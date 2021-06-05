@@ -1,32 +1,53 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <div class="top-level"></div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+const config = {
+  customIconPacks: {
+    uil: {
+      sizes: {
+        default: "is-size-5",
+        "is-small": "",
+        "is-medium": "is-size-3",
+        "is-large": "is-size-1"
+      },
+      iconPrefix: "uil-",
+      internalIcons: {
+        check: "check",
+        information: "information",
+        "check-circle": "checkmark-circle",
+        alert: "exclamation",
+        "alert-circle": "exclamation-circle",
+        "arrow-up": "arrow-up",
+        "chevron-right": "angle-right",
+        "chevron-left": "angle-left",
+        "chevron-down": "arrow-down",
+        eye: "eye",
+        "eye-off": "eye-slash",
+        "menu-down": "angle-down",
+        "menu-up": "angle-up",
+        "close-circle": "times-circle"
+      }
     }
   }
+};
+
+export default {
+  created() {
+    this.$buefy.config.setOptions(config);
+  }
+};
+</script>
+
+<style lang="scss">
+// offline usage
+@import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
+
+.top-level {
+  font-family: "Inter", sans-serif;
+  background: #ecf0f1;
+  height: 100vh;
+  user-select: none;
 }
 </style>
