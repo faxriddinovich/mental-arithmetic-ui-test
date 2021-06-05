@@ -1,51 +1,29 @@
 <template>
-  <div class="top-level"></div>
+<bottom-bar-component />
 </template>
 
-<script>
-const config = {
-  customIconPacks: {
-    uil: {
-      sizes: {
-        default: "is-size-5",
-        "is-small": "",
-        "is-medium": "is-size-3",
-        "is-large": "is-size-1"
-      },
-      iconPrefix: "uil-",
-      internalIcons: {
-        check: "check",
-        information: "information",
-        "check-circle": "checkmark-circle",
-        alert: "exclamation",
-        "alert-circle": "exclamation-circle",
-        "arrow-up": "arrow-up",
-        "chevron-right": "angle-right",
-        "chevron-left": "angle-left",
-        "chevron-down": "arrow-down",
-        eye: "eye",
-        "eye-off": "eye-slash",
-        "menu-down": "angle-down",
-        "menu-up": "angle-up",
-        "close-circle": "times-circle"
-      }
-    }
-  }
-};
+<script lang="ts">
+import BottomBarComponent from '@/components/BottomBar.vue';
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
-export default {
-  created() {
-    this.$buefy.config.setOptions(config);
-  }
-};
+@Component({
+  components: { BottomBarComponent }
+})
+export default class AppComponent extends Vue {
+
+}
 </script>
 
 <style lang="scss">
 // offline usage
 @import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
 
-.top-level {
+* {
   font-family: "Inter", sans-serif;
+}
+
+.top-level {
   background: #ecf0f1;
   height: 100vh;
   user-select: none;
