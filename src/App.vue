@@ -1,22 +1,15 @@
 <template>
   <div class="top-level">
     <router-view />
-    <bottom-bar-component v-if="canRenderBottomBar" />
   </div>
 </template>
 
 <script lang="ts">
-import BottomBarComponent from "@/components/BottomBar.vue";
 import Vue from "vue";
 import Component from "vue-class-component";
 
-@Component({
-  components: { BottomBarComponent }
-})
+@Component
 export default class AppComponent extends Vue {
-  public canRenderBottomBar = !!!["Activation"].includes(
-    this.$router.currentRoute.name || ""
-  );
 }
 </script>
 
@@ -29,7 +22,7 @@ export default class AppComponent extends Vue {
 }
 
 .top-level {
-  background: #ecf0f1;
+  background: #eff8f3;
   height: 100vh;
   user-select: none;
 }
