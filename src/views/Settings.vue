@@ -1,17 +1,13 @@
 <template>
   <div
-    class="is-flex is-justify-content-center is-align-items-center"
+    class="is-flex is-justify-content-center is-align-items-center is-flex-direction-column"
     style="height: 100vh"
   >
     <div class="box">
-      <b-icon icon="setting" /><span class="is-size-5 has-text-weight-medium"
-        >Settings</span
-      >
-      <hr />
-
       <b-field label="Your name">
         <b-input value="Kevin Garvey"></b-input>
       </b-field>
+
       <b-field label="Select mode">
         <b-switch>Offline mode</b-switch>
       </b-field>
@@ -30,9 +26,44 @@
         >
       </b-field>
 
-      <b-button type="is-primary" expanded
-        ><b-icon icon="save" /> <span>Save changes</span></b-button
+      <b-field label="Enable & disable sound">
+        <b-radio-button
+          v-model="soundSetting"
+          native-value="volume-on"
+          type="is-success"
+          ><b-icon icon="volume" /> Enabled</b-radio-button
+        >
+        <b-radio-button
+          v-model="soundSetting"
+          native-value="volume-off"
+          type="is-danger"
+        >
+          <b-icon icon="volume-mute" />
+          Disabled
+        </b-radio-button>
+      </b-field>
+      <b-field label="Clear storage">
+        <b-button type="is-warning" icon-left="trash-alt"
+          >Clear all data</b-button
+        >
+      </b-field>
+
+      <!-- <b-icon icon="setting" /><span class="is-size-5 has-text-weight-medium"
+        >Settings</span
       >
+      <hr /> -->
+
+      <b-field>
+        <b-button type="is-primary" expanded loading
+          ><b-icon icon="save" /> <span>Save changes</span></b-button
+        >
+      </b-field>
+      <b-field>
+        <b-button type="is-primary" tag="router-link" to="/" expanded inverted
+          ><b-icon icon="angle-left-b">Back</b-icon>
+          <span>Go back</span></b-button
+        >
+      </b-field>
     </div>
   </div>
 </template>
@@ -43,6 +74,8 @@ import Component from "vue-class-component";
 @Component
 export default class SettingsComponent extends Vue {
   public lang: string = "en";
+  public activeTab = 0;
+  public soundSetting = "volume-on";
 }
 </script>
 <style lang="scss" scoped></style>

@@ -79,14 +79,16 @@
         </div>
       </div>
       <div class="column is-one-fifth">
-        <div class="box">
-          <center>
-            <b-icon type="is-primary" icon="setting" size="is-large" /><br />
-            Settings
-            <br />
-            <b-tag>Update settings</b-tag>
-          </center>
-        </div>
+        <router-link to="/settings">
+          <div class="box">
+            <center>
+              <b-icon type="is-primary" icon="setting" size="is-large" /><br />
+              Settings
+              <br />
+              <b-tag>Update settings</b-tag>
+            </center>
+          </div>
+        </router-link>
       </div>
     </div>
     <div>
