@@ -3,7 +3,7 @@ import AppComponent from "@/App.vue";
 import router from "@/router";
 
 import Buefy from "buefy";
-import "buefy/dist/buefy.css";
+import "@/styles/global.scss";
 
 Vue.config.productionTip = false;
 
@@ -16,7 +16,7 @@ const buefyOptions = {
         "is-small": "",
         "is-medium": "is-size-3",
         "is-large": "is-size-1",
-        test: "is-size-4",
+        test: "is-size-4"
       },
       iconPrefix: "uil-",
       internalIcons: {
@@ -33,14 +33,14 @@ const buefyOptions = {
         "eye-off": "eye-slash",
         "menu-down": "angle-down",
         "menu-up": "angle-up",
-        "close-circle": "times-circle",
-      },
-    },
-  },
+        "close-circle": "times-circle"
+      }
+    }
+  }
 };
 Vue.use(Buefy, buefyOptions);
 
 new Vue({
   router,
-  render: (h) => h(AppComponent),
+  render: h => h(AppComponent)
 }).$mount("#app");

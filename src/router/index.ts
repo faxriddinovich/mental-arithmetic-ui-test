@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "@/views/Home.vue";
 import Activation from "@/views/Activation.vue";
+import Settings from '@/views/Settings.vue';
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,11 @@ const routes: Array<RouteConfig> = [
     path: "/activation",
     name: "Activation",
     component: Activation
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings
   }
 ];
 
