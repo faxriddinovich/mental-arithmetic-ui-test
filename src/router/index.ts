@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Home from "@/views/Home.vue";
 import Activation from "@/views/Activation.vue";
 import Settings from '@/views/Settings.vue';
+import FlashCard from '@/views/FlashCard.vue';
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes: Array<RouteConfig> = [
     path: '/settings',
     name: 'Settings',
     component: Settings
+  },
+  {
+    path: '/flash-card',
+    name: 'FlashCard',
+    component: FlashCard
   }
 ];
 

@@ -1,8 +1,8 @@
 import Vue from "vue";
+import Buefy from "buefy";
+
 import AppComponent from "@/App.vue";
 import router from "@/router";
-
-import Buefy from "buefy";
 import "@/styles/global.scss";
 
 Vue.config.productionTip = false;
@@ -38,6 +38,8 @@ const buefyOptions = {
     }
   }
 };
+
+//FIXME: "use" only used components
 Vue.use(Buefy, buefyOptions);
 
 new Vue({
