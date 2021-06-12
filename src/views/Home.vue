@@ -30,18 +30,20 @@
         </div>
       </div>
       <div class="column is-one-fifth">
-        <div class="box">
-          <center>
-            <b-icon
-              type="is-primary"
-              icon="square-shape"
-              size="is-large"
-            /><br />
-            Flash card
-            <br />
-            <b-tag>14+</b-tag> <b-tag>14+</b-tag>
-          </center>
-        </div>
+        <router-link to="/flash-card">
+          <div class="box">
+            <center>
+              <b-icon
+                type="is-primary"
+                icon="square-shape"
+                size="is-large"
+              /><br />
+              Flash card
+              <br />
+              <b-tag>14+</b-tag> <b-tag>14+</b-tag>
+            </center>
+          </div>
+        </router-link>
       </div>
       <div class="column is-one-fifth">
         <div class="box">

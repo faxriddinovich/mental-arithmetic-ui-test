@@ -18,11 +18,11 @@
         >
         <b-radio-button v-model="lang" native-value="ru" type="is-primary"
           ><img src="https://www.countryflags.io/uz/flat/16.png" />
-          Uzbek</b-radio-button
+          <span>Uzbek</span></b-radio-button
         >
         <b-radio-button v-model="lang" native-value="en" type="is-primary"
           ><img src="https://www.countryflags.io/us/flat/16.png" />
-          English</b-radio-button
+          <span>English</span></b-radio-button
         >
       </b-field>
 
@@ -40,6 +40,17 @@
         >
           <b-icon icon="volume-mute" />
           Disabled
+        </b-radio-button>
+      </b-field>
+      <b-field label="Abacus style">
+        <b-radio-button v-model="abacus" native-value="yellow" type="is-primary"
+          ><img src="../assets/abacus/yellow/stone.svg" width="34" />
+        </b-radio-button>
+        <b-radio-button v-model="abacus" native-value="green" type="is-primary"
+          ><img src="../assets/abacus/green/stone.svg" width="34" />
+        </b-radio-button>
+        <b-radio-button v-model="abacus" native-value="red" type="is-primary"
+          ><img src="../assets/abacus/red/stone.svg" width="34" />
         </b-radio-button>
       </b-field>
       <b-field label="Clear storage">
@@ -74,6 +85,7 @@ import Component from "vue-class-component";
 @Component
 export default class SettingsComponent extends Vue {
   public lang: string = "en";
+  public abacus: string = "yellow";
   public activeTab = 0;
   public soundSetting = "volume-on";
 }
