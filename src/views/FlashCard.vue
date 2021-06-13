@@ -8,7 +8,8 @@
       :key="index"
       width="50"
       class="abacus_row"
-src="../../public/abacus/skins/yellow/full.svg"
+      :src="require('../assets/abacus/yellow/default.svg')"
+      :ref="`row-${index}`"
     />
   </div>
 </template>
@@ -18,12 +19,11 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 @Component
-export default class FlashCard extends Vue {}
+export default class FlashCard extends Vue { }
 </script>
 
 <style>
 .abacus_row {
   margin-bottom: -7px;
-user-drag: none;
 }
 </style>
