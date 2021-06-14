@@ -4,6 +4,7 @@ import Home from "@/views/Home.vue";
 import Activation from "@/views/Activation.vue";
 import Settings from '@/views/Settings.vue';
 import FlashCard from '@/views/FlashCard.vue';
+import ActivationStatus from '@/views/ActivationStatus.vue';
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes: Array<RouteConfig> = [
     path: '/flash-card',
     name: 'FlashCard',
     component: FlashCard
+  },
+  {
+    path: '/activation-status',
+    name: 'ActivationStatus',
+    component: ActivationStatus
   }
 ];
 
