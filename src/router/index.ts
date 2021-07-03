@@ -6,6 +6,7 @@ import Settings from '@/views/Settings.vue';
 import FlashCard from '@/views/FlashCard.vue';
 
 import UserLogin from '@/views/user/login.vue';
+import UserAccount from '@/views/user/account.vue';
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user/login',
     component: UserLogin
+  },
+  {
+    path: '/user/account',
+    component: UserAccount
   }
 ];
 
