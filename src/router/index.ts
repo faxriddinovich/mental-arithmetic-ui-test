@@ -8,6 +8,8 @@ import FlashCard from '@/views/FlashCard.vue';
 import UserLogin from '@/views/user/login.vue';
 import UserAccount from '@/views/user/account.vue';
 
+import Courses from '@/views/course/courses.vue';
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -38,6 +40,11 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user/account',
     component: UserAccount
+  },
+
+  {
+    path: '/courses',
+    component: Courses
   }
 ];
 
