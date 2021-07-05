@@ -71,7 +71,7 @@
       </b-field>
       <b-field>
         <b-button type="is-primary" tag="router-link" to="/" expanded inverted
-          ><b-icon icon="angle-left-b">Back</b-icon>
+          ><b-icon icon="angle-left-b"/>
           <span>Go back</span></b-button
         >
       </b-field>

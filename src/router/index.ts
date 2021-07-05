@@ -5,7 +5,7 @@ import Activation from "@/views/Activation.vue";
 import Settings from '@/views/Settings.vue';
 import FlashCard from '@/views/FlashCard.vue';
 
-import UserLogin from '@/views/user/login.vue';
+import UserRegister from '@/views/user/register.vue';
 import UserAccount from '@/views/user/account.vue';
 
 import Courses from '@/views/course/courses.vue';
@@ -34,8 +34,8 @@ const routes: Array<RouteConfig> = [
     component: FlashCard
   },
   {
-    path: '/user/login',
-    component: UserLogin
+    path: '/user/register',
+    component: UserRegister
   },
   {
     path: '/user/account',

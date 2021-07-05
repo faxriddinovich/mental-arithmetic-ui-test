@@ -1,7 +1,5 @@
 <template>
-  <div class="top-level">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script lang="ts">
@@ -9,8 +7,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 @Component
-export default class AppComponent extends Vue {
-}
+export default class AppComponent extends Vue { }
 </script>
 
 <style lang="scss">
@@ -21,9 +18,9 @@ export default class AppComponent extends Vue {
   font-family: "Inter", sans-serif;
 }
 
-.top-level {
+html, body {
   background: #eff8f3;
-  height: 100vh;
+  height: 100%;
   user-select: none;
 }
 </style>
