@@ -1,5 +1,6 @@
 <template>
   <section>
+    <!-- we need is-flex ? -->
     <div
       class="columns is-flex is-vcentered is-centered is-desktop"
       style="height: 100vh"
@@ -35,7 +36,8 @@
               </b-field>
 
               <b-field label="Password">
-                <b-input type="password" icon="keyhole-circle" password-reveal> </b-input>
+                <b-input type="password" icon="keyhole-circle" password-reveal>
+                </b-input>
               </b-field>
               <b-field label="Repeat the password">
                 <b-input type="password" icon="keyhole-circle" password-reveal>

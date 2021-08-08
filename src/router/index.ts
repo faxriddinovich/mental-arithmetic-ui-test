@@ -5,6 +5,9 @@ import Home from "../views/Home.vue";
 // user
 import CreateUser from "../views/user/Create.vue";
 
+// lesson
+import ViewLesson from "../views/lesson/View.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -13,10 +16,17 @@ const routes: Array<RouteConfig> = [
     name: "Home",
     component: Home,
   },
+
   {
     path: "/user/create",
-    name: "Createuser",
+    name: "CreateUser",
     component: CreateUser,
+  },
+
+  {
+    path: "/lesson/view",
+    name: "ViewLesson",
+    component: ViewLesson,
   },
 ];
 
