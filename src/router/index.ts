@@ -2,6 +2,9 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 
+// user
+import CreateUser from "../views/user/Create.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -9,6 +12,11 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/user/create",
+    name: "Createuser",
+    component: CreateUser,
   },
 ];
 

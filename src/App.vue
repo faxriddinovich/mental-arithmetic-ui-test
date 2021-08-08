@@ -5,6 +5,8 @@
 </template>
 
 <style lang="scss">
+// offline
+@import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
 html,
 body {
   min-height: 100vh;
