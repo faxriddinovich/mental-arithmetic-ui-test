@@ -25,9 +25,7 @@ export const BigCard = () => {
       p={4}
     >
       <Stack spacing={3}>
-        <Heading size="lg">
-          #1 Endianness
-        </Heading>
+        <Heading size="lg">#1 Endianness</Heading>
         <Box>
           <Flex align="center">
             <Tag size="lg" borderRadius="full" bg="blue.100">

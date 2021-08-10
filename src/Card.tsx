@@ -4,16 +4,17 @@ import {
   Box,
   Divider,
   Flex,
-  Link,
   Spacer,
   Tag,
   TagLabel,
   Text,
+  LinkBox,
+  LinkOverlay,
 } from "@chakra-ui/react";
 import { IconRuler2, IconMessageCircle } from "@tabler/icons";
 export const Card = ({ title, isNew }) => {
   return (
-    <Box
+    <LinkBox
       bg="white"
       border="1px"
       borderColor="gray.300"
@@ -24,7 +25,7 @@ export const Card = ({ title, isNew }) => {
         background: "gray.50",
       }}
     >
-      <Link
+      <LinkOverlay
         mt={1}
         display="block"
         fontSize="lg"
@@ -40,7 +41,7 @@ export const Card = ({ title, isNew }) => {
         ) : (
           ""
         )}
-      </Link>
+      </LinkOverlay>
       <Text mt={2} color="gray.500" mb={3}>
         Getting a new business off the ground is a lot of hard work.
       </Text>
@@ -70,6 +71,6 @@ export const Card = ({ title, isNew }) => {
           </Tag>
         </Box>
       </Flex>
-    </Box>
+    </LinkBox>
   );
 };
