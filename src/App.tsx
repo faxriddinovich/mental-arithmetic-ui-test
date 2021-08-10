@@ -33,6 +33,7 @@ import { theme } from "./theme";
 import { Card } from "./Card.tsx";
 import { BigCard } from "./BigCard.tsx";
 import { Comment } from "./Comment";
+import { Task } from "./Task";
 
 export const App = () => {
   return (
@@ -134,16 +135,10 @@ export const App = () => {
                     </Box>
                   </TabPanel>
                   <TabPanel p={0}>
-                    <Box
-                      bg="white"
-                      border="1px"
-                      borderColor="gray.300"
-                      rounded="md"
-                      boxShadow="sm"
-                      p="4"
-                    >
-                      Tasks ...
-                    </Box>
+                    <Stack>
+                      <Task isDone theme="Some theme" />
+                      <Task theme="Ko'paytirish 4n" />
+                    </Stack>
                   </TabPanel>
                 </TabPanels>
               </Stack>
