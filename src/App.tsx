@@ -2,33 +2,25 @@ import * as React from "react";
 import {
   ChakraProvider,
   Container,
-  Box,
   Grid,
   GridItem,
-  Image,
-  Heading,
-  Divider,
   Link,
-  Text,
-  Avatar,
-  Tag,
-  TagLabel,
-  Badge,
-  Flex,
-  Spacer,
-  HStack,
+  Box,
   Center,
+  Stack,
+  Tabs,
+  TabItem,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  Text,
 } from "@chakra-ui/react";
 import {
-  IconCloud,
-  IconLifebuoy,
-  IconGolf,
-  IconLayoutList,
+  IconDots,
+  IconFile,
   IconMessageCircle,
   IconRuler2,
-  IconClock,
-  IconPencil,
-  IconDots
 } from "@tabler/icons";
 import { theme } from "./theme";
 import { Card } from "./Card.tsx";
@@ -40,38 +32,118 @@ export const App = () => {
       <Container maxW="container.xl" mt={10}>
         <Grid
           gap={4}
-          templateRows="repeat(auto-fill, 1fr)"
-          templateColumns="repeat(3, 1fr)"
+          templateColumns={{ base: "1fr", lg: "2fr 1fr"}}
         >
-          <GridItem colSpan={2} rowSpan={10}>
-            <BigCard />
-          </GridItem>
-          <GridItem colSpan={1}>
-            <Card title="#2 How does memory work" />
-          </GridItem>
-          <GridItem colSpan={1}>
-            <Card title="#2 How does memory work" />
-          </GridItem>
-          <GridItem colSpan={1}>
-            <Card title="#3 Struct padding & packing" />
+          <GridItem>
+            <Tabs isFitted variant="unstyled">
+              <Stack spacing={4}>
+                <Box
+                  bg="white"
+                  border="1px"
+                  borderColor="gray.300"
+                  rounded="md"
+                  boxShadow="sm"
+                  p={4}
+                >
+                  <TabList>
+                    <Tab
+                      _selected={{
+                        color: "white",
+                        bg: "gray.500",
+                        borderRadius: 5,
+                      }}
+                    >
+                      <IconFile />{" "}
+                      <Text
+                        d={{ base: "none", sm: "none", xl: "block" }}
+                        isTruncated
+                      >
+                        Endianness
+                      </Text>
+                    </Tab>
+                    <Tab
+                      _selected={{
+                        color: "white",
+                        bg: "gray.500",
+                        borderRadius: 5,
+                      }}
+                    >
+                      <IconMessageCircle />{" "}
+                      <Text d={{ base: "none", sm: "none", xl: "block" }}>
+                        Comments:
+                      </Text>
+                      &nbsp;<b>23</b>
+                    </Tab>
+                    <Tab
+                      _selected={{
+                        color: "white",
+                        bg: "gray.500",
+                        borderRadius: 5,
+                      }}
+                    >
+                      <IconRuler2 />{" "}
+                      <Text d={{ base: "none", sm: "none", xl: "block" }}>
+                        Tasks:
+                      </Text>
+                      &nbsp;<b>1</b>
+                    </Tab>
+                  </TabList>
+                </Box>
+                <TabPanels>
+                  <TabPanel p={0}>
+                    <BigCard />
+                  </TabPanel>
+                  <TabPanel p={0}>
+
+    <Box
+      bg="white"
+      border="1px"
+      borderColor="gray.300"
+      rounded="md"
+      boxShadow="sm"
+      p="4"
+    >
+    Comments ...
+    </Box>
+                  </TabPanel>
+                  <TabPanel p={0}>
+    <Box
+      bg="white"
+      border="1px"
+      borderColor="gray.300"
+      rounded="md"
+      boxShadow="sm"
+      p="4"
+    >
+    Tasks ...
+    </Box>
+                  </TabPanel>
+                </TabPanels>
+              </Stack>
+            </Tabs>
           </GridItem>
           <GridItem>
-            <Card title="#4 Another thing about something" isNew={true} />
-          </GridItem>
-          <GridItem>
-          <Link>
-            <Box
-              bg="white"
-              border="1px"
-              borderColor="gray.300"
-              rounded="md"
-              boxShadow="sm"
-              p="2"
-              _hover = {{ background: 'blue.50' }}
-            >
-              <Center><IconDots /></Center>
-            </Box>
-            </Link>
+            <Stack spacing={4}>
+              <Card title="#2 How does memory work" />
+              <Card title="#2 How does memory work" />
+              <Card title="#2 How does memory work" />
+              <Card title="#2 How does memory work" />
+              <Link>
+                <Box
+                  bg="white"
+                  border="1px"
+                  borderColor="gray.300"
+                  rounded="md"
+                  boxShadow="sm"
+                  p="2"
+                  _hover={{ background: "blue.50" }}
+                >
+                  <Center>
+                    <IconDots />
+                  </Center>
+                </Box>
+              </Link>
+            </Stack>
           </GridItem>
         </Grid>
       </Container>
