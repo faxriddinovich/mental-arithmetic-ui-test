@@ -16,16 +16,26 @@ import {
   Text,
   LinkBox,
   LinkOverlay,
+  Flex,
+  Divider,
+  Textarea,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Spacer,
 } from "@chakra-ui/react";
 import {
   IconDots,
   IconFile,
   IconMessageCircle,
   IconRuler2,
+  IconPencil,
+  IconTrash,
 } from "@tabler/icons";
 import { theme } from "./theme";
 import { Card } from "./Card.tsx";
 import { BigCard } from "./BigCard.tsx";
+import { Comment } from "./Comment";
 
 export const App = () => {
   return (
@@ -70,7 +80,7 @@ export const App = () => {
                       <Text d={{ base: "none", sm: "none", xl: "block" }}>
                         Comments:
                       </Text>
-                      &nbsp;<b>23</b>
+                      &nbsp;<b>2</b>
                     </Tab>
                     <Tab
                       _selected={{
@@ -100,7 +110,36 @@ export const App = () => {
                       boxShadow="sm"
                       p="4"
                     >
-                      test
+                      <Stack spacing={4}>
+                        <Box>
+                          <Stack spacing={4}>
+                            <Textarea
+                              placeholder="Here is a sample placeholder"
+                              size="md"
+                            />
+                            <Flex>
+                              <Spacer />
+                              <ButtonGroup
+                                size="sm"
+                                isAttached
+                                variant="outline"
+                              >
+                                <Button leftIcon={<IconPencil />}>
+                                  Leave a comment
+                                </Button>
+                                <IconButton
+                                  aria-label="Add to friends"
+                                  color="red"
+                                  icon={<IconTrash />}
+                                />
+                              </ButtonGroup>
+                            </Flex>
+                          </Stack>
+                        </Box>
+                        <Comment isAdmin={true} username="Michelle (Shelley)" />
+                        <Divider />
+                        <Comment username="Rachel Stone" />
+                      </Stack>
                     </Box>
                   </TabPanel>
                   <TabPanel p={0}>
