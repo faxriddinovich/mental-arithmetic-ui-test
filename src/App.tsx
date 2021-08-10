@@ -20,8 +20,6 @@ import {
   Divider,
   Textarea,
   Button,
-  ButtonGroup,
-  IconButton,
   Spacer,
 } from "@chakra-ui/react";
 import {
@@ -30,7 +28,6 @@ import {
   IconMessageCircle,
   IconRuler2,
   IconPencil,
-  IconTrash,
 } from "@tabler/icons";
 import { theme } from "./theme";
 import { Card } from "./Card.tsx";
@@ -110,7 +107,7 @@ export const App = () => {
                       boxShadow="sm"
                       p="4"
                     >
-                      <Stack spacing={4}>
+                      <Stack spacing={4} pb={4}>
                         <Box>
                           <Stack spacing={4}>
                             <Textarea
@@ -119,20 +116,14 @@ export const App = () => {
                             />
                             <Flex>
                               <Spacer />
-                              <ButtonGroup
+                              <Button
+                                leftIcon={<IconPencil />}
                                 size="sm"
-                                isAttached
-                                variant="outline"
+                                colorScheme="green"
+                                variant="solid"
                               >
-                                <Button leftIcon={<IconPencil />}>
-                                  Leave a comment
-                                </Button>
-                                <IconButton
-                                  aria-label="Add to friends"
-                                  color="red"
-                                  icon={<IconTrash />}
-                                />
-                              </ButtonGroup>
+                                Leave a comment
+                              </Button>
                             </Flex>
                           </Stack>
                         </Box>
