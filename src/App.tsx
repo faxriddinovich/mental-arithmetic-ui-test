@@ -30,8 +30,8 @@ import {
   IconPencil,
 } from "@tabler/icons";
 import { theme } from "./theme";
-import { Card } from "./Card.tsx";
-import { BigCard } from "./BigCard.tsx";
+import { Card } from "./Card";
+import { BigCard } from "./BigCard";
 import { Comment } from "./Comment";
 import { Task } from "./Task";
 
