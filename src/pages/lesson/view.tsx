@@ -35,7 +35,7 @@ import {
   IconPencil,
   IconRuler2,
 } from "@tabler/icons";
-import { Card } from "components/lesson/card";
+import { LessonCard } from "components/lesson/card";
 import { Comment } from "components/lesson/comment";
 import { Task } from "components/lesson/task";
 
@@ -228,10 +228,10 @@ export const ViewLessonPage = () => {
         </GridItem>
         <GridItem>
           <Stack spacing={4}>
-            <Card title="#1 How does memory work" />
-            <Card title="#2 How does everything work" />
-            <Card title="#3 How does a work" isNew={true} />
-            <Card title="#4 How does b work" isNew={true} />
+            <LessonCard title="#1 How does memory work" />
+            <LessonCard title="#2 How does everything work" />
+            <LessonCard title="#3 How does a work" isNew={true} />
+            <LessonCard title="#4 How does b work" isNew={true} />
             <LinkBox
               bg="white"
               border="1px"

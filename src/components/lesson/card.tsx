@@ -18,7 +18,7 @@ interface Props {
   isNew?: boolean;
 }
 
-export class Card extends Component<Props> {
+export class LessonCard extends Component<Props> {
   public render() {
     return (
       <LinkBox
