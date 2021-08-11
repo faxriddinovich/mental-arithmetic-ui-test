@@ -1,195 +1,21 @@
 import * as React from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "focus-visible/dist/focus-visible";
-import {
-  ChakraProvider,
-  Container,
-  Grid,
-  GridItem,
-  Box,
-  Center,
-  Stack,
-  Tabs,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Text,
-  LinkBox,
-  LinkOverlay,
-  Flex,
-  Divider,
-  Textarea,
-  Button,
-  Spacer,
-} from "@chakra-ui/react";
-import {
-  IconDots,
-  IconFile,
-  IconMessageCircle,
-  IconRuler2,
-  IconPencil,
-} from "@tabler/icons";
-import { theme } from "./theme";
-import { Card } from "./Card";
-import { BigCard } from "./BigCard";
-import { Comment } from "./Comment";
-import { Task } from "./Task";
+
+import { theme } from "config/theme";
+import { ViewLessonPage } from "pages/lesson/view.page";
 
 export const App = () => {
   return (
     <ChakraProvider theme={theme}>
-      <Container maxW="container.xl" mt={5}>
-        <Grid gap={4} templateColumns={{ base: "1fr", lg: "2fr 1fr" }}>
-          <GridItem>
-            <Tabs isFitted variant="unstyled" isLazy>
-              <Stack spacing={4}>
-                <Box
-                  bg="white"
-                  border="1px"
-                  borderColor="gray.300"
-                  rounded="md"
-                  boxShadow="sm"
-                  p={4}
-                >
-                  <TabList>
-                    <Tab
-                      _selected={{
-                        color: "white",
-                        bg: "gray.500",
-                        borderRadius: 5,
-                      }}
-                    >
-                      <IconFile />{" "}
-                      <Text
-                        d={{ base: "none", sm: "none", xl: "block" }}
-                        isTruncated
-                      >
-                        Endianness
-                      </Text>
-                    </Tab>
-                    <Tab
-                      _selected={{
-                        color: "white",
-                        bg: "gray.500",
-                        borderRadius: 5,
-                      }}
-                    >
-                      <IconMessageCircle />{" "}
-                      <Text d={{ base: "none", sm: "none", xl: "block" }}>
-                        Comments:
-                      </Text>
-                      &nbsp;<b>2</b>
-                    </Tab>
-                    <Tab
-                      _selected={{
-                        color: "white",
-                        bg: "gray.500",
-                        borderRadius: 5,
-                      }}
-                    >
-                      <IconRuler2 />{" "}
-                      <Text d={{ base: "none", sm: "none", xl: "block" }}>
-                        Tasks:
-                      </Text>
-                      &nbsp;<b>6</b>
-                    </Tab>
-                  </TabList>
-                </Box>
-                <TabPanels>
-                  <TabPanel p={0}>
-                    <BigCard />
-                  </TabPanel>
-                  <TabPanel p={0}>
-                    <Box
-                      bg="white"
-                      border="1px"
-                      borderColor="gray.300"
-                      rounded="md"
-                      boxShadow="sm"
-                      p="4"
-                    >
-                      <Stack spacing={4} pb={4}>
-                        <Box>
-                          <Stack spacing={4}>
-                            <Textarea
-                              placeholder="Here is a sample placeholder"
-                              size="md"
-                            />
-                            <Flex>
-                              <Spacer />
-                              <Button
-                                leftIcon={<IconPencil />}
-                                size="sm"
-                                colorScheme="green"
-                                variant="solid"
-                              >
-                                Leave a comment
-                              </Button>
-                            </Flex>
-                          </Stack>
-                        </Box>
-                        <Comment isAdmin={true} username="Michelle (Shelley)" />
-                        <Divider />
-                        <Comment username="Rachel Stone" />
-                      </Stack>
-                    </Box>
-                  </TabPanel>
-                  <TabPanel p={0}>
-                    <Stack>
-                      <Task
-                        img="https://image.flaticon.com/icons/png/512/1156/1156977.png"
-                        isDone
-                      />
-                      <Task
-                        img="https://image.flaticon.com/icons/png/512/1519/1519458.png"
-                        isDone
-                        theme="Katta o'rtoqlar -2"
-                      />
-                      <Task
-                        img="https://image.flaticon.com/icons/png/512/1519/1519458.png"
-                        isDone
-                        theme="Some theme"
-                      />
-                      <Task
-                        img="https://image.flaticon.com/icons/png/512/1994/1994825.png"
-                        theme="Some theme"
-                      />
-                      <Task
-                        img="https://image.flaticon.com/icons/png/512/867/867454.png"
-                        theme="Some theme"
-                      />
-                      <Task img="https://image.flaticon.com/icons/png/512/1046/1046277.png" />
-                    </Stack>
-                  </TabPanel>
-                </TabPanels>
-              </Stack>
-            </Tabs>
-          </GridItem>
-          <GridItem>
-            <Stack spacing={4}>
-              <Card title="#1 How does memory work" />
-              <Card title="#2 How does everything work" />
-              <Card title="#3 How does a work" isNew={true} />
-              <Card title="#4 How does b work" isNew={true} />
-              <LinkBox
-                bg="white"
-                border="1px"
-                borderColor="gray.300"
-                rounded="md"
-                boxShadow="sm"
-                p="2"
-                _hover={{ background: "blue.50" }}
-              >
-                <Center>
-                  <LinkOverlay href="#">
-                    <IconDots />
-                  </LinkOverlay>
-                </Center>
-              </LinkBox>
-            </Stack>
-          </GridItem>
-        </Grid>
-      </Container>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/lesson/view">
+            <ViewLessonPage />
+          </Route>
+        </Switch>
+      </BrowserRouter>
     </ChakraProvider>
   );
 };
