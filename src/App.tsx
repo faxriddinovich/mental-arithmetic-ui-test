@@ -91,7 +91,7 @@ export const App = () => {
                       <Text d={{ base: "none", sm: "none", xl: "block" }}>
                         Tasks:
                       </Text>
-                      &nbsp;<b>1</b>
+                      &nbsp;<b>6</b>
                     </Tab>
                   </TabList>
                 </Box>
@@ -136,8 +136,29 @@ export const App = () => {
                   </TabPanel>
                   <TabPanel p={0}>
                     <Stack>
-                      <Task isDone theme="Some theme" />
-                      <Task theme="Ko'paytirish 4n" />
+                      <Task
+                        img="https://image.flaticon.com/icons/png/512/1156/1156977.png"
+                        isDone
+                      />
+                      <Task
+                        img="https://image.flaticon.com/icons/png/512/1519/1519458.png"
+                        isDone
+                        theme="Katta o'rtoqlar -2"
+                      />
+                      <Task
+                        img="https://image.flaticon.com/icons/png/512/1519/1519458.png"
+                        isDone
+                        theme="Some theme"
+                      />
+                      <Task
+                        img="https://image.flaticon.com/icons/png/512/1994/1994825.png"
+                        theme="Some theme"
+                      />
+                      <Task
+                        img="https://image.flaticon.com/icons/png/512/867/867454.png"
+                        theme="Some theme"
+                      />
+                      <Task img="https://image.flaticon.com/icons/png/512/1046/1046277.png" />
                     </Stack>
                   </TabPanel>
                 </TabPanels>
