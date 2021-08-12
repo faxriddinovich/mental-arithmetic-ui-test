@@ -22,6 +22,9 @@ import {
 } from "@chakra-ui/react";
 import { IconCheck, IconShoppingCart, IconSearch } from "@tabler/icons";
 import { LessonCard } from "components/lesson/card";
+import "styles/styles.css";
+//@ts-ignore
+import Rating from 'react-rating-stars-component';
 
 interface State {
   isOpen: boolean;
@@ -43,7 +46,12 @@ export class ViewCoursePage extends Component<{}, State> {
               boxShadow="sm"
               overflow="hidden"
             >
-              <Image src="https://thumbs-prod.si-cdn.com/s-jZTk0XtVmp-89MlOgFXqaAVe4=/fit-in/1600x0/https://public-media.si-cdn.com/filer/29/0f/290fb8c0-1872-46e5-8c12-235742905def/science_smithsonian_magazine_booklist_2019.png" />
+              <Box position="relative">
+                <div className="bottom-right">
+                  <Rating activeColor="#F2C066" size={18} />
+                </div>
+                <Image src="https://thumbs-prod.si-cdn.com/s-jZTk0XtVmp-89MlOgFXqaAVe4=/fit-in/1600x0/https://public-media.si-cdn.com/filer/29/0f/290fb8c0-1872-46e5-8c12-235742905def/science_smithsonian_magazine_booklist_2019.png" />
+              </Box>
               <Box p={4}>
                 <Stack spacing={3}>
                   <Heading size="md">Data & science course</Heading>
