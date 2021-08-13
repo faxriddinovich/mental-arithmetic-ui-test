@@ -24,7 +24,7 @@ import { IconCheck, IconShoppingCart, IconSearch } from "@tabler/icons";
 import { LessonCard } from "components/lesson/card";
 import "styles/styles.css";
 //@ts-ignore
-import Rating from 'react-rating-stars-component';
+import Rating from "react-rating-stars-component";
 
 interface State {
   isOpen: boolean;
@@ -54,7 +54,7 @@ export class ViewCoursePage extends Component<{}, State> {
               </Box>
               <Box p={4}>
                 <Stack spacing={3}>
-                  <Heading size="md">Data & science course</Heading>
+                  <Heading size="md">Data science course.</Heading>
                   <Box>
                     <Tag size="lg" borderRadius="full" bg="blue.100">
                       <Avatar

@@ -5,6 +5,8 @@ import "focus-visible/dist/focus-visible";
 
 import { theme } from "config/theme";
 import { ViewLessonPage } from "pages/lesson/view";
+
+import { CourseList } from "pages/course/list";
 import { ViewCoursePage } from "pages/course/view";
 
 export const App = () => {
@@ -17,6 +19,9 @@ export const App = () => {
           </Route>
           <Route path="/course">
             <ViewCoursePage />
+          </Route>
+          <Route path="/courses">
+            <CourseList />
           </Route>
         </Switch>
       </BrowserRouter>

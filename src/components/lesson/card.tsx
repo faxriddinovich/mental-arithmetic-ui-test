@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Avatar,
   Badge,
@@ -32,23 +33,23 @@ export class LessonCard extends Component<Props> {
           background: "gray.50",
         }}
       >
-        <LinkOverlay
-          mt={1}
-          display="block"
-          fontSize="lg"
-          lineHeight="normal"
-          fontWeight="semibold"
-          href="#"
-        >
-          {this.props.title}{" "}
-          {this.props.isNew ? (
-            <Badge variant="solid" colorScheme="green">
-              New
-            </Badge>
-          ) : (
-            ""
-          )}
-        </LinkOverlay>
+        {/* FIXME: static className*/}
+        <RouterLink to="/lesson" className="chakra-linkbox__overlay">
+          <LinkOverlay
+            mt={1}
+            fontSize="lg"
+            lineHeight="normal"
+            fontWeight="semibold"
+          >
+            {this.props.title}{" "}
+          </LinkOverlay>
+        </RouterLink>
+
+        {this.props.isNew && (
+          <Badge variant="solid" colorScheme="green">
+            New
+          </Badge>
+        )}
         <Text mt={2} color="gray.500" mb={3}>
           Getting a new business off the ground is a lot of hard work.
         </Text>
