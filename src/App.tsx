@@ -9,6 +9,8 @@ import { ViewLessonPage } from "pages/lesson/view";
 import { CourseList } from "pages/course/list";
 import { ViewCoursePage } from "pages/course/view";
 
+import { CreateUser } from "pages/user/create";
+
 export const App = () => {
   return (
     <ChakraProvider theme={theme}>
@@ -22,6 +24,9 @@ export const App = () => {
           </Route>
           <Route path="/courses">
             <CourseList />
+          </Route>
+          <Route path="/user/create">
+            <CreateUser />
           </Route>
         </Switch>
       </BrowserRouter>

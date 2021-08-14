@@ -19,7 +19,6 @@ import {
   Avatar,
   TagLabel,
   Collapse,
-  HStack,
 } from "@chakra-ui/react";
 import { IconCheck, IconShoppingCart, IconSearch } from "@tabler/icons";
 import { LessonCard } from "components/lesson/card";
