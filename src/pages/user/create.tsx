@@ -60,7 +60,7 @@ export const CreateUser = () => {
               </InputGroup>
             </FormControl>
             <FormControl id="role">
-              <FormLabel>Select yor role:</FormLabel>
+              <FormLabel>Select your role:</FormLabel>
               <RadioGroup colorScheme="purple" value="1">
                 <Stack direction="row">
                   <Radio value="1">Simple user</Radio>
@@ -89,7 +89,7 @@ export const CreateUser = () => {
                     {showPassword ? "Hide" : "Show"}
                   </Button>
                 </InputRightElement>
-                <Input type={showPassword ? "text" : "password"} placeholder="Plese write a password"/>
+                <Input type={showPassword ? "text" : "password"} placeholder="Please write a password"/>
               </InputGroup>
               <FormHelperText>
                 We recommend to write a strong password for you safety. Please
