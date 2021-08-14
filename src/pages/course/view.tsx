@@ -19,6 +19,7 @@ import {
   Avatar,
   TagLabel,
   Collapse,
+  HStack,
 } from "@chakra-ui/react";
 import { IconCheck, IconShoppingCart, IconSearch } from "@tabler/icons";
 import { LessonCard } from "components/lesson/card";
@@ -38,94 +39,130 @@ export class ViewCoursePage extends Component<{}, State> {
       <Container maxW="container.xl" mt={5}>
         <Grid templateColumns={{ base: "1fr", lg: "1fr 2fr" }} gap={4}>
           <GridItem>
-            <Box
-              bg="white"
-              border="1px"
-              borderColor="gray.300"
-              rounded="md"
-              boxShadow="sm"
-              overflow="hidden"
-            >
-              <Box position="relative">
-                <div className="bottom-right">
-                  <Rating activeColor="#F2C066" size={18} />
-                </div>
-                <Image src="https://thumbs-prod.si-cdn.com/s-jZTk0XtVmp-89MlOgFXqaAVe4=/fit-in/1600x0/https://public-media.si-cdn.com/filer/29/0f/290fb8c0-1872-46e5-8c12-235742905def/science_smithsonian_magazine_booklist_2019.png" />
+            <Stack spacing={4}>
+              <Box
+                bg="white"
+                border="1px"
+                borderColor="gray.300"
+                rounded="md"
+                boxShadow="sm"
+                overflow="hidden"
+              >
+                <Box position="relative">
+                  <div className="bottom-right">
+                    <Rating activeColor="#F2C066" size={18} />
+                  </div>
+                  <Image src="https://thumbs-prod.si-cdn.com/s-jZTk0XtVmp-89MlOgFXqaAVe4=/fit-in/1600x0/https://public-media.si-cdn.com/filer/29/0f/290fb8c0-1872-46e5-8c12-235742905def/science_smithsonian_magazine_booklist_2019.png" />
+                </Box>
+                <Box p={4}>
+                  <Stack spacing={3}>
+                    <Heading size="md">Data science course.</Heading>
+                    <Box>
+                      <Tag size="lg" borderRadius="full" bg="blue.100">
+                        <Avatar
+                          src="https://bit.ly/sage-adebayo"
+                          size="xs"
+                          name="Satoshi nakomoto"
+                          ml={-2}
+                          mr={2}
+                        />
+                        <TagLabel as="b">Satoshi Nakamoto</TagLabel>
+                      </Tag>
+                    </Box>
+                    <Box>
+                      Data science is an interdisciplinary field focused on
+                      extracting knowledge from data sets, which are typically
+                      large (see big data), and applying the knowledge and
+                      actionable insights from data to solve problems in a wide
+                      range of application domains.
+                    </Box>
+                    <Box>
+                      <StatGroup>
+                        <Stat>
+                          <StatLabel>Lessons</StatLabel>
+                          <StatNumber>5</StatNumber>
+                        </Stat>
+                        <Stat>
+                          <StatLabel>Users</StatLabel>
+                          <StatNumber>128</StatNumber>
+                        </Stat>
+                        <Stat>
+                          <StatLabel>Tasks</StatLabel>
+                          <StatNumber>20</StatNumber>
+                        </Stat>
+                      </StatGroup>
+                    </Box>
+                    <Divider />
+                    <Button
+                      bg="green.400"
+                      color="white"
+                      leftIcon={<IconShoppingCart size={18} />}
+                      _hover={{ background: "green.500" }}
+                      _active={{ background: "green.600" }}
+                    >
+                      <b>23 000 sum</b>
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        this.setState({ isOpen: !this.state.isOpen })
+                      }
+                    >
+                      I have an activation code
+                    </Button>
+                    <Collapse in={this.state.isOpen}>
+                      <Flex>
+                        <Input
+                          placeholder="Enter the activation code"
+                          size="sm"
+                        />
+                        <Button
+                          leftIcon={<IconCheck size={15} />}
+                          size="sm"
+                          ml={4}
+                          px={6}
+                        >
+                          Activate
+                        </Button>
+                      </Flex>
+                    </Collapse>
+                  </Stack>
+                </Box>
               </Box>
-              <Box p={4}>
-                <Stack spacing={3}>
-                  <Heading size="md">Data science course.</Heading>
-                  <Box>
-                    <Tag size="lg" borderRadius="full" bg="blue.100">
-                      <Avatar
-                        src="https://bit.ly/sage-adebayo"
-                        size="xs"
-                        name="Satoshi nakomoto"
-                        ml={-2}
-                        mr={2}
-                      />
-                      <TagLabel as="b">Satoshi Nakamoto</TagLabel>
-                    </Tag>
-                  </Box>
-                  <Box>
-                    Data science is an interdisciplinary field focused on
-                    extracting knowledge from data sets, which are typically
-                    large (see big data), and applying the knowledge and
-                    actionable insights from data to solve problems in a wide
-                    range of application domains.
-                  </Box>
-                  <Box>
-                    <StatGroup>
-                      <Stat>
-                        <StatLabel>Lessons</StatLabel>
-                        <StatNumber>5</StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel>Users</StatLabel>
-                        <StatNumber>128</StatNumber>
-                      </Stat>
-                      <Stat>
-                        <StatLabel>Tasks</StatLabel>
-                        <StatNumber>20</StatNumber>
-                      </Stat>
-                    </StatGroup>
-                  </Box>
-                  <Divider />
-                  <Button
-                    bg="green.400"
-                    color="white"
-                    leftIcon={<IconShoppingCart size={18} />}
-                    _hover={{ background: "green.500" }}
-                    _active={{ background: "green.600" }}
-                  >
-                    <b>23 000 sum</b>
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      this.setState({ isOpen: !this.state.isOpen })
-                    }
-                  >
-                    I have an activation code
-                  </Button>
-                  <Collapse in={this.state.isOpen}>
-                    <Flex>
-                      <Input
-                        placeholder="Enter the activation code"
-                        size="sm"
-                      />
-                      <Button
-                        leftIcon={<IconCheck size={15} />}
-                        size="sm"
-                        ml={4}
-                        px={6}
-                      >
-                        Activate
-                      </Button>
-                    </Flex>
-                  </Collapse>
-                </Stack>
+              <Box
+                bg="white"
+                border="1px"
+                borderColor="gray.300"
+                rounded="md"
+                boxShadow="sm"
+                overflow="hidden"
+                p={3}
+              >
+                <Tag mb={2} mr={2}>
+                  test
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  testsklefj lskejf lksjefkl j
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  teseflkesjfkl jst
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  est
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  tsefoi jsoiefj est
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  tesefljst
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  test
+                </Tag>
+                <Tag mb={2} mr={2}>
+                  test
+                </Tag>
               </Box>
-            </Box>
+            </Stack>
           </GridItem>
           <GridItem>
             <Stack spacing={4}>
