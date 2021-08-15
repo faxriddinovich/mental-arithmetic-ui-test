@@ -26,7 +26,6 @@ export const CreateUser = () => {
     <Container maxW="container.sm">
       <Flex direction="column" justifyContent="center" height="100vh">
         <Box
-          w="100%"
           bg="white"
           border="1px"
           borderColor="gray.300"
@@ -84,12 +83,14 @@ export const CreateUser = () => {
                     h="1.75rem"
                     size="sm"
                     onClick={() => setShowPassword(!showPassword)}
-                    
                   >
                     {showPassword ? "Hide" : "Show"}
                   </Button>
                 </InputRightElement>
-                <Input type={showPassword ? "text" : "password"} placeholder="Please write a password"/>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Please write a password"
+                />
               </InputGroup>
               <FormHelperText>
                 We recommend to write a strong password for you safety. Please
@@ -103,16 +104,26 @@ export const CreateUser = () => {
                   pointerEvents="none"
                   children={<IconKey color="gray" size={21} />}
                 />
-                <Input type="password" placeholder="Repeat the password"/>
+                <Input type="password" placeholder="Repeat the password" />
               </InputGroup>
             </FormControl>
             <FormControl>
-              <Checkbox colorScheme="purple" defaultIsChecked>
-                I agree to the 
-              </Checkbox> <Link color="purple.700" as="b">Terms of Service</Link>
+              <Checkbox colorScheme="purple">I agree to the</Checkbox>{" "}
+              <Link color="purple.700" as="b">
+                Terms of Service
+              </Link>
             </FormControl>
             <Box>
-              <Button colorScheme="purple" mt={4} leftIcon={<IconUserPlus size={20} />} borderColor="purple.600" borderWidth="2px" isFullWidth>Create </Button>
+              <Button
+                colorScheme="purple"
+                mt={4}
+                leftIcon={<IconUserPlus size={20} />}
+                borderColor="purple.600"
+                borderWidth="2px"
+                isFullWidth
+              >
+                Create
+              </Button>
             </Box>
           </Stack>
         </Box>

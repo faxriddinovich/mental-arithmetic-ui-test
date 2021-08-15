@@ -10,6 +10,7 @@ import { CourseList } from "pages/course/list";
 import { ViewCoursePage } from "pages/course/view";
 
 import { CreateUser } from "pages/user/create";
+import { LoginUser } from "pages/user/login";
 
 export const App = () => {
   return (
@@ -27,6 +28,9 @@ export const App = () => {
           </Route>
           <Route path="/user/create">
             <CreateUser />
+          </Route>
+          <Route path="/user/login">
+            <LoginUser />
           </Route>
         </Switch>
       </BrowserRouter>
