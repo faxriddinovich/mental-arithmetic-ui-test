@@ -13,6 +13,7 @@ import { CreateUser } from "pages/user/create";
 import { LoginUser } from "pages/user/login";
 
 import { UserAccount } from "pages/user/account";
+import { UserScores } from "pages/user/scores";
 
 export const App = () => {
   return (
@@ -36,6 +37,9 @@ export const App = () => {
           </Route>
           <Route path="/user/account">
             <UserAccount />
+          </Route>
+          <Route path="/user/scores">
+            <UserScores />
           </Route>
         </Switch>
       </BrowserRouter>

@@ -104,57 +104,52 @@ const options = {
   },
 };
 
-export const UserAccount = () => {
+export const UserScores = () => {
   return (
-    <Container maxW="container.lg">
-      <Stack spacing={5}>
-        <Box
-          bg="white"
-          border="1px"
-          borderColor="gray.300"
-          boxShadow="inner"
-          rounded="md"
-          mt={4}
-          p={4}
-        >
-          <StatGroup>
-            <Stat>
-              <StatLabel>Daily ex.</StatLabel>
-              <StatNumber>45</StatNumber>
-            </Stat>
-            <Stat>
-              <StatLabel>Weekly ex.</StatLabel>
-              <StatNumber>1000</StatNumber>
-            </Stat>
-            <Stat>
-              <StatLabel>Total ex.</StatLabel>
-              <StatNumber>1000</StatNumber>
-            </Stat>
-          </StatGroup>
-        </Box>
-        <Box
-          bg="white"
-          border="1px"
-          borderColor="gray.300"
-          boxShadow="inner"
-          rounded="md"
-          mt={4}
-          p={4}
-        >
-          <Bar data={barData} options={barOptions} />
-        </Box>
-        <Box
-          bg="white"
-          border="1px"
-          borderColor="gray.300"
-          boxShadow="inner"
-          rounded="md"
-          mt={4}
-          p={4}
-        >
-          <Line data={data} options={options} />
-        </Box>
-      </Stack>
-    </Container>
+    <Stack spacing={5}>
+      <Box
+        bg="white"
+        border="1px"
+        borderColor="gray.300"
+        boxShadow="inner"
+        rounded="md"
+        p={4}
+      >
+        <StatGroup>
+          <Stat>
+            <StatLabel>Daily ex.</StatLabel>
+            <StatNumber>45</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Weekly ex.</StatLabel>
+            <StatNumber>1000</StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Total ex.</StatLabel>
+            <StatNumber>1000</StatNumber>
+          </Stat>
+        </StatGroup>
+      </Box>
+      <Box
+        bg="white"
+        border="1px"
+        borderColor="gray.300"
+        boxShadow="inner"
+        rounded="md"
+        p={4}
+      >
+        <Bar data={barData} options={barOptions} />
+      </Box>
+      <Box
+        bg="white"
+        border="1px"
+        borderColor="gray.300"
+        boxShadow="inner"
+        rounded="md"
+        p={4}
+      >
+        <Line data={data} options={options} />
+      </Box>
+    </Stack>
   );
 };
