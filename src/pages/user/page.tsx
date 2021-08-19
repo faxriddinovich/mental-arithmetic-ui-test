@@ -20,11 +20,14 @@ import {
   IconNotes,
   IconUsers,
   IconCertificate,
+  IconSettings, IconUserExclamation
 } from "@tabler/icons";
 import { UserScores } from "pages/user/scores";
 import { UserSessions } from "pages/user/sessions";
 import { UserSubscription } from "pages/user/subscription";
 import { UserEdit } from "pages/user/edit";
+import { PlatformSettings } from 'pages/user/platform-settings';
+import { UpdateUsers } from 'pages/user/update-users';
 import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 
 export const UserPage = () => {
@@ -58,7 +61,7 @@ export const UserPage = () => {
             >
               <Stat textAlign="center">
                 <StatLabel>Balance</StatLabel>
-                <StatNumber>22 000</StatNumber>
+                <StatNumber>110 999</StatNumber>
               </Stat>
             </Box>
             <Box
@@ -119,11 +122,33 @@ export const UserPage = () => {
                   </Box>
                 </Flex>
               </Box>
+            </Box>
+            <Box
+              bg="white"
+              border="1px"
+              borderColor="gray.300"
+              rounded="md"
+              p={2}
+            >
+              <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
+                <Flex align="center">
+                  <IconSettings style={{ display: "inline-block" }} />{" "}
+                  <Box ml={2}>
+                    <Link to={`${url}/platform-settings`}>Platform settings</Link>
+                  </Box>
+                  <Spacer />
+                  <Box>
+                    <IconChevronRight />
+                  </Box>
+                </Flex>
+              </Box>
               <Divider />
               <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
                 <Flex align="center">
-                  <IconNotes style={{ display: "inline-block" }} />{" "}
-                  <Box ml={2}>Purchased courses</Box>
+                  <IconUserExclamation style={{ display: "inline-block" }} />{" "}
+                  <Box ml={2}>
+                    <Link to={`${url}/update-users`}>Update users</Link>
+                  </Box>
                   <Spacer />
                   <Box>
                     <IconChevronRight />
@@ -146,6 +171,12 @@ export const UserPage = () => {
             </Route>
             <Route path={`${path}/edit`}>
               <UserEdit />
+            </Route>
+            <Route path={`${path}/platform-settings`}>
+              <PlatformSettings />
+            </Route>
+            <Route path={`${path}/update-users`}>
+              <UpdateUsers />
             </Route>
           </Switch>
         </GridItem>
