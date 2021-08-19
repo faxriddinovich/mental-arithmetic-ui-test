@@ -1,5 +1,5 @@
 import {
-  Spacer, 
+  Spacer,
   Flex,
   Button,
   FormLabel,
@@ -35,16 +35,16 @@ export const UserEdit = () => {
             <Input type="mail" value="myemail@example.com" />
           </InputGroup>
           <Flex>
-          <Spacer />
-          <Button
-            colorScheme="purple"
-            mt={4}
-            leftIcon={<IconDeviceFloppy size={20} />}
-            borderColor="purple.600"
-            borderWidth="2px"
-          >
-            Save
-          </Button>
+            <Spacer />
+            <Button
+              colorScheme="purple"
+              mt={4}
+              leftIcon={<IconDeviceFloppy size={20} />}
+              borderColor="purple.600"
+              borderWidth="2px"
+            >
+              Save
+            </Button>
           </Flex>
         </FormControl>
       </Stack>

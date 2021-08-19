@@ -1,18 +1,8 @@
 import {
-  Center,
   Stat,
-  StatHelpText,
   StatNumber,
-  Spacer,
-  Badge,
-  Text,
-  Avatar,
-  Container,
-  Flex,
   Box,
   Stack,
-  Heading,
-  Divider,
   StatLabel,
   StatGroup,
 } from "@chakra-ui/react";

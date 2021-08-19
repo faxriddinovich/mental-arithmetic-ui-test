@@ -1,15 +1,11 @@
 import {
   Divider,
-  Heading,
   Grid,
   GridItem,
-  Center,
   Stat,
-  StatHelpText,
   StatNumber,
   StatLabel,
   Spacer,
-  Badge,
   Text,
   Avatar,
   Container,
@@ -18,8 +14,6 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import {
-  IconMail,
-  IconHash,
   IconChartDots,
   IconChevronRight,
   IconPencil,

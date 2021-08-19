@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Redirect, BrowserRouter, Switch, Route } from "react-router-dom";
 import "focus-visible/dist/focus-visible";
 
 import { theme } from "config/theme";
@@ -36,6 +36,9 @@ export const App = () => {
           </Route>
           <Route path="/user">
             <UserPage />
+          </Route>
+          <Route path="*">
+            <Redirect to="/" />
           </Route>
         </Switch>
       </BrowserRouter>

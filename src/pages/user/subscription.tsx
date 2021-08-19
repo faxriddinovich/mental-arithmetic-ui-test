@@ -1,4 +1,4 @@
-import { Badge, Button, Text, Image, Flex, Box } from "@chakra-ui/react";
+import { Badge, Image, Flex, Box } from "@chakra-ui/react";
 
 export const UserSubscription = () => {
   return (
