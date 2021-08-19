@@ -15,11 +15,19 @@ export const UserSessions = () => {
     <Box bg="white" border="1px" borderColor="gray.300" rounded="md" p={4}>
       <Stack>
         <Flex mb={4}>
-          <Button colorScheme="yellow" leftIcon={<IconTrash size={20} />} size="sm">
+          <Button
+            colorScheme="yellow"
+            leftIcon={<IconTrash size={20} />}
+            size="sm"
+          >
             Delete all except this
           </Button>
           <Spacer />
-          <Button colorScheme="green" leftIcon={<IconPlus size={20} />} size="sm">
+          <Button
+            colorScheme="green"
+            leftIcon={<IconPlus size={20} />}
+            size="sm"
+          >
             Add
           </Button>
         </Flex>
@@ -43,7 +51,9 @@ export const UserSessions = () => {
             <Text fontSize="sm">2021-05-06 03:13</Text>
           </Box>
           <Spacer />
-          <Button leftIcon={<IconLogin size={20} />} size="sm">Enter</Button>
+          <Button leftIcon={<IconLogin size={20} />} size="sm">
+            Enter
+          </Button>
         </Flex>
       </Stack>
     </Box>

@@ -30,6 +30,7 @@ import {
 import { UserScores } from "pages/user/scores";
 import { UserSessions } from "pages/user/sessions";
 import { UserSubscription } from "pages/user/subscription";
+import { UserEdit } from "pages/user/edit";
 import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 
 export const UserPage = () => {
@@ -115,7 +116,9 @@ export const UserPage = () => {
               <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
                 <Flex align="center">
                   <IconPencil style={{ display: "inline-block" }} />{" "}
-                  <Box ml={2}>Edit account</Box>
+                  <Box ml={2}>
+                    <Link to={`${url}/edit`}>Edit account</Link>
+                  </Box>
                   <Spacer />
                   <Box>
                     <IconChevronRight />
@@ -146,6 +149,9 @@ export const UserPage = () => {
             </Route>
             <Route path={`${path}/subscription`}>
               <UserSubscription />
+            </Route>
+            <Route path={`${path}/edit`}>
+              <UserEdit />
             </Route>
           </Switch>
         </GridItem>
