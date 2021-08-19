@@ -28,8 +28,12 @@ import {
   IconCertificate,
 } from "@tabler/icons";
 import { UserScores } from "pages/user/scores";
+import { UserSessions } from "pages/user/sessions";
+import { UserSubscription } from "pages/user/subscription";
+import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 
-export const UserAccount = () => {
+export const UserPage = () => {
+  const { path, url } = useRouteMatch();
   return (
     <Container maxW="container.lg">
       <Grid templateColumns={{ base: "1fr", md: "1fr 2fr" }} gap={4} mt={4}>
@@ -72,7 +76,9 @@ export const UserAccount = () => {
               <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
                 <Flex align="center">
                   <IconChartDots style={{ display: "inline-block" }} />{" "}
-                  <Box ml={2}>Scores</Box>
+                  <Box ml={2}>
+                    <Link to={url}>Scores</Link>
+                  </Box>
                   <Spacer />
                   <Box>
                     <IconChevronRight />
@@ -83,7 +89,9 @@ export const UserAccount = () => {
               <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
                 <Flex align="center">
                   <IconUsers style={{ display: "inline-block" }} />{" "}
-                  <Box ml={2}>Sessions</Box>
+                  <Box ml={2}>
+                    <Link to={`${url}/sessions`}>Sessions</Link>
+                  </Box>
                   <Spacer />
                   <Box>
                     <IconChevronRight />
@@ -94,7 +102,9 @@ export const UserAccount = () => {
               <Box px={1} py={2} _hover={{ backgroundColor: "gray.50" }}>
                 <Flex align="center">
                   <IconCertificate style={{ display: "inline-block" }} />{" "}
-                  <Box ml={2}>Subscription</Box>
+                  <Box ml={2}>
+                    <Link to={`${url}/subscription`}>Subscription</Link>
+                  </Box>
                   <Spacer />
                   <Box>
                     <IconChevronRight />
@@ -127,9 +137,17 @@ export const UserAccount = () => {
           </Stack>
         </GridItem>
         <GridItem minWidth={0}>
-          <Box>
-            <UserScores />
-          </Box>
+          <Switch>
+            <Route exact path={`${path}`}>
+              <UserScores />
+            </Route>
+            <Route path={`${path}/sessions`}>
+              <UserSessions />
+            </Route>
+            <Route path={`${path}/subscription`}>
+              <UserSubscription />
+            </Route>
+          </Switch>
         </GridItem>
       </Grid>
     </Container>

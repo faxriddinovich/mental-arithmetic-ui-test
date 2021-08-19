@@ -12,8 +12,7 @@ import { ViewCoursePage } from "pages/course/view";
 import { CreateUser } from "pages/user/create";
 import { LoginUser } from "pages/user/login";
 
-import { UserAccount } from "pages/user/account";
-import { UserScores } from "pages/user/scores";
+import { UserPage } from "pages/user/page";
 
 export const App = () => {
   return (
@@ -35,11 +34,8 @@ export const App = () => {
           <Route path="/user/login">
             <LoginUser />
           </Route>
-          <Route path="/user/account">
-            <UserAccount />
-          </Route>
-          <Route path="/user/scores">
-            <UserScores />
+          <Route path="/user">
+            <UserPage />
           </Route>
         </Switch>
       </BrowserRouter>
