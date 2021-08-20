@@ -17,7 +17,6 @@ import {
   IconChartDots,
   IconChevronRight,
   IconPencil,
-  IconNotes,
   IconUsers,
   IconCertificate,
   IconSettings, IconUserExclamation
