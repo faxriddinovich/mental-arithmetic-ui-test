@@ -19,17 +19,21 @@ import {
   IconPencil,
   IconUsers,
   IconCertificate,
-  IconSettings, IconUserExclamation
+  IconSettings,
+  IconUserExclamation,
+  IconArrowNarrowRight,
 } from "@tabler/icons";
+import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 import { UserScores } from "pages/user/scores";
 import { UserSessions } from "pages/user/sessions";
 import { UserSubscription } from "pages/user/subscription";
 import { UserEdit } from "pages/user/edit";
-import { PlatformSettings } from 'pages/user/platform-settings';
-import { UpdateUsers } from 'pages/user/update-users';
-import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 
-export const UserPage = () => {
+import { PlatformSettingsPage } from "pages/user/control-panel/platform-settings";
+import { UsersPage } from "pages/user/control-panel/users";
+import { UserPage } from "pages/user/control-panel/user";
+
+export const UserProfilePage = () => {
   const { path, url } = useRouteMatch();
   return (
     <Container maxW="container.lg">
@@ -133,7 +137,9 @@ export const UserPage = () => {
                 <Flex align="center">
                   <IconSettings style={{ display: "inline-block" }} />{" "}
                   <Box ml={2}>
-                    <Link to={`${url}/platform-settings`}>Platform settings</Link>
+                    <Link to={`${url}/control-panel/platform-settings`}>
+                      Platform settings
+                    </Link>
                   </Box>
                   <Spacer />
                   <Box>
@@ -146,7 +152,7 @@ export const UserPage = () => {
                 <Flex align="center">
                   <IconUserExclamation style={{ display: "inline-block" }} />{" "}
                   <Box ml={2}>
-                    <Link to={`${url}/update-users`}>Update users</Link>
+                    <Link to={`${url}/control-panel/users`}>Users</Link>
                   </Box>
                   <Spacer />
                   <Box>
@@ -171,11 +177,14 @@ export const UserPage = () => {
             <Route path={`${path}/edit`}>
               <UserEdit />
             </Route>
-            <Route path={`${path}/platform-settings`}>
-              <PlatformSettings />
+            <Route path={`${path}/control-panel/platform-settings`}>
+              <PlatformSettingsPage />
             </Route>
-            <Route path={`${path}/update-users`}>
-              <UpdateUsers />
+            <Route path={`${path}/control-panel/users/:id`}>
+              <UserPage />
+            </Route>
+            <Route path={`${path}/control-panel/users`}>
+              <UsersPage />
             </Route>
           </Switch>
         </GridItem>

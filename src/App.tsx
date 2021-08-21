@@ -12,7 +12,7 @@ import { ViewCoursePage } from "pages/course/view";
 import { CreateUser } from "pages/user/create";
 import { LoginUser } from "pages/user/login";
 
-import { UserPage } from "pages/user/page";
+import { UserProfilePage } from "pages/user/profile";
 
 export const App = () => {
   return (
@@ -34,8 +34,8 @@ export const App = () => {
           <Route path="/user/login">
             <LoginUser />
           </Route>
-          <Route path="/user">
-            <UserPage />
+          <Route path="/profile">
+            <UserProfilePage />
           </Route>
           <Route path="*">
             <Redirect to="/" />
