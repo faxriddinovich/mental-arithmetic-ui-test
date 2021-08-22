@@ -3,13 +3,11 @@ import {
   Radio,
   RadioGroup,
   HStack,
-  Select,
   FormControl,
   FormLabel,
   Spacer,
   Stack,
   Input,
-  Avatar,
   Box,
   Flex,
   Button,
@@ -19,17 +17,9 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   InputGroup,
-  InputLeftElement
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
-import {
-  IconUser,
-  IconMail,
-  IconCoin,
-  IconCalendar,
-  IconCheck,
-  IconDeviceFloppy,
-} from "@tabler/icons";
+import { IconUser, IconMail, IconDeviceFloppy } from "@tabler/icons";
 
 export const UserPage = () => {
   return (
@@ -39,18 +29,14 @@ export const UserPage = () => {
           <FormControl id="username">
             <FormLabel>Username:</FormLabel>
             <InputGroup>
-              <InputLeftElement
-                children={<IconUser />}
-                />
+              <InputLeftElement children={<IconUser />} />
               <Input type="text" value="Ciaran Sheridan" />
             </InputGroup>
           </FormControl>
           <FormControl id="email">
             <FormLabel>Email address:</FormLabel>
             <InputGroup>
-              <InputLeftElement
-                children={<IconMail />}
-                />
+              <InputLeftElement children={<IconMail />} />
               <Input type="email" value="myemail@example.com" />
             </InputGroup>
           </FormControl>

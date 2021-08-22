@@ -21,7 +21,6 @@ import {
   IconCertificate,
   IconSettings,
   IconUserExclamation,
-  IconArrowNarrowRight,
 } from "@tabler/icons";
 import { Link, Switch, Route, useRouteMatch } from "react-router-dom";
 import { UserScores } from "pages/user/scores";

@@ -7,7 +7,6 @@ import {
   Avatar,
   Flex,
   Input,
-  Divider,
 } from "@chakra-ui/react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { IconSearch, IconPencil } from "@tabler/icons";

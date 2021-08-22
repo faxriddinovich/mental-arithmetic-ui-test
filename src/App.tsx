@@ -10,7 +10,7 @@ import { CourseList } from "pages/course/list";
 import { ViewCoursePage } from "pages/course/view";
 
 import { CreateUser } from "pages/user/create";
-import { LoginUser } from "pages/user/login";
+import { UserLoginPage } from "pages/user/login";
 
 import { UserProfilePage } from "pages/user/profile";
 
@@ -31,9 +31,7 @@ export const App = () => {
           <Route path="/user/create">
             <CreateUser />
           </Route>
-          <Route path="/user/login">
-            <LoginUser />
-          </Route>
+          <Route path="/user/login" component={UserLoginPage} />
           <Route path="/profile">
             <UserProfilePage />
           </Route>
