@@ -61,10 +61,10 @@ export class UserLoginPage extends Component<{}, State> {
   private async handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     this.setState({ isLoading: true, showError: false });
-    const rcResponse = (recaptchaRef as any).current.getValue();
+    const rc = (recaptchaRef as any).current.getValue();
     const { login, password } = this.state.form;
     try {
-      await rpc.call("user.login", { login, password, rc: rcResponse });
+      await rpc.call("user.login", { login, password, rc });
       this.setState({ isLoading: false });
       alert("success");
     } catch {
