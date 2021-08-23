@@ -12,14 +12,24 @@ import {
   Input,
   InputLeftElement,
   FormLabel,
+  Alert,
+  CloseButton,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
-import { IconUserCheck, IconKey, IconUser } from "@tabler/icons";
+import {
+  IconUserCheck,
+  IconKey,
+  IconUser,
+  IconAlertCircle,
+} from "@tabler/icons";
 import ReCAPTCHA from "react-google-recaptcha";
+import { rpc } from "rpc/rpc";
 
 const recaptchaRef = createRef();
 
 interface Form {
-  username: string;
+  login: string;
   password: string;
   remember: boolean;
 }
@@ -28,6 +38,7 @@ interface State {
   showPassword: boolean;
   isDisabled: boolean;
   isLoading: boolean;
+  showError: boolean;
   form: Form;
 }
 
@@ -36,7 +47,8 @@ export class UserLoginPage extends Component<{}, State> {
     showPassword: false,
     isDisabled: true,
     isLoading: false,
-    form: { username: "", password: "", remember: false },
+    showError: false,
+    form: { login: "", password: "", remember: false },
   };
 
   private setFormInput(input: keyof Form, value: any) {
@@ -48,7 +60,17 @@ export class UserLoginPage extends Component<{}, State> {
 
   private async handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, showError: false });
+    const rcResponse = (recaptchaRef as any).current.getValue();
+    const { login, password } = this.state.form;
+    try {
+      await rpc.call("user.login", { login, password, rc: rcResponse });
+      this.setState({ isLoading: false });
+      alert("success");
+    } catch {
+      (recaptchaRef as any).current.reset();
+      this.setState({ isLoading: false, showError: true, isDisabled: true });
+    }
   }
 
   public render() {
@@ -65,9 +87,24 @@ export class UserLoginPage extends Component<{}, State> {
             p={4}
             onSubmit={this.handleSubmit.bind(this)}
           >
+            {this.state.showError && (
+              <Alert status="error" variant="left-accent" mb={3}>
+                <IconAlertCircle />
+                <AlertTitle ml={2} mr={2}>
+                  Invalid request
+                </AlertTitle>
+                <AlertDescription>Please pay attention!</AlertDescription>
+                <CloseButton
+                  position="absolute"
+                  right="8px"
+                  top="8px"
+                  onClick={() => this.setState({ showError: false })}
+                />
+              </Alert>
+            )}
             <form>
               <Stack>
-                <FormControl id="username" isRequired>
+                <FormControl id="login" isRequired>
                   <FormLabel>Username or email</FormLabel>
                   <InputGroup>
                     <InputLeftElement
@@ -76,12 +113,12 @@ export class UserLoginPage extends Component<{}, State> {
                     />
                     <Input
                       type="text"
-                      value={this.state.form.username}
+                      value={this.state.form.login}
                       placeholder="Please enter your username or email"
                       minLength={4}
                       maxLength={20}
                       onChange={(event) =>
-                        this.setFormInput("username", event.target.value)
+                        this.setFormInput("login", event.target.value)
                       }
                     />
                   </InputGroup>
