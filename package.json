@@ -11,6 +11,7 @@
     "@testing-library/react": "^10.2.1",
     "@testing-library/user-event": "^12.0.2",
     "@theta-rpc/http-client": "file:../../rpc/packages/http-client",
+    "@theta-rpc/json-rpc": "file:../../rpc/packages/json-rpc",
     "@types/jest": "^25.0.0",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",

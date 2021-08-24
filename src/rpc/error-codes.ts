@@ -1,0 +1,1 @@
+export const RPC_ERR_INVALID_CREDENTIALS = -32002;

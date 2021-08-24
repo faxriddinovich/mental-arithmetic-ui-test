@@ -8,6 +8,7 @@ import { ViewLessonPage } from "pages/lesson/view";
 
 import { CourseList } from "pages/course/list";
 import { ViewCoursePage } from "pages/course/view";
+import { PanicPage } from 'pages/panic'
 
 import { CreateUserPage } from "pages/user/create";
 import { UserLoginPage } from "pages/user/login";
@@ -30,6 +31,7 @@ export const App = () => {
           </Route>
           <Route path="/user/create" component={CreateUserPage} />
           <Route path="/user/login" component={UserLoginPage} />
+          <Route path="/panic" component={PanicPage} />
           <Route path="/profile">
             <UserProfilePage />
           </Route>

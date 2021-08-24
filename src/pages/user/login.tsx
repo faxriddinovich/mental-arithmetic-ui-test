@@ -1,4 +1,5 @@
 import { Component, createRef, SyntheticEvent } from "react";
+import { RouteComponentProps } from 'react-router-dom';
 import {
   Checkbox,
   InputRightElement,
@@ -12,22 +13,23 @@ import {
   Input,
   InputLeftElement,
   FormLabel,
-  Alert,
-  CloseButton,
-  AlertTitle,
-  AlertDescription,
+  createStandaloneToast,
 } from "@chakra-ui/react";
 import {
   IconUserCheck,
   IconKey,
   IconUser,
-  IconAlertCircle,
 } from "@tabler/icons";
 import ReCAPTCHA from "react-google-recaptcha";
 import { rpc } from "rpc/rpc";
+import { RPC_ERR_INVALID_CREDENTIALS } from "rpc/error-codes";
+import { RPCException } from "@theta-rpc/json-rpc";
 
 const recaptchaRef = createRef();
+/* FIXME: we can't use hooks inside a class component. */
+const createToast = createStandaloneToast();
 
+interface Props extends RouteComponentProps { }
 interface Form {
   login: string;
   password: string;
@@ -38,16 +40,14 @@ interface State {
   showPassword: boolean;
   isDisabled: boolean;
   isLoading: boolean;
-  showError: boolean;
   form: Form;
 }
 
-export class UserLoginPage extends Component<{}, State> {
+export class UserLoginPage extends Component<Props, State> {
   public state: State = {
     showPassword: false,
     isDisabled: true,
     isLoading: false,
-    showError: false,
     form: { login: "", password: "", remember: false },
   };
 
@@ -58,19 +58,32 @@ export class UserLoginPage extends Component<{}, State> {
     });
   }
 
-  private async handleSubmit(e: SyntheticEvent) {
-    e.preventDefault();
-    this.setState({ isLoading: true, showError: false });
-    const rc = (recaptchaRef as any).current.getValue();
+  private handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
     const { login, password } = this.state.form;
-    try {
-      await rpc.call("user.login", { login, password, rc });
-      this.setState({ isLoading: false });
-      alert("success");
-    } catch {
-      (recaptchaRef as any).current.reset();
-      this.setState({ isLoading: false, showError: true, isDisabled: true });
-    }
+    this.setState({ isLoading: true });
+    const rc = (recaptchaRef as any).current.getValue();
+    rpc
+      .call("user.login", { login, password, rc })
+      .then(() => {
+      })
+      .catch((error) => {
+        (recaptchaRef as any).current.reset();
+        if (error instanceof RPCException) {
+          const { jsonrpcError } = error;
+          if (jsonrpcError.code === RPC_ERR_INVALID_CREDENTIALS) {
+            createToast({
+              title: `Invalid credentials`,
+              position: "top",
+              variant: "top-accent",
+              status: "warning",
+            });
+          }
+        }
+        this.setState({ isLoading: false, isDisabled: true });
+        this.props.history.push({ pathname: '/panic', state: true });
+      })
+      .finally(() => this.setState({ isLoading: false }));
   }
 
   public render() {
@@ -87,21 +100,6 @@ export class UserLoginPage extends Component<{}, State> {
             p={4}
             onSubmit={this.handleSubmit.bind(this)}
           >
-            {this.state.showError && (
-              <Alert status="error" variant="left-accent" mb={3}>
-                <IconAlertCircle />
-                <AlertTitle ml={2} mr={2}>
-                  Invalid request
-                </AlertTitle>
-                <AlertDescription>Please pay attention!</AlertDescription>
-                <CloseButton
-                  position="absolute"
-                  right="8px"
-                  top="8px"
-                  onClick={() => this.setState({ showError: false })}
-                />
-              </Alert>
-            )}
             <form>
               <Stack>
                 <FormControl id="login" isRequired>
