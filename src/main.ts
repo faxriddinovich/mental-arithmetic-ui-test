@@ -8,6 +8,7 @@ import {
   uniEnvelope,
   uniExternalLinkAlt,
   uniUserPlus,
+  uniHistoryAlt
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -17,6 +18,7 @@ Unicon.add([
   uniUserCheck,
   uniEnvelope,
   uniExternalLinkAlt,
+  uniHistoryAlt
 ]);
 
 import App from "./App.vue";

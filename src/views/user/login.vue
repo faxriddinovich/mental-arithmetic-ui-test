@@ -153,7 +153,7 @@ export default class UserLogin extends Vue {
       if (error.jsonrpcError) {
         const { jsonrpcError } = error;
         if (jsonrpcError.code === RPC_ERR_INVALID_CREDENTIALS_CODE) {
-          this.$toast({
+          return this.$toast({
             title: "Invalid credentials",
             status: "warning",
             position: "top",
@@ -162,6 +162,7 @@ export default class UserLogin extends Vue {
           });
         }
       }
+      this.$router.push({ name: "Panic", params: { error }});
     }
   }
 }

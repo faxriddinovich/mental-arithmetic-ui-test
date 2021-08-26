@@ -187,7 +187,7 @@ export default class UserLogin extends Vue {
       if (error.jsonrpcError) {
         const { jsonrpcError } = error;
         if (jsonrpcError.code === RPC_ERR_USER_ALREADY_EXISTS_CODE) {
-          this.$toast({
+          return this.$toast({
             title: "User already exists",
             status: "warning",
             position: "top",
@@ -196,6 +196,7 @@ export default class UserLogin extends Vue {
           });
         }
       }
+      this.$router.push({ name: "Panic", params: { error }});
     }
   }
 
