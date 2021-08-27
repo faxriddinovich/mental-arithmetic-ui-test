@@ -4,8 +4,14 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    runtimeError: null,
+    test: "test"
+  },
+  mutations: {
+    setRuntimeError: (state, error) => state.runtimeError = error,
+    freeRuntimeError: (state) => { console.log(state); state.runtimeError = null }
+  },
   actions: {},
   modules: {},
 });

@@ -90,6 +90,7 @@ import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
 import { rpc } from "@/rpc/rpc";
 import { RPC_ERR_INVALID_CREDENTIALS_CODE } from "@/rpc/error-codes";
 import { RPC_USER_LOGIN_METHOD } from "@/rpc/methods";
+import { reportError } from '@/runtime/report-error';
 
 @Component({
   components: {
@@ -162,7 +163,7 @@ export default class UserLogin extends Vue {
           });
         }
       }
-      this.$router.push({ name: "Panic", params: { error }});
+      reportError(error);
     }
   }
 }

@@ -8,7 +8,18 @@ import {
   uniEnvelope,
   uniExternalLinkAlt,
   uniUserPlus,
-  uniHistoryAlt
+  uniHistoryAlt,
+  uniAbacus,
+  uniSquareShape,
+  uniWindowSection,
+  uniChartLine,
+  uniSetting,
+  uniNewspaper,
+  uniBoxMonochrome,
+  uniLayerGroupMonochrome,
+  uniAngleRight,
+  uniClipboardNotes,
+  uniRuler,
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -18,7 +29,18 @@ Unicon.add([
   uniUserCheck,
   uniEnvelope,
   uniExternalLinkAlt,
-  uniHistoryAlt
+  uniHistoryAlt,
+  uniAbacus,
+  uniSquareShape,
+  uniWindowSection,
+  uniChartLine,
+  uniSetting,
+  uniNewspaper,
+  uniBoxMonochrome,
+  uniLayerGroupMonochrome,
+  uniAngleRight,
+  uniClipboardNotes,
+  uniRuler,
 ]);
 
 import App from "./App.vue";

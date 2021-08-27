@@ -1,9 +1,10 @@
 <template>
   <c-box
-    bg="gray.100"
+    bg="gray.50"
     min-width="min-content"
     min-height="100vh"
     overflow="auto"
+    user-select="none"
   >
     <router-view />
   </c-box>

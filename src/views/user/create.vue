@@ -196,7 +196,7 @@ export default class UserLogin extends Vue {
           });
         }
       }
-      this.$router.push({ name: "Panic", params: { error }});
+      this.$router.push({ name: "Panic", params: { error } });
     }
   }
 

@@ -1,11 +1,13 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
+import store from '@/store';
+
 import Home from "@/views/home.vue";
 import UserLogin from "@/views/user/login.vue";
 import UserCreate from "@/views/user/create.vue";
 
-import Panic from '@/views/panic.vue';
+import ReportError from "@/views/report-error.vue";
 
 Vue.use(VueRouter);
 
@@ -26,18 +28,17 @@ const routes: Array<RouteConfig> = [
     component: UserCreate,
   },
   {
-    path: "/panic",
-    name: "Panic",
-    component: Panic,
+    path: "/report-error",
+    name: "report-error",
+    component: ReportError,
     props: true,
     beforeEnter: (to, from, next) => {
-      if(!to.params.error) {
-        next("/");
-        return;
+      if(!store.state.runtimeError) {
+        return next("/");
       }
       next();
-    }
-  }
+    },
+  },
 ];
 
 const router = new VueRouter({
