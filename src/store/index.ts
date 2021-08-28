@@ -9,8 +9,12 @@ export default new Vuex.Store({
     test: "test"
   },
   mutations: {
-    setRuntimeError: (state, error) => state.runtimeError = error,
-    freeRuntimeError: (state) => { console.log(state); state.runtimeError = null }
+setRuntimeError: (state, error) => {
+      state.runtimeError = error
+    },
+freeRuntimeError: (state) => {
+      state.runtimeError = null;
+    }
   },
   actions: {},
   modules: {},

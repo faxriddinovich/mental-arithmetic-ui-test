@@ -36,7 +36,7 @@ const routes: Array<RouteConfig> = [
       if(!store.state.runtimeError) {
         return next("/");
       }
-      next();
+      next({ query: { redirect: from.name } });
     },
   },
 ];
