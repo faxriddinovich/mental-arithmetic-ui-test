@@ -58,7 +58,7 @@ import {
 })
 export default class RuntimeError extends Vue {
   public goBack() {
-    this.$store.commit('freeRuntimeError');
+    this.$store.commit("freeRuntimeError");
     this.$router.back();
   }
 

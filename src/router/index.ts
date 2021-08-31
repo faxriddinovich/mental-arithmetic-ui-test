@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import store from '@/store';
+import store from "@/store";
 
 import Home from "@/views/home.vue";
 import UserLogin from "@/views/user/login.vue";
@@ -33,7 +33,7 @@ const routes: Array<RouteConfig> = [
     component: ReportError,
     props: true,
     beforeEnter: (to, from, next) => {
-      if(!store.state.runtimeError) {
+      if (!store.state.runtimeError) {
         return next("/");
       }
       next({ query: { redirect: from.name } });

@@ -6,15 +6,15 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     runtimeError: null,
-    test: "test"
+    test: "test",
   },
   mutations: {
-setRuntimeError: (state, error) => {
-      state.runtimeError = error
+    setRuntimeError: (state, error) => {
+      state.runtimeError = error;
     },
-freeRuntimeError: (state) => {
+    freeRuntimeError: (state) => {
       state.runtimeError = null;
-    }
+    },
   },
   actions: {},
   modules: {},

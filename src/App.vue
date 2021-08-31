@@ -1,19 +1,24 @@
 <template>
-  <c-box
-    bg="gray.50"
-    min-width="min-content"
-    min-height="100vh"
-    overflow="auto"
-    user-select="none"
-  >
+  <div class="is-unselectable">
     <router-view />
-  </c-box>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { CBox } from "@chakra-ui/vue";
 
-@Component({ components: { CBox } })
+@Component
 export default class App extends Vue {}
 </script>
+
+<style lang="scss">
+// offline
+@import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100&display=swap");
+html,
+body {
+  font-family: "Inter", sans-serif;
+  min-height: 100vh;
+  background-color: #ecf3f4;
+}
+</style>
