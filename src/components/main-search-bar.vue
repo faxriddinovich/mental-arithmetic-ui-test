@@ -7,7 +7,7 @@
       aria-role="list"
     >
       <template #trigger>
-        <b-button icon-right="filter"> Apply filter </b-button>
+        <b-button icon-left="filter">Filter</b-button>
       </template>
 
       <b-dropdown-item value="option1" aria-role="listitem">
@@ -25,7 +25,6 @@
     <b-input
       class="is-flex-grow-1 ml-3"
       placeholder="Course name, author name"
-      type="search"
       icon="search"
     >
     </b-input>

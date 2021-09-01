@@ -1,6 +1,10 @@
 <template>
   <div class="columns is-variable is-2 is-mobile is-multiline">
-    <div class="column is-6-mobile is-4-tablet is-2-desktop" v-for="item of items" :key="item.icon">
+    <div
+      class="column is-6-mobile is-4-tablet is-2-desktop"
+      v-for="item of items"
+      :key="item.icon"
+    >
       <div
         class="
           card
