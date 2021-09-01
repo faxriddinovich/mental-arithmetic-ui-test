@@ -9,6 +9,9 @@ import UserCreate from "@/views/user/create.vue";
 
 import ReportError from "@/views/report-error.vue";
 
+import MainResources from "@/views/main-resources.vue";
+import OtherResources from "@/views/other-resources.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -16,6 +19,10 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "Home",
     component: Home,
+    children: [
+      { path: "/", component: MainResources },
+      { path: "/other-resources", component: OtherResources },
+    ],
   },
   {
     path: "/user/login",
