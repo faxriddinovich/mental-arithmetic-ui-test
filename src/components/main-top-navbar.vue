@@ -24,7 +24,7 @@ export default class MainTopBar extends Vue {
   public items = [
     { path: "/", icon: "abacus", title: "Mental arithmetic" },
     { path: "/other-resources", icon: "cube", title: "Other resources" },
-    { path: "/profile", icon: "user", title: "Profile" },
+    { path: "/user/enter-profile", icon: "user", title: "Profile" },
   ];
 
   public go(path: string) {

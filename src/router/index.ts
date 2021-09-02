@@ -12,6 +12,8 @@ import ReportError from "@/views/report-error.vue";
 import MainResources from "@/views/main-resources.vue";
 import OtherResources from "@/views/other-resources.vue";
 
+import EnterProfile from "@/views/user/enter-profile.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -25,9 +27,9 @@ const routes: Array<RouteConfig> = [
     ],
   },
   {
-    path: "/user/login",
-    name: "UserLogin",
-    component: UserLogin,
+    path: "/user/enter-profile",
+    name: "EnterProfile",
+    component: EnterProfile,
   },
   {
     path: "/user/create",

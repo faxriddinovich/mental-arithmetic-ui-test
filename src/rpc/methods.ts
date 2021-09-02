@@ -1,2 +1,2 @@
-export const RPC_USER_LOGIN_METHOD = "user.login";
-export const RPC_CREATE_USER_METHOD = "user.create";
+export const RPC_ENTER_USER_PROFILE_METHOD = "enter_user_profile";
+export const RPC_CREATE_USER_PROFILE_METHOD = "create_user_profile";
