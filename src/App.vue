@@ -6,9 +6,14 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { Database } from '@/services/database';
 
 @Component
-export default class App extends Vue {}
+export default class App extends Vue {
+  async beforeMount() {
+    await Database.tryInit();
+  }
+}
 </script>
 
 <style lang="scss">

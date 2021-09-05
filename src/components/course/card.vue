@@ -92,13 +92,6 @@
         <b-skeleton :active="isLoading" width="50px" position="is-centered" />
       </div>
     </div>
-
-    <!--
-    <div class="card-footer">
-      <div class="card-footer-item p-1">
-      </div>
-    </div>
-      -->
   </div>
 </template>
 <script lang="ts">

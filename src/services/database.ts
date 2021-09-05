@@ -8,13 +8,25 @@ interface Session {
 }
 
 class AsyncDatabase extends Dexie {
+  public static db = "Mental-Arithmetic";
   private sessions!: Table<Session, number>;
 
   constructor() {
-    super("Mental-Arithmetic");
-    this.version(3).stores({
-      sessions: "++id, username, session, date, isCurrent"
+    super(AsyncDatabase.db);
+    this.version(4).stores({
+      sessions: "++id, username, session, date, isCurrent",
+      configs: "++id, key, value"
     });
+  }
+
+  public async tryInit() {
+    const configs = this.table("configs");
+
+    if(!(await configs.count())) {
+      await configs.bulkAdd([
+        { key: "show_latest_event", value: 1 }
+      ]);
+    }
   }
 
   public async addSession(username: string, session: string) {
@@ -44,6 +56,11 @@ class AsyncDatabase extends Dexie {
 
   public getCurrentSession(): Promise<Session | undefined> {
     return this.table("sessions").where({ isCurrent: 1 }).first();
+  }
+
+  public async eventsEnabled() {
+    const conf = await this.table("configs").where({ key: "show_latest_event" }).first();
+    return conf ? conf.value : true;
   }
 }
 
