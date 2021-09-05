@@ -15,6 +15,8 @@
     "@theta-rpc/http-client": "file:../../rpc/packages/http-client",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
     "buefy": "^0.9.10",
+    "dexie": "^3.0.3",
+    "lockr": "^0.9.0-beta.0",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

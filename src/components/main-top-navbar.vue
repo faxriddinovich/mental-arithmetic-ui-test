@@ -1,34 +1,49 @@
 <template>
-  <div class="card is-flex is-rounded is-clipped">
-    <div
-      v-for="item of items"
-      :key="item.icon"
-      :class="
-        'is-flex is-justify-content-center p-2 is-align-items-center is-flex-grow-1 '.concat(
-          $route.path === item.path
-            ? 'has-background-primary has-text-white'
-            : 'is-clickable'
-        )
-      "
-      @click="go(item.path)"
-    >
-      <b-icon :icon="item.icon" />
-      <span class="is-hidden-mobile">{{ item.title }}</span>
+  <div>
+    <div class="card">
+      <div class="tabs is-toggle is-fullwidth">
+        <ul>
+          <li :class="$route.path === '/' && 'is-active is-disabled'">
+            <router-link to="/">
+              <b-icon icon="abacus" class="mx-0" />
+              <span class="is-hidden-mobile">Mental arithmetic</span>
+            </router-link>
+          </li>
+          <li
+            :class="
+              $route.path === '/other-resources' && 'is-active is-disabled'
+            "
+          >
+            <router-link to="/other-resources">
+              <b-icon icon="cube" class="mx-0" />
+              <span class="is-hidden-mobile">Other resources</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              :to="session ? '/user/profile' : '/user/enter-profile'"
+            >
+              <b-icon icon="user" class="mx-0" />
+              <span class="is-hidden-mobile">{{
+                session ? session.username : "Profile"
+              }}</span>
+            </router-link>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import { Database } from "@/services/database";
+
 @Component
 export default class MainTopBar extends Vue {
-  public items = [
-    { path: "/", icon: "abacus", title: "Mental arithmetic" },
-    { path: "/other-resources", icon: "cube", title: "Other resources" },
-    { path: "/user/enter-profile", icon: "user", title: "Profile" },
-  ];
+  public session: any;
 
-  public go(path: string) {
-    this.$router.push(path);
+  async mounted() {
+    this.session = await Database.getCurrentSession();
   }
 }
 </script>

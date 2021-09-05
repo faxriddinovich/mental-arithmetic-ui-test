@@ -3,10 +3,11 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
+const { stringify, parse } = JSON;
+
 export default new Vuex.Store({
   state: {
     runtimeError: null,
-    test: "test",
   },
   mutations: {
     setRuntimeError: (state, error) => {

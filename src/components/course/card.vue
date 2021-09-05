@@ -107,6 +107,6 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 @Component
 export default class CourseCard extends Vue {
   @Prop(String) public image!: string;
-  @Prop(Boolean) public isLoading: boolean;
+  @Prop(Boolean) public isLoading!: boolean;
 }
 </script>

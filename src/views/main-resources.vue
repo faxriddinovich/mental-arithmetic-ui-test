@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import MainGameBar from "@/components/main-game-bar.vue";
-import Courses from "@/components/course/courses";
+import Courses from "@/components/course/courses.vue";
 
 @Component({
   components: { MainGameBar, Courses },

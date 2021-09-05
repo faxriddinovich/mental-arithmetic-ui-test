@@ -44,7 +44,11 @@
                   required
                 />
               </b-field>
-              <b-field><b-checkbox v-model="rememberMe">Remember me</b-checkbox></b-field>
+              <b-field
+                ><b-checkbox v-model="rememberMe"
+                  >Remember me</b-checkbox
+                ></b-field
+              >
               <b-field>
                 <vue-hcaptcha
                   ref="captcha"
@@ -52,7 +56,7 @@
                   @expire="onCaptchaExpire"
                   @error="onCaptchaError"
                   :sitekey="hcaptchaSiteKey"
-                  />
+                />
               </b-field>
               <b-button
                 native-type="submit"
@@ -80,18 +84,26 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
-import { rpc } from '@/rpc/rpc';
-import { RPC_INVALID_PARAMS_ERR_CODE, RPC_INVALID_CREDENTIALS_ERR_CODE } from '@/rpc/error-codes';
-import { RPC_ENTER_USER_PROFILE_METHOD } from '@/rpc/methods';
+import { rpc } from "@/rpc/rpc";
+import {
+  RPC_INVALID_PARAMS_ERR_CODE,
+  RPC_INVALID_CREDENTIALS_ERR_CODE,
+} from "@/rpc/error-codes";
+import { RPC_ENTER_USER_PROFILE_METHOD } from "@/rpc/methods";
+import { Database } from "@/services/database";
 
 @Component({ components: { VueHcaptcha } })
 export default class EnterProfile extends Vue {
-  public usernameOrEmail = '';
-  public enterMode: 'username' | 'email' = 'username';
-  public password = '';
+  public usernameOrEmail = "";
+  public enterMode: "username" | "email" = "username";
+  public password = "";
   public rememberMe = false;
-  public captcha = '';
-  public canSubmit = false;
+  public captcha = "";
+  public canSubmit = true;
+
+  public $refs!: {
+    captcha: VueHcaptcha;
+  };
 
   get hcaptchaSiteKey() {
     return process.env.VUE_APP_HCAPTCHA_SITEKEY;
@@ -115,30 +127,40 @@ export default class EnterProfile extends Vue {
     this.canSubmit = false;
   }
 
-  public enterProfile() {
+  public async enterProfile() {
     const credentials: any = { password: this.password, captcha: this.captcha };
     credentials[this.enterMode] = this.usernameOrEmail;
 
-    rpc.call(RPC_ENTER_USER_PROFILE_METHOD, credentials).then((session) => {
-      alert('success');
-    }).catch((error) => {
-      this.resetHcaptcha();
-      if(error.jsonrpcError) {
-        const { jsonrpcError } = error;
-        if(jsonrpcError.code === RPC_INVALID_PARAMS_ERR_CODE) {
-          this.$buefy.toast.open({ type: 'is-danger', message: 'Invalid parameters' });
-        } else if(jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
-          this.$buefy.toast.open({
-            type: 'is-danger',
-            message: 'Invalid credentials'
-          });
+    rpc
+      .call(RPC_ENTER_USER_PROFILE_METHOD, credentials)
+      .then(async (user) => {
+        await Database.addSession(user.username, user.session);
+        this.$buefy.toast.open({
+          type: "is-success",
+          message: `🎉 Success! Hey <b>${user.username}</b>!`,
+        });
+      })
+      .catch((error) => {
+        this.resetHcaptcha();
+        if (error.jsonrpcError) {
+          const { jsonrpcError } = error;
+          if (jsonrpcError.code === RPC_INVALID_PARAMS_ERR_CODE) {
+            this.$buefy.toast.open({
+              type: "is-danger",
+              message: "Invalid parameters",
+            });
+          } else if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
+            this.$buefy.toast.open({
+              type: "is-danger",
+              message: "Invalid credentials",
+            });
+          }
         }
-      }
-    });
+      });
   }
-  
+
   public changeEnterMode() {
-    this.enterMode = this.enterMode === 'username' ? 'email' : 'username';
+    this.enterMode = this.enterMode === "username" ? "email" : "username";
   }
 }
 </script>

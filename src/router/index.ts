@@ -5,9 +5,6 @@ import store from "@/store";
 
 import Home from "@/views/home.vue";
 import UserLogin from "@/views/user/login.vue";
-import UserCreate from "@/views/user/create.vue";
-
-import ReportError from "@/views/report-error.vue";
 
 import MainResources from "@/views/main-resources.vue";
 import OtherResources from "@/views/other-resources.vue";
@@ -31,23 +28,13 @@ const routes: Array<RouteConfig> = [
     name: "EnterProfile",
     component: EnterProfile,
   },
+  /*
   {
     path: "/user/create",
     name: "UserCreate",
     component: UserCreate,
   },
-  {
-    path: "/report-error",
-    name: "report-error",
-    component: ReportError,
-    props: true,
-    beforeEnter: (to, from, next) => {
-      if (!store.state.runtimeError) {
-        return next("/");
-      }
-      next({ query: { redirect: from.name } });
-    },
-  },
+  */
 ];
 
 const router = new VueRouter({
