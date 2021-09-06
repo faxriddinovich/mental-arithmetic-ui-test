@@ -71,7 +71,9 @@
         </div>
         <div class="column is-12-desktop">
           <div class="is-flex mx-3">
-            <b-button icon-left="home" expanded>Home</b-button>
+            <b-button tag="router-link" to="/" icon-left="home" expanded
+              >Home</b-button
+            >
             <b-button class="ml-3" icon-left="user-plus" expanded
               >Create a profile</b-button
             >
@@ -99,7 +101,7 @@ export default class EnterProfile extends Vue {
   public password = "";
   public rememberMe = false;
   public captcha = "";
-  public canSubmit = true;
+  public canSubmit = false;
 
   public $refs!: {
     captcha: VueHcaptcha;

@@ -16,7 +16,7 @@
                 </b-field>
               </div>
               <b-button
-              class="mt-4"
+                class="mt-4"
                 native-type="submit"
                 type="is-primary"
                 icon-left="save"
@@ -28,7 +28,9 @@
         </div>
         <div class="column is-12-desktop">
           <div class="mx-2">
-            <b-button tag="router-link" to="/" icon-left="home" expanded>Home</b-button>
+            <b-button tag="router-link" to="/" icon-left="home" expanded
+              >Home</b-button
+            >
           </div>
         </div>
       </div>

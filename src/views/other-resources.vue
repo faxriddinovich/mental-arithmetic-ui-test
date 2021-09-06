@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Courses from "@/components/course/courses.vue";
+import Courses from "@/views/course/courses.vue";
 
 @Component({ components: { Courses } })
 export default class OtherResources extends Vue {}
