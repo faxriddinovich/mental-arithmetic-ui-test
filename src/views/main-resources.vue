@@ -12,9 +12,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from '@/services/database';
-import { rpc } from '@/rpc/rpc';
-import { RPC_GET_LATEST_EVENT_METHOD } from '@/rpc/methods';
+import { Database } from "@/services/database";
+import { rpc } from "@/rpc/rpc";
+import { RPC_GET_LATEST_EVENT_METHOD } from "@/rpc/methods";
 import MainGameBar from "@/components/main-game-bar.vue";
 import Courses from "@/components/course/courses.vue";
 
@@ -25,7 +25,7 @@ export default class MainResource extends Vue {
   public event = false;
   async mounted() {
     const enabled = await Database.eventsEnabled();
-    if(enabled) {
+    if (enabled) {
       const event = await rpc.call(RPC_GET_LATEST_EVENT_METHOD);
       this.event = event;
     }

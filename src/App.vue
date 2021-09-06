@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from '@/services/database';
+import { Database } from "@/services/database";
 
 @Component
 export default class App extends Vue {

@@ -11,6 +11,8 @@ import OtherResources from "@/views/other-resources.vue";
 
 import EnterProfile from "@/views/user/enter-profile.vue";
 
+import Settings from "@/views/settings.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -22,6 +24,10 @@ const routes: Array<RouteConfig> = [
       { path: "/", component: MainResources },
       { path: "/other-resources", component: OtherResources },
     ],
+  },
+  {
+    path: "/settings",
+    component: Settings,
   },
   {
     path: "/user/enter-profile",

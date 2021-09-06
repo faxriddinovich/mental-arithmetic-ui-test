@@ -7,25 +7,28 @@ interface Session {
   date: string;
 }
 
+interface Setting {
+  key: string;
+  value: any;
+}
+
 class AsyncDatabase extends Dexie {
   public static db = "Mental-Arithmetic";
   private sessions!: Table<Session, number>;
 
   constructor() {
     super(AsyncDatabase.db);
-    this.version(4).stores({
+    this.version(5).stores({
       sessions: "++id, username, session, date, isCurrent",
-      configs: "++id, key, value"
+      settings: "&key, value",
     });
   }
 
   public async tryInit() {
-    const configs = this.table("configs");
+    const settings = this.table("settings");
 
-    if(!(await configs.count())) {
-      await configs.bulkAdd([
-        { key: "show_latest_event", value: 1 }
-      ]);
+    if (!(await settings.count())) {
+      await settings.bulkAdd([{ key: "show_latest_event", value: true }]);
     }
   }
 
@@ -59,8 +62,18 @@ class AsyncDatabase extends Dexie {
   }
 
   public async eventsEnabled() {
-    const conf = await this.table("configs").where({ key: "show_latest_event" }).first();
-    return conf ? conf.value : true;
+    const setting = await this.table("settings")
+      .where({ key: "show_latest_event" })
+      .first();
+    return setting.value;
+  }
+
+  public getSettings(): Promise<Config[]> {
+    return this.table("settings").toArray();
+  }
+
+  public async applySettings(settings: Setting[]) {
+    await this.table("settings").bulkPut(settings);
   }
 }
 

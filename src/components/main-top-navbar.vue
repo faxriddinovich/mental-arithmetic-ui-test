@@ -40,7 +40,7 @@ import { Database } from "@/services/database";
 
 @Component
 export default class MainTopBar extends Vue {
-  public session! = false;
+  public session = false;
 
   async mounted() {
     this.session = await Database.getCurrentSession();

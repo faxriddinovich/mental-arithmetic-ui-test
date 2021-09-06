@@ -5,7 +5,8 @@
       v-for="item of items"
       :key="item.icon"
     >
-      <div
+      <router-link
+      :to="item.link"
         class="
           card
           is-clickable is-flex is-flex-direction-column is-align-items-center
@@ -14,7 +15,7 @@
       >
         <b-icon :icon="item.icon" type="is-primary" size="is-large" />
         <span class="has-text-weight-semibold mt-1">{{ item.title }}</span>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -24,12 +25,12 @@ import { Vue, Component } from "vue-property-decorator";
 @Component
 export default class MainGameBar extends Vue {
   public items = [
-    { title: "Abacus", icon: "abacus" },
-    { title: "Numbers", icon: "10-plus" },
-    { title: "Flash card", icon: "square-shape" },
-    { title: "Table", icon: "browser" },
-    { title: "Scores", icon: "chart-line" },
-    { title: "Settings", icon: "setting" },
+    { title: "Abacus", icon: "abacus", link: "/" },
+    { title: "Numbers", icon: "10-plus", link: "/" },
+    { title: "Flash card", icon: "square-shape", link: "/" },
+    { title: "Table", icon: "browser", link: "/"},
+    { title: "Scores", icon: "chart-line", link: "/" },
+    { title: "Settings", icon: "setting", link: "/settings" },
   ];
 }
 </script>
