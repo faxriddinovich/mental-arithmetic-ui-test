@@ -33,22 +33,29 @@
         >Search</b-button
       >
     </div>
-    <div class="mt-4" v-if="isLoading">
-      <course-loading />
-    </div>
-    <div class="columns is-mobile is-multiline mt-2" v-if="courses.length">
-      <div
-        class="column is-12-mobile is-6-tablet is-4-desktop"
-        v-for="course of courses"
-        :key="course.id"
-      >
-        <course-card :course="course" />
+
+    <div class="mt-5">
+      <cloud-loading v-if="isLoading" />
+      <not-found-box
+        text="No courses found"
+        v-if="!isLoading && !courses.length"
+      />
+      <div v-if="courses.length">
+        <div class="columns is-mobile is-multiline">
+          <div
+            class="column is-12-mobile is-6-tablet is-4-desktop"
+            v-for="course of courses"
+            :key="course.id"
+          >
+            <course-card :course="course" />
+          </div>
+        </div>
+        <div class="my-3">
+          <b-button type="is-primary" icon-left="arrow-down" expanded
+            >Load more</b-button
+          >
+        </div>
       </div>
-    </div>
-    <div class="my-2" v-if="!isLoading">
-      <b-button type="is-primary" icon-left="arrow-down" expanded
-        >Load more</b-button
-      >
     </div>
   </div>
 </template>
@@ -57,20 +64,22 @@
 import { Component, Vue } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
 import CourseCard from "@/components/course/card.vue";
-import CourseLoading from "@/components/course/loading.vue";
+import CloudLoading from "@/components/cloud-loading.vue";
+import NotFoundBox from "@/components/not-found-box.vue";
 
 @Component({
-  components: { CourseCard, CourseLoading },
+  components: { CourseCard, CloudLoading, NotFoundBox },
 })
 export default class Courses extends Vue {
   public filter = [];
   public isLoading = true;
   public courses = [];
+
   mounted() {
-    setTimeout( async () => {
-    this.courses = await rpc.call("get_courses");
-    this.isLoading = false;
-    }, 5000);
+    setTimeout(async () => {
+      this.courses = await rpc.call("get_courses");
+      this.isLoading = false;
+    }, 1000);
   }
 }
 </script>
