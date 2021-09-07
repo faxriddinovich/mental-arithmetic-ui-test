@@ -4,12 +4,11 @@ import VueRouter, { RouteConfig } from "vue-router";
 import store from "@/store";
 
 import Home from "@/views/home.vue";
-import UserLogin from "@/views/user/login.vue";
 
 import MainResources from "@/views/main-resources.vue";
 import OtherResources from "@/views/other-resources.vue";
 
-import EnterProfile from "@/views/user/enter-profile.vue";
+import AuthenticateAccount from "@/views/account/authenticate.vue";
 
 import Settings from "@/views/settings.vue";
 
@@ -30,17 +29,10 @@ const routes: Array<RouteConfig> = [
     component: Settings,
   },
   {
-    path: "/user/enter-profile",
-    name: "EnterProfile",
-    component: EnterProfile,
+    path: "/account/authenticate",
+    name: "AuthenticateAccount",
+    component: AuthenticateAccount,
   },
-  /*
-  {
-    path: "/user/create",
-    name: "UserCreate",
-    component: UserCreate,
-  },
-  */
 ];
 
 const router = new VueRouter({

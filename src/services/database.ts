@@ -1,4 +1,5 @@
 import { Dexie, Table } from "dexie";
+import { AuthAccountContract } from '@/rpc/contracts/account';
 
 interface Session {
   id?: number;
@@ -14,12 +15,11 @@ interface Setting {
 
 class AsyncDatabase extends Dexie {
   public static db = "Mental-Arithmetic";
-  private sessions!: Table<Session, number>;
 
   constructor() {
     super(AsyncDatabase.db);
-    this.version(5).stores({
-      sessions: "++id, username, session, date, isCurrent",
+    this.version(6).stores({
+      sessions: "++id, username, session, role, isCurrent, date",
       settings: "&key, value",
     });
   }
@@ -32,7 +32,8 @@ class AsyncDatabase extends Dexie {
     }
   }
 
-  public async addSession(username: string, session: string) {
+  public async addSession(account: AuthAccountContract) {
+    const { username, session, role } = account;
     const sessionsTable = this.table("sessions");
     const hasCurrent = await sessionsTable.where({ isCurrent: 1 }).first();
     const existingSession = sessionsTable.where({ username });
@@ -48,6 +49,7 @@ class AsyncDatabase extends Dexie {
     await sessionsTable.add({
       username,
       session,
+      role,
       date,
       isCurrent: !hasCurrent ? 1 : 0,
     });
@@ -68,7 +70,7 @@ class AsyncDatabase extends Dexie {
     return setting.value;
   }
 
-  public getSettings(): Promise<Config[]> {
+  public getSettings(): Promise<Setting[]> {
     return this.table("settings").toArray();
   }
 

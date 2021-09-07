@@ -4,7 +4,7 @@
       <div class="columns is-multiline">
         <div class="column is-12">
           <div class="box mx-2">
-            <form @submit.prevent="enterProfile">
+            <form @submit.prevent="authenticate">
               <b-field v-if="enterMode === 'username'" key="1" label="Username">
                 <b-input
                   type="text"
@@ -64,7 +64,7 @@
                 icon-right="user-check"
                 :disabled="!canSubmit"
                 expanded
-                >Enter profile</b-button
+                >Authenticate</b-button
               >
             </form>
           </div>
@@ -75,7 +75,7 @@
               >Home</b-button
             >
             <b-button class="ml-3" icon-left="user-plus" expanded
-              >Create a profile</b-button
+              >Create an account</b-button
             >
           </div>
         </div>
@@ -91,11 +91,12 @@ import {
   RPC_INVALID_PARAMS_ERR_CODE,
   RPC_INVALID_CREDENTIALS_ERR_CODE,
 } from "@/rpc/error-codes";
-import { RPC_ENTER_USER_PROFILE_METHOD } from "@/rpc/methods";
+import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/rpc/methods";
+import { AuthAccountContract } from '@/rpc/contracts/account';
 import { Database } from "@/services/database";
 
 @Component({ components: { VueHcaptcha } })
-export default class EnterProfile extends Vue {
+export default class AuthenticateAccount extends Vue {
   public usernameOrEmail = "";
   public enterMode: "username" | "email" = "username";
   public password = "";
@@ -129,18 +130,20 @@ export default class EnterProfile extends Vue {
     this.canSubmit = false;
   }
 
-  public async enterProfile() {
+  public async authenticate() {
     const credentials: any = { password: this.password, captcha: this.captcha };
     credentials[this.enterMode] = this.usernameOrEmail;
 
     rpc
-      .call(RPC_ENTER_USER_PROFILE_METHOD, credentials)
-      .then(async (user) => {
-        await Database.addSession(user.username, user.session);
-        this.$buefy.toast.open({
-          type: "is-success",
-          message: `🎉 Success! Hey <b>${user.username}</b>!`,
-        });
+      .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
+      .then((account: AuthAccountContract) => {
+        Database.addSession(account)
+          .then(() => {
+            this.$buefy.toast.open({
+              type: "is-success",
+              message: `🎉 Success! Hey <b>${account.username}</b>!`,
+            });
+          });
       })
       .catch((error) => {
         this.resetHcaptcha();

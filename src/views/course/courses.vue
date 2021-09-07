@@ -62,25 +62,8 @@
           image="https://img.freepik.com/free-photo/mental-arithmetic-mathematics-concept-colorful-pens-pencils-numbers-abacus-scores_120794-673.jpg?size=626&ext=jpg"
         />
       </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://img.freepik.com/free-photo/mental-arithmetic-mathematics-concept-colorful-pens-pencils-numbers-abacus-scores_120794-673.jpg?size=626&ext=jpg"
-          :isLoading="true"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://img.freepik.com/free-photo/mental-arithmetic-mathematics-concept-colorful-pens-pencils-numbers-abacus-scores_120794-673.jpg?size=626&ext=jpg"
-          :isLoading="true"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://img.freepik.com/free-photo/mental-arithmetic-mathematics-concept-colorful-pens-pencils-numbers-abacus-scores_120794-673.jpg?size=626&ext=jpg"
-          :isLoading="true"
-        />
-      </div>
     </div>
+    <course-loading />
     <div class="my-2">
       <b-button type="is-primary" icon-left="arrow-down" expanded
         >Load more</b-button
@@ -92,9 +75,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CourseCard from "@/components/course/card.vue";
+import CourseLoading from '@/components/course/loading.vue';
 
 @Component({
-  components: { CourseCard },
+  components: { CourseCard, CourseLoading },
 })
 export default class Courses extends Vue {
   public filter = [];

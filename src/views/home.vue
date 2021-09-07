@@ -21,11 +21,11 @@
           </li>
           <li>
             <router-link
-              :to="session ? '/user/profile' : '/user/enter-profile'"
+              :to="session ? '/account' : '/account/authenticate'"
             >
               <b-icon icon="user" class="mx-0" />
               <span class="is-hidden-mobile">{{
-                session ? session.username : "Profile"
+                session ? session.username : "Account"
               }}</span>
             </router-link>
           </li>
