@@ -1,5 +1,5 @@
 import { Dexie, Table } from "dexie";
-import { AuthAccountContract } from '@/rpc/contracts/account';
+import { AuthAccountContract } from "@/rpc/contracts/account";
 
 interface Session {
   id?: number;

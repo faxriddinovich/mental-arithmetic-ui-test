@@ -20,9 +20,7 @@
             </router-link>
           </li>
           <li>
-            <router-link
-              :to="session ? '/account' : '/account/authenticate'"
-            >
+            <router-link :to="session ? '/account' : '/account/authenticate'">
               <b-icon icon="user" class="mx-0" />
               <span class="is-hidden-mobile">{{
                 session ? session.username : "Account"

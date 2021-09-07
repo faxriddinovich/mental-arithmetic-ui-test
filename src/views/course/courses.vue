@@ -33,38 +33,19 @@
         >Search</b-button
       >
     </div>
-    <div class="columns is-mobile is-multiline mt-2">
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://amakids.com/images/pages/ma/goals-block.png"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://marvelkidsflorida.com/wp-content/uploads/2019/05/Mental-caclulation-1279x959.jpg"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://kidgeniuschicago.com/wp-content/uploads/2019/06/mathematic-calculate-kids-.jpg"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://thumbs.dreamstime.com/b/special-abacus-mental-math-kid-hand-183329008.jpg"
-        />
-      </div>
-      <div class="column is-12-mobile is-6-tablet is-4-desktop">
-        <course-card
-          image="https://img.freepik.com/free-photo/mental-arithmetic-mathematics-concept-colorful-pens-pencils-numbers-abacus-scores_120794-673.jpg?size=626&ext=jpg"
-        />
+    <div class="mt-4" v-if="isLoading">
+      <course-loading />
+    </div>
+    <div class="columns is-mobile is-multiline mt-2" v-if="courses.length">
+      <div
+        class="column is-12-mobile is-6-tablet is-4-desktop"
+        v-for="course of courses"
+        :key="course.id"
+      >
+        <course-card :course="course" />
       </div>
     </div>
-    <course-loading />
-    <div class="my-2">
+    <div class="my-2" v-if="!isLoading">
       <b-button type="is-primary" icon-left="arrow-down" expanded
         >Load more</b-button
       >
@@ -74,13 +55,22 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { rpc } from "@/rpc/rpc";
 import CourseCard from "@/components/course/card.vue";
-import CourseLoading from '@/components/course/loading.vue';
+import CourseLoading from "@/components/course/loading.vue";
 
 @Component({
   components: { CourseCard, CourseLoading },
 })
 export default class Courses extends Vue {
   public filter = [];
+  public isLoading = true;
+  public courses = [];
+  mounted() {
+    setTimeout( async () => {
+    this.courses = await rpc.call("get_courses");
+    this.isLoading = false;
+    }, 5000);
+  }
 }
 </script>
