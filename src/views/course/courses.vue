@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
 import CourseCard from "@/components/course/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
@@ -77,6 +77,7 @@ import NotFoundBox from "@/components/not-found-box.vue";
   components: { CourseCard, CloudLoading, NotFoundBox },
 })
 export default class Courses extends Vue {
+  @Prop(String) public res;
   public filter = [];
   public searchText = '';
   public isLoading = false;
@@ -84,15 +85,16 @@ export default class Courses extends Vue {
 
   mounted() {
     this.isLoading = true;
-    rpc.call('get_courses').then((courses) => {
+    rpc.call('get_courses', { res: this.res }).then((courses) => {
       this.courses = courses;
     }).finally(() => this.isLoading = false);
   }
 
   public search() { 
-    const params = {};
+    const params = { res: this.res };
     if(this.filter.length) params['filter'] = this.filter;
     if(this.searchText.length) params['searchText'] = this.searchText;
+
     this.isLoading = true;
     rpc.call('get_courses', params).then((courses) => {
       this.courses = courses;

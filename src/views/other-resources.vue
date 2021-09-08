@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <courses class="mt-4" />
+  <div class="mt-4">
+    <courses res="other" />
   </div>
 </template>
 

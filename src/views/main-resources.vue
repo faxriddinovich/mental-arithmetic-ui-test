@@ -24,7 +24,7 @@
         </router-link>
       </div>
     </div>
-    <courses />
+    <courses res="main" />
   </div>
 </template>
 
