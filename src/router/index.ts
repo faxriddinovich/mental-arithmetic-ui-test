@@ -12,6 +12,8 @@ import AuthenticateAccount from "@/views/account/authenticate.vue";
 
 import Settings from "@/views/settings.vue";
 
+import Course from "@/views/course/course.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -32,6 +34,11 @@ const routes: Array<RouteConfig> = [
     path: "/account/authenticate",
     name: "AuthenticateAccount",
     component: AuthenticateAccount,
+  },
+  {
+    path: "/course/:id",
+    name: "Course",
+    component: Course,
   },
 ];
 

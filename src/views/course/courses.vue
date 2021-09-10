@@ -1,42 +1,46 @@
 <template>
   <div>
     <div class="card p-3">
-    <form @submit.prevent="search" class="is-flex">
-      <b-dropdown
-        v-model="filter"
-        :mobile-modal="false"
-        multiple
-        aria-role="list"
-      >
-        <template #trigger>
-          <b-button icon-left="filter">Filter</b-button>
-        </template>
+      <form @submit.prevent="search" class="is-flex">
+        <b-dropdown
+          v-model="filter"
+          :mobile-modal="false"
+          multiple
+          aria-role="list"
+        >
+          <template #trigger>
+            <b-button icon-left="filter">Filter</b-button>
+          </template>
 
-        <b-dropdown-item value="price" aria-role="listitem">
-        <b-icon icon="dollar-alt" />
-          Price
-        </b-dropdown-item>
+          <b-dropdown-item value="price" aria-role="listitem">
+            <b-icon icon="dollar-alt" />
+            Price
+          </b-dropdown-item>
 
-        <b-dropdown-item value="popular" aria-role="listitem">
-          <b-icon icon="star" />
-          Popular
-        </b-dropdown-item>
+          <b-dropdown-item value="popular" aria-role="listitem">
+            <b-icon icon="star" />
+            Popular
+          </b-dropdown-item>
 
-        <b-dropdown-item value="purchased" aria-role="listitem">
-          <b-icon icon="shopping-basket" />
-          Purchased
-        </b-dropdown-item>
-      </b-dropdown>
-      <b-input
-        v-model="searchText"
-        class="is-flex-grow-1 ml-3"
-        placeholder="Course name, author name"
-        icon="search"
-      >
-      </b-input>
-      <b-button native-type="submit" type="is-primary" class="ml-3" icon-left="search"
-        >Search</b-button
-      >
+          <b-dropdown-item value="purchased" aria-role="listitem">
+            <b-icon icon="shopping-basket" />
+            Purchased
+          </b-dropdown-item>
+        </b-dropdown>
+        <b-input
+          v-model="searchText"
+          class="is-flex-grow-1 ml-3"
+          placeholder="Course name, author name"
+          icon="search"
+        >
+        </b-input>
+        <b-button
+          native-type="submit"
+          type="is-primary"
+          class="ml-3"
+          icon-left="search"
+          >Search</b-button
+        >
       </form>
     </div>
 
@@ -79,26 +83,32 @@ import NotFoundBox from "@/components/not-found-box.vue";
 export default class Courses extends Vue {
   @Prop(String) public res;
   public filter = [];
-  public searchText = '';
+  public searchText = "";
   public isLoading = false;
   public courses = [];
 
   mounted() {
     this.isLoading = true;
-    rpc.call('get_courses', { res: this.res }).then((courses) => {
-      this.courses = courses;
-    }).finally(() => this.isLoading = false);
+    rpc
+      .call("get_courses", { res: this.res })
+      .then((courses) => {
+        this.courses = courses;
+      })
+      .finally(() => (this.isLoading = false));
   }
 
-  public search() { 
+  public search() {
     const params = { res: this.res };
-    if(this.filter.length) params['filter'] = this.filter;
-    if(this.searchText.length) params['searchText'] = this.searchText;
+    if (this.filter.length) params["filter"] = this.filter;
+    if (this.searchText.length) params["searchText"] = this.searchText;
 
     this.isLoading = true;
-    rpc.call('get_courses', params).then((courses) => {
-      this.courses = courses;
-    }).finally(() =>  this.isLoading = false );
+    rpc
+      .call("get_courses", params)
+      .then((courses) => {
+        this.courses = courses;
+      })
+      .finally(() => (this.isLoading = false));
   }
 }
 </script>
