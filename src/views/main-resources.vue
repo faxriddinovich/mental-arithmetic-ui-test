@@ -7,7 +7,7 @@
     </div>
     <div class="columns is-variable is-2 is-mobile is-multiline mt-2">
       <div
-        class="column is-6-mobile is-4-tablet is-2-desktop"
+        class="column is-4-mobile is-4-tablet is-2-desktop"
         v-for="item of items"
         :key="item.icon"
       >

@@ -14,6 +14,8 @@ import Settings from "@/views/settings.vue";
 
 import Course from "@/views/course/course.vue";
 
+import AccountBlocked from '@/views/account/blocked.vue';
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -40,6 +42,11 @@ const routes: Array<RouteConfig> = [
     name: "Course",
     component: Course,
   },
+  {
+    path: "/account/blocked",
+    name: "Blocked",
+    component: AccountBlocked
+  }
 ];
 
 const router = new VueRouter({

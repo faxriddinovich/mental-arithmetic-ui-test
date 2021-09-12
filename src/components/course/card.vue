@@ -1,7 +1,11 @@
 <template>
   <div class="card">
     <div class="card-image is-relative">
-      <b-image :src="course.image" ratio="4by3"  :placeholder="require('../../../public/img/placeholder.jpg')"/>
+      <b-image
+        :src="course.image"
+        ratio="4by3"
+        :placeholder="require('../../../public/img/placeholder.jpg')"
+      />
       <div class="is-bottom-left" v-if="!isLoading">
         <b-tag type="is-primary">{{ course.category }}</b-tag>
       </div>
@@ -9,10 +13,16 @@
     <div class="card-content p-3">
       <div class="has-text-weight-semibold is-size-5">
         <b-skeleton width="70%" v-if="isLoading" />
-        <span v-else>{{ course.title }}</span>
+        <span v-else
+          ><router-link
+            :to="{ name: 'Course', params: { id: course.id } }"
+            class="has-text-dark"
+            >{{ course.title }}</router-link
+          ></span
+        >
       </div>
       <div class="mt-1 is-size-6">
-        <b-skeleton count="4" v-if="isLoading" />
+        <b-skeleton :count="4" v-if="isLoading" />
         <span v-else>{{ course.description }}</span>
       </div>
       <div
@@ -62,7 +72,7 @@
         <b-skeleton v-if="isLoading" />
         <b-tooltip label="Purchased count" v-else>
           <span class="has-text-weight-semibold"
-            ><b-icon icon="users-alt" />{{ course.purchCount }}</span
+            ><b-icon icon="users-alt" />{{ course.purchasedCount }}</span
           >
         </b-tooltip>
       </div>

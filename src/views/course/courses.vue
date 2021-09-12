@@ -46,11 +46,8 @@
 
     <div class="mt-5">
       <cloud-loading v-if="isLoading" />
-      <not-found-box
-        text="No courses found"
-        v-if="!isLoading && !courses.length"
-      />
-      <div v-if="!isLoading && courses.length">
+      <not-found-box text="No courses found" v-else-if="!courses.length" />
+      <div v-else>
         <div class="columns is-mobile is-multiline">
           <div
             class="column is-12-mobile is-6-tablet is-4-desktop"
