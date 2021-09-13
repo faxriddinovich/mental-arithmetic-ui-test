@@ -10,7 +10,10 @@
             <div class="card p-3" v-if="courseLoading">
               <b-skeleton :count="2" />
             </div>
-            <div class="card p-3" v-else-if="!course.purchased && course.price">
+            <div
+              class="card p-3"
+              v-else-if="!course.purchased && course.price && session"
+            >
               <div class="buttons">
                 <b-button
                   type="is-success"
@@ -133,7 +136,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
 import { Database } from "@/services/indexeddb/database";
-import { Session } from '@/services/indexeddb/interfaces';
+import { Session } from "@/services/indexeddb/interfaces";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
   RPC_LOW_BALANCE_ERR_CODE,
@@ -164,10 +167,9 @@ export default class Course extends Vue {
   public searchText = "";
 
   async mounted() {
-    const session = await Database.getCurrentSession();
-    if (session) {
-      rpc.setHeader("session", session.session);
-    }
+    Database.getCurrentSession().then((session) => {
+      this.session = session;
+    });
     const courseId = Number(this.$route.params.id);
 
     rpc
@@ -207,7 +209,7 @@ export default class Course extends Vue {
     this.$buefy.dialog.confirm({
       message:
         'Do you really want to purchase this course ?<br><span class="has-text-weight-semibold">After purchasing the course you cannot cancel this operation!</span>',
-      onConfirm: () => this.purchase(false),
+      onConfirm: () => this.purchase(),
       confirmText: "Purchase",
       hasIcon: true,
       icon: "shopping-basket",
@@ -215,14 +217,21 @@ export default class Course extends Vue {
   }
 
   public activate() {
+    this.activateButtonLoading = true;
     rpc
       .call(RPC_PURCHASE_COURSE_METHOD, {
         courseId: Number(this.$route.params.id),
         pcode: this.activationCode,
       })
       .then(() => {
-          //
-      });
+        this.$router.go();
+      }).catch(() => {
+        this.$buefy.toast.open({
+          message: 'This operation cannot be performed',
+          position: 'is-top',
+          type: 'is-danger'
+        });
+      }).finally(() => this.activateButtonLoading = false);;
   }
 
   public purchase(usingCode: boolean) {
@@ -235,7 +244,22 @@ export default class Course extends Vue {
         this.$router.go();
       })
       .catch((error) => {
-        console.log(error);
+        if (error.jsonrpcError) {
+          const { jsonrpcError } = error;
+          if (jsonrpcError.code === RPC_LOW_BALANCE_ERR_CODE) {
+            this.$buefy.toast.open({
+              message: "Low balance",
+              position: "is-top",
+              type: "is-danger",
+            });
+            return;
+          }
+        }
+        this.$buefy.toast.open({
+          message: 'This operation cannot be performed',
+          position: 'is-top',
+          type: 'is-danger'
+        });
       })
       .finally(() => (this.purchaseButtonLoading = false));
   }

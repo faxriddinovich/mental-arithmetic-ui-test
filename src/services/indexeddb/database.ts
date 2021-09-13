@@ -1,5 +1,5 @@
 import { Dexie, Table } from "dexie";
-import { Session, Setting } from './interfaces';
+import { Session, Setting } from "./interfaces";
 import { AuthAccountContract } from "@/rpc/contracts/account";
 
 class AsyncDatabase extends Dexie {

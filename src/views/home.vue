@@ -37,7 +37,7 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import { Database } from "@/services/indexeddb/database";
-import { Session } from '@/services/indexeddb/interfaces';
+import { Session } from "@/services/indexeddb/interfaces";
 
 @Component
 export default class Home extends Vue {

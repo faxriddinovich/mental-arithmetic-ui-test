@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Database } from "@/services/indexeddb/database";
-import { Setting } from '@/services/indexeddb/interfaces';
+import { Setting } from "@/services/indexeddb/interfaces";
 
 @Component
 export default class Settings extends Vue {
