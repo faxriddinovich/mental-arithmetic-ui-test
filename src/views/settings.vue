@@ -39,13 +39,14 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from "@/services/database";
+import { Database } from "@/services/indexeddb/database";
+import { Setting } from '@/services/indexeddb/interfaces';
 
 @Component
 export default class Settings extends Vue {
   public showLatestEvent = false;
 
-  public settings = [];
+  public settings: Setting[] = [];
 
   async mounted() {
     this.settings = await Database.getSettings();

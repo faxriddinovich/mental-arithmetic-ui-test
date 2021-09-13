@@ -93,7 +93,7 @@ import {
 } from "@/rpc/error-codes";
 import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/rpc/methods";
 import { AuthAccountContract } from "@/rpc/contracts/account";
-import { Database } from "@/services/database";
+import { Database } from "@/services/indexeddb/database";
 
 @Component({ components: { VueHcaptcha } })
 export default class AuthenticateAccount extends Vue {

@@ -15,7 +15,7 @@
                 <b-button
                   type="is-success"
                   icon-left="shopping-basket"
-                  @click="purchase"
+                  @click="confirmPurchase"
                   :loading="purchaseButtonLoading"
                   expanded
                   >Purchase
@@ -23,14 +23,44 @@
                     formatCurrency(course.price)
                   }}</span>
                 </b-button>
-                <b-button
-                  type="is-light"
-                  size="is-small"
-                  icon-left="ticket"
-                  :disabled="courseLoading"
-                  expanded
-                  >I have an activation code</b-button
+
+                <b-collapse
+                  :open="false"
+                  aria-id="contentIdForA11y1"
+                  style="width: 100%"
                 >
+                  <template #trigger>
+                    <b-button
+                      type="is-light"
+                      size="is-small"
+                      icon-left="ticket"
+                      :disabled="courseLoading"
+                      expanded
+                      aria-controls="contentIdForA11y1"
+                      >I have an activation code</b-button
+                    >
+                  </template>
+                  <form @submit.prevent="activate" class="is-flex">
+                    <b-field class="is-flex-grow-1">
+                      <b-input
+                        icon="ticket"
+                        size="is-small"
+                        placeholder="Please write the code"
+                        v-model="activationCode"
+                        required
+                      ></b-input>
+                    </b-field>
+                    <b-button
+                      native-type="submit"
+                      icon-left="check"
+                      type="is-success"
+                      size="is-small"
+                      class="ml-2"
+                      :loading="activateButtonLoading"
+                      >Activate</b-button
+                    >
+                  </form>
+                </b-collapse>
               </div>
             </div>
           </div>
@@ -102,9 +132,17 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
-import { Database } from "@/services/database";
-import { RPC_RESOURCE_NOT_FOUND_ERR_CODE } from "@/rpc/error-codes";
-import { RPC_GET_COURSE_METHOD, RPC_GET_LESSONS_METHOD, RPC_PURCHASE_COURSE_METHOD } from "@/rpc/methods";
+import { Database } from "@/services/indexeddb/database";
+import { Session } from '@/services/indexeddb/interfaces';
+import {
+  RPC_RESOURCE_NOT_FOUND_ERR_CODE,
+  RPC_LOW_BALANCE_ERR_CODE,
+} from "@/rpc/error-codes";
+import {
+  RPC_GET_COURSE_METHOD,
+  RPC_GET_LESSONS_METHOD,
+  RPC_PURCHASE_COURSE_METHOD,
+} from "@/rpc/methods";
 import { formatCurrency } from "@/common/utils";
 import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
@@ -115,11 +153,14 @@ import NotFoundBox from "@/components/not-found-box.vue";
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
 })
 export default class Course extends Vue {
+  public session: Session | null = null;
   public course = {};
   public lessons = [];
   public courseLoading = true;
   public lessonsLoading = true;
   public purchaseButtonLoading = false;
+  public activationCode = "";
+  public activateButtonLoading = false;
   public searchText = "";
 
   async mounted() {
@@ -162,13 +203,41 @@ export default class Course extends Vue {
       .finally(() => (this.lessonsLoading = false));
   }
 
-  public purchase() {
+  public confirmPurchase() {
+    this.$buefy.dialog.confirm({
+      message:
+        'Do you really want to purchase this course ?<br><span class="has-text-weight-semibold">After purchasing the course you cannot cancel this operation!</span>',
+      onConfirm: () => this.purchase(false),
+      confirmText: "Purchase",
+      hasIcon: true,
+      icon: "shopping-basket",
+    });
+  }
+
+  public activate() {
+    rpc
+      .call(RPC_PURCHASE_COURSE_METHOD, {
+        courseId: Number(this.$route.params.id),
+        pcode: this.activationCode,
+      })
+      .then(() => {
+          //
+      });
+  }
+
+  public purchase(usingCode: boolean) {
     this.purchaseButtonLoading = true;
-    rpc.setHeader('session', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6InJvb3QiLCJpYXQiOjE2MzE0NDYzNjQsImV4cCI6MTYzMTc5MTk2NH0.FMa6fhqF77Zun3Ye8leObnlMHviePZTrmd2sDA2z8Og').call(RPC_PURCHASE_COURSE_METHOD, { courseId: Number(this.$route.params.id) }).then(() => {
-      this.$router.go();
-    }).catch((error) => {
-      console.log(error);
-    }).finally(() => this.purchaseButtonLoading = false);
+    rpc
+      .call(RPC_PURCHASE_COURSE_METHOD, {
+        courseId: Number(this.$route.params.id),
+      })
+      .then(() => {
+        this.$router.go();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => (this.purchaseButtonLoading = false));
   }
 
   public formatCurrency(amount: number): string {

@@ -1,17 +1,6 @@
 import { Dexie, Table } from "dexie";
+import { Session, Setting } from './interfaces';
 import { AuthAccountContract } from "@/rpc/contracts/account";
-
-interface Session {
-  id?: number;
-  username: string;
-  session: string;
-  date: string;
-}
-
-interface Setting {
-  key: string;
-  value: any;
-}
 
 class AsyncDatabase extends Dexie {
   public static db = "Mental-Arithmetic";

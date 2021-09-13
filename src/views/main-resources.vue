@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from "@/services/database";
+import { Database } from "@/services/indexeddb/database";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/rpc/methods";
 import Courses from "@/views/course/courses.vue";

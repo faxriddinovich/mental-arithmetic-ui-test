@@ -14,7 +14,7 @@ import Settings from "@/views/settings.vue";
 
 import Course from "@/views/course/course.vue";
 
-import AccountBlocked from '@/views/account/blocked.vue';
+import AccountBlocked from "@/views/account/blocked.vue";
 
 Vue.use(VueRouter);
 
@@ -45,8 +45,8 @@ const routes: Array<RouteConfig> = [
   {
     path: "/account/blocked",
     name: "Blocked",
-    component: AccountBlocked
-  }
+    component: AccountBlocked,
+  },
 ];
 
 const router = new VueRouter({
