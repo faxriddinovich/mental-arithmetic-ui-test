@@ -11,21 +11,6 @@
           >NEW</b-tag
         >
       </div>
-      {{ lesson.preview }}
-
-      <div
-        class="
-          is-flex is-justify-content-space-between is-align-items-center
-          mt-4
-        "
-      >
-        <div class="has-text-weight-semibold">
-          <b-icon icon="user" />{{ lesson.author.username }}
-        </div>
-        <div class="has-text-weight-semibold">
-          <b-icon icon="calendar-alt" /> 2020-02-02
-        </div>
-      </div>
     </div>
     <div class="card-footer">
       <div class="card-footer-item p-2">
