@@ -18,6 +18,7 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
+@import "https://unicons.iconscout.com/release/v4.0.0/css/solid.css";
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100&display=swap");
 
 html,

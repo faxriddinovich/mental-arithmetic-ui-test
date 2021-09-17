@@ -1,5 +1,4 @@
 import Vue from "vue";
-import Chakra from "@chakra-ui/vue";
 
 import Buefy from "buefy";
 
@@ -10,10 +9,15 @@ import store from "./store";
 
 import "./styles/styles.scss";
 
-Vue.use(Chakra);
 const buefyOptions = {
   defaultIconPack: "uil",
   customIconPacks: {
+    uis: {
+      iconPrefix: "uis-",
+      internalIcons: {
+        star: "star",
+      },
+    },
     uil: {
       sizes: {
         default: "is-size-5",

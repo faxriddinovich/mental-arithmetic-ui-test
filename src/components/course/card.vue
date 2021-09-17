@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-image is-relative">
       <b-image
-        :src="course.image"
+        :src="fsBucketUrl + '/' + course.image"
         ratio="4by3"
         :placeholder="require('../../../public/img/placeholder.jpg')"
       />
@@ -94,9 +94,13 @@ import { formatCurrency } from "@/common/utils";
 @Component
 export default class CourseCard extends Vue {
   @Prop(Object) public course!: any;
-  @Prop({ type: Boolean, default: false }) public isLoading;
+  @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   public formatCurrency(amount: number) {
     return formatCurrency(amount);
+  }
+
+  public get fsBucketUrl() {
+    return process.env.VUE_APP_FS_BUCKET_URL;
   }
 }
 </script>

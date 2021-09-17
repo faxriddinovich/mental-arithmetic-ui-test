@@ -225,13 +225,15 @@ export default class Course extends Vue {
       })
       .then(() => {
         this.$router.go();
-      }).catch(() => {
+      })
+      .catch(() => {
         this.$buefy.toast.open({
-          message: 'This operation cannot be performed',
-          position: 'is-top',
-          type: 'is-danger'
+          message: "This operation cannot be performed",
+          position: "is-top",
+          type: "is-danger",
         });
-      }).finally(() => this.activateButtonLoading = false);;
+      })
+      .finally(() => (this.activateButtonLoading = false));
   }
 
   public purchase(usingCode: boolean) {
@@ -256,9 +258,9 @@ export default class Course extends Vue {
           }
         }
         this.$buefy.toast.open({
-          message: 'This operation cannot be performed',
-          position: 'is-top',
-          type: 'is-danger'
+          message: "This operation cannot be performed",
+          position: "is-top",
+          type: "is-danger",
         });
       })
       .finally(() => (this.purchaseButtonLoading = false));

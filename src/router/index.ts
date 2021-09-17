@@ -1,18 +1,19 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import store from "@/store";
+import { Database } from '@/services/indexeddb/database';
 
 import Home from "@/views/home.vue";
 
 import MainResources from "@/views/main-resources.vue";
 import OtherResources from "@/views/other-resources.vue";
 
-import AuthenticateAccount from "@/views/account/authenticate.vue";
+import Authenticate from "@/views/account/authenticate.vue";
 
 import Settings from "@/views/settings.vue";
 
 import Course from "@/views/course/course.vue";
+import CreateCourse from "@/views/course/create.vue";
 
 import AccountBlocked from "@/views/account/blocked.vue";
 
@@ -34,25 +35,37 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/account/authenticate",
-    name: "AuthenticateAccount",
-    component: AuthenticateAccount,
+    name: "Authenticate",
+    component: Authenticate,
   },
   {
-    path: "/course/:id",
+    path: "/courses/:id",
     name: "Course",
     component: Course,
   },
   {
-    path: "/account/blocked",
-    name: "Blocked",
-    component: AccountBlocked,
-  },
+    path: "/course/create",
+    name: "CreateCourse",
+    component: CreateCourse,
+    meta: { requiresAuth: true }
+  }
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  if(to.matched.some((record => record.meta.requiresAuth))) {
+    const session = await Database.getCurrentSession();
+
+    if(!session) {
+      return next({ name: 'Authenticate' });
+    }
+  }
+  next();
 });
 
 export default router;
