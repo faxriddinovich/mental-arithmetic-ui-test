@@ -139,7 +139,7 @@ import { Database } from "@/services/indexeddb/database";
 import { Session } from "@/services/indexeddb/interfaces";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
-  RPC_LOW_BALANCE_ERR_CODE,
+  RPC_INSUFFICIENT_BALANCE_ERR_CODE,
 } from "@/rpc/error-codes";
 import {
   RPC_GET_COURSE_METHOD,
@@ -248,9 +248,9 @@ export default class Course extends Vue {
       .catch((error) => {
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_LOW_BALANCE_ERR_CODE) {
+          if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
             this.$buefy.toast.open({
-              message: "Low balance",
+              message: "Insufficient balance",
               position: "is-top",
               type: "is-danger",
             });
