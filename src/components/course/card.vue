@@ -15,15 +15,17 @@
       <div class="has-text-weight-semibold is-size-5">
         <b-skeleton width="70%" v-if="isLoading" />
         <div :class="detailed && 'is-card-title'" v-else>
+          <span v-if="detailed">{{ course.title }}</span>
           <router-link
             :to="{ name: 'Course', params: { id: course.id } }"
             class="has-text-dark"
+            v-else
             >{{ course.title }}</router-link
           >
         </div>
       </div>
       <div class="mt-3" v-if="detailed">
-        <b-skeleton count="4" v-if="isLoading" />
+        <b-skeleton :count="4" v-if="isLoading" />
         <span v-else>
           {{ course.description }}
         </span>
@@ -56,10 +58,10 @@
           </div>
         </div>
         <div>
-        <b-skeleton width="100px" v-if="isLoading"/>
-        <span class="has-text-weight-bold is-size-5 has-text-primary" v-else>
-          {{ formatCurrency(course.price) }}
-        </span>
+          <b-skeleton width="100px" v-if="isLoading" />
+          <span class="has-text-weight-bold is-size-5 has-text-primary" v-else>
+            {{ formatCurrency(course.price) }}
+          </span>
         </div>
       </div>
     </div>
