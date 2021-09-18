@@ -5,7 +5,7 @@
         <div
           class="column is-12-mobile is-6-tablet is-5-desktop is-4-widescreen"
         >
-          <course-card :course="course" :isLoading="courseLoading" />
+          <course-card :course="course" :isLoading="courseLoading" detailed />
           <div class="mt-3">
             <div class="card p-3" v-if="courseLoading">
               <b-skeleton :count="2" />

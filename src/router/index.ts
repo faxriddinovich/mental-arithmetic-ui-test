@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import { Database } from '@/services/indexeddb/database';
+import { Database } from "@/services/indexeddb/database";
 
 import Home from "@/views/home.vue";
 
@@ -25,8 +25,12 @@ const routes: Array<RouteConfig> = [
     name: "Home",
     component: Home,
     children: [
-      { path: "/", name: 'MainResources',  component: MainResources },
-      { path: "/other-resources", name: 'OtherResources', component: OtherResources },
+      { path: "/", name: "MainResources", component: MainResources },
+      {
+        path: "/other-resources",
+        name: "OtherResources",
+        component: OtherResources,
+      },
     ],
   },
   {
@@ -47,8 +51,8 @@ const routes: Array<RouteConfig> = [
     path: "/course/create",
     name: "CreateCourse",
     component: CreateCourse,
-    meta: { requiresAuth: true, roles: ['root', 'teacher'] }
-  }
+    meta: { requiresAuth: true, roles: ["root", "teacher"] },
+  },
 ];
 
 const router = new VueRouter({
@@ -58,14 +62,13 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if(to.matched.some((record => record.meta.requiresAuth))) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     const session = await Database.getCurrentSession();
 
-    if(!session)
-      return next({ name: 'Authenticate' });
+    if (!session) return next({ name: "Authenticate" });
 
-    if(!to.meta.roles.includes(session.role))
-      return next({ name: 'MainResources' });
+    if (!to.meta.roles.includes(session.role))
+      return next({ name: "MainResources" });
   }
   next();
 });

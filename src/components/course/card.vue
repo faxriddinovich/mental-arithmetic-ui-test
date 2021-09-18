@@ -1,10 +1,11 @@
 <template>
   <div class="card">
-    <div class="card-image is-relative">
+    <div class="card-image is-relative" v-if="course.image">
       <b-image
         :src="fsBucketUrl + '/' + course.image"
-        ratio="4by3"
         :placeholder="require('../../../public/img/placeholder.jpg')"
+        :src-fallback="require('../../../public/img/placeholder.jpg')"
+        ratio="4by3"
       />
       <div class="is-bottom-left" v-if="!isLoading">
         <b-tag type="is-primary">{{ course.category }}</b-tag>
@@ -13,41 +14,52 @@
     <div class="card-content p-3">
       <div class="has-text-weight-semibold is-size-5">
         <b-skeleton width="70%" v-if="isLoading" />
-        <span v-else
-          ><router-link
+        <div :class="detailed && 'is-card-title'" v-else>
+          <router-link
             :to="{ name: 'Course', params: { id: course.id } }"
             class="has-text-dark"
             >{{ course.title }}</router-link
-          ></span
-        >
+          >
+        </div>
       </div>
-      <div class="mt-1 is-size-6">
-        <b-skeleton :count="4" v-if="isLoading" />
-        <span v-else>{{ course.description }}</span>
+      <div class="mt-3" v-if="detailed">
+        <b-skeleton count="4" v-if="isLoading" />
+        <span v-else>
+          {{ course.description }}
+        </span>
       </div>
       <div
         class="
           is-flex is-justify-content-space-between is-align-items-center
-          mt-1
+          mt-4
         "
       >
         <div>
+          <div>
+            <b-skeleton width="150px" v-if="isLoading" />
+            <div v-else>
+              <b-icon icon="user" />
+              <span class="has-text-weight-semibold">{{
+                course.author.username
+              }}</span>
+            </div>
+          </div>
           <b-skeleton width="150px" v-if="isLoading" />
           <div v-else>
-            <b-icon icon="user" />
-            <span class="has-text-weight-semibold">{{
-              course.author.username
-            }}</span>
+            <b-rate
+              disabled
+              icon-pack="uis"
+              v-model="course.ratingAvg"
+              :custom-text="course.ratingAvg"
+              size="is-medium"
+            ></b-rate>
           </div>
         </div>
-        <div v-if="isLoading"><b-skeleton width="60px" /></div>
-        <div class="has-text-weight-bold is-size-5" v-else>
-          <span class="has-text-success" v-if="course.price === 0">
-            *FREE
-          </span>
-          <span class="has-text-primary" v-else>
-            {{ formatCurrency(course.price) }}
-          </span>
+        <div>
+        <b-skeleton width="100px" v-if="isLoading"/>
+        <span class="has-text-weight-bold is-size-5 has-text-primary" v-else>
+          {{ formatCurrency(course.price) }}
+        </span>
         </div>
       </div>
     </div>
@@ -76,14 +88,6 @@
           >
         </b-tooltip>
       </div>
-      <div class="card-footer-item">
-        <b-skeleton v-if="isLoading" />
-        <b-tooltip label="Rating" v-else>
-          <span class="has-text-weight-semibold"
-            ><b-icon icon="star" />{{ course.ratingAvg }}</span
-          >
-        </b-tooltip>
-      </div>
     </div>
   </div>
 </template>
@@ -95,6 +99,9 @@ import { formatCurrency } from "@/common/utils";
 export default class CourseCard extends Vue {
   @Prop(Object) public course!: any;
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
+  @Prop({ type: Boolean, default: false }) public detailed!: boolean;
+
+  public rate = 3;
   public formatCurrency(amount: number) {
     return formatCurrency(amount);
   }
@@ -104,3 +111,13 @@ export default class CourseCard extends Vue {
   }
 }
 </script>
+<style lang="scss">
+.is-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 3.8rem;
+}
+</style>

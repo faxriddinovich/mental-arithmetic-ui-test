@@ -211,15 +211,23 @@ export default class CreateCourse extends Vue {
     if (this.price) params["price"] = this.price;
     if (this.image.length) params["image"] = this.image;
     this.createButtonLoading = true;
-    rpc.call(CREATE_COURSE_METHOD, params).then(() => {
-      this.$buefy.toast.open({
-        position: "is-top",
-        message: "Successfully created!",
-        type: "is-success",
-      });
-    }).catch(() => {
-      this.$buefy.toast.open({ position: 'is-top', message: 'Unable to create a course', type: 'is-danger' });
-    }).finally(() => this.createButtonLoading = false);
+    rpc
+      .call(CREATE_COURSE_METHOD, params)
+      .then(() => {
+        this.$buefy.toast.open({
+          position: "is-top",
+          message: "Successfully created!",
+          type: "is-success",
+        });
+      })
+      .catch(() => {
+        this.$buefy.toast.open({
+          position: "is-top",
+          message: "Unable to create a course",
+          type: "is-danger",
+        });
+      })
+      .finally(() => (this.createButtonLoading = false));
   }
 }
 </script>
