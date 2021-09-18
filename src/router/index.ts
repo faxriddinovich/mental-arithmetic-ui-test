@@ -25,8 +25,8 @@ const routes: Array<RouteConfig> = [
     name: "Home",
     component: Home,
     children: [
-      { path: "/", component: MainResources },
-      { path: "/other-resources", component: OtherResources },
+      { path: "/", name: 'MainResources',  component: MainResources },
+      { path: "/other-resources", name: 'OtherResources', component: OtherResources },
     ],
   },
   {
@@ -47,7 +47,7 @@ const routes: Array<RouteConfig> = [
     path: "/course/create",
     name: "CreateCourse",
     component: CreateCourse,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, roles: ['root', 'teacher'] }
   }
 ];
 
@@ -61,9 +61,11 @@ router.beforeEach(async (to, from, next) => {
   if(to.matched.some((record => record.meta.requiresAuth))) {
     const session = await Database.getCurrentSession();
 
-    if(!session) {
+    if(!session)
       return next({ name: 'Authenticate' });
-    }
+
+    if(!to.meta.roles.includes(session.role))
+      return next({ name: 'MainResources' });
   }
   next();
 });
