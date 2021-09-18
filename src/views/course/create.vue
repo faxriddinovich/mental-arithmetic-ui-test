@@ -203,7 +203,7 @@ export default class CreateCourse extends Vue {
     const params = {
       title: this.title,
       description: this.description,
-      category: this.selectedCategory,
+      category: this.category,
     };
 
     if (this.tags.length) params["tags"] = this.tags;
