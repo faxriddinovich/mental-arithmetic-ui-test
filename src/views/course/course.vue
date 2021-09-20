@@ -132,10 +132,13 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Mixins, Vue } from "vue-property-decorator";
+import CourseCard from "@/components/course/card.vue";
+import LessonCard from "@/components/lesson/card.vue";
+import CloudLoading from "@/components/cloud-loading.vue";
+import NotFoundBox from "@/components/not-found-box.vue";
+import { Base } from '@/mixins/base.mixin';
 import { rpc } from "@/rpc/rpc";
-import { Database } from "@/services/indexeddb/database";
-import { Session } from "@/services/indexeddb/interfaces";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
   RPC_INSUFFICIENT_BALANCE_ERR_CODE,
@@ -145,17 +148,11 @@ import {
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
 } from "@/rpc/methods";
-import { formatCurrency } from "@/common/utils";
-import CourseCard from "@/components/course/card.vue";
-import LessonCard from "@/components/lesson/card.vue";
-import CloudLoading from "@/components/cloud-loading.vue";
-import NotFoundBox from "@/components/not-found-box.vue";
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
 })
-export default class Course extends Vue {
-  public session: Session | null = null;
+export default class Course extends Mixins(Base) {
   public course = {};
   public lessons = [];
   public courseLoading = true;
@@ -166,9 +163,6 @@ export default class Course extends Vue {
   public searchText = "";
 
   async mounted() {
-    Database.getCurrentSession().then((session) => {
-      this.session = session;
-    });
     const courseId = Number(this.$route.params.id);
 
     rpc
@@ -235,7 +229,7 @@ export default class Course extends Vue {
       .finally(() => (this.activateButtonLoading = false));
   }
 
-  public purchase(usingCode: boolean) {
+  public purchase() {
     this.purchaseButtonLoading = true;
     rpc
       .call(RPC_PURCHASE_COURSE_METHOD, {
@@ -263,10 +257,6 @@ export default class Course extends Vue {
         });
       })
       .finally(() => (this.purchaseButtonLoading = false));
-  }
-
-  public formatCurrency(amount: number): string {
-    return formatCurrency(amount);
   }
 }
 </script>

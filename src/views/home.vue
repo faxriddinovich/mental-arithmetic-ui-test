@@ -35,16 +35,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { Database } from "@/services/indexeddb/database";
-import { Session } from "@/services/indexeddb/interfaces";
+import { Vue, Component, Mixins } from "vue-property-decorator";
+import { Base } from '@/mixins/base.mixin';
 
 @Component
-export default class Home extends Vue {
-  public session: Session | null = null;
-
-  async mounted() {
-    this.session = await Database.getCurrentSession();
-  }
-}
+export default class Home extends Mixins(Base) { }
 </script>
