@@ -9,7 +9,7 @@
               v-model="title"
               placeholder="e.g: Awesome course"
               minlength="5"
-              maxlength="25"
+              maxlength="50"
               required
             ></b-input>
           </b-field>
@@ -19,7 +19,7 @@
               v-model="description"
               placeholder="Some description here"
               minlength="10"
-              maxlength="100"
+              maxlength="500"
               required
             ></b-input>
           </b-field>
@@ -30,7 +30,7 @@
               icon="label"
               placeholder="Add a tag"
               aria-close-label="Delete this tag"
-              maxlength="10"
+              maxlength="12"
               maxtags="20"
             >
             </b-taginput>
@@ -114,8 +114,8 @@ import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import { rpc } from "@/rpc/rpc";
 import {
-  GET_COURSE_CATEGORIES_METHOD,
-  CREATE_COURSE_METHOD,
+  RPC_GET_COURSE_CATEGORIES_METHOD,
+  RPC_CREATE_COURSE_METHOD,
 } from "@/rpc/methods";
 
 @Component
@@ -140,7 +140,7 @@ export default class CreateCourse extends Vue {
 
   mounted() {
     rpc
-      .call(GET_COURSE_CATEGORIES_METHOD)
+      .call(RPC_GET_COURSE_CATEGORIES_METHOD)
       .then((categories) => {
         this.categories = categories;
       })
@@ -212,7 +212,7 @@ export default class CreateCourse extends Vue {
     if (this.image.length) params["image"] = this.image;
     this.createButtonLoading = true;
     rpc
-      .call(CREATE_COURSE_METHOD, params)
+      .call(RPC_CREATE_COURSE_METHOD, params)
       .then(() => {
         this.$buefy.toast.open({
           position: "is-top",

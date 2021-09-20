@@ -49,11 +49,12 @@
           <b-skeleton width="150px" v-if="isLoading" />
           <div v-else>
             <b-rate
-              disabled
               icon-pack="uis"
               v-model="course.ratingAvg"
               :custom-text="course.ratingAvg"
-              size="is-medium"
+              :size="detailed ? 'is-medium' : ''"
+              :disabled="!detailed || !session || !course.canRate"
+              @change="rate"
             ></b-rate>
           </div>
         </div>
@@ -96,6 +97,9 @@
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { formatCurrency } from "@/common/utils";
+import { rpc } from "@/rpc/rpc";
+import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
+import { Database } from '@/services/indexeddb/database';
 
 @Component
 export default class CourseCard extends Vue {
@@ -103,13 +107,39 @@ export default class CourseCard extends Vue {
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
-  public rate = 3;
+  public session = null;
+
+  mounted() {
+    Database.getCurrentSession().then((session) => {
+      this.session = session;
+    });
+  }
+
   public formatCurrency(amount: number) {
     return formatCurrency(amount);
   }
 
   public get fsBucketUrl() {
     return process.env.VUE_APP_FS_BUCKET_URL;
+  }
+
+  public rate(rating: number) {
+    const courseId = Number(this.$route.params.id);
+    rpc .call(RPC_RATE_COURSE_METHOD, { rating, courseId })
+      .then(() => {
+        this.$buefy.toast.open({
+          message: "Success",
+          type: "is-success",
+          position: "is-top",
+        });
+      })
+      .catch(() => {
+        this.$buefy.toast.open({
+          message: "Failed to rate the course",
+          type: "is-danger",
+          position: "is-top",
+        });
+      });
   }
 }
 </script>

@@ -67,7 +67,6 @@
               </div>
             </div>
           </div>
-
           <div class="mt-3">
             <div class="card p-3" v-if="courseLoading">
               <b-skeleton />

@@ -13,6 +13,11 @@ const buefyOptions = {
   defaultIconPack: "uil",
   customIconPacks: {
     uis: {
+      sizes: {
+        default: "is-size-6",
+        "is-small": "is-size-3",
+        "is-medium": "is-size-5",
+      },
       iconPrefix: "uis-",
       internalIcons: {
         star: "star",
