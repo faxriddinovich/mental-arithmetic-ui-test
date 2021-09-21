@@ -93,38 +93,10 @@
           >
         </div>
         <div class="column">
-          <div class="card p-3">
-            <form @submit.prevent="search" class="is-flex">
-              <b-input
-                v-model="searchText"
-                class="is-flex-grow-1"
-                placeholder="Please write something"
-                icon="search"
-              />
-              <b-button
-                native-type="submit"
-                type="is-primary"
-                class="ml-3"
-                icon-left="search"
-                >Search</b-button
-              >
-            </form>
-          </div>
-          <div class="mt-4">
-            <cloud-loading class="mt-2" v-if="lessonsLoading" />
-            <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
-            <div class="columns is-multiline" v-else>
-              <div
-                class="
-                  column
-                  is-12-mobile is-12-tablet is-12-desktop is-6-widescreen
-                "
-                v-for="lesson of lessons"
-                :key="lesson.id"
-              >
-                <lesson-card :lesson="lesson" />
-              </div>
-            </div>
+          <cloud-loading class="mt-2" v-if="lessonsLoading" />
+          <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
+          <div class="mb-2" v-for="lesson of lessons" :key="lesson.id">
+            <lesson-card :lesson="lesson" />
           </div>
         </div>
       </div>
@@ -137,7 +109,7 @@ import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
-import { Base } from '@/mixins/base.mixin';
+import { Base } from "@/mixins/base.mixin";
 import { rpc } from "@/rpc/rpc";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,

@@ -1,30 +1,23 @@
 <template>
-  <div class="card" style="border: 1px solid rgb(171, 183, 183)">
-    <div class="p-3">
-      <div class="is-flex is-justify-content-space-between">
-        <div class="has-text-weight-semibold has-text-underlined is-size-5">
-          {{ lesson.title }}
+  <div class="card p-3">
+    <div class="columns">
+      <div class="column is-9-desktop">
+        <span class="is-size-6 has-text-weight-semibold">{{
+          lesson.title
+        }}</span>
+      </div>
+      <div class="column is-3-desktop">
+        <div class="has-text-right pr-2">
+          <span class="has-text-weight-semibold"
+            ><b-icon icon="paperclip" />5</span
+          >
+          <span class="ml-2 has-text-weight-semibold"
+            ><b-icon icon="ruler" />{{ lesson.tasks }}</span
+          >
+          <span class="ml-2 has-text-weight-semibold"
+            ><b-icon icon="comment-dots" />{{ lesson.comments }}</span
+          >
         </div>
-        <b-tag
-          type="is-success"
-          class="p-2 ml-2 is-size-8 has-text-weight-semibold"
-          >NEW</b-tag
-        >
-      </div>
-    </div>
-    <div class="card-footer">
-      <div class="card-footer-item p-2">
-        <b-icon icon="play" /><span class="has-text-weight-semibold">23</span>
-      </div>
-      <div class="card-footer-item p-2">
-        <b-icon icon="ruler" /><span class="has-text-weight-semibold">{{
-          lesson.tasks
-        }}</span>
-      </div>
-      <div class="card-footer-item p-2">
-        <b-icon icon="comment-dots" /><span class="has-text-weight-semibold">{{
-          lesson.comments
-        }}</span>
       </div>
     </div>
   </div>
@@ -37,3 +30,12 @@ export default class Lessons extends Vue {
   @Prop(Object) public lesson;
 }
 </script>
+<style lang="scss" scoped>
+.is-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

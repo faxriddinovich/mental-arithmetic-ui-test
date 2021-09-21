@@ -1,10 +1,10 @@
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue } from "vue-property-decorator";
 import { formatCurrency } from "@/common/utils";
-import { Database } from '@/services/indexeddb/database';
-import { Session } from '@/services/indexeddb/interfaces';
+import { Database } from "@/services/indexeddb/database";
+import { Session } from "@/services/indexeddb/interfaces";
 
 @Component
-export  class Base extends Vue {
+export class Base extends Vue {
   public session: Session | null = null;
 
   mounted() {

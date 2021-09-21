@@ -99,7 +99,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { formatCurrency } from "@/common/utils";
 import { rpc } from "@/rpc/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
-import { Database } from '@/services/indexeddb/database';
+import { Database } from "@/services/indexeddb/database";
 
 @Component
 export default class CourseCard extends Vue {
@@ -125,7 +125,8 @@ export default class CourseCard extends Vue {
 
   public rate(rating: number) {
     const courseId = Number(this.$route.params.id);
-    rpc .call(RPC_RATE_COURSE_METHOD, { rating, courseId })
+    rpc
+      .call(RPC_RATE_COURSE_METHOD, { rating, courseId })
       .then(() => {
         this.$buefy.toast.open({
           message: "Success",
@@ -143,7 +144,7 @@ export default class CourseCard extends Vue {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .is-card-title {
   display: -webkit-box;
   -webkit-line-clamp: 2;

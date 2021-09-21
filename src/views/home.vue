@@ -36,8 +36,8 @@
 
 <script lang="ts">
 import { Vue, Component, Mixins } from "vue-property-decorator";
-import { Base } from '@/mixins/base.mixin';
+import { Base } from "@/mixins/base.mixin";
 
 @Component
-export default class Home extends Mixins(Base) { }
+export default class Home extends Mixins(Base) {}
 </script>
