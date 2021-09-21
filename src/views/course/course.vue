@@ -95,8 +95,8 @@
         <div class="column">
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
-          <div class="mb-2" v-for="lesson of lessons" :key="lesson.id">
-            <lesson-card :lesson="lesson" />
+          <div class="mb-2" v-for="(lesson, idx) of lessons" :key="lesson.id">
+            <lesson-card :lesson="lesson" :idx="idx + 1" />
           </div>
         </div>
       </div>

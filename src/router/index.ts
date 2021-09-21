@@ -15,6 +15,8 @@ import Settings from "@/views/settings.vue";
 import Course from "@/views/course/course.vue";
 import CreateCourse from "@/views/course/create.vue";
 
+import Lesson from '@/views/lesson/lesson.vue';
+
 import AccountBlocked from "@/views/account/blocked.vue";
 
 Vue.use(VueRouter);
@@ -53,6 +55,11 @@ const routes: Array<RouteConfig> = [
     component: CreateCourse,
     meta: { requiresAuth: true, roles: ["root", "teacher"] },
   },
+  {
+    path: "/lessons/:id",
+    name: "Lesson",
+    component: Lesson,
+  }
 ];
 
 const router = new VueRouter({
