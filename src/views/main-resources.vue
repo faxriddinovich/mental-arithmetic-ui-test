@@ -45,7 +45,7 @@ export default class MainResource extends Vue {
     { title: "Numbers", icon: "10-plus", link: "/" },
     { title: "Flash card", icon: "square-shape", link: "/" },
     { title: "Table", icon: "browser", link: "/" },
-    { title: "Scores", icon: "chart-line", link: "/" },
+    { title: "Scores", icon: "chart-line", link: "/scores" },
     { title: "Settings", icon: "setting", link: "/settings" },
   ];
   async mounted() {

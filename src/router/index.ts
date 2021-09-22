@@ -15,9 +15,9 @@ import Settings from "@/views/settings.vue";
 import Course from "@/views/course/course.vue";
 import CreateCourse from "@/views/course/create.vue";
 
-import Lesson from '@/views/lesson/lesson.vue';
+import Lesson from "@/views/lesson/lesson.vue";
 
-import AccountBlocked from "@/views/account/blocked.vue";
+import Scores from "@/views/scores.vue";
 
 Vue.use(VueRouter);
 
@@ -59,7 +59,12 @@ const routes: Array<RouteConfig> = [
     path: "/lessons/:id",
     name: "Lesson",
     component: Lesson,
-  }
+  },
+  {
+    path: "/scores",
+    name: "Scores",
+    component: Scores,
+  },
 ];
 
 const router = new VueRouter({

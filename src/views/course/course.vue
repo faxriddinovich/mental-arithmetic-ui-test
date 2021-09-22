@@ -40,16 +40,16 @@
                       :disabled="courseLoading"
                       expanded
                       aria-controls="contentIdForA11y1"
-                      >I have an activation code</b-button
+                      >I have a coupon code</b-button
                     >
                   </template>
-                  <form @submit.prevent="activate" class="is-flex">
+                  <form @submit.prevent="purchaseUsingCoupon" class="is-flex">
                     <b-field class="is-flex-grow-1">
                       <b-input
                         icon="ticket"
                         size="is-small"
-                        placeholder="Please write the code"
-                        v-model="activationCode"
+                        placeholder="Please write the coupon code her"
+                        v-model="coupon"
                         required
                       ></b-input>
                     </b-field>
@@ -59,8 +59,8 @@
                       type="is-success"
                       size="is-small"
                       class="ml-2"
-                      :loading="activateButtonLoading"
-                      >Activate</b-button
+                      :loading="couponButtonLoading"
+                      >Purchase</b-button
                     >
                   </form>
                 </b-collapse>
@@ -130,8 +130,8 @@ export default class Course extends Mixins(Base) {
   public courseLoading = true;
   public lessonsLoading = true;
   public purchaseButtonLoading = false;
-  public activationCode = "";
-  public activateButtonLoading = false;
+  public couponButtonLoading = false;
+  public coupon = "";
   public searchText = "";
 
   async mounted() {
@@ -181,12 +181,12 @@ export default class Course extends Mixins(Base) {
     });
   }
 
-  public activate() {
-    this.activateButtonLoading = true;
+  public purchaseUsingCoupon() {
+    this.couponButtonLoading = true;
     rpc
       .call(RPC_PURCHASE_COURSE_METHOD, {
         courseId: Number(this.$route.params.id),
-        pcode: this.activationCode,
+        coupon: this.coupon,
       })
       .then(() => {
         this.$router.go();
@@ -198,7 +198,7 @@ export default class Course extends Mixins(Base) {
           type: "is-danger",
         });
       })
-      .finally(() => (this.activateButtonLoading = false));
+      .finally(() => (this.couponButtonLoading = false));
   }
 
   public purchase() {
