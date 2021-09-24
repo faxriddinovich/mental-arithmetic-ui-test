@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="mx-2 pt-2">
-      <div class="columns">
-        <div class="column is-8-desktop">
+      <div class="columns is-desktop">
+        <div class="column is-12-tablet is-8-desktop">
           <b-tabs
             type="is-toggle"
             class="is-lesson-tabs"
@@ -236,7 +236,7 @@
             >
           </div>
         </div>
-        <div class="column is-4-desktop">
+        <div class="column is-12-tablet is-4-desktop">
           <lesson-card
             :lesson="{ id: 2, title: 'test', comments: 2, tasks: 4 }"
             :idx="1"
