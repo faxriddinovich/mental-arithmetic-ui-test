@@ -117,15 +117,18 @@
             <b-tab-item>
               <template #header>
                 <b-icon icon="ruler" class="mx-0" />
-                <span class="is-hidden-mobile">Tasks</span>
+                <span class="is-hidden-mobile">Tasks:</span
+                ><span class="ml-1 has-text-weight-semibold">5</span>
               </template>
 
-              <div class="card p-3 is-bordered">
+              <div class="card py-1 is-bordered">
                 <div
                   v-for="(task, index) of tasks"
                   :key="index"
                   class="
-                    mb-2
+                    is-task-item
+                    py-1
+                    px-3
                     is-flex
                     is-justify-content-space-between
                     is-align-items-center
@@ -141,9 +144,7 @@
                     </div>
                   </div>
                   <div>
-                    <b-button icon-right="arrow-right" size="is-small"
-                      >Perform</b-button
-                    >
+                    <b-icon icon="arrow-right" size="is-medium" />
                   </div>
                 </div>
               </div>
@@ -154,9 +155,69 @@
             <b-tab-item>
               <template #header>
                 <b-icon icon="comment-dots" class="mx-0" />
-                <span class="is-hidden-mobile">Comments</span>
+                <span class="is-hidden-mobile">Comments:</span
+                ><span class="ml-1 has-text-weight-semibold">1</span>
               </template>
-              <div class="card p-2">comments</div>
+              <div class="card p-4 is-bordered">
+                <form>
+                  <b-field>
+                    <b-input
+                      maxlength="200"
+                      type="textarea"
+                      placeholder="Write something..."
+                      :has-counter="false"
+                    ></b-input>
+                  </b-field>
+                  <div class="has-text-right">
+                    <b-button
+                      native-type="submit"
+                      type="is-success"
+                      icon-left="pen"
+                      >Leave comment</b-button
+                    >
+                  </div>
+                </form>
+              </div>
+              <div class="card mt-3 p-3 is-bordered">
+                <article class="media">
+                  <figure class="media-left">
+                    <p class="image is-64x64">
+                      <img
+                        src="https://bulma.io/images/placeholders/128x128.png"
+                      />
+                    </p>
+                  </figure>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>John Smith</strong>
+                        <span class="ml-2"
+                          ><b-icon icon="calendar-alt" size="is-small" />
+                          <small class="ml-1">2027.01.01 00:00:01</small></span
+                        >
+                        <br />
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Proin ornare magna eros, eu pellentesque tortor
+                        vestibulum ut. Maecenas non massa sem. Etiam finibus
+                        odio quis feugiat facilisis.
+                      </p>
+                    </div>
+                    <nav class="level is-mobile">
+                      <div class="level-left">
+                        <b-button
+                          icon-left="corner-up-left"
+                          class="has-text-weight-semibold"
+                          size="is-small"
+                          >Reply</b-button
+                        >
+                      </div>
+                    </nav>
+                  </div>
+                  <div class="media-right">
+                    <b-icon icon="trash-alt" />
+                  </div>
+                </article>
+              </div>
             </b-tab-item>
           </b-tabs>
           <!-- End comments -->
@@ -218,7 +279,14 @@ export default class Lesson extends Vue {
 <style lang="scss">
 $border-color: rgb(149, 165, 166);
 
-.is-task {
+.is-task-item {
+  //padding-left: 0.75rem;
+  //padding-right: 0.75rem;
+}
+
+.is-task-item:hover {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .is-lesson-tabs > .tabs {
