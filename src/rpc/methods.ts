@@ -12,3 +12,5 @@ export const RPC_GET_LATEST_EVENT_METHOD = "get_latest_event";
 export const RPC_GET_COURSE_CATEGORIES_METHOD = "get_course_categories";
 export const RPC_CREATE_COURSE_METHOD = "create_course";
 export const RPC_RATE_COURSE_METHOD = "rate_course";
+
+export const RPC_GET_LESSON_METHOD = "get_lesson";

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="mx-2 pt-5">
+    <div class="mx-2 pt-2">
       <div class="columns">
         <div
           class="column is-12-mobile is-6-tablet is-5-desktop is-4-widescreen"

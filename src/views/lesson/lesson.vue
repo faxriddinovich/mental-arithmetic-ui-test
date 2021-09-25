@@ -17,12 +17,15 @@
               </template>
 
               <div>
-                <div class="is-size-5 has-text-weight-semibold">
-                  Marketing in 5 minutes
+                <b-skeleton width="200px" v-if="isLoading" />
+                <div class="is-size-5 has-text-weight-semibold" v-else>
+                  {{ lesson.title }}
                 </div>
+                <b-skeleton width="350px" v-if="isLoading" />
                 <nav
                   class="breadcrumb has-arrow-separator"
                   aria-label="breadcrumbs"
+                  v-else
                 >
                   <ul>
                     <li>
@@ -30,15 +33,26 @@
                         ><b-icon icon="home" />Home</router-link
                       >
                     </li>
-                    <li><a href="#">Marketing in 5 mins!</a></li>
+                    <li>
+                      <router-link
+                        :to="{
+                          name: 'Course',
+                          params: { id: lesson.course.id },
+                        }"
+                        >{{ lesson.course.title }}</router-link
+                      >
+                    </li>
                     <li class="is-active">
-                      <a href="#">Digital marketing Demystified in 5 Mins!</a>
+                      <a href="#">{{ lesson.title }}</a>
                     </li>
                   </ul>
                 </nav>
               </div>
 
-              <div class="is-bordered card mt-4 is-overflow is-clipped">
+              <div
+                class="is-bordered card mt-4 is-overflow is-clipped"
+                v-if="!isLoading"
+              >
                 <div>
                   <video width="100%" controls>
                     <source src="https://www.w3schools.com/html/mov_bbb.mp4" />
@@ -73,38 +87,23 @@
 
               <div class="card mt-4 p-3 is-bordered">
                 <div>
-                  <div class="is-size-5 has-text-weight-semibold">
-                    What Is Marketing?
+                  <b-skeleton :count="4" v-if="isLoading" />
+                  <div v-else>
+                    {{ lesson.body }}
                   </div>
-                  Marketing refers to activities a company undertakes to promote
-                  the buying or selling of a product or service. Marketing
-                  includes advertising, selling, and delivering products to
-                  consumers or other businesses. Some marketing is done by
-                  affiliates on behalf of a company. Professionals who work in a
-                  corporation's marketing and promotion departments seek to get
-                  the attention of key potential audiences through advertising.
-                  Promotions are targeted to certain audiences and may involve
-                  celebrity endorsements, catchy phrases or slogans, memorable
-                  packaging or graphic designs and overall media exposure.
-                  <div class="is-size-5 has-text-weight-semibold mt-3">
-                    Understanding marketing
-                  </div>
-                  Marketing as a discipline involves all the actions a company
-                  undertakes to draw in customers and maintain relationships
-                  with them. Networking with potential or past clients is part
-                  of the work too, and may include writing thank you emails,
-                  playing golf with prospective clients, returning calls and
-                  emails quickly, and meeting with clients for coffee or a meal.
-                  At its most basic level, marketing seeks to match a company's
-                  products and services to customers who want access to those
-                  products. Matching products to customers ultimately ensures
-                  profitability.
                 </div>
                 <div class="is-flex is-justify-content-space-between mt-4">
-                  <span class="is-size-7"
-                    ><b-icon icon="user" size="is-small" /> mhw0</span
+                  <b-skeleton width="100px" v-if="isLoading" />
+                  <span class="is-size-7" v-else
+                    ><b-icon icon="user" size="is-small" />{{ lesson.author.username }}</span
                   >
-                  <span class="is-size-7"
+
+                  <b-skeleton
+                    width="100px"
+                    position="is-right"
+                    v-if="isLoading"
+                  />
+                  <span class="is-size-7" v-else-if="lesson.createdAt"
                     ><b-icon icon="calendar-alt" size="is-small" /> 2021-02-02
                     10:41:24</span
                   >
@@ -117,36 +116,26 @@
             <b-tab-item>
               <template #header>
                 <b-icon icon="ruler" class="mx-0" />
-                <span class="is-hidden-mobile">Tasks:</span
-                ><span class="ml-1 has-text-weight-semibold">5</span>
+                <span class="is-hidden-mobile">Tasks:</span>
+                <span class="icon is-small ml-1" v-if="isLoading">
+                  <b-skeleton></b-skeleton>
+                </span>
+                <span class="ml-1 has-text-weight-semibold" v-else>5</span>
               </template>
 
               <div class="card py-1 is-bordered">
-                <div
+                <div v-if="isLoading">
+                  <lesson-task />
+                  <lesson-task />
+                  <lesson-task />
+                </div>
+                <lesson-task
                   v-for="(task, index) of tasks"
                   :key="index"
-                  class="
-                    is-task-item
-                    py-1
-                    px-3
-                    is-flex
-                    is-justify-content-space-between
-                    is-align-items-center
-                  "
-                >
-                  <div class="is-flex is-align-items-center">
-                    <img :src="task.image" width="40" />
-                    <div class="ml-2">
-                      <div class="has-text-weight-semibold">
-                        {{ ++index }}. {{ task.title }}
-                      </div>
-                      <div>Some description here</div>
-                    </div>
-                  </div>
-                  <div>
-                    <b-icon icon="arrow-right" size="is-medium" />
-                  </div>
-                </div>
+                  :task="task"
+                  :idx="++index"
+                  v-else
+                />
               </div>
             </b-tab-item>
             <!-- End tasks -->
@@ -155,8 +144,11 @@
             <b-tab-item>
               <template #header>
                 <b-icon icon="comment-dots" class="mx-0" />
-                <span class="is-hidden-mobile">Comments:</span
-                ><span class="ml-1 has-text-weight-semibold">1</span>
+                <span class="is-hidden-mobile">Comments:</span>
+                <span class="icon is-small ml-1" v-if="isLoading">
+                  <b-skeleton></b-skeleton>
+                </span>
+                <span class="ml-1 has-text-weight-semibold" v-else>5</span>
               </template>
               <div class="card p-4 is-bordered">
                 <form>
@@ -179,44 +171,8 @@
                 </form>
               </div>
               <div class="card mt-3 p-3 is-bordered">
-                <article class="media">
-                  <figure class="media-left">
-                    <p class="image is-64x64">
-                      <img
-                        src="https://bulma.io/images/placeholders/128x128.png"
-                      />
-                    </p>
-                  </figure>
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong>John Smith</strong>
-                        <span class="ml-2"
-                          ><b-icon icon="calendar-alt" size="is-small" />
-                          <small class="ml-1">2027.01.01 00:00:01</small></span
-                        >
-                        <br />
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Proin ornare magna eros, eu pellentesque tortor
-                        vestibulum ut. Maecenas non massa sem. Etiam finibus
-                        odio quis feugiat facilisis.
-                      </p>
-                    </div>
-                    <nav class="level is-mobile">
-                      <div class="level-left">
-                        <b-button
-                          icon-left="corner-up-left"
-                          class="has-text-weight-semibold"
-                          size="is-small"
-                          >Reply</b-button
-                        >
-                      </div>
-                    </nav>
-                  </div>
-                  <div class="media-right">
-                    <b-icon icon="trash-alt" />
-                  </div>
-                </article>
+                <lesson-comment />
+                <lesson-comment />
               </div>
             </b-tab-item>
           </b-tabs>
@@ -249,9 +205,19 @@
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
 import LessonCard from "@/components/lesson/card.vue";
+import LessonTask from "@/components/lesson/task.vue";
+import LessonComment from "@/components/lesson/comment.vue";
+import { rpc } from "@/rpc/rpc";
+import { RPC_GET_LESSON_METHOD } from "@/rpc/methods";
 
-@Component({ components: { LessonCard } })
+@Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Vue {
+  public lesson = null;
+
+  public get isLoading() {
+    return this.lesson === null;
+  }
+
   public tasks = [
     {
       image: "https://cdn-icons-png.flaticon.com/512/4100/4100738.png",
@@ -274,20 +240,17 @@ export default class Lesson extends Vue {
       title: "Test",
     },
   ];
+
+  mounted() {
+    const lessonId = Number(this.$route.params.id);
+    rpc.call(RPC_GET_LESSON_METHOD, { lessonId }).then((lesson) => {
+      this.lesson = lesson;
+    });
+  }
 }
 </script>
 <style lang="scss">
 $border-color: rgb(149, 165, 166);
-
-.is-task-item {
-  //padding-left: 0.75rem;
-  //padding-right: 0.75rem;
-}
-
-.is-task-item:hover {
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.03);
-}
 
 .is-lesson-tabs > .tabs {
   background: white;
