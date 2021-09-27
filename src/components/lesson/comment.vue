@@ -10,7 +10,7 @@
       <div class="content">
         <b-skeleton width="200px" v-if="isLoading" />
         <span v-else>
-          <strong>John Smith</strong>
+          <strong>{{ comment.creator.username }}</strong>
           <span class="ml-2">
             <b-icon icon="calendar-alt" size="is-small" />
             <small class="ml-1">2027.01.01 00:00:01</small>
@@ -18,11 +18,9 @@
         </span>
 
         <b-skeleton :count="3" v-if="isLoading" />
-        <span v-else>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare
-          magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa
-          sem. Etiam finibus odio quis feugiat facilisis.
-        </span>
+        <div v-else>
+          {{ comment.body }}
+        </div>
       </div>
       <nav class="level is-mobile">
         <div class="level-left">
@@ -32,6 +30,7 @@
             icon-left="corner-up-left"
             class="has-text-weight-semibold"
             size="is-small"
+            @click="emitReply"
             v-else
             >Reply</b-button
           >
@@ -53,6 +52,10 @@ export default class Comment extends Vue {
 
   public get isLoading() {
     return !this.comment;
+  }
+
+  public emitReply() {
+    this.$emit("reply", this.comment.creator.username);
   }
 }
 </script>

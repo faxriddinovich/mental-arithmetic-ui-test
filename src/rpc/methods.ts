@@ -14,3 +14,6 @@ export const RPC_CREATE_COURSE_METHOD = "create_course";
 export const RPC_RATE_COURSE_METHOD = "rate_course";
 
 export const RPC_GET_LESSON_METHOD = "get_lesson";
+
+export const RPC_GET_COMMENTS_METHOD = "get_comments";
+export const RPC_CREATE_COMMENT_METHOD = "create_comment";

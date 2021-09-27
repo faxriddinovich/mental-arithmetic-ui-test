@@ -7,21 +7,22 @@
             type="is-toggle"
             class="is-lesson-tabs"
             :animated="false"
+            @input="tabChange"
             expanded
           >
             <!-- Lesson -->
-            <b-tab-item>
+            <b-tab-item value="lesson">
               <template #header>
                 <b-icon icon="file-blank" class="mx-0" />
                 <span class="is-hidden-mobile">Lesson</span>
               </template>
 
               <div>
-                <b-skeleton width="200px" v-if="isLoading" />
+                <b-skeleton width="200px" v-if="lessonLoading" />
                 <div class="is-size-5 has-text-weight-semibold" v-else>
                   {{ lesson.title }}
                 </div>
-                <b-skeleton width="350px" v-if="isLoading" />
+                <b-skeleton width="350px" v-if="lessonLoading" />
                 <nav
                   class="breadcrumb has-arrow-separator"
                   aria-label="breadcrumbs"
@@ -51,7 +52,7 @@
 
               <div
                 class="is-bordered card mt-4 is-overflow is-clipped"
-                v-if="!isLoading"
+                v-if="!lessonLoading"
               >
                 <div>
                   <video width="100%" controls>
@@ -87,21 +88,23 @@
 
               <div class="card mt-4 p-3 is-bordered">
                 <div>
-                  <b-skeleton :count="4" v-if="isLoading" />
+                  <b-skeleton :count="4" v-if="lessonLoading" />
                   <div v-else>
                     {{ lesson.body }}
                   </div>
                 </div>
                 <div class="is-flex is-justify-content-space-between mt-4">
-                  <b-skeleton width="100px" v-if="isLoading" />
+                  <b-skeleton width="100px" v-if="lessonLoading" />
                   <span class="is-size-7" v-else
-                    ><b-icon icon="user" size="is-small" />{{ lesson.author.username }}</span
+                    ><b-icon icon="user" size="is-small" />{{
+                      lesson.author.username
+                    }}</span
                   >
 
                   <b-skeleton
                     width="100px"
                     position="is-right"
-                    v-if="isLoading"
+                    v-if="lessonLoading"
                   />
                   <span class="is-size-7" v-else-if="lesson.createdAt"
                     ><b-icon icon="calendar-alt" size="is-small" /> 2021-02-02
@@ -113,18 +116,20 @@
             <!-- End lesson -->
 
             <!-- Tasks -->
-            <b-tab-item>
+            <b-tab-item value="tasks">
               <template #header>
                 <b-icon icon="ruler" class="mx-0" />
                 <span class="is-hidden-mobile">Tasks:</span>
-                <span class="icon is-small ml-1" v-if="isLoading">
+                <span class="icon is-small ml-1" v-if="lessonLoading">
                   <b-skeleton></b-skeleton>
                 </span>
-                <span class="ml-1 has-text-weight-semibold" v-else>5</span>
+                <span class="ml-1 has-text-weight-semibold" v-else>{{
+                  lesson.tasks
+                }}</span>
               </template>
 
               <div class="card py-1 is-bordered">
-                <div v-if="isLoading">
+                <div v-if="lessonLoading">
                   <lesson-task />
                   <lesson-task />
                   <lesson-task />
@@ -139,25 +144,31 @@
               </div>
             </b-tab-item>
             <!-- End tasks -->
-            <!-- Comments -->
 
-            <b-tab-item>
+            <!-- Comments -->
+            <b-tab-item value="comments">
               <template #header>
                 <b-icon icon="comment-dots" class="mx-0" />
                 <span class="is-hidden-mobile">Comments:</span>
-                <span class="icon is-small ml-1" v-if="isLoading">
+                <span class="icon is-small ml-1" v-if="lessonLoading">
                   <b-skeleton></b-skeleton>
                 </span>
-                <span class="ml-1 has-text-weight-semibold" v-else>5</span>
+                <span class="ml-1 has-text-weight-semibold" v-else>{{
+                  lesson.comments
+                }}</span>
               </template>
               <div class="card p-4 is-bordered">
-                <form>
+                <form @submit.prevent="createComment">
                   <b-field>
                     <b-input
-                      maxlength="200"
                       type="textarea"
+                      minlength="1"
+                      maxlength="400"
                       placeholder="Write something..."
                       :has-counter="false"
+                      ref="commentTextare"
+                      v-model="comment"
+                      required
                     ></b-input>
                   </b-field>
                   <div class="has-text-right">
@@ -170,9 +181,25 @@
                   </div>
                 </form>
               </div>
-              <div class="card mt-3 p-3 is-bordered">
-                <lesson-comment />
-                <lesson-comment />
+              <div class="mt-3">
+                <div class="card p-3 is-bordered" v-if="commentsLoading">
+                  <lesson-comment />
+                  <lesson-comment />
+                </div>
+                <div
+                  class="has-text-centered has-text-weight-bold"
+                  v-else-if="!comments.length"
+                >
+                  There are no comments yet.
+                </div>
+                <div class="card p-3 is-bordered" v-else>
+                  <lesson-comment
+                    @reply="reply"
+                    v-for="comment of comments"
+                    :comment="comment"
+                    :key="comment.id"
+                  />
+                </div>
               </div>
             </b-tab-item>
           </b-tabs>
@@ -208,14 +235,25 @@ import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
 import { rpc } from "@/rpc/rpc";
-import { RPC_GET_LESSON_METHOD } from "@/rpc/methods";
+import {
+  RPC_GET_LESSON_METHOD,
+  RPC_GET_COMMENTS_METHOD,
+  RPC_CREATE_COMMENT_METHOD,
+} from "@/rpc/methods";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Vue {
   public lesson = null;
+  public comments = null;
 
-  public get isLoading() {
+  public comment = "";
+
+  public get lessonLoading() {
     return this.lesson === null;
+  }
+
+  public get commentsLoading() {
+    return this.comments === null;
   }
 
   public tasks = [
@@ -246,6 +284,43 @@ export default class Lesson extends Vue {
     rpc.call(RPC_GET_LESSON_METHOD, { lessonId }).then((lesson) => {
       this.lesson = lesson;
     });
+  }
+
+  public tabChange(tab) {
+    if (tab === "comments") {
+      this.loadComments();
+      return;
+    }
+  }
+
+  public loadComments() {
+    this.comments = null;
+    const lessonId = Number(this.$route.params.id);
+    rpc.call(RPC_GET_COMMENTS_METHOD, { lessonId }).then((comments) => {
+      this.comments = comments;
+    });
+  }
+
+  public reply(to: string) {
+    this.$refs.commentTextare.focus();
+    this.comment = `@${to}, ${this.comment}`;
+    window.scrollTo(0, 0);
+  }
+
+  public createComment() {
+    const lessonId = Number(this.$route.params.id);
+    rpc
+      .call(RPC_CREATE_COMMENT_METHOD, { lessonId, body: this.comment })
+      .then(() => {
+        this.loadComments();
+      })
+      .catch(() => {
+        this.$buefy.toast.open({
+          type: "is-danger",
+          position: "is-top",
+          message: "Unable to leave a comment",
+        });
+      });
   }
 }
 </script>
