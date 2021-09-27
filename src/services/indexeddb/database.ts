@@ -7,8 +7,8 @@ class AsyncDatabase extends Dexie {
 
   constructor() {
     super(AsyncDatabase.db);
-    this.version(6).stores({
-      sessions: "++id, username, session, role, isCurrent, date",
+    this.version(1).stores({
+      sessions: "&id, username, session, role, isCurrent, date",
       settings: "&key, value",
     });
   }
@@ -22,7 +22,7 @@ class AsyncDatabase extends Dexie {
   }
 
   public async addSession(account: AuthAccountContract) {
-    const { username, session, role } = account;
+    const { id, username, session, role } = account;
     const sessionsTable = this.table("sessions");
     const hasCurrent = await sessionsTable.where({ isCurrent: 1 }).first();
     const existingSession = sessionsTable.where({ username });
@@ -36,6 +36,7 @@ class AsyncDatabase extends Dexie {
 
     const date = new Date().toUTCString();
     await sessionsTable.add({
+      id,
       username,
       session,
       role,

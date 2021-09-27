@@ -13,7 +13,7 @@
           <strong>{{ comment.creator.username }}</strong>
           <span class="ml-2">
             <b-icon icon="calendar-alt" size="is-small" />
-            <small class="ml-1">2027.01.01 00:00:01</small>
+            <small class="ml-1">{{ comment.createdAt }}</small>
           </span>
         </span>
 
@@ -31,31 +31,52 @@
             class="has-text-weight-semibold"
             size="is-small"
             @click="emitReply"
-            v-else
+            v-else-if="canReply"
             >Reply</b-button
           >
         </div>
       </nav>
     </div>
-    <div class="media-right">
-      <b-icon icon="trash-alt" />
+    <div class="media-right" v-if="canDelete">
+      <b-icon
+        icon="trash-alt"
+        class="is-clickable"
+        @click.native="emitDelete"
+      />
     </div>
   </article>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { Base } from "@/mixins/base.mixin";
 
 @Component
-export default class Comment extends Vue {
+export default class Comment extends Mixins(Base) {
   @Prop(Object) public comment;
 
   public get isLoading() {
     return !this.comment;
   }
 
+  public get canDelete() {
+    const { session, comment } = this;
+    return (
+      session && (session.role === "root" || comment.creator.id === session.id)
+    );
+  }
+
+  public get canReply() {
+    const { session, comment } = this;
+    return session && comment.creator.id !== session.id;
+  }
+
   public emitReply() {
     this.$emit("reply", this.comment.creator.username);
+  }
+
+  public emitDelete() {
+    this.$emit("delete", this.comment.id);
   }
 }
 </script>

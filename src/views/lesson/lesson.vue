@@ -107,8 +107,9 @@
                     v-if="lessonLoading"
                   />
                   <span class="is-size-7" v-else-if="lesson.createdAt"
-                    ><b-icon icon="calendar-alt" size="is-small" /> 2021-02-02
-                    10:41:24</span
+                    ><b-icon icon="calendar-alt" size="is-small" />{{
+                      lesson.createdAt
+                    }}</span
                   >
                 </div>
               </div>
@@ -157,7 +158,7 @@
                   lesson.comments
                 }}</span>
               </template>
-              <div class="card p-4 is-bordered">
+              <div class="card p-4 is-bordered" v-if="session">
                 <form @submit.prevent="createComment">
                   <b-field>
                     <b-input
@@ -194,7 +195,8 @@
                 </div>
                 <div class="card p-3 is-bordered" v-else>
                   <lesson-comment
-                    @reply="reply"
+                    @reply="replyComment"
+                    @delete="deleteComment"
                     v-for="comment of comments"
                     :comment="comment"
                     :key="comment.id"
@@ -213,7 +215,10 @@
               icon-left="arrow-left"
               class="ml-2"
               tag="router-link"
-              to="/"
+              :to="{
+                name: 'Course',
+                params: { id: lesson && lesson.course.id },
+              }"
               expanded
               >Course</b-button
             >
@@ -231,6 +236,7 @@
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
+import { Base } from "@/mixins/base.mixin";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
@@ -239,10 +245,11 @@ import {
   RPC_GET_LESSON_METHOD,
   RPC_GET_COMMENTS_METHOD,
   RPC_CREATE_COMMENT_METHOD,
+  RPC_DELETE_COMMENT_METHOD,
 } from "@/rpc/methods";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
-export default class Lesson extends Vue {
+export default class Lesson extends Mixins(Base) {
   public lesson = null;
   public comments = null;
 
@@ -301,10 +308,16 @@ export default class Lesson extends Vue {
     });
   }
 
-  public reply(to: string) {
+  public replyComment(to: string) {
     this.$refs.commentTextare.focus();
     this.comment = `@${to}, ${this.comment}`;
     window.scrollTo(0, 0);
+  }
+
+  public deleteComment(commentId: number) {
+    rpc.call(RPC_DELETE_COMMENT_METHOD, { commentId }).then(() => {
+      this.loadComments();
+    });
   }
 
   public createComment() {
