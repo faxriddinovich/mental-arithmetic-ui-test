@@ -79,7 +79,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (!session) return next({ name: "Authenticate" });
 
-    if (!to.meta.roles.includes(session.role))
+    if (to.meta && !to.meta.roles.includes(session.role))
       return next({ name: "MainResources" });
   }
   next();

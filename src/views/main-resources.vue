@@ -30,16 +30,19 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Courses from "@/views/course/courses.vue";
+
 import { Database } from "@/services/indexeddb/database";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/rpc/methods";
-import Courses from "@/views/course/courses.vue";
+import { EventContract } from '@/rpc/contracts/event';
 
 @Component({
   components: { Courses },
 })
 export default class MainResource extends Vue {
-  public event = false;
+  public event: EventContract | null = null;
+
   public items = [
     { title: "Abacus", icon: "abacus", link: "/" },
     { title: "Numbers", icon: "10-plus", link: "/" },
@@ -48,12 +51,15 @@ export default class MainResource extends Vue {
     { title: "Scores", icon: "chart-line", link: "/scores" },
     { title: "Settings", icon: "setting", link: "/settings" },
   ];
-  async mounted() {
-    const enabled = await Database.eventsEnabled();
-    if (enabled) {
-      const event = await rpc.call(RPC_GET_LATEST_EVENT_METHOD);
-      this.event = event;
-    }
+
+  mounted() {
+    Database.eventsEnabled().then((enabled) => {
+      if(enabled) 
+        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event) => {
+          // this must be fixed in the future
+          this.event = (event as any) as EventContract;
+        });
+    });
   }
 }
 </script>

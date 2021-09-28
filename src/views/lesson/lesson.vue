@@ -235,7 +235,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import { Component, Mixins, Vue, Ref } from "vue-property-decorator";
 import { Base } from "@/mixins/base.mixin";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
@@ -247,11 +247,15 @@ import {
   RPC_CREATE_COMMENT_METHOD,
   RPC_DELETE_COMMENT_METHOD,
 } from "@/rpc/methods";
+import { CommentContract } from '@/rpc/contracts/comment';
+import { LessonContract } from '@/rpc/contracts/lesson';
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Mixins(Base) {
-  public lesson = null;
-  public comments = null;
+  @Ref() public commentTextarea!: HTMLElement;
+
+  public lesson: LessonContract | null = null;
+  public comments: CommentContract[] | null = null;
 
   public comment = "";
 
@@ -289,11 +293,12 @@ export default class Lesson extends Mixins(Base) {
   mounted() {
     const lessonId = Number(this.$route.params.id);
     rpc.call(RPC_GET_LESSON_METHOD, { lessonId }).then((lesson) => {
-      this.lesson = lesson;
+      // this MUST be fixed in the future
+      this.lesson = (lesson as any) as LessonContract;
     });
   }
 
-  public tabChange(tab) {
+  public tabChange(tab: string) {
     if (tab === "comments") {
       this.loadComments();
       return;
@@ -304,12 +309,13 @@ export default class Lesson extends Mixins(Base) {
     this.comments = null;
     const lessonId = Number(this.$route.params.id);
     rpc.call(RPC_GET_COMMENTS_METHOD, { lessonId }).then((comments) => {
-      this.comments = comments;
+      // this MUST be fixed in the future
+      this.comments = (comments as any) as CommentContract[];
     });
   }
 
   public replyComment(to: string) {
-    this.$refs.commentTextare.focus();
+    this.commentTextarea.focus();
     this.comment = `@${to}, ${this.comment}`;
     window.scrollTo(0, 0);
   }

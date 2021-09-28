@@ -56,7 +56,7 @@
             <b-input
               type="text"
               icon="asterisk"
-              v-model="pcode"
+              v-model="coupon"
               placeholder="Please write strong text"
             />
           </b-field>
@@ -117,6 +117,7 @@ import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
   RPC_CREATE_COURSE_METHOD,
 } from "@/rpc/methods";
+import { CourseCreationContract } from '@/rpc/contracts/course';
 
 @Component
 export default class CreateCourse extends Vue {
@@ -125,13 +126,13 @@ export default class CreateCourse extends Vue {
   public category = "";
   public selectedCategory = null;
   public tags: string[] = [];
-  public pcode = "";
+  public coupon = "";
   public price = 0;
   public image = "";
-  public imageObj = null;
+  public imageObj: File | null = null;
 
   public categoryLoading = true;
-  public categories = [];
+  public categories: string[] = [];
 
   public uploadingState: "neutral" | "uploading" | "uploaded" = "neutral";
   public uploadPercent = 0;
@@ -142,7 +143,8 @@ export default class CreateCourse extends Vue {
     rpc
       .call(RPC_GET_COURSE_CATEGORIES_METHOD)
       .then((categories) => {
-        this.categories = categories;
+        // FIXME: this is must be fixed in the future
+        this.categories = (categories as any) as string[];
       })
       .finally(() => (this.categoryLoading = false));
   }
@@ -176,9 +178,9 @@ export default class CreateCourse extends Vue {
   }
 
   public get filtered() {
-    return this.categories.filter((option) => {
+    return this.categories.filter((option: string) => {
       return (
-        option.toString().toLowerCase().indexOf(this.category.toLowerCase()) >=
+        option.toLowerCase().indexOf(this.category.toLowerCase()) >=
         0
       );
     });
@@ -186,7 +188,7 @@ export default class CreateCourse extends Vue {
 
   public upload() {
     const form = new FormData();
-    form.append("image", this.imageObj);
+    form.append("image", this.imageObj!);
     this.uploadingState = "uploading";
     axios
       .post("http://192.168.1.103:3000/fs", form, {
@@ -200,14 +202,14 @@ export default class CreateCourse extends Vue {
   }
 
   public create() {
-    const params = {
+    const params: CourseCreationContract = {
       title: this.title,
       description: this.description,
       category: this.category,
     };
 
     if (this.tags.length) params["tags"] = this.tags;
-    if (this.pcode.length) params["pcode"] = this.pcode;
+    if (this.coupon.length) params["coupon"] = this.coupon;
     if (this.price) params["price"] = this.price;
     if (this.image.length) params["image"] = this.image;
     this.createButtonLoading = true;

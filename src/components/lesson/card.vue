@@ -29,10 +29,11 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { LessonContract } from '@/rpc/contracts/lesson';
 
 @Component
 export default class Lessons extends Vue {
-  @Prop(Object) public lesson;
+  @Prop(Object) public lesson!: LessonContract;
   @Prop(Number) public idx!: number;
 }
 </script>

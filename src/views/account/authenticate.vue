@@ -136,7 +136,8 @@ export default class AuthenticateAccount extends Vue {
 
     rpc
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
-      .then((account: AuthAccountContract) => {
+      //FIXME
+      .then((account: any) => {
         Database.addSession(account).then(() => {
           this.$buefy.toast.open({
             type: "is-success",

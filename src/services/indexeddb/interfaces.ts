@@ -3,6 +3,7 @@ export interface Session {
   username: string;
   session: string;
   date: string;
+  role: string;
 }
 
 export interface Setting {

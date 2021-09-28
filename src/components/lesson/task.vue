@@ -28,8 +28,9 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class Task extends Vue {
-  @Prop(Object) public task;
-  @Prop(Number) public idx;
+  // FIXME: TaskContract
+  @Prop(Object) public task!: any;
+  @Prop(Number) public idx!: number;
 
   public get isLoading() {
     return !this.task;

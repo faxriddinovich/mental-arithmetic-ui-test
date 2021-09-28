@@ -4,8 +4,8 @@ import { Line } from "vue-chartjs";
 
 @Component
 export default class LineChart extends Mixins(Line) {
-  @Prop(Object) public chartdata;
-  @Prop(Object) public options;
+  @Prop(Object) public chartdata!: any;
+  @Prop(Object) public options!: any;
 
   mounted() {
     this.renderChart(this.chartdata, this.options);

@@ -95,29 +95,17 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { formatCurrency } from "@/common/utils";
+import { Component, Vue, Prop, Mixins } from "vue-property-decorator";
+import { Base } from '@/mixins/base.mixin';
 import { rpc } from "@/rpc/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
-import { Database } from "@/services/indexeddb/database";
+import { CourseContract } from '@/rpc/contracts/course';
 
 @Component
-export default class CourseCard extends Vue {
-  @Prop(Object) public course!: any;
+export default class CourseCard extends Mixins(Base) {
+  @Prop(Object) public course!: CourseContract;
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
-
-  public session = null;
-
-  mounted() {
-    Database.getCurrentSession().then((session) => {
-      this.session = session;
-    });
-  }
-
-  public formatCurrency(amount: number) {
-    return formatCurrency(amount);
-  }
 
   public get fsBucketUrl() {
     return process.env.VUE_APP_FS_BUCKET_URL;

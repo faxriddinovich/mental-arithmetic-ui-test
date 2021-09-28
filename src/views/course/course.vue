@@ -120,13 +120,15 @@ import {
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
 } from "@/rpc/methods";
+import { CourseContract } from '@/rpc/contracts/course';
+import { LessonContract } from '@/rpc/contracts/lesson';
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
 })
 export default class Course extends Mixins(Base) {
-  public course = {};
-  public lessons = [];
+  public course: CourseContract | null = null;
+  public lessons: LessonContract[] = [];
   public courseLoading = true;
   public lessonsLoading = true;
   public purchaseButtonLoading = false;
@@ -140,7 +142,7 @@ export default class Course extends Mixins(Base) {
     rpc
       .call(RPC_GET_COURSE_METHOD, { courseId })
       .then((course) => {
-        this.course = course;
+        this.course = (course as any) as CourseContract;
       })
       .catch((error) => {
         if (error.jsonrpcError) {
@@ -157,7 +159,7 @@ export default class Course extends Mixins(Base) {
     rpc
       .call(RPC_GET_LESSONS_METHOD, { courseId })
       .then((lessons) => {
-        this.lessons = lessons;
+        this.lessons = (lessons as any) as LessonContract[];
       })
       .catch((error) => {
         if (error.jsonrpcError) {
@@ -182,14 +184,15 @@ export default class Course extends Mixins(Base) {
   }
 
   public purchaseUsingCoupon() {
+    const courseId = Number(this.$route.params.id);
     this.couponButtonLoading = true;
     rpc
       .call(RPC_PURCHASE_COURSE_METHOD, {
-        courseId: Number(this.$route.params.id),
+        courseId,
         coupon: this.coupon,
       })
       .then(() => {
-        this.$router.go();
+        this.$router.go(0);
       })
       .catch(() => {
         this.$buefy.toast.open({
@@ -208,7 +211,7 @@ export default class Course extends Mixins(Base) {
         courseId: Number(this.$route.params.id),
       })
       .then(() => {
-        this.$router.go();
+        this.$router.go(0);
       })
       .catch((error) => {
         if (error.jsonrpcError) {

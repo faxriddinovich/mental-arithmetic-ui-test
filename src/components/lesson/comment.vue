@@ -50,10 +50,11 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Base } from "@/mixins/base.mixin";
+import { CommentContract } from '@/rpc/contracts/lesson';
 
 @Component
 export default class Comment extends Mixins(Base) {
-  @Prop(Object) public comment;
+  @Prop(Object) public comment!: CommentContract;
 
   public get isLoading() {
     return !this.comment;
