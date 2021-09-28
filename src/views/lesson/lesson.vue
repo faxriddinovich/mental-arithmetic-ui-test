@@ -167,7 +167,7 @@
                       maxlength="400"
                       placeholder="Write something..."
                       :has-counter="false"
-                      ref="commentTextare"
+                      ref="commentTextarea"
                       v-model="comment"
                       required
                     ></b-input>
@@ -252,7 +252,7 @@ import { LessonContract } from '@/rpc/contracts/lesson';
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Mixins(Base) {
-  @Ref() public commentTextarea!: HTMLElement;
+  @Ref() public readonly commentTextarea!: HTMLElement;
 
   public lesson: LessonContract | null = null;
   public comments: CommentContract[] | null = null;
@@ -332,6 +332,7 @@ export default class Lesson extends Mixins(Base) {
       .call(RPC_CREATE_COMMENT_METHOD, { lessonId, body: this.comment })
       .then(() => {
         this.loadComments();
+        this.comment = "";
       })
       .catch(() => {
         this.$buefy.toast.open({
