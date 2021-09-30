@@ -1,10 +1,9 @@
 <template>
   <div class="card">
-    <div class="card-image is-relative" v-if="course.image">
+    <div class="card-image is-relative">
       <b-image
-        :src="fsBucketUrl + '/' + course.image"
-        :placeholder="require('../../../public/img/placeholder.jpg')"
-        :src-fallback="require('../../../public/img/placeholder.jpg')"
+        :src="course.image ? fsBucketFactory(course.image) : placeholderImg"
+        :placeholder="placeholderImg"
         ratio="4by3"
       />
       <div class="is-bottom-left" v-if="!isLoading">
@@ -14,7 +13,7 @@
     <div class="card-content p-3">
       <div class="has-text-weight-semibold is-size-5">
         <b-skeleton width="70%" v-if="isLoading" />
-        <div :class="detailed && 'is-card-title'" v-else>
+        <div :class="!detailed && 'is-card-title'" v-else>
           <span v-if="detailed">{{ course.title }}</span>
           <router-link
             :to="{ name: 'Course', params: { id: course.id } }"
@@ -107,8 +106,8 @@ export default class CourseCard extends Mixins(Base) {
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
-  public get fsBucketUrl() {
-    return process.env.VUE_APP_FS_BUCKET_URL;
+  public get placeholderImg() {
+    return require('../../../public/img/placeholder.jpg');
   }
 
   public rate(rating: number) {
