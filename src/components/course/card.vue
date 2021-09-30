@@ -59,8 +59,9 @@
         </div>
         <div>
           <b-skeleton width="100px" v-if="isLoading" />
-          <span class="has-text-weight-bold is-size-5 has-text-primary" v-else>
-            {{ formatCurrency(course.price) }}
+          <span class="has-text-weight-bold is-size-5" v-else>
+            <span class="has-text-success" v-if="course.price === 0">*FREE</span>
+            <span class="has-text-primary" v-else>{{ formatCurrency(course.price) }}</span>
           </span>
         </div>
       </div>
