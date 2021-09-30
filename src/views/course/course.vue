@@ -12,7 +12,7 @@
             </div>
             <div
               class="card p-3"
-              v-else-if="!course.purchased && course.price && session"
+              v-else-if="session && !course.purchased"
             >
               <div class="buttons">
                 <b-button
@@ -22,7 +22,7 @@
                   :loading="purchaseButtonLoading"
                   expanded
                   >Purchase
-                  <span class="has-text-weight-semibold">{{
+                  <span class="has-text-weight-semibold" v-if="course.price !== 0">{{
                     formatCurrency(course.price)
                   }}</span>
                 </b-button>
@@ -31,6 +31,7 @@
                   :open="false"
                   aria-id="contentIdForA11y1"
                   style="width: 100%"
+                  v-if="course.price !== 0"
                 >
                   <template #trigger>
                     <b-button
