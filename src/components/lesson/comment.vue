@@ -50,7 +50,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
 import { Base } from "@/mixins/base.mixin";
-import { CommentContract } from '@/rpc/contracts/lesson';
+import { CommentContract } from "@/rpc/contracts/lesson";
 
 @Component
 export default class Comment extends Mixins(Base) {
@@ -61,9 +61,11 @@ export default class Comment extends Mixins(Base) {
   }
 
   public get canDelete() {
-    const { session, comment } = this;
+    const { session, comment, isLoading } = this;
     return (
-      session && (session.role === "root" || comment.creator.id === session.id)
+      session &&
+      !isLoading &&
+      (session.role === "root" || comment.creator.id === session.id)
     );
   }
 

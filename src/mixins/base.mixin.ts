@@ -14,7 +14,7 @@ export class Base extends Vue {
   }
 
   public fsBucketFactory(id: string) {
-    return process.env.VUE_APP_FS_BUCKET_URL + '/' + id;
+    return process.env.VUE_APP_FS_BUCKET_URL + "/" + id;
   }
 
   public formatCurrency(amount: number): string {

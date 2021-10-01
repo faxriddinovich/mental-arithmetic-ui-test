@@ -1,5 +1,5 @@
 export interface EventContract {
-id: number,
-      body: string,
-      createdAt: string
+  id: number;
+  body: string;
+  createdAt: string;
 }

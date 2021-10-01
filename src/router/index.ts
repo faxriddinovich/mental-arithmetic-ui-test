@@ -16,6 +16,7 @@ import Course from "@/views/course/course.vue";
 import CreateCourse from "@/views/course/create.vue";
 
 import Lesson from "@/views/lesson/lesson.vue";
+import CreateLesson from "@/views/lesson/create.vue";
 
 import Scores from "@/views/scores.vue";
 
@@ -59,6 +60,11 @@ const routes: Array<RouteConfig> = [
     path: "/lessons/:id",
     name: "Lesson",
     component: Lesson,
+  },
+  {
+    path: "/lesson/create",
+    name: "CreateLesson",
+    component: CreateLesson,
   },
   {
     path: "/scores",

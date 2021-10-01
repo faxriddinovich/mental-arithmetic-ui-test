@@ -73,8 +73,8 @@ import CourseCard from "@/components/course/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
 import { rpc } from "@/rpc/rpc";
-import { RPC_GET_COURSES_METHOD } from '@/rpc/methods';
-import { CourseContract, GetCoursesContract } from '@/rpc/contracts/course';
+import { RPC_GET_COURSES_METHOD } from "@/rpc/methods";
+import { CourseContract, GetCoursesContract } from "@/rpc/contracts/course";
 
 @Component({
   components: { CourseCard, CloudLoading, NotFoundBox },
@@ -91,7 +91,7 @@ export default class Courses extends Vue {
     rpc
       .call(RPC_GET_COURSES_METHOD, { res: this.res })
       .then((courses) => {
-        this.courses = (courses as any) as CourseContract[];
+        this.courses = courses as any as CourseContract[];
       })
       .finally(() => (this.isLoading = false));
   }
@@ -105,7 +105,7 @@ export default class Courses extends Vue {
     rpc
       .call(RPC_GET_COURSES_METHOD, params)
       .then((courses) => {
-        this.courses = (courses as any) as CourseContract[];
+        this.courses = courses as any as CourseContract[];
       })
       .finally(() => (this.isLoading = false));
   }

@@ -8,12 +8,25 @@
             <span class="has-text-weight-semibold">{{ lesson.title }}</span>
           </span>
 
-          <b-tag type="is-success" class="has-text-weight-bold ml-1">NEW</b-tag>
+          <span class="ml-1">
+            <b-tag
+              type="is-primary"
+              class="has-text-weight-bold ml-1"
+              v-if="lesson.isTrial"
+              >TRIAL</b-tag
+            >
+            <b-tag
+              type="is-success"
+              class="has-text-weight-bold ml-1"
+              v-if="isNew(lesson.createdAt)"
+              >NEW</b-tag
+            >
+          </span>
         </div>
         <div class="column is-3-desktop">
           <div class="has-text-right pr-2">
             <span class="has-text-weight-semibold"
-              ><b-icon icon="paperclip" />5</span
+              ><b-icon icon="paperclip" />{{ lesson.attachementsCount }}</span
             >
             <span class="ml-1 has-text-weight-semibold"
               ><b-icon icon="ruler" />{{ lesson.tasks }}</span
@@ -29,12 +42,17 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { LessonContract } from '@/rpc/contracts/lesson';
+import { LessonContract } from "@/rpc/contracts/lesson";
 
 @Component
 export default class Lessons extends Vue {
   @Prop(Object) public lesson!: LessonContract;
   @Prop(Number) public idx!: number;
+
+  public isNew(createdAt: string): number {
+    const diff = Math.floor((new Date() - Date.parse(createdAt)) / 86400000);
+    return diff <= 7;
+  }
 }
 </script>
 <style lang="scss" scoped>

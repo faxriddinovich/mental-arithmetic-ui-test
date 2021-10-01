@@ -117,7 +117,7 @@ import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
   RPC_CREATE_COURSE_METHOD,
 } from "@/rpc/methods";
-import { CourseCreationContract } from '@/rpc/contracts/course';
+import { CourseCreationContract } from "@/rpc/contracts/course";
 
 @Component
 export default class CreateCourse extends Vue {
@@ -144,7 +144,7 @@ export default class CreateCourse extends Vue {
       .call(RPC_GET_COURSE_CATEGORIES_METHOD)
       .then((categories) => {
         // FIXME: this is must be fixed in the future
-        this.categories = (categories as any) as string[];
+        this.categories = categories as any as string[];
       })
       .finally(() => (this.categoryLoading = false));
   }
@@ -179,10 +179,7 @@ export default class CreateCourse extends Vue {
 
   public get filtered() {
     return this.categories.filter((option: string) => {
-      return (
-        option.toLowerCase().indexOf(this.category.toLowerCase()) >=
-        0
-      );
+      return option.toLowerCase().indexOf(this.category.toLowerCase()) >= 0;
     });
   }
 

@@ -50,7 +50,9 @@ class AsyncDatabase extends Dexie {
   }
 
   public async getCurrentSession(): Promise<Session | null> {
-    return (await this.table("sessions").where({ isCurrent: 1 }).first()) || null;
+    return (
+      (await this.table("sessions").where({ isCurrent: 1 }).first()) || null
+    );
   }
 
   public async eventsEnabled() {

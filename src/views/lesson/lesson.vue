@@ -52,36 +52,45 @@
 
               <div
                 class="is-bordered card mt-4 is-overflow is-clipped"
-                v-if="!lessonLoading"
+                v-if="!lessonLoading && lesson.attachements.length"
               >
                 <div>
-                  <video width="100%" controls>
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" />
-                  </video>
+                  <div
+                    v-for="(attachement, index) of lesson.attachements"
+                    :key="index"
+                  >
+                    <div v-if="index === selectedAttachementIndex">
+                      <div
+                        class="is-flex is-justify-content-center p-3"
+                        v-if="attachement.type === 'audio'"
+                      >
+                        <audio controls>
+                          <source :src="fsBucketFactory(attachement.fguid)" />
+                        </audio>
+                      </div>
+                      <div v-else-if="attachement.type === 'image'">
+                        <b-image
+                          :src="fsBucketFactory(attachement.fguid)"
+                          ratio="6by3"
+                        />
+                      </div>
+                      <div v-else-if="attachement.type === 'video'">
+                        <video class="is-128x128" width="100%" controls>
+                          <source :src="fsBucketFactory(attachement.fguid)" />
+                        </video>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <div
-                    class="
-                      px-3
-                      py-2
-                      is-playlist-active-item
-                      has-text-weight-semibold
-                    "
+                    v-for="(attachement, index) of lesson.attachements"
+                    :key="index"
+                    :class="attachementClass(index)"
+                    @click="selectedAttachementIndex = index"
                   >
-                    <b-icon icon="play" /> 1. Digital Marketing Demystified in 5
-                    Mins!
-                  </div>
-                  <div class="px-3 py-2 is-playlist-item">
-                    <b-icon icon="play" /> 2. How to Find a Hungry-to-Buy
-                    Audience with 3 Simple Questions
-                  </div>
-                  <div class="px-3 py-2 is-playlist-item">
-                    <b-icon icon="play" /> 3. How to Find a Hungry-to-Buy
-                    Audience with 3 Simple Questions
-                  </div>
-                  <div class="px-3 py-2 is-playlist-item">
-                    <b-icon icon="volume" /> 4. How to Find a Hungry-to-Buy
-                    Audience with 3 Simple Questions
+                    <b-icon :icon="attachementIcon(attachement.type)" />
+                    {{ index + 1 }}. {{ attachement.description }}
                   </div>
                 </div>
               </div>
@@ -247,8 +256,8 @@ import {
   RPC_CREATE_COMMENT_METHOD,
   RPC_DELETE_COMMENT_METHOD,
 } from "@/rpc/methods";
-import { CommentContract } from '@/rpc/contracts/comment';
-import { LessonContract } from '@/rpc/contracts/lesson';
+import { CommentContract } from "@/rpc/contracts/comment";
+import { LessonContract } from "@/rpc/contracts/lesson";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Mixins(Base) {
@@ -256,8 +265,8 @@ export default class Lesson extends Mixins(Base) {
 
   public lesson: LessonContract | null = null;
   public comments: CommentContract[] | null = null;
-
   public comment = "";
+  public selectedAttachementIndex = 0;
 
   public get lessonLoading() {
     return this.lesson === null;
@@ -265,6 +274,14 @@ export default class Lesson extends Mixins(Base) {
 
   public get commentsLoading() {
     return this.comments === null;
+  }
+
+  public attachementClass(index: number) {
+    return "px-3 py-2 is-playlist-item".concat(
+      this.selectedAttachementIndex === index
+        ? " is-playlist-active-item has-text-weight-semibold"
+        : ""
+    );
   }
 
   public tasks = [
@@ -290,11 +307,17 @@ export default class Lesson extends Mixins(Base) {
     },
   ];
 
+  public attachementIcon(type: string) {
+    if (type === "image") return "image";
+    if (type === "video") return "play";
+    return "volume";
+  }
+
   mounted() {
     const lessonId = Number(this.$route.params.id);
     rpc.call(RPC_GET_LESSON_METHOD, { lessonId }).then((lesson) => {
       // this MUST be fixed in the future
-      this.lesson = (lesson as any) as LessonContract;
+      this.lesson = lesson as any as LessonContract;
     });
   }
 
@@ -310,7 +333,7 @@ export default class Lesson extends Mixins(Base) {
     const lessonId = Number(this.$route.params.id);
     rpc.call(RPC_GET_COMMENTS_METHOD, { lessonId }).then((comments) => {
       // this MUST be fixed in the future
-      this.comments = (comments as any) as CommentContract[];
+      this.comments = comments as any as CommentContract[];
     });
   }
 

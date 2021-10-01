@@ -10,10 +10,7 @@
             <div class="card p-3" v-if="courseLoading">
               <b-skeleton :count="2" />
             </div>
-            <div
-              class="card p-3"
-              v-else-if="session && !course.purchased"
-            >
+            <div class="card p-3" v-else-if="session && !course.purchased">
               <div class="buttons">
                 <b-button
                   type="is-success"
@@ -22,9 +19,11 @@
                   :loading="purchaseButtonLoading"
                   expanded
                   >Purchase
-                  <span class="has-text-weight-semibold" v-if="course.price !== 0">{{
-                    formatCurrency(course.price)
-                  }}</span>
+                  <span
+                    class="has-text-weight-semibold"
+                    v-if="course.price !== 0"
+                    >{{ formatCurrency(course.price) }}</span
+                  >
                 </b-button>
 
                 <b-collapse
@@ -94,6 +93,20 @@
           >
         </div>
         <div class="column">
+          <div
+            class="is-flex is-justify-content-space-between mb-2"
+            v-if="session && !courseLoading && course.author.id === session.id"
+          >
+            <div class="buttons m-0">
+              <b-button icon-left="chart-line" type="is-primary"
+                >Scores</b-button
+              >
+              <b-button icon-left="pen" type="is-primary"
+                >Update course</b-button
+              >
+            </div>
+            <b-button icon-left="plus" type="is-success">Add lesson</b-button>
+          </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
           <div class="mb-2" v-for="(lesson, idx) of lessons" :key="lesson.id">
@@ -121,8 +134,8 @@ import {
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
 } from "@/rpc/methods";
-import { CourseContract } from '@/rpc/contracts/course';
-import { LessonContract } from '@/rpc/contracts/lesson';
+import { CourseContract } from "@/rpc/contracts/course";
+import { LessonContract } from "@/rpc/contracts/lesson";
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
@@ -143,7 +156,7 @@ export default class Course extends Mixins(Base) {
     rpc
       .call(RPC_GET_COURSE_METHOD, { courseId })
       .then((course) => {
-        this.course = (course as any) as CourseContract;
+        this.course = course as any as CourseContract;
       })
       .catch((error) => {
         if (error.jsonrpcError) {
@@ -160,7 +173,7 @@ export default class Course extends Mixins(Base) {
     rpc
       .call(RPC_GET_LESSONS_METHOD, { courseId })
       .then((lessons) => {
-        this.lessons = (lessons as any) as LessonContract[];
+        this.lessons = lessons as any as LessonContract[];
       })
       .catch((error) => {
         if (error.jsonrpcError) {

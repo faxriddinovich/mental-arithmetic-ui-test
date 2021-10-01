@@ -2,7 +2,11 @@
   <div class="card">
     <div class="card-image is-relative">
       <b-image
-        :src="course.image ? fsBucketFactory(course.image) : placeholderImg"
+        :src="
+          course && course.image
+            ? fsBucketFactory(course.image)
+            : placeholderImg
+        "
         :placeholder="placeholderImg"
         ratio="4by3"
       />
@@ -60,8 +64,12 @@
         <div>
           <b-skeleton width="100px" v-if="isLoading" />
           <span class="has-text-weight-bold is-size-5" v-else>
-            <span class="has-text-success" v-if="course.price === 0">*FREE</span>
-            <span class="has-text-primary" v-else>{{ formatCurrency(course.price) }}</span>
+            <span class="has-text-success" v-if="course.price === 0"
+              >*FREE</span
+            >
+            <span class="has-text-primary" v-else>{{
+              formatCurrency(course.price)
+            }}</span>
           </span>
         </div>
       </div>
@@ -96,10 +104,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Mixins } from "vue-property-decorator";
-import { Base } from '@/mixins/base.mixin';
+import { Base } from "@/mixins/base.mixin";
 import { rpc } from "@/rpc/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
-import { CourseContract } from '@/rpc/contracts/course';
+import { CourseContract } from "@/rpc/contracts/course";
 
 @Component
 export default class CourseCard extends Mixins(Base) {
@@ -108,7 +116,7 @@ export default class CourseCard extends Mixins(Base) {
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
   public get placeholderImg() {
-    return require('../../../public/img/placeholder.jpg');
+    return require("../../../public/img/placeholder.jpg");
   }
 
   public rate(rating: number) {
