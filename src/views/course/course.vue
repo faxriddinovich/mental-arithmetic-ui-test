@@ -126,14 +126,15 @@ import NotFoundBox from "@/components/not-found-box.vue";
 import { Base } from "@/mixins/base.mixin";
 import { rpc } from "@/rpc/rpc";
 import {
-  RPC_RESOURCE_NOT_FOUND_ERR_CODE,
-  RPC_INSUFFICIENT_BALANCE_ERR_CODE,
-} from "@/rpc/error-codes";
-import {
   RPC_GET_COURSE_METHOD,
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
 } from "@/rpc/methods";
+import {
+  RPC_RESOURCE_NOT_FOUND_ERR_CODE,
+  RPC_INSUFFICIENT_BALANCE_ERR_CODE,
+  RPC_NOT_PURCHASED_ERR_CODE
+} from "@/rpc/error-codes";
 import { CourseContract } from "@/rpc/contracts/course";
 import { LessonContract } from "@/rpc/contracts/lesson";
 
@@ -161,6 +162,7 @@ export default class Course extends Mixins(Base) {
       .catch((error) => {
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
+          console.log(jsonrpcError);
           if (jsonrpcError.code === RPC_RESOURCE_NOT_FOUND_ERR_CODE) {
             this.$router.push("/");
           }

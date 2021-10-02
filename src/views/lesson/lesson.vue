@@ -186,6 +186,7 @@
                       native-type="submit"
                       type="is-success"
                       icon-left="pen"
+                      :disabled="commentsLoading"
                       >Leave comment</b-button
                     >
                   </div>
@@ -256,6 +257,7 @@ import {
   RPC_CREATE_COMMENT_METHOD,
   RPC_DELETE_COMMENT_METHOD,
 } from "@/rpc/methods";
+import { RPC_NOT_PURCHASED_ERR_CODE } from '@/rpc/error-codes';
 import { CommentContract } from "@/rpc/contracts/comment";
 import { LessonContract } from "@/rpc/contracts/lesson";
 
@@ -318,6 +320,14 @@ export default class Lesson extends Mixins(Base) {
     rpc.call(RPC_GET_LESSON_METHOD, { lessonId }).then((lesson) => {
       // this MUST be fixed in the future
       this.lesson = lesson as any as LessonContract;
+    }).catch((error) => {
+      if(error.jsonrpcError) {
+        const { jsonrpcError } = error;
+        if(jsonrpcError.code === RPC_NOT_PURCHASED_ERR_CODE) {
+          this.$buefy.toast.open({ message: 'The course was not purchased', type: 'is-danger' });
+          this.$router.push({ name: 'MainResources' });
+        }
+      }
     });
   }
 
