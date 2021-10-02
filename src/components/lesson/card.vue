@@ -26,7 +26,7 @@
         <div class="column is-3-desktop">
           <div class="has-text-right pr-2">
             <span class="has-text-weight-semibold"
-              ><b-icon icon="paperclip" />{{ lesson.attachementsCount }}</span
+              ><b-icon icon="paperclip" />{{ lesson.attachmentsCount }}</span
             >
             <span class="ml-1 has-text-weight-semibold"
               ><b-icon icon="ruler" />{{ lesson.tasks }}</span

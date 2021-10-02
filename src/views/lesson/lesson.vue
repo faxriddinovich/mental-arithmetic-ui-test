@@ -52,31 +52,31 @@
 
               <div
                 class="is-bordered card mt-4 is-overflow is-clipped"
-                v-if="!lessonLoading && lesson.attachements.length"
+                v-if="!lessonLoading && lesson.attachments.length"
               >
                 <div>
                   <div
-                    v-for="(attachement, index) of lesson.attachements"
+                    v-for="(attachment, index) of lesson.attachments"
                     :key="index"
                   >
-                    <div v-if="index === selectedAttachementIndex">
+                    <div v-if="index === selectedAttachmentIndex">
                       <div
                         class="is-flex is-justify-content-center p-3"
-                        v-if="attachement.type === 'audio'"
+                        v-if="attachment.type === 'audio'"
                       >
                         <audio controls>
-                          <source :src="fsBucketFactory(attachement.fguid)" />
+                          <source :src="fsBucketFactory(attachment.fguid)" />
                         </audio>
                       </div>
-                      <div v-else-if="attachement.type === 'image'">
+                      <div v-else-if="attachment.type === 'image'">
                         <b-image
-                          :src="fsBucketFactory(attachement.fguid)"
+                          :src="fsBucketFactory(attachment.fguid)"
                           ratio="6by3"
                         />
                       </div>
-                      <div v-else-if="attachement.type === 'video'">
+                      <div v-else-if="attachment.type === 'video'">
                         <video class="is-128x128" width="100%" controls>
-                          <source :src="fsBucketFactory(attachement.fguid)" />
+                          <source :src="fsBucketFactory(attachment.fguid)" />
                         </video>
                       </div>
                     </div>
@@ -84,13 +84,13 @@
                 </div>
                 <div>
                   <div
-                    v-for="(attachement, index) of lesson.attachements"
+                    v-for="(attachment, index) of lesson.attachment"
                     :key="index"
-                    :class="attachementClass(index)"
-                    @click="selectedAttachementIndex = index"
+                    :class="attachmentClass(index)"
+                    @click="selectedAttachmentIndex = index"
                   >
-                    <b-icon :icon="attachementIcon(attachement.type)" />
-                    {{ index + 1 }}. {{ attachement.description }}
+                    <b-icon :icon="attachmentIcon(attachment.type)" />
+                    {{ index + 1 }}. {{ attachment.description }}
                   </div>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default class Lesson extends Mixins(Base) {
   public lesson: LessonContract | null = null;
   public comments: CommentContract[] | null = null;
   public comment = "";
-  public selectedAttachementIndex = 0;
+  public selectedAttachmentIndex = 0;
 
   public get lessonLoading() {
     return this.lesson === null;
@@ -276,9 +276,9 @@ export default class Lesson extends Mixins(Base) {
     return this.comments === null;
   }
 
-  public attachementClass(index: number) {
+  public attachmentClass(index: number) {
     return "px-3 py-2 is-playlist-item".concat(
-      this.selectedAttachementIndex === index
+      this.selectedAttachmentIndex === index
         ? " is-playlist-active-item has-text-weight-semibold"
         : ""
     );
@@ -307,7 +307,7 @@ export default class Lesson extends Mixins(Base) {
     },
   ];
 
-  public attachementIcon(type: string) {
+  public attachmentIcon(type: string) {
     if (type === "image") return "image";
     if (type === "video") return "play";
     return "volume";
