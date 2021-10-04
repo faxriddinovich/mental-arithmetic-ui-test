@@ -6,7 +6,7 @@
           <b-field label="Title:" horizontal>
             <b-input
               icon="pen"
-              v-model="title"
+              v-model="course.title"
               placeholder="e.g: Awesome course"
               minlength="5"
               maxlength="50"
@@ -16,7 +16,7 @@
           <b-field label="Description:" horizontal>
             <b-input
               type="textarea"
-              v-model="description"
+              v-model="course.description"
               placeholder="Some description here"
               minlength="10"
               maxlength="500"
@@ -25,7 +25,7 @@
           </b-field>
           <b-field label="Course tags:" horizontal>
             <b-taginput
-              v-model="tags"
+              v-model="course.tags"
               ellipsis
               icon="label"
               placeholder="Add a tag"
@@ -37,7 +37,7 @@
           </b-field>
           <b-field label="Category:" horizontal>
             <b-autocomplete
-              v-model="category"
+              v-model="course.category"
               :data="filtered"
               :loading="categoryLoading"
               :open-on-focus="true"
@@ -52,17 +52,17 @@
               <template #empty>No results found</template>
             </b-autocomplete>
           </b-field>
-          <b-field label="Purchase code:" horizontal>
+          <b-field label="Coupon:" horizontal>
             <b-input
               type="text"
+              v-model="course.coupon"
               icon="asterisk"
-              v-model="coupon"
               placeholder="Please write strong text"
             />
           </b-field>
           <b-field label="Price:" horizontal>
             <b-numberinput
-              v-model="price"
+              v-model="course.price"
               :controls="false"
               :min="0"
               expanded
@@ -107,6 +107,17 @@ import { CourseCreationContract } from "@/rpc/contracts/course";
 
 @Component({ components: { Upload } })
 export default class CreateCourse extends Vue {
+
+  public course: CourseCreationContract = {
+    title: "",
+    description: "",
+    category: "",
+    tags: [],
+    coupon: "",
+    price: 0,
+    image: ""
+  }
+
   public title = "";
   public description = "";
   public category = "";
@@ -149,25 +160,23 @@ export default class CreateCourse extends Vue {
   }
 
   public create() {
-    const params: CourseCreationContract = {
-      title: this.title,
-      description: this.description,
-      category: this.category,
-    };
+    const { course } = this;
 
-    if (this.tags.length) params["tags"] = this.tags;
-    if (this.coupon.length) params["coupon"] = this.coupon;
-    if (this.price) params["price"] = this.price;
-    if (this.image.length) params["image"] = this.image;
+    // exclude empty fields from the params. I this ok ?
+    if (!course.tags.length) delete course["tags"];
+    if (!course.coupon.length) delete course["coupon"];
+    if (!course.image.length) delete course["image"];
     this.createButtonLoading = true;
+
     rpc
-      .call(RPC_CREATE_COURSE_METHOD, params)
-      .then(() => {
+      .call(RPC_CREATE_COURSE_METHOD, course)
+      .then((id) => {
         this.$buefy.toast.open({
           position: "is-top",
           message: "Successfully created!",
           type: "is-success",
         });
+        this.$router.push({ name: 'Course', params: { id } });
       })
       .catch(() => {
         this.$buefy.toast.open({
