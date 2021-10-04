@@ -93,21 +93,35 @@
           >
         </div>
         <div class="column">
-          <div
-            class="is-flex is-justify-content-space-between mb-2"
-            v-if="session && !courseLoading && course.author.id === session.id"
-          >
-            <div class="buttons m-0">
-              <b-button icon-left="chart-line" size="is-small" type="is-primary"
-                >Scores</b-button
-              >
-              <b-button icon-left="pen" size="is-small" type="is-primary"
-                >Update course</b-button
+          <div class="card p-2 mb-2">
+            <div
+              class="
+                is-flex is-justify-content-space-between is-align-items-center
+              "
+              v-if="
+                session && !courseLoading && course.author.id === session.id
+              "
+            >
+              <div>
+                <b-button
+                  icon-left="chart-line"
+                  size="is-small"
+                  type="is-primary"
+                  >Scores</b-button
+                >
+                <b-button
+                  class="ml-2"
+                  icon-left="pen"
+                  size="is-small"
+                  type="is-primary"
+                  >Update course</b-button
+                >
+              </div>
+
+              <b-button icon-left="plus" size="is-small" type="is-success"
+                >Add lesson</b-button
               >
             </div>
-            <b-button icon-left="plus" size="is-small" type="is-success"
-              >Add lesson</b-button
-            >
           </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />

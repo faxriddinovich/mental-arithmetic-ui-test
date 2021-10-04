@@ -69,7 +69,11 @@
             ></b-numberinput>
           </b-field>
           <b-field label="Image:" horizontal>
-            <upload accept=".jpg,.jpeg,.png" @uploaded="imageUploaded" @maxFileSizeError="maxFileSizeError" />
+            <upload
+              accept=".jpg,.jpeg,.png"
+              @uploaded="imageUploaded"
+              @maxFileSizeError="maxFileSizeError"
+            />
           </b-field>
           <div class="mt-5">
             <b-button
@@ -142,7 +146,7 @@ export default class CreateCourse extends Vue {
       type: "is-danger",
       message: `The size of the file is too large.`,
     });
-	}
+  }
 
   public create() {
     const params: CourseCreationContract = {

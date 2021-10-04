@@ -78,7 +78,7 @@ export default class Upload extends Vue {
 
   public upload() {
     if (this.file.size > this.maxUploadSize) {
-			this.$emit('maxFileSizeError', this.file.size);
+      this.$emit("maxFileSizeError", this.file.size);
       return;
     }
 
