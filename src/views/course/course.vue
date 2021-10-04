@@ -98,14 +98,16 @@
             v-if="session && !courseLoading && course.author.id === session.id"
           >
             <div class="buttons m-0">
-              <b-button icon-left="chart-line" type="is-primary"
+              <b-button icon-left="chart-line" size="is-small" type="is-primary"
                 >Scores</b-button
               >
-              <b-button icon-left="pen" type="is-primary"
+              <b-button icon-left="pen" size="is-small" type="is-primary"
                 >Update course</b-button
               >
             </div>
-            <b-button icon-left="plus" type="is-success">Add lesson</b-button>
+            <b-button icon-left="plus" size="is-small" type="is-success"
+              >Add lesson</b-button
+            >
           </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
@@ -133,7 +135,7 @@ import {
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
   RPC_INSUFFICIENT_BALANCE_ERR_CODE,
-  RPC_NOT_PURCHASED_ERR_CODE
+  RPC_NOT_PURCHASED_ERR_CODE,
 } from "@/rpc/error-codes";
 import { CourseContract } from "@/rpc/contracts/course";
 import { LessonContract } from "@/rpc/contracts/lesson";

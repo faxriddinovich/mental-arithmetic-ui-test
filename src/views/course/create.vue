@@ -1,6 +1,6 @@
 <template>
   <div class="container is-max-desktop">
-    <div class="mx-2 pt-3">
+    <div class="mx-2 pt-2">
       <div class="card p-4 mt-2">
         <form @submit.prevent="create">
           <b-field label="Title:" horizontal>
@@ -69,25 +69,7 @@
             ></b-numberinput>
           </b-field>
           <b-field label="Image:" horizontal>
-            <b-upload
-              v-model="imageObj"
-              accept=".jpg,.jpeg,.png"
-              :disabled="uploadDisabled"
-              drag-drop
-              @input="upload"
-              expanded
-            >
-              <section class="section">
-                <div class="content has-text-centered">
-                  <p>
-                    <b-icon :icon="uploadIcon" size="is-large"> </b-icon>
-                  </p>
-                  <div>
-                    {{ uploadText }}
-                  </div>
-                </div>
-              </section>
-            </b-upload>
+            <upload accept=".jpg,.jpeg,.png" @uploaded="imageUploaded" @maxFileSizeError="maxFileSizeError" />
           </b-field>
           <div class="mt-5">
             <b-button
@@ -111,7 +93,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import axios from "axios";
+import Upload from "@/components/upload.vue";
 import { rpc } from "@/rpc/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
@@ -119,7 +101,7 @@ import {
 } from "@/rpc/methods";
 import { CourseCreationContract } from "@/rpc/contracts/course";
 
-@Component
+@Component({ components: { Upload } })
 export default class CreateCourse extends Vue {
   public title = "";
   public description = "";
@@ -129,13 +111,9 @@ export default class CreateCourse extends Vue {
   public coupon = "";
   public price = 0;
   public image = "";
-  public imageObj: File | null = null;
 
   public categoryLoading = true;
   public categories: string[] = [];
-
-  public uploadingState: "neutral" | "uploading" | "uploaded" = "neutral";
-  public uploadPercent = 0;
 
   public createButtonLoading = false;
 
@@ -149,54 +127,22 @@ export default class CreateCourse extends Vue {
       .finally(() => (this.categoryLoading = false));
   }
 
-  public get uploadIcon() {
-    switch (this.uploadingState) {
-      case "uploading":
-        return "cloud";
-      case "uploaded":
-        return "cloud-check";
-      default:
-        return "upload";
-    }
-  }
-
-  public get uploadText() {
-    switch (this.uploadingState) {
-      case "uploading":
-        return "Uploading...";
-      case "uploaded":
-        return "Uploaded";
-      default:
-        return "Drop an image here or click to upload";
-    }
-  }
-
-  public get uploadDisabled() {
-    return (
-      this.uploadingState === "uploading" || this.uploadingState === "uploaded"
-    );
-  }
-
   public get filtered() {
     return this.categories.filter((option: string) => {
       return option.toLowerCase().indexOf(this.category.toLowerCase()) >= 0;
     });
   }
 
-  public upload() {
-    const form = new FormData();
-    form.append("image", this.imageObj!);
-    this.uploadingState = "uploading";
-    axios
-      .post("http://192.168.1.103:3000/fs", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((response) => {
-        this.image = response.data;
-        this.uploadingState = "uploaded";
-      })
-      .catch(() => (this.uploadingState = "neutral"));
+  public imageUploaded(fguid: string) {
+    this.image = fguid;
   }
+
+  public maxFileSizeError() {
+    this.$buefy.toast.open({
+      type: "is-danger",
+      message: `The size of the file is too large.`,
+    });
+	}
 
   public create() {
     const params: CourseCreationContract = {

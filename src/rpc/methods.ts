@@ -18,3 +18,5 @@ export const RPC_GET_LESSON_METHOD = "get_lesson";
 export const RPC_GET_COMMENTS_METHOD = "get_comments";
 export const RPC_CREATE_COMMENT_METHOD = "create_comment";
 export const RPC_DELETE_COMMENT_METHOD = "delete_comment";
+
+export const RPC_GET_SETTINGS_METHOD = "get_settings";
