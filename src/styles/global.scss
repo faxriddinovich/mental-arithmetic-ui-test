@@ -1,0 +1,10 @@
+$border-color: rgb(149, 165, 166);
+
+.is-bordered {
+  border: 1px solid $border-color;
+}
+
+.is-bordered-bottom-accent {
+  border: 1px solid $border-color;
+  border-bottom: 2px solid $border-color;
+}

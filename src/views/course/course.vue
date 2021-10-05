@@ -116,6 +116,13 @@
                   type="is-primary"
                   >Update course</b-button
                 >
+                <b-button
+                  class="ml-2"
+                  icon-left="trash-alt"
+                  size="is-small"
+                  type="is-danger"
+                  >Delete course</b-button
+                >
               </div>
 
               <b-button icon-left="plus" size="is-small" type="is-success"

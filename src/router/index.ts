@@ -9,6 +9,7 @@ import MainResources from "@/views/main-resources.vue";
 import OtherResources from "@/views/other-resources.vue";
 
 import Authenticate from "@/views/account/authenticate.vue";
+import Account from "@/views/account/account.vue";
 
 import Settings from "@/views/settings.vue";
 
@@ -39,6 +40,12 @@ const routes: Array<RouteConfig> = [
   {
     path: "/settings",
     component: Settings,
+  },
+  {
+    path: "/account",
+    name: "Account",
+    component: Account,
+    meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
   },
   {
     path: "/account/authenticate",

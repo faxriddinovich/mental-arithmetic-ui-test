@@ -1,6 +1,6 @@
 <template>
   <router-link :to="{ name: 'Lesson', params: { id: lesson.id } }">
-    <div class="card p-3 is-bottom-bordered">
+    <div class="card p-3 is-bordered-bottom-accent">
       <div class="columns">
         <div class="column is-9-desktop">
           <span class="is-size-6">
@@ -59,10 +59,6 @@ export default class LessonCard extends Vue {
 .is-disabled {
   background: rgba(255, 255, 255, 0.7);
   cursor: not-allowed;
-}
-.is-bottom-bordered {
-  border: 1px solid rgb(149, 165, 166);
-  border-bottom: 2px solid rgb(149, 165, 166);
 }
 .is-card-title {
   display: -webkit-box;

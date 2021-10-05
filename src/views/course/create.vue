@@ -107,7 +107,6 @@ import { CourseCreationContract } from "@/rpc/contracts/course";
 
 @Component({ components: { Upload } })
 export default class CreateCourse extends Vue {
-
   public course: CourseCreationContract = {
     title: "",
     description: "",
@@ -115,8 +114,8 @@ export default class CreateCourse extends Vue {
     tags: [],
     coupon: "",
     price: 0,
-    image: ""
-  }
+    image: "",
+  };
 
   public title = "";
   public description = "";
@@ -176,7 +175,7 @@ export default class CreateCourse extends Vue {
           message: "Successfully created!",
           type: "is-success",
         });
-        this.$router.push({ name: 'Course', params: { id } });
+        this.$router.push({ name: "Course", params: { id } });
       })
       .catch(() => {
         this.$buefy.toast.open({
