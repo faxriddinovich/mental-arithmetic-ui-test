@@ -1,6 +1,4 @@
-export interface AccountContract {
-
-}
+export interface AccountContract {}
 
 export interface AuthAccountContract {
   id: number;

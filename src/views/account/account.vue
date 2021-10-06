@@ -3,15 +3,24 @@
     <div class="px-2 py-2">
       <div class="columns is-desktop is-multiline">
         <div class="column is-12-mobile is-4-desktop">
-          <div
-            class="
-              card
-              is-bordered
-            "
-          >
-<div class="has-background-primary" style="height: 100px">
-</div>
+          <div class="card is-bordered">
+            <div class="has-background-primary" style="height: 100px"></div>
+
+            <div style="margin-top: -70px; margin-bottom: 20px">
+              <b-skeleton
+                width="140px"
+                height="140px"
+                position="is-centered"
+                :animated="false"
+                circle
+              />
+              <b-skeleton width="160px" position="is-centered" />
+              <b-skeleton width="200px" position="is-centered" />
+            </div>
+
+            <!--
 <div class="is-flex is-flex-direction-column is-align-items-center py-2" style="margin-top: -70px">
+
             <avatar
               src="https://picsum.photos/600/400"
               :size="140"
@@ -20,6 +29,7 @@
             <div class="has-text-weight-semibold is-size-4 mt-2">mhw0</div>
             <div>mhw0@yahoo.com</div>
 </div>
+-->
           </div>
 
           <div class="card mt-2 p-2 is-bordered">
@@ -27,7 +37,10 @@
               <div class="level-item has-text-centered">
                 <div>
                   <p class="heading">Balance</p>
-                  <p class="title">28.000</p>
+                  <!-- <p class="title">28.000</p> -->
+                  <p class="title">
+                    <b-skeleton width="150px" height="36px" />
+                  </p>
                 </div>
               </div>
             </nav>
@@ -38,36 +51,57 @@
                 <b-menu-item
                   icon="user-exclamation"
                   label="Update account"
+                  tag="router-link"
+                  :to="{ name: 'UpdateAccount' }"
+                  :active="$route.name === 'UpdateAccount'"
                 ></b-menu-item>
-                <b-menu-item icon="users-alt" label="Sessions"></b-menu-item>
+                <b-menu-item
+                  icon="users-alt"
+                  label="Sessions"
+                  tag="router-link"
+                  :to="{ name: 'AccountSessions' }"
+                  :active="$route.name === 'AccountSessions'"
+                ></b-menu-item>
               </b-menu-list>
-              <b-menu-list label="Control panel" v-if="session && session.role === 'root'">
+              <b-menu-list
+                label="Control panel"
+                v-if="session && session.role === 'root'"
+              >
                 <b-menu-item
                   icon="setting"
                   label="Platform settings"
+                  tag="router-link"
+                  :to="{ name: 'PlatformSettings' }"
+                  :active="$route.name === 'PlatformSettings'"
                 ></b-menu-item>
                 <b-menu-item icon="users-alt" label="Users"></b-menu-item>
               </b-menu-list>
             </b-menu>
           </div>
-<b-button tag="router-link" :to="{ name: 'MainResources' }" icon-left="home" class="mt-2" outlined expanded>Home</b-button>
+          <b-button
+            tag="router-link"
+            :to="{ name: 'MainResources' }"
+            icon-left="home"
+            class="mt-2"
+            outlined
+            expanded
+            >Home</b-button
+          >
         </div>
         <div class="column">
-          <div class="card is-bordered">2</div>
+          <router-view />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import { Component, Mixins } from "vue-property-decorator";
 import Avatar from "vue-avatar";
-import { rpc } from '@/rpc/rpc';
-import { RPC_GET_ACCOUNT_METHOD } from '@/rpc/methods';
+import { rpc } from "@/rpc/rpc";
+import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
 import { Base } from "@/mixins/base.mixin";
 
 @Component({ components: { Avatar } })
-export default class Account extends Mixins(Base) {
-  //public account: 
-}
+export default class Account extends Mixins(Base) { }
 </script>

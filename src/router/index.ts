@@ -10,6 +10,9 @@ import OtherResources from "@/views/other-resources.vue";
 
 import Authenticate from "@/views/account/authenticate.vue";
 import Account from "@/views/account/account.vue";
+import UpdateAccount from "@/views/account/update.vue";
+import AccountSessions from "@/views/account/sessions.vue";
+import PlatformSettings from "@/views/account/platform-settings.vue";
 
 import Settings from "@/views/settings.vue";
 
@@ -46,6 +49,15 @@ const routes: Array<RouteConfig> = [
     name: "Account",
     component: Account,
     meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
+    children: [
+      { path: "", name: "UpdateAccount", component: UpdateAccount },
+      { path: "sessions", name: "AccountSessions", component: AccountSessions },
+      {
+        path: "platform-settings",
+        name: "PlatformSettings",
+        component: PlatformSettings,
+      },
+    ],
   },
   {
     path: "/account/authenticate",
@@ -92,7 +104,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (!session) return next({ name: "Authenticate" });
 
-    if (to.meta && !to.meta.roles.includes(session.role))
+    if (to.meta.roles && !to.meta.roles.includes(session.role))
       return next({ name: "MainResources" });
   }
   next();

@@ -1,5 +1,6 @@
 export const RPC_AUTHENTICATE_ACCOUNT_METHOD = "authenticate_account";
 export const RPC_CREATE_ACCOUNT_METHOD = "create_account";
+export const RPC_GET_ACCOUNT_METHOD = "get_account";
 
 export const RPC_GET_COURSES_METHOD = "get_courses";
 export const RPC_GET_COURSE_METHOD = "get_course";
@@ -20,3 +21,4 @@ export const RPC_CREATE_COMMENT_METHOD = "create_comment";
 export const RPC_DELETE_COMMENT_METHOD = "delete_comment";
 
 export const RPC_GET_SETTINGS_METHOD = "get_settings";
+export const RPC_UPDATE_SETTINGS_METHOD = "update_settings";
