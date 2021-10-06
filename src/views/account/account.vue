@@ -103,5 +103,5 @@ import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
 import { Base } from "@/mixins/base.mixin";
 
 @Component({ components: { Avatar } })
-export default class Account extends Mixins(Base) { }
+export default class Account extends Mixins(Base) {}
 </script>

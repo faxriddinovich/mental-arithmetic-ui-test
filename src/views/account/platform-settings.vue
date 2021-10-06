@@ -5,21 +5,26 @@
         v-for="(setting, index) of settings"
         :key="setting.key"
         :label="humanReadableLabel(setting.key)"
-required
+        required
       >
         <b-numberinput v-model="settings[index].value" :controls="false">
         </b-numberinput>
       </b-field>
-<div class="has-text-right">
-        <b-button type="is-success" icon-left="save" native-type="submit">Save changes</b-button>
-</div>
+      <div class="has-text-right">
+        <b-button type="is-success" icon-left="save" native-type="submit"
+          >Save changes</b-button
+        >
+      </div>
     </form>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
-import { RPC_GET_SETTINGS_METHOD, RPC_UPDATE_SETTINGS_METHOD } from "@/rpc/methods";
+import {
+  RPC_GET_SETTINGS_METHOD,
+  RPC_UPDATE_SETTINGS_METHOD,
+} from "@/rpc/methods";
 
 @Component
 export default class PlatformSettings extends Vue {
@@ -50,10 +55,10 @@ export default class PlatformSettings extends Vue {
   public saveChanges() {
     rpc.call(RPC_UPDATE_SETTINGS_METHOD, this.settings).then(() => {
       this.$buefy.toast.open({
-  type: 'is-success',
-message: 'Successfully saved!'
-});
+        type: "is-success",
+        message: "Successfully saved!",
+      });
     });
-}
+  }
 }
 </script>
