@@ -6,7 +6,18 @@
           <div class="card is-bordered">
             <div class="has-background-primary" style="height: 100px"></div>
 
-            <div style="margin-top: -70px; margin-bottom: 20px">
+<div class="is-flex is-flex-direction-column is-align-items-center mb-3" style="margin-top: -70px" v-if="account">
+
+            <avatar
+              src="https://picsum.photos/600/400"
+              :size="140"
+              username="mhw0"
+            ></avatar>
+            <div class="has-text-weight-semibold is-size-4 mt-2">{{ account.username }}</div>
+            <div>{{ account.email }}</div>
+</div>
+
+            <div class="mb-3" style="margin-top: -70px" v-else>
               <b-skeleton
                 width="140px"
                 height="140px"
@@ -18,18 +29,6 @@
               <b-skeleton width="200px" position="is-centered" />
             </div>
 
-            <!--
-<div class="is-flex is-flex-direction-column is-align-items-center py-2" style="margin-top: -70px">
-
-            <avatar
-              src="https://picsum.photos/600/400"
-              :size="140"
-              username="mhw0"
-            ></avatar>
-            <div class="has-text-weight-semibold is-size-4 mt-2">mhw0</div>
-            <div>mhw0@yahoo.com</div>
-</div>
--->
           </div>
 
           <div class="card mt-2 p-2 is-bordered">
@@ -39,7 +38,8 @@
                   <p class="heading">Balance</p>
                   <!-- <p class="title">28.000</p> -->
                   <p class="title">
-                    <b-skeleton width="150px" height="36px" />
+                  <span v-if="account">{{ formatCurrency(account.balance) }}</span>
+                    <b-skeleton width="150px" height="36px" v-else/>
                   </p>
                 </div>
               </div>
@@ -101,7 +101,24 @@ import Avatar from "vue-avatar";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
 import { Base } from "@/mixins/base.mixin";
+import { AccountContract } from '@/rpc/contracts/account';
 
 @Component({ components: { Avatar } })
-export default class Account extends Mixins(Base) {}
+export default class Account extends Mixins(Base) {
+  public account: AccountContract | null = null;
+
+  mounted() {
+    const cachedAccount = this.$store.getters.cachedAccount;
+
+    if(cachedAccount) {
+      this.account = cachedAccount;
+      return;
+    }
+
+    rpc.call(RPC_GET_ACCOUNT_METHOD).then((account) => {
+      this.account = account;
+      this.$store.commit('setCachedAccount', account);
+    });
+  }
+}
 </script>

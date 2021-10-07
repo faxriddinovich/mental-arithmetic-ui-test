@@ -3,19 +3,20 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-const { stringify, parse } = JSON;
-
 export default new Vuex.Store({
   state: {
-    runtimeError: null,
+    cachedAccount: null,
   },
   mutations: {
-    setRuntimeError: (state, error) => {
-      state.runtimeError = error;
+    setCachedAccount: (state, account) => {
+      state.cachedAccount = account;
     },
-    freeRuntimeError: (state) => {
-      state.runtimeError = null;
+    releaseCachedAccount: (state) => {
+      state.cachedAccount = null;
     },
+  },
+  getters: {
+    cachedAccount: (state) => state.cachedAccount
   },
   actions: {},
   modules: {},
