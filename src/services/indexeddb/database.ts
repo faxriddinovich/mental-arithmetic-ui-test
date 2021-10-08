@@ -45,6 +45,15 @@ class AsyncDatabase extends Dexie {
     });
   }
 
+  public async deleteSession(id: number) {
+    await this.table('sessions').where('id').equals(id).delete();
+  }
+
+  public async setCurrentSession(id: number) {
+    await this.table('sessions').where('isCurrent').equals(1).modify({ isCurrent: 0 });
+    await this.table('sessions').where('id').equals(id).modify({ isCurrent: 1 });
+  }
+
   public getSessions(): Promise<Session[]> {
     return this.table("sessions").toArray();
   }
