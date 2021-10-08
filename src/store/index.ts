@@ -16,7 +16,7 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    cachedAccount: (state) => state.cachedAccount
+    cachedAccount: (state) => state.cachedAccount,
   },
   actions: {},
   modules: {},

@@ -93,13 +93,13 @@
           >
         </div>
         <div class="column">
-          <div class="card p-2 mb-2">
+          <div
+            class="card p-2 mb-2"
+            v-if="session && !courseLoading && course.author.id === session.id"
+          >
             <div
               class="
                 is-flex is-justify-content-space-between is-align-items-center
-              "
-              v-if="
-                session && !courseLoading && course.author.id === session.id
               "
             >
               <div>

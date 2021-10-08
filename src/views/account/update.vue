@@ -2,11 +2,23 @@
   <div class="card p-4 is-bordered">
     <form @submit.prevent="saveChanges" v-if="account">
       <b-field label="Username">
-        <b-input v-model="account.username" minlength="4" maxlength="20" :has-counter="false" required />
+        <b-input
+          v-model="account.username"
+          minlength="4"
+          maxlength="20"
+          :has-counter="false"
+          required
+        />
       </b-field>
 
       <b-field label="Email">
-        <b-input type="email" v-model="account.email" minlength="4" maxlength="20" :has-counter="false" />
+        <b-input
+          type="email"
+          v-model="account.email"
+          minlength="4"
+          maxlength="20"
+          :has-counter="false"
+        />
       </b-field>
 
       <b-field label="Password">
@@ -14,10 +26,7 @@
       </b-field>
 
       <div class="has-text-right">
-        <b-button
-          native-type="submit"
-          icon-left="save"
-          type="is-success"
+        <b-button native-type="submit" icon-left="save" type="is-success"
           >Save</b-button
         >
       </div>
@@ -35,7 +44,6 @@ import { AccountContract } from "@/rpc/contracts/account";
 
 @Component
 export default class UpdateAccount extends Vue {
-
   public get account() {
     return this.$store.getters.cachedAccount;
   }
