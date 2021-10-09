@@ -112,6 +112,10 @@ import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
 import { Base } from "@/mixins/base.mixin";
 import { AccountContract } from "@/rpc/contracts/account";
 
+Component.registerHooks([
+  'beforeRouteLeave'
+]);
+
 @Component({ components: { Avatar } })
 export default class Account extends Mixins(Base) {
   public account: AccountContract | null = null;
@@ -129,5 +133,10 @@ export default class Account extends Mixins(Base) {
       this.$store.commit("setCachedAccount", account);
     });
   }
+
+  beforeRouteLeave(to, from, next) {
+    this.$store.commit('releaseCachedAccount');
+    next();
+	}
 }
 </script>

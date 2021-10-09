@@ -6,7 +6,7 @@ export interface AccountContract {
   blocked: boolean;
 }
 
-export interface AuthAccountContract {
+export interface SessionContract {
   id: number;
   username: string;
   role: string;

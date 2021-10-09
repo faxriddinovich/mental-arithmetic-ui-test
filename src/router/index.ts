@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import { Database } from "@/services/indexeddb/database";
+import Store from '@/store';
 
 import Home from "@/views/home.vue";
 
@@ -98,13 +98,13 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const session = await Database.getCurrentSession();
+    const { activeSession } = Store.getters;
 
-    if (!session) return next({ name: "Authenticate" });
+    if (!activeSession) return next({ name: "Authenticate" });
 
-    if (to.meta.roles && !to.meta.roles.includes(session.role))
+    if (to.meta.roles && !to.meta.roles.includes(activeSession.role))
       return next({ name: "MainResources" });
   }
   next();

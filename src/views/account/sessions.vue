@@ -28,8 +28,8 @@
           size="is-small"
           type="is-primary"
           icon-left="arrow-right"
-          v-if="!session.isCurrent"
-          @click="setCurrentSession(session.id)"
+          v-if="!session.isActive"
+          @click="setActiveSession(session.id)"
           >Enter</b-button
         >
       </div>
@@ -38,26 +38,21 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from "@/services/indexeddb/database";
+import { mapState } from 'vuex';
+import { SessionContract } from '@/rpc/contracts/account';
 
-@Component
+@Component({ computed: { ...mapState(['sessions']) } })
 export default class Sessions extends Vue {
-  public sessions = null;
-
-  mounted() {
-    Database.getSessions().then((sessions) => (this.sessions = sessions));
-  }
+  public sessions!: SessionContract[];
 
   public deleteSession(id: number) {
-    Database.deleteSession(id).then(() => {
-      this.$router.go(0);
-    });
+    this.$store.dispatch('deleteSession', id);
+    this.$router.go(0);
   }
 
-  public setCurrentSession(id: number) {
-    Database.setCurrentSession(id).then(() => {
-      this.$router.go(0);
-    });
+  public setActiveSession(id: number) {
+    this.$store.dispatch('setActiveSession', id);
+    this.$router.go(0);
   }
 }
 </script>

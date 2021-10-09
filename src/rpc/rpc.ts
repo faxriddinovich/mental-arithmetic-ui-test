@@ -1,16 +1,17 @@
 import axios from "axios";
-import Router from "@/router/index";
 import { HTTPClient } from "@theta-rpc/http-client";
-import { Database } from "@/services/indexeddb/database";
+import Router from "@/router/index";
+import Store from '@/store';
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_RPC_URL,
 });
 
-axiosInstance.interceptors.request.use(async (config) => {
-  const session = await Database.getCurrentSession();
-  if (Router.history.current.name !== "Authenticate" && session) {
-    config.headers["session"] = session.session;
+axiosInstance.interceptors.request.use((config) => {
+  const { activeSession } = Store.getters;
+  // Hard code. Can we fix this ?
+  if (Router.history.current.name !== "Authenticate" && activeSession) {
+    config.headers["session"] = activeSession.session;
   }
 
   return config;

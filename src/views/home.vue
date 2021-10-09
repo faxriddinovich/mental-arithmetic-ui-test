@@ -20,10 +20,10 @@
             </router-link>
           </li>
           <li>
-            <router-link :to="session ? '/account' : '/account/authenticate'">
+            <router-link :to="activeSession ? '/account' : '/account/authenticate'">
               <b-icon icon="user" class="mx-0" />
               <span class="is-hidden-mobile">{{
-                session ? session.username : "Account"
+                activeSession ? activeSession.username : "Account"
               }}</span>
             </router-link>
           </li>
@@ -35,9 +35,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Mixins } from "vue-property-decorator";
-import { Base } from "@/mixins/base.mixin";
+import { Vue, Component } from "vue-property-decorator";
+import { mapGetters } from 'vuex';
+import { SessionContract } from '@/rpc/contracts/account';
 
-@Component
-export default class Home extends Mixins(Base) {}
+@Component({ computed: { ...mapGetters(['activeSession']) } })
+export default class Home extends Vue {
+  public activeSession!: SessionContract;
+}
 </script>
