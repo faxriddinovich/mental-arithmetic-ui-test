@@ -17,7 +17,8 @@ export default {
     cachedAccount: (state) => state.cachedAccount,
     activeSession: (state) => {
       return state.sessions.find((session) => session.isActive === true);
-		}
+		},
+    sessions: (state) => state.sessions
   },
   actions: {
     addSession(context, session) {
