@@ -21,8 +21,11 @@ export default {
     sessions: (state) => state.sessions
   },
   actions: {
-    addSession(context, session) {
-      const { sessions } = context.state;
+    getSessions() {
+      return LocalStorage.get('sessions') || []
+    },
+    async addSession(context, session) {
+      const sessions = await context.dispatch('getSessions');
       const _session = sessions.find((s) => s.id === session.id);
       const currTimestamp =(new Date).getTime();
 
@@ -46,8 +49,8 @@ export default {
 
       LocalStorage.set("sessions", sessions);
     },
-    setActiveSession(context, activeSessionId) {
-      const { sessions } = context.state;
+    async setActiveSession(context, activeSessionId) {
+      const sessions = await context.dispatch('getSessions');
 
       for (const session of sessions) {
         if (session.isActive) session.isActive = false;
@@ -58,11 +61,11 @@ export default {
 
       LocalStorage.set("sessions", sessions);
     },
-    deleteSession(context, sessionId) {
-      const { sessions } = context.state;
+    async deleteSession(context, sessionId) {
+      const sessions = await context.dispatch('getSessions');
       let isActiveSession = false;
 
-      const sessions = sessions.filter(
+      const _sessions = sessions.filter(
         (session) => {
           if (session.id === sessionId) {
             if (session.isActive) isActiveSession = true;
@@ -72,14 +75,14 @@ export default {
         }
       );
 
-      LocalStorage.set("sessions", sessions);
+      LocalStorage.set("sessions", _sessions);
 
       /*
        * If the target session is active, then we should make the first
        * session active in the session list
        */
-      if (isActiveSession && sessions.length) {
-        context.dispatch("setActiveSession", sessions[0].id);
+      if (isActiveSession && _sessions.length) {
+        context.dispatch("setActiveSession", _sessions[0].id);
       }
     },
   },

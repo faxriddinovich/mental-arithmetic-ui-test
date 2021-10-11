@@ -38,14 +38,17 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { mapGetters } from 'vuex';
 import { SessionContract } from '@/rpc/contracts/account';
 
-@Component({ computed: { ...mapGetters(['sessions']) } })
+@Component
 export default class Sessions extends Vue {
-  public sessions!: SessionContract[];
+  public sessions!: SessionContract[] | null = null;
 
-  mounted() { console.log(this.$store.getters.sessions) }
+  mounted() {
+    this.$store.dispatch('getSessions').then((sessions) => {
+      this.sessions = sessions;
+    });
+  }
 
   public deleteSession(id: number) {
     this.$store.dispatch('deleteSession', id);

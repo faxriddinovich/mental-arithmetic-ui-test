@@ -74,7 +74,7 @@
               </b-menu-list>
               <b-menu-list
                 label="Control panel"
-                v-if="session && session.role === 'root'"
+                v-if="activeSession && activeSession.role === 'root'"
               >
                 <b-menu-item
                   icon="setting"
@@ -105,20 +105,24 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
+import { Component, Mixins, Vue } from "vue-property-decorator";
+import { mapGetters } from 'vuex';
 import Avatar from "vue-avatar";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
-import { Base } from "@/mixins/base.mixin";
 import { AccountContract } from "@/rpc/contracts/account";
+import { formatCurrency } from '@/common/utils';
 
 Component.registerHooks([
   'beforeRouteLeave'
 ]);
 
-@Component({ components: { Avatar } })
-export default class Account extends Mixins(Base) {
+@Component({ components: { Avatar }, computed: { ...mapGetters(['activeSession']) } })
+export default class Account extends Vue {
+  public activeSession!;
   public account: AccountContract | null = null;
+  // utils
+  public formatCurrency = formatCurrency;
 
   mounted() {
     const cachedAccount = this.$store.getters.cachedAccount;
