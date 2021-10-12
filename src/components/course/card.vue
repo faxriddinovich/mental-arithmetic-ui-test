@@ -56,7 +56,7 @@
               v-model="course.ratingAvg"
               :custom-text="course.ratingAvg"
               :size="detailed ? 'is-medium' : ''"
-              :disabled="!detailed || !session || !course.canRate"
+              :disabled="!detailed || !activeSession || !course.canRate"
               @change="rate"
             ></b-rate>
           </div>
@@ -103,20 +103,31 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop, Mixins } from "vue-property-decorator";
-import { Base } from "@/mixins/base.mixin";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
 import { CourseContract } from "@/rpc/contracts/course";
+import { SessionContract } from '@/rpc/contracts/account';
+import { formatCurrency, fsBucketFactory } from '@/common/utils';
 
 @Component
-export default class CourseCard extends Mixins(Base) {
+export default class CourseCard extends Vue {
   @Prop(Object) public course!: CourseContract;
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
+  public activeSession: SessionContract | null = null;
+  public formatCurrency = formatCurrency
+  public fsBucketFactory = fsBucketFactory
+
   public get placeholderImg() {
     return require("../../../public/img/placeholder.jpg");
+  }
+
+  mounted() {
+    this.$store.dispatch('getActiveSession').then((session) => {
+      this.activeSession = session;
+    });
   }
 
   public rate(rating: number) {

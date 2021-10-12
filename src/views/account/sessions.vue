@@ -18,7 +18,7 @@
         ><span class="has-text-weight-semibold"
           ><b-icon icon="user" /> {{ session.username }}</span
         >
-        <span class="has-text-grey is-size-7">{{
+        <span class="ml-2 has-text-grey is-size-7">{{
           new Date(session.timestamp)
         }}</span></span
       >

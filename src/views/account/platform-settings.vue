@@ -39,13 +39,13 @@ export default class PlatformSettings extends Vue {
   public humanReadableLabel(key: string) {
     let humanReadable = "";
     switch (key) {
-      case "sub_cost_per_day":
-        humanReadable = "Subscription cost per day (soums):";
+      case "subscription_cost_per_day":
+        humanReadable = "Subscription cost per day (in sums):";
         break;
-      case "purch_course_comission":
-        humanReadable = "Purchase comission (% percent):";
+      case "purchase_course_comission":
+        humanReadable = "Purchase comission (in percent):";
         break;
-      case "max_upload_size":
+      case "max_upload_file_size":
         humanReadable = "Max. upload size (in bytes):";
         break;
     }
