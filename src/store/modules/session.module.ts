@@ -1,35 +1,34 @@
 import { LocalStorage } from "@/services/local-storage";
 
 export default {
-  state: {
-    cachedAccount: null,
-    sessions: LocalStorage.get('sessions') || []
-  },
-  mutations: {
-    setCachedAccount: (state, account) => {
-      state.cachedAccount = account;
-    },
-    releaseCachedAccount: (state) => {
-      state.cachedAccount = null;
-    },
-  },
   getters: {
-    cachedAccount: (state) => state.cachedAccount,
-    activeSession: (state) => {
-      return state.sessions.find((session) => session.isActive === true);
-		},
-    sessions: (state) => state.sessions
+    sessions: (state) => state.sessions,
   },
   actions: {
+    /*
+     * We could just store sessions in state. But localstorage is not
+     * reactive. So we have to call this action every time get list of
+     * sessions.
+     */
     getSessions() {
-      return LocalStorage.get('sessions') || []
+      return LocalStorage.get("sessions") || [];
     },
-    async addSession(context, session) {
-      const sessions = await context.dispatch('getSessions');
-      const _session = sessions.find((s) => s.id === session.id);
-      const currTimestamp =(new Date).getTime();
 
-      /* replace the target session with the existing one */
+    async getActiveSession(context) {
+      const sessions = await context.dispatch("getSessions");
+      return sessions.find((session) => session.isActive === true) || null;
+    },
+
+    /*
+     * Add a sesssion to the sessions list. If the target session
+     * already exists, then this action just replaces the target
+     * session with the existing one.
+     */
+    async addSession(context, session) {
+      const sessions = await context.dispatch("getSessions");
+      const _session = sessions.find((s) => s.id === session.id);
+      const currTimestamp = new Date().getTime();
+
       if (_session) {
         _session.id = session.id;
         _session.username = session.username;
@@ -43,14 +42,14 @@ export default {
           role: session.role,
           session: session.session,
           timestamp: currTimestamp,
-          isActive: !sessions.length ? true : false
+          isActive: !sessions.length ? true : false,
         });
       }
 
       LocalStorage.set("sessions", sessions);
     },
     async setActiveSession(context, activeSessionId) {
-      const sessions = await context.dispatch('getSessions');
+      const sessions = await context.dispatch("getSessions");
 
       for (const session of sessions) {
         if (session.isActive) session.isActive = false;
@@ -62,18 +61,16 @@ export default {
       LocalStorage.set("sessions", sessions);
     },
     async deleteSession(context, sessionId) {
-      const sessions = await context.dispatch('getSessions');
+      const sessions = await context.dispatch("getSessions");
       let isActiveSession = false;
 
-      const _sessions = sessions.filter(
-        (session) => {
-          if (session.id === sessionId) {
-            if (session.isActive) isActiveSession = true;
-            return false;
-          }
-          return true;
+      const _sessions = sessions.filter((session) => {
+        if (session.id === sessionId) {
+          if (session.isActive) isActiveSession = true;
+          return false;
         }
-      );
+        return true;
+      });
 
       LocalStorage.set("sessions", _sessions);
 

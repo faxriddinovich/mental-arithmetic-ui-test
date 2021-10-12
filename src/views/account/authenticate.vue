@@ -92,8 +92,6 @@ import {
   RPC_INVALID_CREDENTIALS_ERR_CODE,
 } from "@/rpc/error-codes";
 import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/rpc/methods";
-import { AuthAccountContract } from "@/rpc/contracts/account";
-import { Database } from "@/services/indexeddb/database";
 
 @Component({ components: { VueHcaptcha } })
 export default class AuthenticateAccount extends Vue {
@@ -138,7 +136,7 @@ export default class AuthenticateAccount extends Vue {
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
       //FIXME
       .then((account: any) => {
-        this.$store.dispatch('addSession', account);
+        this.$store.dispatch("addSession", account);
         this.$buefy.toast.open({
           type: "is-success",
           message: `🎉 Success! Hey <b>${account.username}</b>!`,

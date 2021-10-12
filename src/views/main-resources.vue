@@ -32,7 +32,6 @@
 import { Component, Vue } from "vue-property-decorator";
 import Courses from "@/views/course/courses.vue";
 
-import { Database } from "@/services/indexeddb/database";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/rpc/methods";
 import { EventContract } from "@/rpc/contracts/event";
@@ -53,12 +52,12 @@ export default class MainResource extends Vue {
   ];
 
   mounted() {
-    Database.eventsEnabled().then((enabled) => {
-      if (enabled)
+    this.$store.dispatch("getSetting", "show_latest_event").then((setting) => {
+      if (setting.value === true) {
         rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event) => {
-          // this must be fixed in the future
           this.event = event as any as EventContract;
         });
+      }
     });
   }
 }

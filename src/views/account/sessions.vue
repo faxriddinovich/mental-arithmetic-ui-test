@@ -14,7 +14,14 @@
       v-for="(session, index) of sessions"
       :key="index"
     >
-      <span><b-icon icon="user" /> {{ session.username }}</span>
+      <span
+        ><span class="has-text-weight-semibold"
+          ><b-icon icon="user" /> {{ session.username }}</span
+        >
+        <span class="has-text-grey is-size-7">{{
+          new Date(session.timestamp)
+        }}</span></span
+      >
 
       <div class="buttons">
         <b-button
@@ -38,25 +45,25 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { SessionContract } from '@/rpc/contracts/account';
+import { SessionContract } from "@/rpc/contracts/account";
 
 @Component
 export default class Sessions extends Vue {
   public sessions!: SessionContract[] | null = null;
 
   mounted() {
-    this.$store.dispatch('getSessions').then((sessions) => {
+    this.$store.dispatch("getSessions").then((sessions) => {
       this.sessions = sessions;
     });
   }
 
   public deleteSession(id: number) {
-    this.$store.dispatch('deleteSession', id);
+    this.$store.dispatch("deleteSession", id);
     this.$router.go(0);
   }
 
   public setActiveSession(id: number) {
-    this.$store.dispatch('setActiveSession', id);
+    this.$store.dispatch("setActiveSession", id);
     this.$router.go(0);
   }
 }

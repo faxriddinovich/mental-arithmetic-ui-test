@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import Store from '@/store';
+import Store from "@/store";
 
 import Home from "@/views/home.vue";
 
@@ -98,9 +98,9 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const { activeSession } = Store.getters;
+    const activeSession = await Store.dispatch("getActiveSession");
 
     if (!activeSession) return next({ name: "Authenticate" });
 

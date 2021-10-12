@@ -39,21 +39,21 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Database } from "@/services/indexeddb/database";
-import { Setting } from "@/services/indexeddb/interfaces";
+import { Setting } from "@/store/interfaces/setting";
 
 @Component
 export default class Settings extends Vue {
   public showLatestEvent = false;
+  public settings: Setting[] | null = null;
 
-  public settings: Setting[] = [];
-
-  async mounted() {
-    this.settings = await Database.getSettings();
+  mounted() {
+    this.$store.dispatch("getSettings").then((settings) => {
+      this.settings = settings;
+    });
   }
 
   public saveChanges() {
-    Database.applySettings(this.settings).then(() => {
+    this.$store.dispatch("updateSettings", this.settings).then(() => {
       this.$buefy.toast.open({
         type: "is-success",
         message: "Changes applied!",

@@ -167,7 +167,7 @@
                   lesson.comments
                 }}</span>
               </template>
-              <div class="card p-4 is-bordered" v-if="session">
+              <div class="card p-4 is-bordered" v-if="activeSession">
                 <form @submit.prevent="createComment">
                   <b-field>
                     <b-input
@@ -260,11 +260,13 @@ import {
 import { RPC_NOT_PURCHASED_ERR_CODE } from "@/rpc/error-codes";
 import { CommentContract } from "@/rpc/contracts/comment";
 import { LessonContract } from "@/rpc/contracts/lesson";
+import { SessionContract } from "@/rpc/contracts/account";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
-export default class Lesson extends Mixins(Base) {
+export default class Lesson extends Vue {
   @Ref() public readonly commentTextarea!: HTMLElement;
 
+  public activeSession!: SessionContract | null = null;
   public lesson: LessonContract | null = null;
   public comments: CommentContract[] | null = null;
   public comment = "";
@@ -316,6 +318,10 @@ export default class Lesson extends Mixins(Base) {
   }
 
   mounted() {
+    this.$store.dispatch("getActiveSession").then((session) => {
+      this.activeSession = session;
+    });
+
     const lessonId = Number(this.$route.params.id);
     rpc
       .call(RPC_GET_LESSON_METHOD, { lessonId })

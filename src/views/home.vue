@@ -20,7 +20,9 @@
             </router-link>
           </li>
           <li>
-            <router-link :to="activeSession ? '/account' : '/account/authenticate'">
+            <router-link
+              :to="activeSession ? '/account' : '/account/authenticate'"
+            >
               <b-icon icon="user" class="mx-0" />
               <span class="is-hidden-mobile">{{
                 activeSession ? activeSession.username : "Account"
@@ -36,11 +38,16 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { mapGetters } from 'vuex';
-import { SessionContract } from '@/rpc/contracts/account';
+import { SessionContract } from "@/rpc/contracts/account";
 
-@Component({ computed: { ...mapGetters(['activeSession']) } })
+@Component
 export default class Home extends Vue {
-  public activeSession!: SessionContract;
+  public activeSession!: SessionContract | null = null;
+
+  mounted() {
+    this.$store.dispatch("getActiveSession").then((session) => {
+      this.activeSession = session;
+    });
+  }
 }
 </script>

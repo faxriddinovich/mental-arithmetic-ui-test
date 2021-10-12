@@ -106,25 +106,26 @@
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
-import { mapGetters } from 'vuex';
 import Avatar from "vue-avatar";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
-import { AccountContract } from "@/rpc/contracts/account";
-import { formatCurrency } from '@/common/utils';
+import { AccountContract, SessionContract } from "@/rpc/contracts/account";
+import { formatCurrency } from "@/common/utils";
 
-Component.registerHooks([
-  'beforeRouteLeave'
-]);
+Component.registerHooks(["beforeRouteLeave"]);
 
-@Component({ components: { Avatar }, computed: { ...mapGetters(['activeSession']) } })
+@Component({ components: { Avatar } })
 export default class Account extends Vue {
-  public activeSession!;
+  public activeSession!: SessionContract | null = null;
   public account: AccountContract | null = null;
   // utils
   public formatCurrency = formatCurrency;
 
   mounted() {
+    this.$store.dispatch("getActiveSession").then((session) => {
+      this.activeSession = session;
+    });
+
     const cachedAccount = this.$store.getters.cachedAccount;
 
     if (cachedAccount) {
@@ -139,8 +140,8 @@ export default class Account extends Vue {
   }
 
   beforeRouteLeave(to, from, next) {
-    this.$store.commit('releaseCachedAccount');
+    this.$store.commit("releaseCachedAccount");
     next();
-	}
+  }
 }
 </script>

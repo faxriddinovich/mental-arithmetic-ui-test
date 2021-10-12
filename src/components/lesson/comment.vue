@@ -48,30 +48,39 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Mixins } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { Base } from "@/mixins/base.mixin";
 import { CommentContract } from "@/rpc/contracts/lesson";
+import { SessionContract } from "@/rpc/contracts/account";
 
 @Component
-export default class Comment extends Mixins(Base) {
+export default class Comment extends Vue {
   @Prop(Object) public comment!: CommentContract;
+
+  public activeSession!: SessionContract | null = null;
 
   public get isLoading() {
     return !this.comment;
   }
 
   public get canDelete() {
-    const { session, comment, isLoading } = this;
+    const { activeSession, comment, isLoading } = this;
     return (
-      session &&
+      activeSession &&
       !isLoading &&
-      (session.role === "root" || comment.creator.id === session.id)
+      (activeSession.role === "root" || comment.creator.id === activeSession.id)
     );
   }
 
   public get canReply() {
-    const { session, comment } = this;
-    return session && comment.creator.id !== session.id;
+    const { activeSession, comment } = this;
+    return activeSession && comment.creator.id !== activeSession.id;
+  }
+
+  mounted() {
+    this.$store.dispatch("getActiveSession").then((session) => {
+      this.activeSession = session;
+    });
   }
 
   public emitReply() {
