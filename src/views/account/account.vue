@@ -11,12 +11,12 @@
                 is-flex is-flex-direction-column is-align-items-center
                 mb-3
               "
-              style="margin-top: -70px"
+              style="margin-top: -60px"
               v-if="account"
             >
               <avatar
-                src="https://picsum.photos/600/400"
-                :size="140"
+                :src="avatarFactory(activeSession.username)"
+                :size="120"
                 username="mhw0"
               ></avatar>
               <div class="has-text-weight-semibold is-size-4 mt-2">
@@ -110,7 +110,7 @@ import Avatar from "vue-avatar";
 import { rpc } from "@/rpc/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/rpc/methods";
 import { AccountContract, SessionContract } from "@/rpc/contracts/account";
-import { formatCurrency } from "@/common/utils";
+import { avatarFactory, formatCurrency } from "@/common/utils";
 
 Component.registerHooks(["beforeRouteLeave"]);
 
@@ -120,6 +120,7 @@ export default class Account extends Vue {
   public account: AccountContract | null = null;
   // utils
   public formatCurrency = formatCurrency;
+  public avatarFactory = avatarFactory;
 
   mounted() {
     this.$store.dispatch("getActiveSession").then((session) => {

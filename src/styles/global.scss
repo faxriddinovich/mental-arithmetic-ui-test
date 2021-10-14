@@ -8,3 +8,8 @@ $border-color: rgb(149, 165, 166);
   border: 1px solid $border-color;
   border-bottom: 2px solid $border-color;
 }
+
+.is-blocked {
+  color: $danger;
+  text-decoration: line-through;
+}

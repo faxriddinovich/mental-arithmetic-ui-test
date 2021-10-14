@@ -44,9 +44,19 @@
             <b-skeleton width="150px" v-if="isLoading" />
             <div v-else>
               <b-icon icon="user" />
-              <span class="has-text-weight-semibold">{{
-                course.author.username
-              }}</span>
+              <span
+                :class="{
+                  'has-text-weight-semibold': true,
+                  'is-blocked': course.author.isBlocked,
+                }"
+                >{{ course.author.username }}</span
+              >
+              <b-icon
+                icon="check-circle"
+                class="ml-1"
+                type="is-info"
+                v-if="course.author.role === 'root'"
+              />
             </div>
           </div>
           <b-skeleton width="150px" v-if="isLoading" />
@@ -107,8 +117,8 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { rpc } from "@/rpc/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
 import { CourseContract } from "@/rpc/contracts/course";
-import { SessionContract } from '@/rpc/contracts/account';
-import { formatCurrency, fsBucketFactory } from '@/common/utils';
+import { SessionContract } from "@/rpc/contracts/account";
+import { formatCurrency, fsBucketFactory } from "@/common/utils";
 
 @Component
 export default class CourseCard extends Vue {
@@ -117,15 +127,15 @@ export default class CourseCard extends Vue {
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
   public activeSession: SessionContract | null = null;
-  public formatCurrency = formatCurrency
-  public fsBucketFactory = fsBucketFactory
+  public formatCurrency = formatCurrency;
+  public fsBucketFactory = fsBucketFactory;
 
   public get placeholderImg() {
     return require("../../../public/img/placeholder.jpg");
   }
 
   mounted() {
-    this.$store.dispatch('getActiveSession').then((session) => {
+    this.$store.dispatch("getActiveSession").then((session) => {
       this.activeSession = session;
     });
   }

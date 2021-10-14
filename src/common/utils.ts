@@ -12,3 +12,7 @@ export function formatCurrency(amount: number): string {
 export function fsBucketFactory(id: string) {
   return process.env.VUE_APP_FS_BUCKET_URL + "/" + id;
 }
+
+export function avatarFactory(seed: string) {
+  return `https://avatars.dicebear.com/api/initials/${seed}.svg?fontSize=35`;
+}

@@ -3,14 +3,22 @@
     <figure class="media-left">
       <p class="image is-64x64">
         <b-skeleton height="64px" v-if="isLoading" />
-        <img src="https://bulma.io/images/placeholders/128x128.png" v-else />
+        <img :src="avatarFactory(comment.creator.username)" v-else />
       </p>
     </figure>
     <div class="media-content">
       <div class="content">
         <b-skeleton width="200px" v-if="isLoading" />
         <span v-else>
-          <strong>{{ comment.creator.username }}</strong>
+          <strong :class="comment.creator.isBlocked && 'is-blocked'">{{
+            comment.creator.username
+          }}</strong>
+          <b-icon
+            icon="check-circle"
+            class="ml-1"
+            type="is-info"
+            v-if="comment.creator.role === 'root'"
+          />
           <span class="ml-2">
             <b-icon icon="calendar-alt" size="is-small" />
             <small class="ml-1">{{ comment.createdAt }}</small>
@@ -52,12 +60,14 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { Base } from "@/mixins/base.mixin";
 import { CommentContract } from "@/rpc/contracts/lesson";
 import { SessionContract } from "@/rpc/contracts/account";
+import { avatarFactory } from "@/common/utils";
 
 @Component
 export default class Comment extends Vue {
   @Prop(Object) public comment!: CommentContract;
 
   public activeSession!: SessionContract | null = null;
+  public avatarFactory = avatarFactory;
 
   public get isLoading() {
     return !this.comment;

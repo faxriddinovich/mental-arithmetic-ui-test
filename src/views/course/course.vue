@@ -10,7 +10,10 @@
             <div class="card p-3" v-if="courseLoading">
               <b-skeleton :count="2" />
             </div>
-            <div class="card p-3" v-else-if="activeSession && !course.purchased">
+            <div
+              class="card p-3"
+              v-else-if="activeSession && !course.purchased"
+            >
               <div class="buttons">
                 <b-button
                   type="is-success"
@@ -95,7 +98,11 @@
         <div class="column">
           <div
             class="card p-2 mb-2"
-            v-if="activeSession && !courseLoading && course.author.id === activeSession.id"
+            v-if="
+              activeSession &&
+              !courseLoading &&
+              course.author.id === activeSession.id
+            "
           >
             <div
               class="
@@ -157,10 +164,10 @@ import {
   RPC_INSUFFICIENT_BALANCE_ERR_CODE,
   RPC_NOT_PURCHASED_ERR_CODE,
 } from "@/rpc/error-codes";
-import { SessionContract } from '@/rpc/contracts/account';
+import { SessionContract } from "@/rpc/contracts/account";
 import { CourseContract } from "@/rpc/contracts/course";
 import { LessonContract } from "@/rpc/contracts/lesson";
-import { formatCurrency } from '@/common/utils';
+import { formatCurrency } from "@/common/utils";
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
@@ -181,7 +188,7 @@ export default class Course extends Vue {
   public formatCurrency = formatCurrency;
 
   mounted() {
-    this.$store.dispatch('getActiveSession').then((session) => {
+    this.$store.dispatch("getActiveSession").then((session) => {
       this.activeSession = session;
     });
 
