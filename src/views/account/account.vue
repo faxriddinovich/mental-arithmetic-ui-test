@@ -15,7 +15,7 @@
               v-if="account"
             >
               <avatar
-                :src="avatarFactory(activeSession.username)"
+                :src="avatarFactory(account.username)"
                 :size="120"
                 username="mhw0"
               ></avatar>
@@ -89,7 +89,7 @@
           </div>
           <b-button
             tag="router-link"
-            :to="{ name: 'MainResources' }"
+            :to="{ name: 'Home' }"
             icon-left="home"
             class="mt-2"
             outlined

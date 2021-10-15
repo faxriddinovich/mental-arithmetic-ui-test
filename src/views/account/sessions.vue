@@ -49,7 +49,7 @@ import { SessionContract } from "@/rpc/contracts/account";
 
 @Component
 export default class Sessions extends Vue {
-  public sessions!: SessionContract[] | null = null;
+  public sessions: SessionContract[] | null = null;
 
   mounted() {
     this.$store.dispatch("getSessions").then((sessions) => {

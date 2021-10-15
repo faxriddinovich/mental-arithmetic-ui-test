@@ -5,9 +5,6 @@ import Store from "@/store";
 
 import Home from "@/views/home.vue";
 
-import MainResources from "@/views/main-resources.vue";
-import OtherResources from "@/views/other-resources.vue";
-
 import Authenticate from "@/views/account/authenticate.vue";
 import Account from "@/views/account/account.vue";
 import UpdateAccount from "@/views/account/update.vue";
@@ -30,15 +27,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
-    component: Home,
-    children: [
-      { path: "/", name: "MainResources", component: MainResources },
-      {
-        path: "/other-resources",
-        name: "OtherResources",
-        component: OtherResources,
-      },
-    ],
+    component: Home
   },
   {
     path: "/settings",

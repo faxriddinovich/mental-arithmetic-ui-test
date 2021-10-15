@@ -30,7 +30,7 @@
                 >
                   <ul>
                     <li>
-                      <router-link to="/"
+                      <router-link :to="{ name: 'Home' }"
                         ><b-icon icon="home" />Home</router-link
                       >
                     </li>
@@ -84,7 +84,7 @@
                 </div>
                 <div>
                   <div
-                    v-for="(attachment, index) of lesson.attachment"
+                    v-for="(attachment, index) of lesson.attachments"
                     :key="index"
                     :class="attachmentClass(index)"
                     @click="selectedAttachmentIndex = index"
@@ -246,7 +246,6 @@
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue, Ref } from "vue-property-decorator";
-import { Base } from "@/mixins/base.mixin";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
@@ -261,6 +260,7 @@ import { RPC_NOT_PURCHASED_ERR_CODE } from "@/rpc/error-codes";
 import { CommentContract } from "@/rpc/contracts/comment";
 import { LessonContract } from "@/rpc/contracts/lesson";
 import { SessionContract } from "@/rpc/contracts/account";
+import { fsBucketFactory } from "@/common/utils";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })
 export default class Lesson extends Vue {
@@ -271,6 +271,8 @@ export default class Lesson extends Vue {
   public comments: CommentContract[] | null = null;
   public comment = "";
   public selectedAttachmentIndex = 0;
+
+  public fsBucketFactory = fsBucketFactory;
 
   public get lessonLoading() {
     return this.lesson === null;

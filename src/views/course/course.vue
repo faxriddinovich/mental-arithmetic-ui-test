@@ -88,7 +88,7 @@
 
           <b-button
             tag="router-link"
-            to="/"
+            :to="{ name: 'Home' }"
             class="mt-3"
             icon-left="home"
             expanded
