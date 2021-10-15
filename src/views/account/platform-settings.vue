@@ -20,11 +20,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_GET_SETTINGS_METHOD,
   RPC_UPDATE_SETTINGS_METHOD,
-} from "@/rpc/methods";
+} from "@/services/rpc/methods";
 
 @Component
 export default class PlatformSettings extends Vue {

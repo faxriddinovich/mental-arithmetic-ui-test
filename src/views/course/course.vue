@@ -153,20 +153,20 @@ import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_METHOD,
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
-} from "@/rpc/methods";
+} from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
   RPC_INSUFFICIENT_BALANCE_ERR_CODE,
   RPC_NOT_PURCHASED_ERR_CODE,
-} from "@/rpc/error-codes";
-import { SessionContract } from "@/rpc/contracts/account";
-import { CourseContract } from "@/rpc/contracts/course";
-import { LessonContract } from "@/rpc/contracts/lesson";
+} from "@/services/rpc/error-codes";
+import { SessionContract } from "@/services/rpc/contracts/account";
+import { CourseContract } from "@/services/rpc/contracts/course";
+import { LessonContract } from "@/services/rpc/contracts/lesson";
 import { formatCurrency } from "@/common/utils";
 
 @Component({

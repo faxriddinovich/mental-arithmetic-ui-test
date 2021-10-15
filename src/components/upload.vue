@@ -22,8 +22,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import axios from "axios";
-import { rpc } from "@/rpc/rpc";
-import { RPC_GET_SETTINGS_METHOD } from "@/rpc/methods";
+import { rpc } from "@/services/rpc";
+import { RPC_GET_SETTINGS_METHOD } from "@/services/rpc/methods";
 
 type UploadingState = "upload" | "uploading" | "uploaded";
 
@@ -72,7 +72,7 @@ export default class Upload extends Vue {
     rpc
       .call(RPC_GET_SETTINGS_METHOD, { key: "max_upload_size" })
       .then((setting) => {
-        this.maxUploadSize = Number(setting.value);
+        this.maxUploadSize = setting ? Number(setting.value) : 0
       });
   }
 

@@ -86,12 +86,12 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_INVALID_PARAMS_ERR_CODE,
   RPC_INVALID_CREDENTIALS_ERR_CODE,
-} from "@/rpc/error-codes";
-import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/rpc/methods";
+} from "@/services/rpc/error-codes";
+import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
 
 @Component({ components: { VueHcaptcha } })
 export default class AuthenticateAccount extends Vue {

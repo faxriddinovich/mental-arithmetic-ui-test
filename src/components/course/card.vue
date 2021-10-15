@@ -114,10 +114,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { rpc } from "@/rpc/rpc";
-import { RPC_RATE_COURSE_METHOD } from "@/rpc/methods";
-import { CourseContract } from "@/rpc/contracts/course";
-import { SessionContract } from "@/rpc/contracts/account";
+import { rpc } from "@/services/rpc";
+import { RPC_RATE_COURSE_METHOD } from "@/services/rpc/methods";
+import { CourseContract } from "@/services/rpc/contracts/course";
+import { SessionContract } from "@/services/rpc/contracts/account";
 import { formatCurrency, fsBucketFactory } from "@/common/utils";
 
 @Component

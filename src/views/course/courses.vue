@@ -72,9 +72,9 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import CourseCard from "@/components/course/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
-import { rpc } from "@/rpc/rpc";
-import { RPC_GET_COURSES_METHOD } from "@/rpc/methods";
-import { CourseContract, GetCoursesContract } from "@/rpc/contracts/course";
+import { rpc } from "@/services/rpc";
+import { RPC_GET_COURSES_METHOD } from "@/services/rpc/methods";
+import { CourseContract, GetCoursesContract } from "@/services/rpc/contracts/course";
 
 @Component({
   components: { CourseCard, CloudLoading, NotFoundBox },

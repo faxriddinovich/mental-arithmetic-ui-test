@@ -35,12 +35,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_GET_ACCOUNT_METHOD,
   RPC_UPDATE_ACCOUNT_METHOD,
-} from "@/rpc/methods";
-import { AccountContract } from "@/rpc/contracts/account";
+} from "@/services/rpc/methods";
+import { AccountContract } from "@/services/rpc/contracts/account";
 
 @Component
 export default class UpdateAccount extends Vue {

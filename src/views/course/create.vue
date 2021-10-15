@@ -98,12 +98,12 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Upload from "@/components/upload.vue";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
   RPC_CREATE_COURSE_METHOD,
-} from "@/rpc/methods";
-import { CourseCreationContract } from "@/rpc/contracts/course";
+} from "@/services/rpc/methods";
+import { CourseCreationContract } from "@/services/rpc/contracts/course";
 
 @Component({ components: { Upload } })
 export default class CreateCourse extends Vue {
@@ -116,15 +116,6 @@ export default class CreateCourse extends Vue {
     price: 0,
     image: "",
   };
-
-  public title = "";
-  public description = "";
-  public category = "";
-  public selectedCategory = null;
-  public tags: string[] = [];
-  public coupon = "";
-  public price = 0;
-  public image = "";
 
   public categoryLoading = true;
   public categories: string[] = [];
@@ -143,7 +134,7 @@ export default class CreateCourse extends Vue {
 
   public get filtered() {
     return this.categories.filter((option: string) => {
-      return option.toLowerCase().indexOf(this.category.toLowerCase()) >= 0;
+      return option.toLowerCase().indexOf(this.course.category.toLowerCase()) >= 0;
     });
   }
 

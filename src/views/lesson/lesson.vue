@@ -249,17 +249,17 @@ import { Component, Mixins, Vue, Ref } from "vue-property-decorator";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
-import { rpc } from "@/rpc/rpc";
+import { rpc } from "@/services/rpc";
 import {
   RPC_GET_LESSON_METHOD,
   RPC_GET_COMMENTS_METHOD,
   RPC_CREATE_COMMENT_METHOD,
   RPC_DELETE_COMMENT_METHOD,
-} from "@/rpc/methods";
-import { RPC_NOT_PURCHASED_ERR_CODE } from "@/rpc/error-codes";
-import { CommentContract } from "@/rpc/contracts/comment";
-import { LessonContract } from "@/rpc/contracts/lesson";
-import { SessionContract } from "@/rpc/contracts/account";
+} from "@/services/rpc/methods";
+import { RPC_NOT_PURCHASED_ERR_CODE } from "@/services/rpc/error-codes";
+import { CommentContract } from "@/services/rpc/contracts/comment";
+import { LessonContract } from "@/services/rpc/contracts/lesson";
+import { SessionContract } from "@/services/rpc/contracts/account";
 import { fsBucketFactory } from "@/common/utils";
 
 @Component({ components: { LessonCard, LessonTask, LessonComment } })

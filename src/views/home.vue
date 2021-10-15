@@ -75,10 +75,10 @@
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import Courses from "@/views/course/courses.vue";
-import { rpc } from "@/rpc/rpc";
-import { RPC_GET_LATEST_EVENT_METHOD } from "@/rpc/methods";
-import { SessionContract } from "@/rpc/contracts/account";
-import { EventContract } from "@/rpc/contracts/event";
+import { rpc } from "@/services/rpc";
+import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
+import { SessionContract } from "@/services/rpc/contracts/account";
+import { EventContract } from "@/services/rpc/contracts/event";
 
 @Component({
   components: { Courses },
