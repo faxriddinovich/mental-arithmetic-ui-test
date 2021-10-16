@@ -117,6 +117,8 @@
                   >Scores</b-button
                 >
                 <b-button
+                  tag="router-link"
+                  :to="{ name: 'UpdateCourse' }"
                   class="ml-2"
                   icon-left="pen"
                   size="is-small"

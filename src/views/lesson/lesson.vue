@@ -266,7 +266,7 @@ import { fsBucketFactory } from "@/common/utils";
 export default class Lesson extends Vue {
   @Ref() public readonly commentTextarea!: HTMLElement;
 
-  public activeSession!: SessionContract | null = null;
+  public activeSession: SessionContract | null = null;
   public lesson: LessonContract | null = null;
   public comments: CommentContract[] | null = null;
   public comment = "";

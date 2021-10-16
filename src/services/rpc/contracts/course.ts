@@ -2,14 +2,14 @@ export interface CourseContract {
   id: number;
   title: string;
   description: string;
-  image: string;
+  image: string | null;
   price: number;
   createdAt: string;
   updatedAt: string;
-  lessons: number;
-  tasks: number;
-  ratingAvg: number;
+  lessonsCount: number;
+  tasksCount: number;
   purchasedCount: number;
+  ratingAvg: number;
   author: {
     id: number;
     username: string;

@@ -29,7 +29,7 @@
       </div>
       <div class="mt-3" v-if="detailed">
         <b-skeleton :count="4" v-if="isLoading" />
-        <span v-else>
+        <span class="is-word-wrap" v-else>
           {{ course.description }}
         </span>
       </div>
@@ -169,5 +169,22 @@ export default class CourseCard extends Vue {
   overflow: hidden;
   text-overflow: ellipsis;
   height: 3.8rem;
+}
+
+.is-word-wrap {
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	-ms-word-break: break-all;
+	/* This is the dangerous one in WebKit, as it breaks things wherever */
+	word-break: break-all;
+	/* Instead use this non-standard one: */
+	word-break: break-word;
+
+	/* Adds a hyphen where the word breaks, if supported (No Blink) */
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
 }
 </style>

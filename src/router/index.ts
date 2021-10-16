@@ -15,6 +15,7 @@ import Settings from "@/views/settings.vue";
 
 import Course from "@/views/course/course.vue";
 import CreateCourse from "@/views/course/create.vue";
+import UpdateCourse from "@/views/course/update.vue";
 
 import Lesson from "@/views/lesson/lesson.vue";
 import CreateLesson from "@/views/lesson/create.vue";
@@ -62,6 +63,12 @@ const routes: Array<RouteConfig> = [
     path: "/course/create",
     name: "CreateCourse",
     component: CreateCourse,
+    meta: { requiresAuth: true, roles: ["root", "teacher"] },
+  },
+  {
+    path: "/courses/:id/update",
+    name: "UpdateCourse",
+    component: UpdateCourse,
     meta: { requiresAuth: true, roles: ["root", "teacher"] },
   },
   {
