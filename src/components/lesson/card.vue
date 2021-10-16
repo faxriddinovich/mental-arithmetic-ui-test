@@ -29,10 +29,10 @@
               ><b-icon icon="paperclip" />{{ lesson.attachmentsCount }}</span
             >
             <span class="ml-1 has-text-weight-semibold"
-              ><b-icon icon="ruler" />{{ lesson.tasks }}</span
+              ><b-icon icon="ruler" />{{ lesson.tasksCount }}</span
             >
             <span class="ml-1 has-text-weight-semibold"
-              ><b-icon icon="comment-dots" />{{ lesson.comments }}</span
+              ><b-icon icon="comment-dots" />{{ lesson.commentsCount }}</span
             >
           </div>
         </div>

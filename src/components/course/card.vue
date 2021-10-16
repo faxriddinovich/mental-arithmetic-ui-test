@@ -89,7 +89,7 @@
         <b-skeleton v-if="isLoading" />
         <b-tooltip label="Lessons count" v-else>
           <span class="has-text-weight-semibold">
-            <b-icon icon="clipboard-alt" />{{ course.lessons }}
+            <b-icon icon="clipboard-alt" />{{ course.lessonsCount }}
           </span>
         </b-tooltip>
       </div>
@@ -97,7 +97,7 @@
         <b-skeleton v-if="isLoading" />
         <b-tooltip label="Exercises count" v-else>
           <span class="has-text-weight-semibold"
-            ><b-icon icon="ruler" />{{ course.tasks }}</span
+            ><b-icon icon="ruler" />{{ course.tasksCount }}</span
           >
         </b-tooltip>
       </div>

@@ -134,7 +134,9 @@ export default class CreateCourse extends Vue {
 
   public get filtered() {
     return this.categories.filter((option: string) => {
-      return option.toLowerCase().indexOf(this.course.category.toLowerCase()) >= 0;
+      return (
+        option.toLowerCase().indexOf(this.course.category.toLowerCase()) >= 0
+      );
     });
   }
 

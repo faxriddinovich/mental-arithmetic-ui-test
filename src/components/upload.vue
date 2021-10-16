@@ -72,7 +72,7 @@ export default class Upload extends Vue {
     rpc
       .call(RPC_GET_SETTINGS_METHOD, { key: "max_upload_size" })
       .then((setting) => {
-        this.maxUploadSize = setting ? Number(setting.value) : 0
+        this.maxUploadSize = setting ? Number(setting.value) : 0;
       });
   }
 

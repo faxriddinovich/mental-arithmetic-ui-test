@@ -28,7 +28,11 @@
         </div>
         <div class="column is-12-desktop">
           <div class="mx-2">
-            <b-button tag="router-link" :to="{ name: 'Home' }" icon-left="home" expanded
+            <b-button
+              tag="router-link"
+              :to="{ name: 'Home' }"
+              icon-left="home"
+              expanded
               >Home</b-button
             >
           </div>

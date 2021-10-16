@@ -128,6 +128,7 @@
                   icon-left="trash-alt"
                   size="is-small"
                   type="is-danger"
+                  @click="confirmDeleteCourse"
                   >Delete course</b-button
                 >
               </div>
@@ -158,6 +159,7 @@ import {
   RPC_GET_COURSE_METHOD,
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
+  RPC_DELETE_COURSE_METHOD,
 } from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
@@ -288,6 +290,37 @@ export default class Course extends Vue {
         });
       })
       .finally(() => (this.purchaseButtonLoading = false));
+  }
+
+  public confirmDeleteCourse() {
+    this.$buefy.dialog.confirm({
+      title: "Deleting course",
+      message: "Are you sure you want to <b>delete</b> this course?",
+      confirmText: "Delete Course",
+      type: "is-danger",
+      hasIcon: true,
+      onConfirm: () => this.deleteCourse(),
+    });
+  }
+
+  public deleteCourse() {
+    const courseId = Number(this.$route.params.id);
+
+    rpc
+      .call(RPC_DELETE_COURSE_METHOD, { courseId })
+      .then(() => {
+        this.$router.push({ name: "Home" });
+        this.$buefy.toast.open({
+          type: "is-warning",
+          message: "Successfully deleted!",
+        });
+      })
+      .catch(() => {
+        this.$buefy.toast.open({
+          type: "is-danger",
+          message: "Unable to delete the course",
+        });
+      });
   }
 }
 </script>

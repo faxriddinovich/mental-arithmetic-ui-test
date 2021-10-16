@@ -134,7 +134,7 @@
                   <b-skeleton></b-skeleton>
                 </span>
                 <span class="ml-1 has-text-weight-semibold" v-else>{{
-                  lesson.tasks
+                  lesson.tasksCount
                 }}</span>
               </template>
 
@@ -164,7 +164,7 @@
                   <b-skeleton></b-skeleton>
                 </span>
                 <span class="ml-1 has-text-weight-semibold" v-else>{{
-                  lesson.comments
+                  lesson.commentsCount
                 }}</span>
               </template>
               <div class="card p-4 is-bordered" v-if="activeSession">

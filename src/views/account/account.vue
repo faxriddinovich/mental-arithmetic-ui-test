@@ -109,7 +109,10 @@ import { Component, Mixins, Vue } from "vue-property-decorator";
 import Avatar from "vue-avatar";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
-import { AccountContract, SessionContract } from "@/services/rpc/contracts/account";
+import {
+  AccountContract,
+  SessionContract,
+} from "@/services/rpc/contracts/account";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 Component.registerHooks(["beforeRouteLeave"]);

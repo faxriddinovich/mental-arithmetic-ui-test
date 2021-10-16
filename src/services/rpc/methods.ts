@@ -6,6 +6,7 @@ export const RPC_UPDATE_ACCOUNT_METHOD = "update_account";
 export const RPC_GET_COURSES_METHOD = "get_courses";
 export const RPC_GET_COURSE_METHOD = "get_course";
 export const RPC_PURCHASE_COURSE_METHOD = "purchase_course";
+export const RPC_DELETE_COURSE_METHOD = "delete_course";
 
 export const RPC_GET_LESSONS_METHOD = "get_lessons";
 
