@@ -1,12 +1,12 @@
 <template>
   <div class="container is-max-desktop">
     <div class="mx-2 pt-2">
-      <div class="card p-4 mt-2">
-        <form @submit.prevent="create">
+      <div class="card p-5">
+        <form @submit.prevent="createCourse">
           <b-field label="Title:" horizontal>
             <b-input
               icon="pen"
-              v-model="course.title"
+              v-model="title"
               placeholder="e.g: Awesome course"
               minlength="5"
               maxlength="50"
@@ -16,30 +16,18 @@
           <b-field label="Description:" horizontal>
             <b-input
               type="textarea"
-              v-model="course.description"
+              v-model="description"
               placeholder="Some description here"
               minlength="10"
               maxlength="500"
               required
             ></b-input>
           </b-field>
-          <b-field label="Course tags:" horizontal>
-            <b-taginput
-              v-model="course.tags"
-              ellipsis
-              icon="label"
-              placeholder="Add a tag"
-              aria-close-label="Delete this tag"
-              maxlength="12"
-              maxtags="20"
-            >
-            </b-taginput>
-          </b-field>
           <b-field label="Category:" horizontal>
             <b-autocomplete
-              v-model="course.category"
-              :data="filtered"
-              :loading="categoryLoading"
+              v-model="category"
+              :data="filteredCategories"
+              :loading="categoriesInputLoading"
               :open-on-focus="true"
               placeholder="e.g. Awesome course"
               icon="box"
@@ -52,17 +40,29 @@
               <template #empty>No results found</template>
             </b-autocomplete>
           </b-field>
+          <b-field label="Course tags:" horizontal>
+            <b-taginput
+              v-model="tags"
+              ellipsis
+              icon="label"
+              placeholder="Add a tag"
+              aria-close-label="Delete this tag"
+              maxlength="12"
+              maxtags="20"
+            >
+            </b-taginput>
+          </b-field>
           <b-field label="Coupon:" horizontal>
             <b-input
               type="text"
-              v-model="course.coupon"
+              v-model="coupon"
               icon="asterisk"
               placeholder="Please write strong text"
             />
           </b-field>
           <b-field label="Price:" horizontal>
             <b-numberinput
-              v-model="course.price"
+              v-model="price"
               :controls="false"
               :min="0"
               expanded
@@ -103,41 +103,77 @@ import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
   RPC_CREATE_COURSE_METHOD,
 } from "@/services/rpc/methods";
-import { CourseCreationContract } from "@/services/rpc/contracts/course";
+import { CreateCourseContract } from "@/services/rpc/contracts/course";
 
 @Component({ components: { Upload } })
 export default class CreateCourse extends Vue {
-  public course: CourseCreationContract = {
-    title: "",
-    description: "",
-    category: "",
-    tags: [],
-    coupon: "",
-    price: 0,
-    image: "",
-  };
-
-  public categoryLoading = true;
+  public title = "";
+  public category = "";
+  public description = "";
+  public image = "";
+  public price = 0;
+  public coupon = "";
+  public tags = [];
   public categories: string[] = [];
 
+  public categoriesInputLoading = false;
   public createButtonLoading = false;
 
+  public get filteredCategories() {
+    return this.categories.filter((category) => {
+      return category.indexOf(this.category.toLowerCase()) >= 0;
+    });
+  }
+
   mounted() {
+    this.getCategories();
+  }
+
+  public getCategories() {
     rpc
       .call(RPC_GET_COURSE_CATEGORIES_METHOD)
       .then((categories) => {
-        // FIXME: this is must be fixed in the future
-        this.categories = categories as any as string[];
+        this.categories = categories;
       })
-      .finally(() => (this.categoryLoading = false));
+      .finally(() => {
+        this.categoriesInputLoading = false;
+      });
   }
 
-  public get filtered() {
-    return this.categories.filter((option: string) => {
-      return (
-        option.toLowerCase().indexOf(this.course.category.toLowerCase()) >= 0
-      );
-    });
+  public createCourse() {
+    this.createButtonLoading = true;
+
+    const course: CreateCourseContract = {
+      title: this.title,
+      description: this.description,
+      category: this.category,
+    };
+
+    if (this.coupon.length) course["coupon"] = this.coupon;
+    if (this.price > 0) course["price"] = this.price;
+    if (this.image?.length) course["image"] = this.image;
+    if (this.tags.length) course["tags"] = this.tags;
+
+    rpc
+      .call(RPC_CREATE_COURSE_METHOD, course)
+      .then((courseId) => {
+        this.$buefy.toast.open({
+          position: "is-top",
+          message: "Successfully created!",
+          type: "is-success",
+        });
+        this.$router.push({ name: "Course", params: { id: courseId } });
+      })
+      .catch(() => {
+        this.$buefy.toast.open({
+          position: "is-top",
+          message: "Unable to create a course",
+          type: "is-danger",
+        });
+      })
+      .finally(() => {
+        this.createButtonLoading = false;
+      });
   }
 
   public imageUploaded(fguid: string) {
@@ -149,35 +185,6 @@ export default class CreateCourse extends Vue {
       type: "is-danger",
       message: `The size of the file is too large.`,
     });
-  }
-
-  public create() {
-    const { course } = this;
-
-    // exclude empty fields from the params. I this ok ?
-    if (!course.tags.length) delete course["tags"];
-    if (!course.coupon.length) delete course["coupon"];
-    if (!course.image.length) delete course["image"];
-    this.createButtonLoading = true;
-
-    rpc
-      .call(RPC_CREATE_COURSE_METHOD, course)
-      .then((id) => {
-        this.$buefy.toast.open({
-          position: "is-top",
-          message: "Successfully created!",
-          type: "is-success",
-        });
-        this.$router.push({ name: "Course", params: { id } });
-      })
-      .catch(() => {
-        this.$buefy.toast.open({
-          position: "is-top",
-          message: "Unable to create a course",
-          type: "is-danger",
-        });
-      })
-      .finally(() => (this.createButtonLoading = false));
   }
 }
 </script>

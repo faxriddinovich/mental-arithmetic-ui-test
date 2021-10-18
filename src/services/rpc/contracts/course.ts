@@ -18,13 +18,21 @@ export interface CourseContract {
   };
 }
 
-export interface GetCoursesContract {
-  res: string;
-  searchText?: string;
-  filter?: string[];
+export interface RawCourseContract {
+  id: number;
+  title: string;
+  category: string;
+  description: string;
+  image: string | null;
+  price: number;
+  coupon: string | null;
+  tags: string[];
+  authorId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface CourseCreationContract {
+export interface CreateCourseContract {
   title: string;
   description: string;
   category: string;
@@ -32,4 +40,14 @@ export interface CourseCreationContract {
   coupon?: string;
   price?: number;
   image?: string;
+}
+
+export interface UpdateCourseContract {
+  courseId: number;
+}
+
+export interface GetCoursesContract {
+  res: string;
+  searchText?: string;
+  filter?: string[];
 }

@@ -1,12 +1,12 @@
 <template>
   <div class="container is-max-desktop">
-    <div class="mx-2 pt-2" v-if="course">
-      <div class="card p-4">
+    <div class="mx-2 pt-2">
+      <div class="card p-5">
         <form @submit.prevent="update">
           <b-field label="Title:" horizontal>
             <b-input
               icon="pen"
-              v-model="course.title"
+              v-model="title"
               placeholder="e.g: Awesome course"
               minlength="5"
               maxlength="50"
@@ -16,29 +16,17 @@
           <b-field label="Description:" horizontal>
             <b-input
               type="textarea"
-              v-model="course.description"
+              v-model="description"
               placeholder="Some description here"
               minlength="10"
               maxlength="500"
               required
             ></b-input>
           </b-field>
-          <b-field label="Course tags:" horizontal>
-            <b-taginput
-              v-model="course.tags"
-              ellipsis
-              icon="label"
-              placeholder="Add a tag"
-              aria-close-label="Delete this tag"
-              maxlength="12"
-              maxtags="20"
-            >
-            </b-taginput>
-          </b-field>
           <b-field label="Category:" horizontal>
             <b-autocomplete
-              v-model="course.category"
-              :data="filtered"
+              v-model="category"
+              :data="filteredCategories"
               :loading="categoriesInputLoading"
               :open-on-focus="true"
               placeholder="e.g. Awesome course"
@@ -52,17 +40,29 @@
               <template #empty>No results found</template>
             </b-autocomplete>
           </b-field>
+          <b-field label="Course tags:" horizontal>
+            <b-taginput
+              v-model="tags"
+              ellipsis
+              icon="label"
+              placeholder="Add a tag"
+              aria-close-label="Delete this tag"
+              maxlength="12"
+              maxtags="20"
+            >
+            </b-taginput>
+          </b-field>
           <b-field label="Coupon:" horizontal>
             <b-input
               type="text"
-              v-model="course.coupon"
+              v-model="coupon"
               icon="asterisk"
               placeholder="Please write strong text"
             />
           </b-field>
           <b-field label="Price:" horizontal>
             <b-numberinput
-              v-model="course.price"
+              v-model="price"
               :controls="false"
               :min="0"
               expanded
@@ -88,15 +88,23 @@
         </form>
       </div>
       <div class="is-flex mt-4">
-        <b-button tag="router-link" :to="{ name: 'Course', params: { id: course.id } }" icon-left="arrow-left" expanded
+        <b-button
+          tag="router-link"
+          :to="{ name: 'Course', params: { id } }"
+          icon-left="arrow-left"
+          expanded
           >Course</b-button
         >
-        <b-button class="ml-2" tag="router-link" to="/" icon-left="home" expanded
+        <b-button
+          class="ml-2"
+          tag="router-link"
+          to="/"
+          icon-left="home"
+          expanded
           >Home</b-button
         >
       </div>
     </div>
-    <CloudLoading class="pt-4" v-else />
   </div>
 </template>
 <script lang="ts">
@@ -108,22 +116,27 @@ import {
   RPC_GET_COURSE_FOR_UPDATE_METHOD,
   RPC_UPDATE_COURSE_METHOD,
 } from "@/services/rpc/methods";
-import { CourseContract } from "@/services/rpc/contracts/course";
-import CloudLoading from '@/components/cloud-loading.vue';
+import { UpdateCourseContract } from "@/services/rpc/contracts/course";
 
-@Component({ components: { CloudLoading, Upload } })
+@Component({ components: { Upload } })
 export default class UpdateCourse extends Vue {
-  public course: CourseContract | null = null;
+  public id = 0;
+  public title = "";
+  public category = "";
+  public description = "";
+  public image = "";
+  public price = 0;
+  public coupon = "";
+  public tags = [];
   public categories: string[] = [];
 
   public categoriesInputLoading = false;
   public updateButtonLoading = false;
 
-  public get filtered() {
-    return this.categories.filter((option) => {
-      return option
-        .toLowerCase()
-        .indexOf(this.course.category.toLowerCase()) >= 0
+  public get filteredCategories() {
+    const inputCategory = this.course?.category || "";
+    return this.categories.filter((category) => {
+      return category.indexOf(inputCategory.toLowerCase()) >= 0;
     });
   }
 
@@ -135,8 +148,14 @@ export default class UpdateCourse extends Vue {
   public getCourse() {
     const courseId = Number(this.$route.params.id);
     rpc.call(RPC_GET_COURSE_FOR_UPDATE_METHOD, { courseId }).then((course) => {
-      this.course = course;
-    })
+      this.title = course.title;
+      this.category = course.category;
+      this.description = course.description;
+      this.image = course.image || "";
+      this.price = course.price;
+      this.coupon = course.coupon || "";
+      this.tags = course.tags;
+    });
   }
 
   public getCategories() {
@@ -144,7 +163,7 @@ export default class UpdateCourse extends Vue {
     rpc
       .call(RPC_GET_COURSE_CATEGORIES_METHOD)
       .then((categories) => {
-        this.categories = categories as any as string[];
+        this.categories = categories;
       })
       .finally(() => {
         this.categoriesInputLoading = false;
@@ -153,22 +172,25 @@ export default class UpdateCourse extends Vue {
 
   public update() {
     const courseId = Number(this.$route.params.id);
-    const course = this.course;
 
-    const params = {
+    const course: UpdateCourseContract = {
       courseId,
-      title: course.title,
-      description: course.description,
-      category: course.category,
-      coupon: course.coupon?.length ? course.coupon : null,
-      price: course.price
-    }
+      title: this.title,
+      description: this.description,
+      category: this.category,
+    };
 
-    if(course.image.length) params['image'] = course.image;
+    if (this.coupon.length) course["coupon"] = this.coupon;
+    if (this.price > 0) course["price"] = this.price;
+    if (this.image?.length) course["image"] = this.image;
+    if (this.tags.length) course["tags"] = this.tags;
 
-    rpc.call(RPC_UPDATE_COURSE_METHOD, params).then(() => {
-      this.$buefy.toast.open({ type: 'is-success', message: 'Successfully updated!' });
-      this.$router.push({ name: 'Home' });
+    rpc.call(RPC_UPDATE_COURSE_METHOD, course).then(() => {
+      this.$buefy.toast.open({
+        type: "is-success",
+        message: "Successfully updated!",
+      });
+      this.$router.push({ name: "Home" });
     });
   }
 
