@@ -98,6 +98,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Upload from "@/components/upload.vue";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
@@ -157,19 +158,11 @@ export default class CreateCourse extends Vue {
     rpc
       .call(RPC_CREATE_COURSE_METHOD, course)
       .then((courseId) => {
-        this.$buefy.toast.open({
-          position: "is-top",
-          message: "Successfully created!",
-          type: "is-success",
-        });
+        showToastMessage("Successfully created!", ToastType.Success);
         this.$router.push({ name: "Course", params: { id: courseId } });
       })
       .catch(() => {
-        this.$buefy.toast.open({
-          position: "is-top",
-          message: "Unable to create a course",
-          type: "is-danger",
-        });
+        showToastMessage("Unable to create a course!", ToastType.Danger);
       })
       .finally(() => {
         this.createButtonLoading = false;
@@ -181,10 +174,7 @@ export default class CreateCourse extends Vue {
   }
 
   public maxFileSizeError() {
-    this.$buefy.toast.open({
-      type: "is-danger",
-      message: `The size of the file is too large.`,
-    });
+    showToastMessage("The size of the file is too large!", ToastType.Danger);
   }
 }
 </script>

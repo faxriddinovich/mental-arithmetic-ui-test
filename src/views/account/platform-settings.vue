@@ -20,6 +20,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_SETTINGS_METHOD,
@@ -54,10 +55,7 @@ export default class PlatformSettings extends Vue {
 
   public saveChanges() {
     rpc.call(RPC_UPDATE_SETTINGS_METHOD, this.settings).then(() => {
-      this.$buefy.toast.open({
-        type: "is-success",
-        message: "Successfully saved!",
-      });
+      showToastMessage("Successfully saved!", ToastType.Success);
     });
   }
 }

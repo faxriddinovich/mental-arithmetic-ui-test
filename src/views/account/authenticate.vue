@@ -86,6 +86,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_INVALID_PARAMS_ERR_CODE,
@@ -137,25 +138,14 @@ export default class AuthenticateAccount extends Vue {
       //FIXME
       .then((account: any) => {
         this.$store.dispatch("addSession", account);
-        this.$buefy.toast.open({
-          type: "is-success",
-          message: `🎉 Success! Hey <b>${account.username}</b>!`,
-        });
+        showToastMessage("🎉 Success! Hey <b>${account.username}</b>!", ToastType.Success);
       })
       .catch((error) => {
         this.resetHcaptcha();
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_INVALID_PARAMS_ERR_CODE) {
-            this.$buefy.toast.open({
-              type: "is-danger",
-              message: "Invalid parameters",
-            });
-          } else if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
-            this.$buefy.toast.open({
-              type: "is-danger",
-              message: "Invalid credentials",
-            });
+          if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
+            showToastMessage("Invalid credentials", ToastType.Danger);
           }
         }
       });

@@ -43,6 +43,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { Setting } from "@/store/interfaces/setting";
 
 @Component
@@ -58,10 +59,7 @@ export default class Settings extends Vue {
 
   public saveChanges() {
     this.$store.dispatch("updateSettings", this.settings).then(() => {
-      this.$buefy.toast.open({
-        type: "is-success",
-        message: "Changes applied!",
-      });
+      showToastMessage("Changes applied!", ToastType.Success);
     });
   }
 }

@@ -249,6 +249,7 @@ import { Component, Mixins, Vue, Ref } from "vue-property-decorator";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_LESSON_METHOD,
@@ -335,10 +336,7 @@ export default class Lesson extends Vue {
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
           if (jsonrpcError.code === RPC_NOT_PURCHASED_ERR_CODE) {
-            this.$buefy.toast.open({
-              message: "The course was not purchased",
-              type: "is-danger",
-            });
+            showToastMessage("The course was not purchased", ToastType.Danger);
             this.$router.push({ name: "MainResources" });
           }
         }

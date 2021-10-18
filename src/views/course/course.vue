@@ -156,6 +156,7 @@ import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_METHOD,
@@ -243,6 +244,17 @@ export default class Course extends Vue {
     });
   }
 
+  public confirmDeleteCourse() {
+    this.$buefy.dialog.confirm({
+      title: "Deleting course",
+      message: "Are you sure you want to <b>delete</b> this course?",
+      confirmText: "Delete Course",
+      type: "is-danger",
+      hasIcon: true,
+      onConfirm: () => this.deleteCourse(),
+    });
+  }
+
   public purchaseUsingCoupon() {
     const courseId = Number(this.$route.params.id);
     this.couponButtonLoading = true;
@@ -255,11 +267,7 @@ export default class Course extends Vue {
         this.$router.go(0);
       })
       .catch(() => {
-        this.$buefy.toast.open({
-          message: "This operation cannot be performed",
-          position: "is-top",
-          type: "is-danger",
-        });
+        showToastMessage("This operation cannot be performed", ToastType.Danger);
       })
       .finally(() => (this.couponButtonLoading = false));
   }
@@ -277,32 +285,13 @@ export default class Course extends Vue {
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
           if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
-            this.$buefy.toast.open({
-              message: "Insufficient balance",
-              position: "is-top",
-              type: "is-danger",
-            });
+            showToastMessage("Insufficient balance", ToastType.Danger);
             return;
           }
         }
-        this.$buefy.toast.open({
-          message: "This operation cannot be performed",
-          position: "is-top",
-          type: "is-danger",
-        });
+        showToastMessage("This operation cannot be performed", ToastType.Danger);
       })
       .finally(() => (this.purchaseButtonLoading = false));
-  }
-
-  public confirmDeleteCourse() {
-    this.$buefy.dialog.confirm({
-      title: "Deleting course",
-      message: "Are you sure you want to <b>delete</b> this course?",
-      confirmText: "Delete Course",
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => this.deleteCourse(),
-    });
   }
 
   public deleteCourse() {
@@ -312,16 +301,10 @@ export default class Course extends Vue {
       .call(RPC_DELETE_COURSE_METHOD, { courseId })
       .then(() => {
         this.$router.push({ name: "Home" });
-        this.$buefy.toast.open({
-          type: "is-warning",
-          message: "Successfully deleted!",
-        });
+        showToastMessage("Successfully deleted!", ToastType.Warning);
       })
       .catch(() => {
-        this.$buefy.toast.open({
-          type: "is-danger",
-          message: "Unable to delete the course",
-        });
+        showToastMessage("Unable to delete the course!", ToastType.Danger);
       });
   }
 }

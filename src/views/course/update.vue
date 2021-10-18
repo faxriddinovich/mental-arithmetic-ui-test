@@ -110,6 +110,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Upload from "@/components/upload.vue";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
@@ -186,11 +187,10 @@ export default class UpdateCourse extends Vue {
     if (this.tags.length) course["tags"] = this.tags;
 
     rpc.call(RPC_UPDATE_COURSE_METHOD, course).then(() => {
-      this.$buefy.toast.open({
-        type: "is-success",
-        message: "Successfully updated!",
-      });
+      showToastMessage("Successfully updated!", ToastType.Success);
       this.$router.push({ name: "Home" });
+    }).catch(() => {
+      showToastMessage("Unable to update the course!", ToastType.Danger);
     });
   }
 
@@ -199,10 +199,7 @@ export default class UpdateCourse extends Vue {
   }
 
   public maxFileSizeError() {
-    this.$buefy.toast.open({
-      type: "is-danger",
-      message: `The size of the file is too large.`,
-    });
+    showToastMessage("The size of the file is too large!", ToastType.Danger);
   }
 }
 </script>
