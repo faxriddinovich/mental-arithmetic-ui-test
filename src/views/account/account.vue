@@ -17,7 +17,6 @@
               <avatar
                 :src="avatarFactory(account.username)"
                 :size="120"
-                username="mhw0"
               ></avatar>
               <div class="has-text-weight-semibold is-size-4 mt-2">
                 {{ account.username }}
@@ -83,7 +82,13 @@
                   :to="{ name: 'PlatformSettings' }"
                   :active="$route.name === 'PlatformSettings'"
                 ></b-menu-item>
-                <b-menu-item icon="users-alt" label="Users"></b-menu-item>
+                <b-menu-item
+                  icon="users-alt"
+                  label="Accounts"
+                  tag="router-link"
+                  :to="{ name: 'Accounts' }"
+                  :active="$route.name === 'Accounts'"
+                ></b-menu-item>
               </b-menu-list>
             </b-menu>
           </div>

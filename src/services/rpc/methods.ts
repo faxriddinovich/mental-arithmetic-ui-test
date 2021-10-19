@@ -3,6 +3,8 @@ export const RPC_CREATE_ACCOUNT_METHOD = "create_account";
 export const RPC_GET_ACCOUNT_METHOD = "get_account";
 export const RPC_UPDATE_ACCOUNT_METHOD = "update_account";
 
+export const RPC_GET_ACCOUNTS_METHOD = "get_accounts";
+
 export const RPC_GET_COURSES_METHOD = "get_courses";
 export const RPC_GET_COURSE_METHOD = "get_course";
 export const RPC_GET_COURSE_FOR_UPDATE_METHOD = "get_course_for_update";

@@ -139,7 +139,7 @@ export default class AuthenticateAccount extends Vue {
       .then((account: any) => {
         this.$store.dispatch("addSession", account);
         showToastMessage(
-          "🎉 Success! Hey <b>${account.username}</b>!",
+          `🎉 Success! Hey <b>${account.username}</b>!`,
           ToastType.Success
         );
       })

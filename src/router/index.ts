@@ -10,6 +10,7 @@ import Account from "@/views/account/account.vue";
 import UpdateAccount from "@/views/account/update.vue";
 import AccountSessions from "@/views/account/sessions.vue";
 import PlatformSettings from "@/views/account/platform-settings.vue";
+import Accounts from "@/views/account/accounts.vue";
 
 import Settings from "@/views/settings.vue";
 
@@ -47,6 +48,7 @@ const routes: Array<RouteConfig> = [
         name: "PlatformSettings",
         component: PlatformSettings,
       },
+      { path: "accounts", name: "Accounts", component: Accounts },
     ],
   },
   {
