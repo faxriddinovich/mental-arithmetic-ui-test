@@ -1,6 +1,5 @@
 <template>
   <b-upload
-    v-model="file"
     :accept="accept"
     :disabled="uploadDisabled"
     @input="upload"
@@ -25,19 +24,17 @@ import axios from "axios";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_SETTINGS_METHOD } from "@/services/rpc/methods";
 
-type UploadingState = "upload" | "uploading" | "uploaded";
+type uploadState = "upload" | "uploading" | "uploaded";
 
 @Component
 export default class Upload extends Vue {
-  @Prop({ type: String, default: "" }) public accept!: string;
+  @Prop({ type: String, default: ".jpg,.png" }) public accept!: string;
+  public maxUploadSize: number | null = null;
 
-  public file!: File | null = null;
-  public maxUploadSize = null;
-
-  public uploadingState: UploadingState = "upload";
+  public uploadState: uploadState = "upload";
 
   public get uploadText() {
-    switch (this.uploadingState) {
+    switch (this.uploadState) {
       case "uploading":
         return "Uploading...";
       case "uploaded":
@@ -45,12 +42,12 @@ export default class Upload extends Vue {
       default:
         return `Drop a file here or click to upload. Max. upload size: <b>${
           this.maxUploadSize && (this.maxUploadSize / (1024 * 1024)).toFixed(2)
-        } MB</b>`;
+        } MB</b><br>Accepts: <b>${this.accept}<b>`;
     }
   }
 
   public get uploadIcon() {
-    switch (this.uploadingState) {
+    switch (this.uploadState) {
       case "uploading":
         return "cloud";
       case "uploaded":
@@ -63,12 +60,16 @@ export default class Upload extends Vue {
   public get uploadDisabled() {
     return (
       this.maxUploadSize === null ||
-      this.uploadingState === "uploading" ||
-      this.uploadingState === "uploaded"
+      this.uploadState === "uploading" ||
+      this.uploadState === "uploaded"
     );
   }
 
   mounted() {
+    this.getMaxUploadSize();
+  }
+
+  public getMaxUploadSize() {
     rpc
       .call(RPC_GET_SETTINGS_METHOD, { key: "max_upload_file_size" })
       .then((setting) => {
@@ -76,24 +77,27 @@ export default class Upload extends Vue {
       });
   }
 
-  public upload() {
-    if (this.file.size > this.maxUploadSize) {
-      this.$emit("maxFileSizeError", this.file.size);
+  public upload(file: File) {
+    if (file.size > this.maxUploadSize) {
+      this.$emit("fileSizeError", file.size);
       return;
     }
 
     const form = new FormData();
-    form.append("file", this.file!);
-    this.uploadingState = "uploading";
+    form.append("file", file);
+    this.uploadState = "uploading";
     axios
       .post(process.env.VUE_APP_FS_BUCKET_URL, form, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        this.$emit("uploaded", response.data);
-        this.uploadingState = "uploaded";
+        this.$emit("upload", response.data);
+        this.uploadState = "uploaded";
       })
-      .catch(() => (this.uploadingState = "upload"));
+      .catch((error) => {
+        this.uploadState = "upload";
+        this.$emit("uploadError", error);
+      });
   }
 }
 </script>

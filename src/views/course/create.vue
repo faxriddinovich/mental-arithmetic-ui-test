@@ -71,8 +71,9 @@
           <b-field label="Image:" horizontal>
             <upload
               accept=".jpg,.jpeg,.png"
-              @uploaded="imageUploaded"
-              @maxFileSizeError="maxFileSizeError"
+              @upload="imageUploaded"
+              @fileSizeError="fileSizeError"
+              @uploadError="uploadError"
             />
           </b-field>
           <div class="mt-5">
@@ -98,7 +99,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Upload from "@/components/upload.vue";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
@@ -169,12 +170,16 @@ export default class CreateCourse extends Vue {
       });
   }
 
-  public imageUploaded(fguid: string) {
+  public upload(fguid: string) {
     this.image = fguid;
   }
 
-  public maxFileSizeError() {
+  public fileSizeError() {
     showToastMessage("The size of the file is too large!", ToastType.Danger);
+  }
+
+  public uploadError() {
+    showToastMessage("Upload error! Please try again", ToastType.Danger);
   }
 }
 </script>

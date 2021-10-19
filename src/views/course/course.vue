@@ -156,7 +156,7 @@ import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_METHOD,
@@ -267,7 +267,10 @@ export default class Course extends Vue {
         this.$router.go(0);
       })
       .catch(() => {
-        showToastMessage("This operation cannot be performed", ToastType.Danger);
+        showToastMessage(
+          "This operation cannot be performed",
+          ToastType.Danger
+        );
       })
       .finally(() => (this.couponButtonLoading = false));
   }
@@ -289,7 +292,10 @@ export default class Course extends Vue {
             return;
           }
         }
-        showToastMessage("This operation cannot be performed", ToastType.Danger);
+        showToastMessage(
+          "This operation cannot be performed",
+          ToastType.Danger
+        );
       })
       .finally(() => (this.purchaseButtonLoading = false));
   }

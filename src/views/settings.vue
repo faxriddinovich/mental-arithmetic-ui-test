@@ -43,7 +43,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { Setting } from "@/store/interfaces/setting";
 
 @Component

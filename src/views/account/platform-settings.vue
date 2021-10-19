@@ -20,7 +20,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_SETTINGS_METHOD,

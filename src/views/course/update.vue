@@ -71,8 +71,9 @@
           <b-field label="Image:" horizontal>
             <upload
               accept=".jpg,.jpeg,.png"
-              @uploaded="imageUploaded"
-              @maxFileSizeError="maxFileSizeError"
+              @upload="upload"
+              @fileSizeError="fileSizeError"
+              @uploadError="uploadError"
             />
           </b-field>
           <div class="mt-5">
@@ -110,7 +111,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Upload from "@/components/upload.vue";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_COURSE_CATEGORIES_METHOD,
@@ -135,7 +136,7 @@ export default class UpdateCourse extends Vue {
   public updateButtonLoading = false;
 
   public get filteredCategories() {
-    const inputCategory = this.course?.category || "";
+    const inputCategory = this.category || "";
     return this.categories.filter((category) => {
       return category.indexOf(inputCategory.toLowerCase()) >= 0;
     });
@@ -149,6 +150,7 @@ export default class UpdateCourse extends Vue {
   public getCourse() {
     const courseId = Number(this.$route.params.id);
     rpc.call(RPC_GET_COURSE_FOR_UPDATE_METHOD, { courseId }).then((course) => {
+      this.id = course.id;
       this.title = course.title;
       this.category = course.category;
       this.description = course.description;
@@ -186,20 +188,27 @@ export default class UpdateCourse extends Vue {
     if (this.image?.length) course["image"] = this.image;
     if (this.tags.length) course["tags"] = this.tags;
 
-    rpc.call(RPC_UPDATE_COURSE_METHOD, course).then(() => {
-      showToastMessage("Successfully updated!", ToastType.Success);
-      this.$router.push({ name: "Home" });
-    }).catch(() => {
-      showToastMessage("Unable to update the course!", ToastType.Danger);
-    });
+    rpc
+      .call(RPC_UPDATE_COURSE_METHOD, course)
+      .then(() => {
+        showToastMessage("Successfully updated!", ToastType.Success);
+        this.$router.push({ name: "Home" });
+      })
+      .catch(() => {
+        showToastMessage("Unable to update the course!", ToastType.Danger);
+      });
   }
 
-  public imageUploaded(fguid: string) {
-    this.course.image = fguid;
+  public upload(fguid: string) {
+    this.image = fguid;
   }
 
-  public maxFileSizeError() {
+  public fileSizeError() {
     showToastMessage("The size of the file is too large!", ToastType.Danger);
+  }
+
+  public uploadError() {
+    showToastMessage("Upload error! Please try again", ToastType.Danger);
   }
 }
 </script>

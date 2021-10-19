@@ -249,7 +249,7 @@ import { Component, Mixins, Vue, Ref } from "vue-property-decorator";
 import LessonCard from "@/components/lesson/card.vue";
 import LessonTask from "@/components/lesson/task.vue";
 import LessonComment from "@/components/lesson/comment.vue";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_LESSON_METHOD,
