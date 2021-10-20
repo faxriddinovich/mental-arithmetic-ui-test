@@ -2,8 +2,8 @@
   <article class="media">
     <figure class="media-left">
       <p class="image is-64x64">
-        <b-skeleton height="64px" v-if="isLoading" />
-        <img :src="avatarFactory(comment.creator.username)" v-else />
+        <b-skeleton height="64px" v-if="isLoading" circle/>
+        <avatar :src="avatarFactory(comment.creator.username)" :size="64" v-else></avatar>
       </p>
     </figure>
     <div class="media-content">
@@ -46,23 +46,20 @@
       </nav>
     </div>
     <div class="media-right" v-if="canDelete">
-      <b-icon
-        icon="trash-alt"
-        class="is-clickable"
-        @click.native="emitDelete"
-      />
+    <button class="delete" @click="emitDelete" />
     </div>
   </article>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import Avatar from "vue-avatar";
 import { Base } from "@/mixins/base.mixin";
 import { CommentContract } from "@/rpc/contracts/lesson";
 import { SessionContract } from "@/rpc/contracts/account";
 import { avatarFactory } from "@/common/utils";
 
-@Component
+@Component({ components: { Avatar } })
 export default class Comment extends Vue {
   @Prop(Object) public comment!: CommentContract;
 

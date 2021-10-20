@@ -337,7 +337,7 @@ export default class Lesson extends Vue {
           const { jsonrpcError } = error;
           if (jsonrpcError.code === RPC_NOT_PURCHASED_ERR_CODE) {
             showToastMessage("The course was not purchased", ToastType.Danger);
-            this.$router.push({ name: "MainResources" });
+            this.$router.push({ name: "Home" });
           }
         }
       });
@@ -380,11 +380,7 @@ export default class Lesson extends Vue {
         this.comment = "";
       })
       .catch(() => {
-        this.$buefy.toast.open({
-          type: "is-danger",
-          position: "is-top",
-          message: "Unable to leave a comment",
-        });
+        showToastMessage("Unable to leave a comment", ToastType.Danger);
       });
   }
 }

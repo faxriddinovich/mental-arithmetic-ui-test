@@ -97,7 +97,7 @@
         </div>
         <div class="column">
           <div
-            class="card p-2 mb-2"
+            class="card p-2 mb-2 is-bordered"
             v-if="
               activeSession &&
               !courseLoading &&

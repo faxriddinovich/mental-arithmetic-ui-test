@@ -1,11 +1,11 @@
 <template>
   <div>
-<div v-if="pickedAccount">
+<div v-if="account">
     <div class="card p-3 mb-3 is-bordered">
       <form @submit.prevent="saveChanges">
         <b-field label="Username">
           <b-input
-            v-model="pickedAccount.username"
+            v-model="localAccount.username"
             minlength="4"
             maxlength="20"
             :has-counter="false"
@@ -16,7 +16,7 @@
         <b-field label="Email">
           <b-input
             type="email"
-            v-model="pickedAccount.email"
+            v-model="localAccount.email"
             minlength="4"
             maxlength="20"
             :has-counter="false"
@@ -24,11 +24,11 @@
         </b-field>
 
         <b-field label="Balance">
-          <b-numberinput v-model="pickedAccount.balance"></b-numberinput>
+          <b-numberinput v-model="localAccount.balance"></b-numberinput>
         </b-field>
 
         <b-field label="Role">
-          <b-select placeholder="Select a role" v-model="pickedAccount.role">
+          <b-select placeholder="Select a role" v-model="localAccount.role">
             <option value="default">default</option>
             <option value="teacher">teacher</option>
             <option value="root">root</option>
@@ -36,24 +36,40 @@
         </b-field>
 
         <b-field label="Password">
-          <b-input type="password" v-model="pickedAccount.password"></b-input>
+          <b-input type="password" v-model="localAccount.password"></b-input>
         </b-field>
 
         <div class="has-text-right">
           <b-button native-type="submit" icon-left="save" type="is-success"
-            >Save</b-button
+            :disabled="!fieldDiff">Save</b-button
           >
         </div>
       </form>
     </div>
-<b-button icon-left="arrow-left" @click="pickedAccount = null" expanded>Back</b-button>
+<b-button icon-left="arrow-left" @click="account = null" expanded>Back</b-button>
 </div>
 
-<div v-if="!pickedAccount">
-    <div class="card p-3 mb-3 is-bordered"></div>
+<div v-if="!account">
+    <div class="card p-3 mb-3 is-bordered">
+    <div class="is-flex">
+        <b-input
+          class="is-flex-grow-1"
+          placeholder="Username etc.."
+          icon="search"
+        >
+        </b-input>
+        <b-button
+          native-type="submit"
+          type="is-primary"
+          class="ml-3"
+          icon-left="search"
+          >Search</b-button
+        >
+        </div>
+
+    </div>
     <div class="card p-3 is-bordered">
-      <div v-for="(account, index) of accounts" :key="index">
-        <article class="media mb-2">
+        <article class="media m-0 py-2" v-for="(account, index) of accounts" :key="index">
           <figure class="media-left">
             <avatar :src="avatarFactory(account.username)" :size="50"></avatar>
           </figure>
@@ -80,36 +96,55 @@
           </div>
         </article>
       </div>
-    </div>
 </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
 import Avatar from "vue-avatar";
+import { diff } from 'deep-diff';
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
-import { RPC_GET_ACCOUNTS_METHOD } from "@/services/rpc/methods";
+import { RPC_GET_ACCOUNTS_METHOD, RPC_UPDATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 @Component({ components: { Avatar } })
 export default class Accounts extends Vue {
   public accounts = [];
 
-  public pickedAccount = null;
-  public isInfoModalActive = true;
+  public localAccount = null;
+  public account = null;
 
   public avatarFactory = avatarFactory;
   public formatCurrency = formatCurrency;
+
+  public get fieldDiff() {
+    return diff(this.account, this.localAccount);
+  }
 
   mounted() {
     this.getAccounts();
   }
 
   public pickAccount(index: number) {
-    this.pickedAccount = this.accounts[index];
+    const account = this.accounts[index];
+    this.account = Object.assign({}, account);
+    this.localAccount = Object.assign({}, account);
   }
 
-  public saveChanges() { /* */ }
+  //FIXME: fix typescript types
+  public saveChanges() {
+    const params = {};
+
+    for(const diff of this.fieldDiff) {
+      params[diff.path[0]] = diff.rhs;
+    }
+
+    rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
+      this.account = Object.assign({}, this.localAccount);
+      showToastMessage("Successfully updated!", ToastType.Success);
+    });
+  }
 
   public getAccounts() {
     rpc.call(RPC_GET_ACCOUNTS_METHOD).then((accounts) => {

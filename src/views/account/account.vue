@@ -24,10 +24,10 @@
               <div>{{ account.email }}</div>
             </div>
 
-            <div class="mb-3" style="margin-top: -70px" v-else>
+            <div class="mb-3" style="margin-top: -60px" v-else>
               <b-skeleton
-                width="140px"
-                height="140px"
+                width="120px"
+                height="120px"
                 position="is-centered"
                 :animated="false"
                 circle
