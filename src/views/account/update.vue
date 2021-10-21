@@ -26,8 +26,12 @@
       </b-field>
 
       <div class="has-text-right">
-        <b-button native-type="submit" icon-left="save" type="is-success"
-          :disabled="!fieldDiff">Save</b-button
+        <b-button
+          native-type="submit"
+          icon-left="save"
+          type="is-success"
+          :disabled="!fieldDiff"
+          >Save</b-button
         >
       </div>
     </form>
@@ -35,8 +39,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { diff } from 'deep-diff';
-import { showToastMessage, ToastType } from '@/services/toast';
+import { diff } from "deep-diff";
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_ACCOUNT_METHOD,
@@ -67,17 +71,15 @@ export default class UpdateAccount extends Vue {
   // FIXME: fix typescript types
   public saveChanges() {
     const params = {};
-    for(const field of this.fieldDiff) {
+    for (const field of this.fieldDiff) {
       params[field.path[0]] = field.rhs;
     }
 
-    rpc
-      .call(RPC_UPDATE_ACCOUNT_METHOD, params)
-      .then(() => {
-        // after updating the account, "local account" becomes "actual account"
-        this.account = Object.assign({}, this.localAccount);
-        showToastMessage("Successfully saved!", ToastType.Success);
-      });
+    rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
+      // after updating the account, "local account" becomes "actual account"
+      this.account = Object.assign({}, this.localAccount);
+      showToastMessage("Successfully saved!", ToastType.Success);
+    });
   }
 }
 </script>

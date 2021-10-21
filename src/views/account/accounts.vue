@@ -1,75 +1,90 @@
 <template>
   <div>
-<div v-if="account">
-    <div class="card p-3 mb-3 is-bordered">
-      <form @submit.prevent="saveChanges">
-        <b-field label="Username">
+    <div v-if="account">
+      <div class="card p-3 mb-3 is-bordered">
+        <form @submit.prevent="saveChanges">
+          <b-field label="Username">
+            <b-input
+              v-model="localAccount.username"
+              minlength="4"
+              maxlength="20"
+              :has-counter="false"
+              required
+            />
+          </b-field>
+
+          <b-field label="Email">
+            <b-input
+              type="email"
+              v-model="localAccount.email"
+              minlength="4"
+              maxlength="20"
+              :has-counter="false"
+            />
+          </b-field>
+
+          <b-field label="Balance">
+            <b-numberinput v-model="localAccount.balance"></b-numberinput>
+          </b-field>
+
+          <b-field label="Role">
+            <b-select placeholder="Select a role" v-model="localAccount.role">
+              <option value="default">default</option>
+              <option value="teacher">teacher</option>
+              <option value="root">root</option>
+            </b-select>
+          </b-field>
+
+          <b-field label="Blocked">
+            <b-switch v-model="localAccount.blocked">
+              {{ localAccount.blocked ? "Yes" : "No" }}
+            </b-switch>
+          </b-field>
+
+          <b-field label="Password">
+            <b-input type="password" v-model="localAccount.password"></b-input>
+          </b-field>
+
+          <div class="has-text-right">
+            <b-button
+              native-type="submit"
+              icon-left="save"
+              type="is-success"
+              :disabled="!fieldDiff"
+              >Save</b-button
+            >
+          </div>
+        </form>
+      </div>
+      <b-button icon-left="arrow-left" @click="account = null" expanded
+        >Back</b-button
+      >
+    </div>
+
+    <div v-if="!account">
+      <div class="card p-3 mb-3 is-bordered">
+        <div class="is-flex">
           <b-input
-            v-model="localAccount.username"
-            minlength="4"
-            maxlength="20"
-            :has-counter="false"
-            required
-          />
-        </b-field>
-
-        <b-field label="Email">
-          <b-input
-            type="email"
-            v-model="localAccount.email"
-            minlength="4"
-            maxlength="20"
-            :has-counter="false"
-          />
-        </b-field>
-
-        <b-field label="Balance">
-          <b-numberinput v-model="localAccount.balance"></b-numberinput>
-        </b-field>
-
-        <b-field label="Role">
-          <b-select placeholder="Select a role" v-model="localAccount.role">
-            <option value="default">default</option>
-            <option value="teacher">teacher</option>
-            <option value="root">root</option>
-          </b-select>
-        </b-field>
-
-        <b-field label="Password">
-          <b-input type="password" v-model="localAccount.password"></b-input>
-        </b-field>
-
-        <div class="has-text-right">
-          <b-button native-type="submit" icon-left="save" type="is-success"
-            :disabled="!fieldDiff">Save</b-button
+            class="is-flex-grow-1"
+            placeholder="Username etc.."
+            icon="search"
+          >
+          </b-input>
+          <b-button
+            native-type="submit"
+            type="is-primary"
+            class="ml-3"
+            icon-left="search"
+            >Search</b-button
           >
         </div>
-      </form>
-    </div>
-<b-button icon-left="arrow-left" @click="account = null" expanded>Back</b-button>
-</div>
-
-<div v-if="!account">
-    <div class="card p-3 mb-3 is-bordered">
-    <div class="is-flex">
-        <b-input
-          class="is-flex-grow-1"
-          placeholder="Username etc.."
-          icon="search"
+      </div>
+      <div class="card p-3 is-bordered">
+        <article
+          class="media m-0 py-2"
+          v-for="(account, index) of accounts"
+          :key="index"
         >
-        </b-input>
-        <b-button
-          native-type="submit"
-          type="is-primary"
-          class="ml-3"
-          icon-left="search"
-          >Search</b-button
-        >
-        </div>
-
-    </div>
-    <div class="card p-3 is-bordered">
-        <article class="media m-0 py-2" v-for="(account, index) of accounts" :key="index">
           <figure class="media-left">
             <avatar :src="avatarFactory(account.username)" :size="50"></avatar>
           </figure>
@@ -96,16 +111,19 @@
           </div>
         </article>
       </div>
-</div>
+    </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
 import Avatar from "vue-avatar";
-import { diff } from 'deep-diff';
-import { showToastMessage, ToastType } from '@/services/toast';
+import { diff } from "deep-diff";
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
-import { RPC_GET_ACCOUNTS_METHOD, RPC_UPDATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import {
+  RPC_GET_ACCOUNTS_METHOD,
+  RPC_UPDATE_ACCOUNT_METHOD,
+} from "@/services/rpc/methods";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 @Component({ components: { Avatar } })
@@ -134,9 +152,11 @@ export default class Accounts extends Vue {
 
   //FIXME: fix typescript types
   public saveChanges() {
-    const params = {};
+    const params = {
+      accountId: this.account.id,
+    };
 
-    for(const diff of this.fieldDiff) {
+    for (const diff of this.fieldDiff) {
       params[diff.path[0]] = diff.rhs;
     }
 

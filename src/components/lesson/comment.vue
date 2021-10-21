@@ -2,8 +2,12 @@
   <article class="media">
     <figure class="media-left">
       <p class="image is-64x64">
-        <b-skeleton height="64px" v-if="isLoading" circle/>
-        <avatar :src="avatarFactory(comment.creator.username)" :size="64" v-else></avatar>
+        <b-skeleton height="64px" v-if="isLoading" circle />
+        <avatar
+          :src="avatarFactory(comment.creator.username)"
+          :size="64"
+          v-else
+        ></avatar>
       </p>
     </figure>
     <div class="media-content">
@@ -46,7 +50,7 @@
       </nav>
     </div>
     <div class="media-right" v-if="canDelete">
-    <button class="delete" @click="emitDelete" />
+      <button class="delete" @click="emitDelete" />
     </div>
   </article>
 </template>
