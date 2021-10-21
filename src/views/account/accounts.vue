@@ -63,11 +63,12 @@
 
     <div v-if="!account">
       <div class="card p-3 mb-3 is-bordered">
-        <div class="is-flex">
+<form @submit.prevent="getAccounts" class="is-flex">
           <b-input
+						v-model="searchText"
             class="is-flex-grow-1"
             placeholder="Username etc.."
-            icon="search"
+            icon=""
           >
           </b-input>
           <b-button
@@ -77,7 +78,7 @@
             icon-left="search"
             >Search</b-button
           >
-        </div>
+</form>
       </div>
       <div class="card p-3 is-bordered">
         <article
@@ -122,12 +123,13 @@ import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_ACCOUNTS_METHOD,
-  RPC_UPDATE_ACCOUNT_METHOD,
+  RPC_UPDATE_ACCOUNT_METHOD
 } from "@/services/rpc/methods";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 @Component({ components: { Avatar } })
 export default class Accounts extends Vue {
+  public searchText = "";
   public accounts = [];
 
   public localAccount = null;
@@ -166,8 +168,10 @@ export default class Accounts extends Vue {
     });
   }
 
+  //FIXME: fix typescript types
   public getAccounts() {
-    rpc.call(RPC_GET_ACCOUNTS_METHOD).then((accounts) => {
+    const params = this.searchText.length ? { text: this.searchText } : undefined;
+    rpc.call(RPC_GET_ACCOUNTS_METHOD, params).then((accounts) => {
       this.accounts = accounts;
     });
   }
