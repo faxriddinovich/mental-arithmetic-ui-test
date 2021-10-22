@@ -136,20 +136,19 @@ export default class Account extends Vue {
   public avatarFactory = avatarFactory;
 
   mounted() {
+    this.getActiveSession();
+    this.getAccount();
+  }
+
+  public getActiveSession() {
     this.$store.dispatch("getActiveSession").then((session) => {
       this.activeSession = session;
     });
+  }
 
-    const cachedAccount = this.$store.getters.cachedAccount;
-
-    if (cachedAccount) {
-      this.account = cachedAccount;
-      return;
-    }
-
+  public getAccount() {
     rpc.call(RPC_GET_ACCOUNT_METHOD).then((account) => {
       this.account = account;
-      this.$store.commit("setCachedAccount", account);
     });
   }
 }
