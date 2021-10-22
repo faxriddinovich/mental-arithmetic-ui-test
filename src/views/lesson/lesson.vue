@@ -259,7 +259,7 @@ import {
 } from "@/services/rpc/methods";
 import {
   RPC_NOT_PURCHASED_ERR_CODE,
-  RPC_ACCESS_DENIED_ERR_CODE
+  RPC_ACCESS_DENIED_ERR_CODE,
 } from "@/services/rpc/error-codes";
 import { CommentContract } from "@/services/rpc/contracts/comment";
 import { LessonContract } from "@/services/rpc/contracts/lesson";
@@ -343,7 +343,10 @@ export default class Lesson extends Vue {
             showToastMessage("The course was not purchased", ToastType.Danger);
             this.$router.push({ name: "Home" });
           } else if (jsonrpcError.code === RPC_ACCESS_DENIED_ERR_CODE) {
-            showToastMessage("You don't have access to see the lesson", ToastType.Danger);
+            showToastMessage(
+              "You don't have access to see the lesson",
+              ToastType.Danger
+            );
             this.$router.push({ name: "Authenticate" });
           }
         }
