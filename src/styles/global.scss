@@ -13,3 +13,7 @@ $border-color: rgb(149, 165, 166);
   color: $danger;
   text-decoration: line-through;
 }
+
+.is-event {
+  background-color: $white !important;
+}

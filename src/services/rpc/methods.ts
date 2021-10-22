@@ -14,7 +14,10 @@ export const RPC_UPDATE_COURSE_METHOD = "update_course";
 
 export const RPC_GET_LESSONS_METHOD = "get_lessons";
 
+export const RPC_GET_EVENTS_METHOD = "get_events";
+export const RPC_CREATE_EVENT_METHOD = "create_event";
 export const RPC_GET_LATEST_EVENT_METHOD = "get_latest_event";
+export const RPC_DELETE_EVENT_METHOD = "delete_event";
 
 export const RPC_GET_COURSE_CATEGORIES_METHOD = "get_course_categories";
 export const RPC_CREATE_COURSE_METHOD = "create_course";

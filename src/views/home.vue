@@ -14,13 +14,17 @@
           <span class="is-hidden-mobile">Mental arithmetic</span>
         </template>
 
-        <b-notification
-          type="is-success"
-          aria-close-label="Close notification"
+        <b-message
+          type="is-info"
+          class="is-event"
           v-if="event"
+          icon="mailbox"
+          icon-size="is-medium"
+          has-icon
         >
-          {{ event.body }}
-        </b-notification>
+          <div class="mb-1" v-html="event.body"></div>
+          <small class="has-text-weight-bold">{{ event.createdAt }}</small>
+        </b-message>
 
         <div class="columns is-variable is-2 is-mobile is-multiline">
           <div

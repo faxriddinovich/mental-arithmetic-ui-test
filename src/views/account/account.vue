@@ -76,18 +76,25 @@
                 v-if="activeSession && activeSession.role === 'root'"
               >
                 <b-menu-item
-                  icon="setting"
-                  label="Platform settings"
-                  tag="router-link"
-                  :to="{ name: 'PlatformSettings' }"
-                  :active="$route.name === 'PlatformSettings'"
-                ></b-menu-item>
-                <b-menu-item
                   icon="users-alt"
                   label="Accounts"
                   tag="router-link"
                   :to="{ name: 'Accounts' }"
                   :active="$route.name === 'Accounts'"
+                ></b-menu-item>
+                <b-menu-item
+                  icon="mailbox"
+                  label="Manage Events"
+                  tag="router-link"
+                  :to="{ name: 'ManageEvents' }"
+                  :active="$route.name === 'ManageEvents'"
+                ></b-menu-item>
+                <b-menu-item
+                  icon="setting"
+                  label="Platform settings"
+                  tag="router-link"
+                  :to="{ name: 'PlatformSettings' }"
+                  :active="$route.name === 'PlatformSettings'"
                 ></b-menu-item>
               </b-menu-list>
             </b-menu>
@@ -120,8 +127,6 @@ import {
 } from "@/services/rpc/contracts/account";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
-Component.registerHooks(["beforeRouteLeave"]);
-
 @Component({ components: { Avatar } })
 export default class Account extends Vue {
   public activeSession!: SessionContract | null = null;
@@ -146,11 +151,6 @@ export default class Account extends Vue {
       this.account = account;
       this.$store.commit("setCachedAccount", account);
     });
-  }
-
-  beforeRouteLeave(to, from, next) {
-    this.$store.commit("releaseCachedAccount");
-    next();
   }
 }
 </script>
