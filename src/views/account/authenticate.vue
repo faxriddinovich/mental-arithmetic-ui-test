@@ -1,84 +1,79 @@
 <template>
-  <div class="is-flex is-centered is-vcentered columns" style="height: 100vh">
+  <div
+    class="columns is-centered is-vcentered is-mobile m-0"
+    style="height: 100vh"
+  >
     <div class="column is-5-desktop is-12-mobile is-9-tablet">
-      <div class="columns is-multiline">
-        <div class="column is-12">
-          <div class="box mx-2">
-            <form @submit.prevent="authenticate">
-              <b-field v-if="enterMode === 'username'" key="1" label="Username">
-                <b-input
-                  type="text"
-                  placeholder="Please enter your username"
-                  icon="user"
-                  :has-counter="false"
-                  @icon-click="changeEnterMode"
-                  icon-clickable
-                  maxlength="18"
-                  v-model="usernameOrEmail"
-                  required
-                />
-              </b-field>
-              <b-field v-else label="Email address">
-                <b-input
-                  type="email"
-                  placeholder="Please enter your email address"
-                  icon="envelope"
-                  :has-counter="false"
-                  @icon-click="changeEnterMode"
-                  icon-clickable
-                  minlength="4"
-                  maxlength="40"
-                  v-model="usernameOrEmail"
-                  required
-                />
-              </b-field>
-              <b-field label="Password">
-                <b-input
-                  placeholder="Please enter your password"
-                  type="password"
-                  icon="lock"
-                  maxlength="18"
-                  :has-counter="false"
-                  password-reveal
-                  v-model="password"
-                  required
-                />
-              </b-field>
-              <b-field
-                ><b-checkbox v-model="rememberMe"
-                  >Remember me</b-checkbox
-                ></b-field
-              >
-              <b-field>
-                <vue-hcaptcha
-                  ref="captcha"
-                  @verify="onCaptchaVerify"
-                  @expire="onCaptchaExpire"
-                  @error="onCaptchaError"
-                  :sitekey="hcaptchaSiteKey"
-                />
-              </b-field>
-              <b-button
-                native-type="submit"
-                type="is-primary"
-                icon-right="user-check"
-                :disabled="!canSubmit"
-                expanded
-                >Authenticate</b-button
-              >
-            </form>
-          </div>
-        </div>
-        <div class="column is-12-desktop">
-          <div class="is-flex mx-3">
-            <b-button tag="router-link" to="/" icon-left="home" expanded
-              >Home</b-button
-            >
-            <b-button class="ml-3" icon-left="user-plus" expanded
-              >Create an account</b-button
-            >
-          </div>
-        </div>
+      <div class="box">
+        <form @submit.prevent="authenticate">
+          <b-field v-if="enterMode === 'username'" key="1" label="Username">
+            <b-input
+              type="text"
+              placeholder="Please enter your username"
+              icon="user"
+              :has-counter="false"
+              @icon-click="changeEnterMode"
+              icon-clickable
+              maxlength="18"
+              v-model="usernameOrEmail"
+              required
+            />
+          </b-field>
+          <b-field v-else label="Email address">
+            <b-input
+              type="email"
+              placeholder="Please enter your email address"
+              icon="envelope"
+              :has-counter="false"
+              @icon-click="changeEnterMode"
+              icon-clickable
+              minlength="4"
+              maxlength="40"
+              v-model="usernameOrEmail"
+              required
+            />
+          </b-field>
+          <b-field label="Password">
+            <b-input
+              placeholder="Please enter your password"
+              type="password"
+              icon="lock"
+              maxlength="18"
+              :has-counter="false"
+              password-reveal
+              v-model="password"
+              required
+            />
+          </b-field>
+          <b-field
+            ><b-checkbox v-model="rememberMe">Remember me</b-checkbox></b-field
+          >
+          <b-field>
+            <vue-hcaptcha
+              ref="captcha"
+              @verify="onCaptchaVerify"
+              @expire="onCaptchaExpire"
+              @error="onCaptchaError"
+              :sitekey="hcaptchaSiteKey"
+            />
+          </b-field>
+          <b-button
+            native-type="submit"
+            type="is-primary"
+            icon-right="user-check"
+            :disabled="!canSubmit"
+            expanded
+            >Authenticate</b-button
+          >
+        </form>
+      </div>
+      <div class="is-flex mx-2">
+        <b-button tag="router-link" to="/" icon-left="home" expanded
+          >Home</b-button
+        >
+        <b-button class="ml-3" icon-left="user-plus" expanded
+          >Create an account</b-button
+        >
       </div>
     </div>
   </div>

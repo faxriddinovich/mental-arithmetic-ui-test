@@ -1,5 +1,8 @@
 <template>
-  <div class="is-flex is-centered is-vcentered columns" style="height: 100vh">
+  <div
+    class="columns is-centered is-vcentered is-mobile m-0"
+    style="height: 100vh"
+  >
     <div class="column is-4-desktop is-12-mobile is-9-tablet">
       <div class="columns is-multiline">
         <div class="column is-12">
@@ -25,16 +28,16 @@
               >
             </form>
           </div>
-        </div>
-        <div class="column is-12-desktop">
-          <div class="mx-2">
-            <b-button
-              tag="router-link"
-              :to="{ name: 'Home' }"
-              icon-left="home"
-              expanded
-              >Home</b-button
-            >
+          <div>
+            <div class="mx-2">
+              <b-button
+                tag="router-link"
+                :to="{ name: 'Home' }"
+                icon-left="home"
+                expanded
+                >Home</b-button
+              >
+            </div>
           </div>
         </div>
       </div>

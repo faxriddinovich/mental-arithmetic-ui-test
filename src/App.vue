@@ -1,5 +1,5 @@
 <template>
-  <div class="is-unselectable">
+  <div class="is-unselectable root">
     <router-view :key="$route.fullPath" />
   </div>
 </template>
@@ -18,9 +18,9 @@ export default class App extends Vue {}
 
 html,
 body {
-  font-family: "Inter", sans-serif;
-  min-height: 100vh;
   background-color: #ecf3f4;
+  font-family: "Inter", sans-serif;
+  height: 100vh;
 }
 
 ::-webkit-scrollbar {
