@@ -1,5 +1,5 @@
 <template>
-  <div class="is-unselectable root">
+  <div class="is-unselectable">
     <router-view :key="$route.fullPath" />
   </div>
 </template>
@@ -20,7 +20,7 @@ html,
 body {
   background-color: #ecf3f4;
   font-family: "Inter", sans-serif;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 ::-webkit-scrollbar {

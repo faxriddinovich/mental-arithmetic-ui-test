@@ -2,17 +2,17 @@
   <div class="card p-4 is-bordered">
     <form @submit.prevent="saveChanges" v-if="settings">
       <b-field
-        v-for="(setting, index) of settings"
+        v-for="(setting, index) of localSettings"
         :key="setting.key"
         :label="humanReadableLabel(setting.key)"
         required
       >
-        <b-numberinput v-model="settings[index].value" :controls="false">
+        <b-numberinput v-model="localSettings[index].value" :controls="false">
         </b-numberinput>
       </b-field>
       <div class="has-text-right">
         <b-button type="is-success" icon-left="save" native-type="submit"
-          >Save changes</b-button
+           :disabled="!fieldDiff">Save changes</b-button
         >
       </div>
     </form>
@@ -20,6 +20,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { diff } from "deep-diff";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
@@ -29,12 +30,18 @@ import {
 
 @Component
 export default class PlatformSettings extends Vue {
+  public localSettings = null;
   public settings = null;
 
   mounted() {
     rpc.call(RPC_GET_SETTINGS_METHOD).then((settings) => {
       this.settings = settings;
+      this.localSettings = settings.map((setting) => Object.assign({}, setting));
     });
+  }
+
+  public get fieldDiff() {
+    return diff(this.settings, this.localSettings);
   }
 
   public humanReadableLabel(key: string) {
@@ -53,8 +60,15 @@ export default class PlatformSettings extends Vue {
     return humanReadable;
   }
 
+  // FIXME: typescript types
   public saveChanges() {
-    rpc.call(RPC_UPDATE_SETTINGS_METHOD, this.settings).then(() => {
+    const params = [];
+
+    for(const field of this.fieldDiff) {
+      params.push(this.localSettings[field.path[0]]);
+    }
+
+    rpc.call(RPC_UPDATE_SETTINGS_METHOD, params).then(() => {
       showToastMessage("Successfully saved!", ToastType.Success);
     });
   }
