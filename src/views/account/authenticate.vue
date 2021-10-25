@@ -132,7 +132,8 @@ export default class AuthenticateAccount extends Vue {
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
       //FIXME
       .then((account: any) => {
-        this.$store.dispatch("addSession", account);
+        this.$store.dispatch("addSession", account).then(() =>
+          this.$store.dispatch("setActiveSession", account.id));
         showToastMessage(
           `🎉 Success! Hey <b>${account.username}</b>!`,
           ToastType.Success

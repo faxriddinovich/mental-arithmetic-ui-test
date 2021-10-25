@@ -7,7 +7,7 @@ export default {
   actions: {
     /*
      * We could just store sessions in state. But localstorage is not
-     * reactive. So we have to call this action every time get list of
+     * reactive. So we have to call this action every time to get list of
      * sessions.
      */
     getSessions() {
