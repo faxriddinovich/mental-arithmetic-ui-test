@@ -1,5 +1,5 @@
 <template>
-  <article class="media">
+  <article class="media my-2 py-2">
     <figure class="media-left">
       <p class="image is-64x64">
         <b-skeleton height="64px" v-if="isLoading" circle />

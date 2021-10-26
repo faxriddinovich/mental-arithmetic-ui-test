@@ -193,7 +193,7 @@
                 </form>
               </div>
               <div class="mt-3">
-                <div class="card p-3 is-bordered" v-if="commentsLoading">
+                <div class="card px-3 is-bordered" v-if="commentsLoading">
                   <lesson-comment />
                   <lesson-comment />
                 </div>
@@ -203,7 +203,7 @@
                 >
                   There are no comments yet.
                 </div>
-                <div class="card p-3 is-bordered" v-else>
+                <div class="card px-3 is-bordered" v-else>
                   <lesson-comment
                     @reply="replyComment"
                     @delete="deleteComment"
