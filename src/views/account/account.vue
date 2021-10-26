@@ -14,10 +14,11 @@
               style="margin-top: -60px"
               v-if="account"
             >
-              <avatar
+              <b-image
+                class="is-128x128"
                 :src="avatarFactory(account.username)"
-                :size="120"
-              ></avatar>
+                rounded
+              />
               <div class="has-text-weight-semibold is-size-4 mt-2">
                 {{ account.username }}
               </div>
@@ -118,7 +119,6 @@
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
-import Avatar from "vue-avatar";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import {
@@ -127,7 +127,7 @@ import {
 } from "@/services/rpc/contracts/account";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
-@Component({ components: { Avatar } })
+@Component
 export default class Account extends Vue {
   public activeSession!: SessionContract | null = null;
   public account: AccountContract | null = null;

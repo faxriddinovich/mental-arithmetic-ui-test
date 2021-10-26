@@ -14,5 +14,6 @@ export function fsBucketFactory(id: string) {
 }
 
 export function avatarFactory(seed: string) {
-  return `https://avatars.dicebear.com/api/initials/${seed}.svg?fontSize=35`;
+  const str = /^[A-Za-z0-9 ]+$/.test(seed) ? seed : " ".repeat(seed.length);
+  return `https://avatars.dicebear.com/api/initials/${str}.svg?fontSize=35`;
 }

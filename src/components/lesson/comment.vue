@@ -3,11 +3,11 @@
     <figure class="media-left">
       <p class="image is-64x64">
         <b-skeleton height="64px" v-if="isLoading" circle />
-        <avatar
+        <b-image
+          class="is-64x64"
           :src="avatarFactory(comment.creator.username)"
-          :size="64"
-          v-else
-        ></avatar>
+          rounded
+        />
       </p>
     </figure>
     <div class="media-content">
@@ -57,13 +57,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import Avatar from "vue-avatar";
 import { Base } from "@/mixins/base.mixin";
 import { CommentContract } from "@/rpc/contracts/lesson";
 import { SessionContract } from "@/rpc/contracts/account";
 import { avatarFactory } from "@/common/utils";
 
-@Component({ components: { Avatar } })
+@Component
 export default class Comment extends Vue {
   @Prop(Object) public comment!: CommentContract;
 

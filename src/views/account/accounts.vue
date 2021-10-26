@@ -88,10 +88,11 @@
             :key="index"
           >
             <figure class="media-left">
-              <avatar
+              <b-image
+                class="is-64x64"
                 :src="avatarFactory(account.username)"
-                :size="50"
-              ></avatar>
+                rounded
+              />
             </figure>
             <div class="media-content">
               <div class="content">
@@ -125,7 +126,6 @@
 </template>
 <script lang="ts">
 import { Component, Mixins, Vue } from "vue-property-decorator";
-import Avatar from "vue-avatar";
 import { diff } from "deep-diff";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
@@ -135,7 +135,7 @@ import {
 } from "@/services/rpc/methods";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
-@Component({ components: { Avatar } })
+@Component
 export default class Accounts extends Vue {
   public searchText = "";
   public accounts = [];
