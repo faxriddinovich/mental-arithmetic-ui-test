@@ -5,33 +5,34 @@
   >
     <div class="column is-5-desktop is-12-mobile is-9-tablet">
       <div class="box">
-        <form @submit.prevent="authenticate">
-          <b-field v-if="enterMode === 'username'" key="1" label="Username">
+        <form @submit.prevent="createAccount">
+          <b-field label="Username">
             <b-input
               type="text"
               placeholder="Please enter your username"
               icon="user"
-              :has-counter="false"
-              @icon-click="changeEnterMode"
-              icon-clickable
               maxlength="18"
-              v-model="usernameOrEmail"
+              :has-counter="false"
+              v-model="username"
               required
             />
           </b-field>
-          <b-field label="Email address" v-else>
+          <b-field label="Email address">
             <b-input
               type="email"
               placeholder="Please enter your email address"
               icon="envelope"
               :has-counter="false"
-              @icon-click="changeEnterMode"
-              icon-clickable
               minlength="4"
               maxlength="40"
-              v-model="usernameOrEmail"
-              required
+              v-model="email"
             />
+          </b-field>
+          <b-field label="Role">
+            <b-select placeholder="Select a role" v-model="role">
+              <option value="default">default</option>
+              <option value="teacher">teacher</option>
+            </b-select>
           </b-field>
           <b-field label="Password">
             <b-input
@@ -57,10 +58,10 @@
           <b-button
             native-type="submit"
             type="is-primary"
-            icon-right="user-check"
+            icon-right="plus"
             :disabled="!canSubmit"
             expanded
-            >Authenticate</b-button
+            >Create</b-button
           >
         </form>
       </div>
@@ -74,11 +75,11 @@
         >
         <b-button
           tag="router-link"
-          :to="{ name: 'CreateAccount' }"
+          :to="{ name: 'Authenticate' }"
           class="ml-3"
-          icon-left="user-plus"
+          icon-left="user-check"
           expanded
-          >Create an account</b-button
+          >Authenticate</b-button
         >
       </div>
     </div>
@@ -89,16 +90,14 @@ import { Component, Vue } from "vue-property-decorator";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
-import {
-  RPC_INVALID_PARAMS_ERR_CODE,
-  RPC_INVALID_CREDENTIALS_ERR_CODE,
-} from "@/services/rpc/error-codes";
-import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import { RPC_CREATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import { RPC_ACCOUNT_ALREADY_EXISTS_ERR_CODE } from "@/services/rpc/error-codes";
 
 @Component({ components: { VueHcaptcha } })
 export default class AuthenticateAccount extends Vue {
-  public usernameOrEmail = "";
-  public enterMode: "username" | "email" = "username";
+  public username = "";
+  public email = "";
+  public role = "default";
   public password = "";
   public captcha = "";
   public canSubmit = false;
@@ -129,35 +128,36 @@ export default class AuthenticateAccount extends Vue {
     this.canSubmit = false;
   }
 
-  public async authenticate() {
-    const credentials: any = { password: this.password, captcha: this.captcha };
-    credentials[this.enterMode] = this.usernameOrEmail;
+  // FIXME: fix typescript types
+  public createAccount() {
+    const params = {
+      username: this.username,
+      role: this.role,
+      password: this.password,
+      captcha: this.captcha,
+    };
+    if (this.email.length) params["email"] = this.email;
 
     rpc
-      .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
-      //FIXME
-      .then((account: any) => {
-        this.$store
-          .dispatch("addSession", account)
-          .then(() => this.$store.dispatch("setActiveSession", account.id));
+      .call(RPC_CREATE_ACCOUNT_METHOD, params)
+      .then((account) => {
         showToastMessage(
-          `🎉 Success! Hey <b>${account.username}</b>!`,
+          `Success! Welcome <b>${account.username}</b>!`,
           ToastType.Success
         );
+        this.$router.push({ name: "Authenticate" });
       })
       .catch((error) => {
-        this.resetHcaptcha();
         if (error.jsonrpcError) {
+          this.resetHcaptcha();
           const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
-            showToastMessage("Invalid credentials", ToastType.Danger);
+          if (jsonrpcError.code === RPC_ACCOUNT_ALREADY_EXISTS_ERR_CODE) {
+            showToastMessage("Account already exists", ToastType.Danger);
+            return;
           }
         }
+        showToastMessage("Something went wrong", ToastType.Danger);
       });
-  }
-
-  public changeEnterMode() {
-    this.enterMode = this.enterMode === "username" ? "email" : "username";
   }
 }
 </script>

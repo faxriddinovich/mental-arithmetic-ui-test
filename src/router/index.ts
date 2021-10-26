@@ -5,6 +5,7 @@ import Store from "@/store";
 
 import Home from "@/views/home.vue";
 
+import CreateAccount from "@/views/account/create.vue";
 import Authenticate from "@/views/account/authenticate.vue";
 import Account from "@/views/account/account.vue";
 import UpdateAccount from "@/views/account/update.vue";
@@ -40,23 +41,44 @@ const routes: Array<RouteConfig> = [
     path: "/account",
     name: "Account",
     component: Account,
-    meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
     children: [
-      { path: "", name: "UpdateAccount", component: UpdateAccount },
+      {
+        path: "",
+        name: "UpdateAccount",
+        component: UpdateAccount,
+        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
+      },
       { path: "sessions", name: "AccountSessions", component: AccountSessions },
       {
         path: "platform-settings",
         name: "PlatformSettings",
         component: PlatformSettings,
+        meta: { requiresAuth: true, roles: ["root"] },
       },
-      { path: "accounts", name: "Accounts", component: Accounts },
-      { path: "manage-events", name: "ManageEvents", component: ManageEvents },
+      {
+        path: "accounts",
+        name: "Accounts",
+        component: Accounts,
+        meta: { requiresAuth: true, roles: ["root"] },
+      },
+      {
+        path: "manage-events",
+        name: "ManageEvents",
+        component: ManageEvents,
+
+        meta: { requiresAuth: true, roles: ["root"] },
+      },
     ],
   },
   {
     path: "/account/authenticate",
     name: "Authenticate",
     component: Authenticate,
+  },
+  {
+    path: "/account/create",
+    name: "CreateAccount",
+    component: CreateAccount,
   },
   {
     path: "/courses/:id",

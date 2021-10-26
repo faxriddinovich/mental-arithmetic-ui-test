@@ -10,7 +10,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(async (config) => {
   const activeSession = await Store.dispatch("getActiveSession");
   // Hard code. Can we fix this ?
-  if (Router.history.current.name !== "Authenticate" && activeSession) {
+  if (
+    !["Authenticate", "CreateAccount"].includes(Router.history.current.name) &&
+    activeSession
+  ) {
     config.headers["session"] = activeSession.session;
   }
 

@@ -11,8 +11,12 @@
         </b-numberinput>
       </b-field>
       <div class="has-text-right">
-        <b-button type="is-success" icon-left="save" native-type="submit"
-           :disabled="!fieldDiff">Save changes</b-button
+        <b-button
+          type="is-success"
+          icon-left="save"
+          native-type="submit"
+          :disabled="!fieldDiff"
+          >Save changes</b-button
         >
       </div>
     </form>
@@ -36,7 +40,9 @@ export default class PlatformSettings extends Vue {
   mounted() {
     rpc.call(RPC_GET_SETTINGS_METHOD).then((settings) => {
       this.settings = settings;
-      this.localSettings = settings.map((setting) => Object.assign({}, setting));
+      this.localSettings = settings.map((setting) =>
+        Object.assign({}, setting)
+      );
     });
   }
 
@@ -64,7 +70,7 @@ export default class PlatformSettings extends Vue {
   public saveChanges() {
     const params = [];
 
-    for(const field of this.fieldDiff) {
+    for (const field of this.fieldDiff) {
       params.push(this.localSettings[field.path[0]]);
     }
 
