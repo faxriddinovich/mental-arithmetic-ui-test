@@ -6,10 +6,13 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "@emotion/css": "^11.1.3",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
     "@theta-rpc/http-client": "file:../../rpc/packages/http-client",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
@@ -18,6 +21,7 @@
     "deep-diff": "^1.0.2",
     "jdenticon": "^3.1.1",
     "register-service-worker": "^1.7.1",
+    "ts-loader": "^8.2.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-class-component": "^7.2.3",
@@ -28,9 +32,11 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/electron-devtools-installer": "^2.2.0",
     "@types/mocha": "^5.2.4",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
+    "@vue/cli": "^4.5.14",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -42,6 +48,8 @@
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "^1.0.3",
     "chai": "^4.1.2",
+    "electron": "^15.3.0",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
@@ -49,6 +57,7 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "typescript": "~4.1.5",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
   }
 }
