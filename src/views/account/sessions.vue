@@ -51,19 +51,22 @@ import { SessionContract } from "@/rpc/contracts/account";
 export default class Sessions extends Vue {
   public sessions: SessionContract[] | null = null;
 
-  mounted() {
-    this.$store.dispatch("getSessions").then((sessions) => {
-      this.sessions = sessions;
-    });
+  async mounted() {
+    this.sessions = await this.$store.dispatch("getSessions");
   }
 
-  public deleteSession(id: number) {
-    this.$store.dispatch("deleteSession", id);
-    this.$router.go(0);
+  public async deleteSession(id: number) {
+    await this.$store.dispatch("deleteSession", id);
+    const currentSession = await this.$store.dispatch('getActiveSession');
+    if(!currentSession) {
+      this.$router.push({ name: 'Home' });
+    } else {
+      this.$router.go(0);
+    }
   }
 
-  public setActiveSession(id: number) {
-    this.$store.dispatch("setActiveSession", id);
+  public async setActiveSession(id: number) {
+    await this.$store.dispatch("setActiveSession", id);
     this.$router.go(0);
   }
 }
