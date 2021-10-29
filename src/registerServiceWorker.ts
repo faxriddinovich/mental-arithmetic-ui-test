@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+// #!if __BROWSER__
 import { register } from "register-service-worker";
 
 if (process.env.NODE_ENV === "production") {
@@ -32,3 +33,4 @@ if (process.env.NODE_ENV === "production") {
     },
   });
 }
+// #!endif

@@ -1,6 +1,9 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
+      chainWebpackRendererProcess (config) {
+        config.plugins.delete('pwa')
+      },
       nodeIntegration: true,
     },
   },
@@ -13,9 +16,15 @@ module.exports = {
       config.output.filename("[name].[hash].js").end();
     }
 
+    /*
+    config.plugins.delete('ts-loader');
+    config.plugins.delete('fork-ts-checker');
+    config.plugins.delete('ts');
+    */
+
     config.module
       .rule("preprocessor")
-      .test(/\.vue$/)
+      .test(/\.(ts|vue)$/)
       .use("webpack-preprocessor-loader")
       .loader("webpack-preprocessor-loader")
       .options({

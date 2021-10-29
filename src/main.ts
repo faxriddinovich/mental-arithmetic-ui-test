@@ -1,9 +1,14 @@
 import Vue from "vue";
-
 import Buefy from "buefy";
+// #!if __MOBILE__
+import { Plugins } from '@capacitor/core';
+const { SplashScreen } = Plugins;
+// #!endif
 
 import App from "./App.vue";
+// #!if __BROWSER__
 import "./registerServiceWorker";
+// #!endif
 import router from "./router";
 import store from "./store";
 
@@ -57,4 +62,9 @@ new Vue({
   router,
   store,
   render: (h) => h(App),
+  // #!if __MOBILE__
+  mounted() {
+    SplashScreen.hide()
+  }
+  // #!endif
 }).$mount("#app");
