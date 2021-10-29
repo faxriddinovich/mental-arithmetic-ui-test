@@ -57,9 +57,9 @@ export default class Sessions extends Vue {
 
   public async deleteSession(id: number) {
     await this.$store.dispatch("deleteSession", id);
-    const currentSession = await this.$store.dispatch('getActiveSession');
-    if(!currentSession) {
-      this.$router.push({ name: 'Home' });
+    const currentSession = await this.$store.dispatch("getActiveSession");
+    if (!currentSession) {
+      this.$router.push({ name: "Home" });
     } else {
       this.$router.go(0);
     }

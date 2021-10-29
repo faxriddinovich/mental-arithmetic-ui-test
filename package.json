@@ -7,12 +7,18 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
+    "capacitor:build": "vue-cli-service capacitor:build",
+    "capacitor:serve": "vue-cli-service capacitor:serve",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@capacitor/android": "^2.0.0",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0",
+    "@capacitor/ios": "^2.0.0",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
     "@theta-rpc/http-client": "file:../../rpc/packages/http-client",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
@@ -57,6 +63,7 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "typescript": "~4.1.5",
+    "vue-cli-plugin-capacitor": "~2.0.1",
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
   }
