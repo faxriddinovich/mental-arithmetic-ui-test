@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "serve": "BROWSER=true vue-cli-service serve",
+    "build": "BROWSER=true vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "capacitor:build": "vue-cli-service capacitor:build",
-    "capacitor:serve": "vue-cli-service capacitor:serve",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
+    "capacitor:build": "MOBILE=true vue-cli-service capacitor:build",
+    "capacitor:serve": "MOBILE=true vue-cli-service capacitor:serve",
+    "electron:build": "DESKTOP=true vue-cli-service electron:build",
+    "electron:serve": "DESKTOP=true vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
@@ -59,12 +59,14 @@
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
+    "ifdef-loader": "^2.3.0",
     "prettier": "^2.2.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "typescript": "~4.1.5",
     "vue-cli-plugin-capacitor": "~2.0.1",
     "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-preprocessor-loader": "^1.1.4"
   }
 }
