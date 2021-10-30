@@ -89,8 +89,21 @@
                     :class="attachmentClass(index)"
                     @click="selectedAttachmentIndex = index"
                   >
-                    <b-icon :icon="attachmentIcon(attachment.type)" />
-                    {{ index + 1 }}. {{ attachment.description }}
+                    <span>
+                      <b-icon :icon="attachmentIcon(attachment.type)" />
+                      {{ index + 1 }}. {{ attachment.description }}
+                    </span>
+                    <!-- #!if !__BROWSER__ -->
+                    <span>
+                      <b-button
+                        type="is-success"
+                        size="is-small"
+                        icon-left="file-download"
+                      >
+                        Download</b-button
+                      >
+                    </span>
+                    <!-- #!endif -->
                   </div>
                 </div>
               </div>
@@ -287,7 +300,7 @@ export default class Lesson extends Vue {
   }
 
   public attachmentClass(index: number) {
-    return "px-3 py-2 is-playlist-item".concat(
+    return "px-3 py-2 is-playlist-item is-flex is-justify-content-space-between".concat(
       this.selectedAttachmentIndex === index
         ? " is-playlist-active-item has-text-weight-semibold"
         : ""

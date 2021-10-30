@@ -13,9 +13,8 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    useContentSize: true,
     width: 1408,
-    minWidth: 1408,
+    minWidth: 600,
     height: 800,
     minHeight: 800,
     webPreferences: {
@@ -25,6 +24,10 @@ async function createWindow() {
         .ELECTRON_NODE_INTEGRATION as unknown as boolean,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
+  });
+
+  win.webContents.session.on("will-download", (event, item, webContents) => {
+    console.log("download.....");
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

@@ -1,10 +1,42 @@
 import axios from "axios";
 import { HTTPClient } from "@theta-rpc/http-client";
+import {
+  RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE,
+  RPC_ACCOUNT_IS_BLOCKED_ERR_CODE,
+} from "@/services/rpc/error-codes";
 import Router from "@/router/index";
 import Store from "@/store";
+import { showToastMessage, ToastType } from "@/services/toast";
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_RPC_URL,
+});
+
+// FIXME: this should be done using the @theta-rpc/json-rpc package
+axiosInstance.interceptors.response.use(async (response) => {
+  if (response.status === 200) {
+    if (response.data.error) {
+      const jsonrpcError = response.data.error;
+      const activeSession = await Store.dispatch("getActiveSession");
+
+      if (activeSession) {
+        if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
+          showToastMessage("Invalid session");
+          await Store.dispatch("deleteSession", activeSession.id);
+          Router.push({ name: "Authenticate" });
+          return;
+        } else if (
+          jsonrpcError.code === RPC_ACCOUNT_IS_BLOCKED_ERR_CODE &&
+          Router.history.current.name !== "AccountBlocked"
+        ) {
+          Router.push({ name: "AccountBlocked" });
+          return;
+        }
+      }
+    }
+  }
+
+  return response;
 });
 
 axiosInstance.interceptors.request.use(async (config) => {

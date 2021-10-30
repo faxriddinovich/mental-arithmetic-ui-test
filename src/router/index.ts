@@ -13,6 +13,7 @@ import AccountSessions from "@/views/account/sessions.vue";
 import PlatformSettings from "@/views/account/platform-settings.vue";
 import Accounts from "@/views/account/accounts.vue";
 import ManageEvents from "@/views/account/manage-events.vue";
+import AccountBlocked from "@/views/account/blocked.vue";
 
 import Settings from "@/views/settings.vue";
 
@@ -79,6 +80,12 @@ const routes: Array<RouteConfig> = [
     path: "/account/create",
     name: "CreateAccount",
     component: CreateAccount,
+  },
+  // FIXME: protect this route
+  {
+    path: "/account/blocked",
+    name: "AccountBlocked",
+    component: AccountBlocked,
   },
   {
     path: "/courses/:id",
