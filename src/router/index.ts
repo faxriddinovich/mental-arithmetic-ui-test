@@ -10,6 +10,7 @@ import Authenticate from "@/views/account/authenticate.vue";
 import Account from "@/views/account/account.vue";
 import UpdateAccount from "@/views/account/update.vue";
 import AccountSessions from "@/views/account/sessions.vue";
+import AccountSubscription from "@/views/account/subscription.vue";
 import PlatformSettings from "@/views/account/platform-settings.vue";
 import Accounts from "@/views/account/accounts.vue";
 import ManageEvents from "@/views/account/manage-events.vue";
@@ -47,6 +48,12 @@ const routes: Array<RouteConfig> = [
         path: "",
         name: "UpdateAccount",
         component: UpdateAccount,
+        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
+      },
+      {
+        path: "subscription",
+        name: "AccountSubscription",
+        component: AccountSubscription,
         meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
       },
       {

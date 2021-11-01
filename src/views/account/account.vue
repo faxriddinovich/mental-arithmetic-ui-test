@@ -42,7 +42,7 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
-                  <p class="heading">Balance</p>
+                  <p class="heading">Balance (in sums)</p>
                   <!-- <p class="title">28.000</p> -->
                   <p class="title">
                     <span v-if="account">{{
@@ -63,6 +63,13 @@
                   tag="router-link"
                   :to="{ name: 'UpdateAccount' }"
                   :active="$route.name === 'UpdateAccount'"
+                ></b-menu-item>
+                <b-menu-item
+                  icon="file-check"
+                  label="Subscription"
+                  tag="router-link"
+                  :to="{ name: 'AccountSubscription' }"
+                  :active="$route.name === 'AccountSubscription'"
                 ></b-menu-item>
                 <b-menu-item
                   icon="users-alt"
