@@ -49,7 +49,6 @@ const routes: Array<RouteConfig> = [
         component: UpdateAccount,
         meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
       },
-      { path: "sessions", name: "AccountSessions", component: AccountSessions },
       {
         path: "platform-settings",
         name: "PlatformSettings",
@@ -86,6 +85,11 @@ const routes: Array<RouteConfig> = [
     path: "/account/blocked",
     name: "AccountBlocked",
     component: AccountBlocked,
+  },
+  {
+    path: "/account/sessions",
+    name: "AccountSessions",
+    component: AccountSessions,
   },
   {
     path: "/courses/:id",

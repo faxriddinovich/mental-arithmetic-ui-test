@@ -7,7 +7,10 @@
       <b-message type="is-danger" has-icon>
         <span class="has-text-weight-semibold">Your account is blocked!</span
         ><br />
-        Please contact administrators.
+        Please contact administrators.<br />You have an access to the
+        <router-link :to="{ name: 'AccountSessions' }"
+          >Sessions page</router-link
+        >.
       </b-message>
     </div>
   </div>

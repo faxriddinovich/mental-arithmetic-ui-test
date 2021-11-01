@@ -69,7 +69,6 @@
                   label="Sessions"
                   tag="router-link"
                   :to="{ name: 'AccountSessions' }"
-                  :active="$route.name === 'AccountSessions'"
                 ></b-menu-item>
               </b-menu-list>
               <b-menu-list

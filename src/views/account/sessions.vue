@@ -1,27 +1,60 @@
 <template>
-  <div class="card p-2 is-bordered">
-    <div class="mb-2 has-text-right">
-      <b-button
-        tag="router-link"
-        :to="{ name: 'Authenticate' }"
-        type="is-success"
-        icon-left="plus"
-        >Add session</b-button
-      >
-    </div>
-    <div
-      class="is-flex is-justify-content-space-between is-align-items-center p-2"
-      v-for="(session, index) of sessions"
-      :key="index"
-    >
-      <span
-        ><span class="has-text-weight-semibold"
-          ><b-icon icon="user" /> {{ session.username }}</span
+  <div
+    class="columns is-centered is-vcentered is-mobile m-0"
+    style="height: 100vh"
+  >
+    <div class="column is-5-desktop is-12-mobile is-9-tablet">
+      <div class="card p-3 is-bordered">
+        <div class="mb-4 has-text-right">
+          <b-button
+            tag="router-link"
+            :to="{ name: 'Authenticate' }"
+            type="is-success"
+            icon-left="plus"
+            >Add account</b-button
+          >
+        </div>
+
+        <article
+          class="media py-1 my-1"
+          v-for="(session, index) of sessions"
+          :key="index"
         >
-        <span class="ml-2 has-text-grey is-size-7">{{
-          new Date(session.timestamp)
-        }}</span></span
-      >
+          <figure class="media-left">
+            <b-icon icon="user" size="is-medium" />
+          </figure>
+          <div class="media-content">
+            <div class="content">
+              <strong>{{ session.username }}</strong> #{{ session.id }}
+              <span
+                v-if="session.isActive"
+                class="has-text-weight-bold has-text-success"
+                >- Active</span
+              >
+              <br />
+              {{ session.timestamp }}
+            </div>
+          </div>
+          <div class="media-right buttons">
+            <b-button
+              size="is-small"
+              type="is-danger"
+              icon-left="trash-alt"
+              @click="deleteSession(session.id)"
+              >Delete</b-button
+            >
+            <b-button
+              size="is-small"
+              type="is-primary"
+              icon-left="arrow-right"
+              v-if="!session.isActive"
+              @click="setActiveSession(session.id)"
+              >Enter</b-button
+            >
+          </div>
+        </article>
+
+        <!--
 
       <div class="buttons">
         <b-button
@@ -40,6 +73,17 @@
           >Enter</b-button
         >
       </div>
+    </div>
+-->
+      </div>
+      <b-button
+        class="mt-3"
+        icon-left="home"
+        tag="router-link"
+        :to="{ name: 'Home' }"
+        expanded
+        >Home</b-button
+      >
     </div>
   </div>
 </template>
