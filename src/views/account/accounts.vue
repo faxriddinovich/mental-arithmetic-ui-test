@@ -80,7 +80,7 @@
           >
         </form>
       </div>
-      <div class="card p-3 is-bordered">
+      <div class="card px-3 py-2 is-bordered">
         <div v-if="accounts.length">
           <article
             class="media m-0 py-2"
@@ -97,8 +97,8 @@
             <div class="media-content">
               <div class="content">
                 <p>
-                  <strong>{{ account.username }}</strong>
-                  <span class="ml-1"
+                  <strong>#{{ account.id }} {{ account.username }}</strong>
+                  <span class="ml-1" v-if="account.email"
                     ><b-icon icon="envelope-alt" />{{ account.email }}</span
                   >
                   <br />
