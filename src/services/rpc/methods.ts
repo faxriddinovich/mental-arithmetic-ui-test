@@ -11,6 +11,9 @@ export const RPC_GET_COURSE_FOR_UPDATE_METHOD = "get_course_for_update";
 export const RPC_PURCHASE_COURSE_METHOD = "purchase_course";
 export const RPC_DELETE_COURSE_METHOD = "delete_course";
 export const RPC_UPDATE_COURSE_METHOD = "update_course";
+export const RPC_GET_SUBSCRIPTION_METHOD = "get_subscription";
+export const RPC_CANCEL_SUBSCRIPTION_METHOD = "cancel_subscription";
+export const RPC_PURCHASE_SUBSCRIPTION_METHOD = "purchase_subscription";
 
 export const RPC_GET_LESSONS_METHOD = "get_lessons";
 
