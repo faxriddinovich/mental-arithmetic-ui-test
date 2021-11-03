@@ -15,7 +15,7 @@
           </p>
         </div>
         <div v-else>
-          <form @submit.prevent="purchaseSubscription">
+          <form @submit.prevent="confirmPurchase">
             <p class="mb-4">
               <b-field label="For how many days?">
                 <b-numberinput v-model="days" minlength="32"></b-numberinput>
@@ -50,12 +50,14 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { showToastMessage, ToastType } from '@/services/toast';
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_SUBSCRIPTION_METHOD,
   RPC_CANCEL_SUBSCRIPTION_METHOD,
   RPC_PURCHASE_SUBSCRIPTION_METHOD,
 } from "@/services/rpc/methods";
+import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from '@/services/rpc/error-codes';
 
 @Component
 export default class Subscription extends Vue {
@@ -83,6 +85,15 @@ export default class Subscription extends Vue {
     });
   }
 
+  public confirmPurchase() {
+    this.$buefy.dialog.confirm({
+      title: "Purchase a subscription",
+      message: "Do you really want to purchase ?",
+      type: "is-warning",
+      onConfirm: () => this.purchaseSubscription(),
+    });
+  }
+
   public cancelSubscription() {
     rpc.call(RPC_CANCEL_SUBSCRIPTION_METHOD).then(() => {
       this.$router.go(0);
@@ -92,6 +103,13 @@ export default class Subscription extends Vue {
   public purchaseSubscription() {
     rpc.call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: this.days }).then(() => {
       this.$router.go(0);
+    }).catch((error) => {
+      if(error.jsonrpcError) {
+        const { jsonrpcError } = error;
+        if(jsonrpcError.code ===RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
+          showToastMessage('Insufficient balance', ToastType.Danger);
+        }
+      }
     });
   }
 }

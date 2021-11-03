@@ -1,8 +1,8 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
-      chainWebpackRendererProcess (config) {
-        config.plugins.delete('pwa')
+      chainWebpackRendererProcess(config) {
+        config.plugins.delete("pwa");
       },
       nodeIntegration: true,
     },
