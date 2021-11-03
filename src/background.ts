@@ -10,6 +10,9 @@ protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
+// hard coded protocol
+const PROTOCOL = "mental-arithmetic";
+
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -25,6 +28,15 @@ async function createWindow() {
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
+
+  app.setAsDefaultProtocolClient(PROTOCOL)
+
+  app.on('open-url', (event, url) => {
+    win.webContents
+      .executeJavaScript(`localStorage.setItem("url-open", "${url.slice(PROTOCOL.length + 2, url.length)}")`, true).then(() => {
+          win.reload();
+      })
+  })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

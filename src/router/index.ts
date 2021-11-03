@@ -33,7 +33,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: Home
   },
   {
     path: "/settings",
@@ -138,6 +138,18 @@ const router = new VueRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const urlOpen = localStorage.getItem('url-open');
+  console.log(urlOpen);
+
+  if(urlOpen) {
+    localStorage.removeItem('url-open');
+    next(urlOpen);
+    return;
+  }
+      next();
+});
+
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const activeSession = await Store.dispatch("getActiveSession");
@@ -149,5 +161,7 @@ router.beforeEach(async (to, from, next) => {
   }
   next();
 });
+
+
 
 export default router;
