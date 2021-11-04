@@ -50,14 +50,14 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { showToastMessage, ToastType } from '@/services/toast';
+import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
   RPC_GET_SUBSCRIPTION_METHOD,
   RPC_CANCEL_SUBSCRIPTION_METHOD,
   RPC_PURCHASE_SUBSCRIPTION_METHOD,
 } from "@/services/rpc/methods";
-import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from '@/services/rpc/error-codes';
+import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from "@/services/rpc/error-codes";
 
 @Component
 export default class Subscription extends Vue {
@@ -101,16 +101,19 @@ export default class Subscription extends Vue {
   }
 
   public purchaseSubscription() {
-    rpc.call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: this.days }).then(() => {
-      this.$router.go(0);
-    }).catch((error) => {
-      if(error.jsonrpcError) {
-        const { jsonrpcError } = error;
-        if(jsonrpcError.code ===RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
-          showToastMessage('Insufficient balance', ToastType.Danger);
+    rpc
+      .call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: this.days })
+      .then(() => {
+        this.$router.go(0);
+      })
+      .catch((error) => {
+        if (error.jsonrpcError) {
+          const { jsonrpcError } = error;
+          if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
+            showToastMessage("Insufficient balance", ToastType.Danger);
+          }
         }
-      }
-    });
+      });
   }
 }
 </script>

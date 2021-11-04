@@ -29,14 +29,21 @@ async function createWindow() {
     },
   });
 
-  app.setAsDefaultProtocolClient(PROTOCOL)
+  app.setAsDefaultProtocolClient(PROTOCOL);
 
-  app.on('open-url', (event, url) => {
+  app.on("open-url", (event, url) => {
     win.webContents
-      .executeJavaScript(`localStorage.setItem("url-open", "${url.slice(PROTOCOL.length + 2, url.length)}")`, true).then(() => {
-          win.reload();
-      })
-  })
+      .executeJavaScript(
+        `localStorage.setItem("url-open", "${url.slice(
+          PROTOCOL.length + 2,
+          url.length
+        )}")`,
+        true
+      )
+      .then(() => {
+        win.reload();
+      });
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
