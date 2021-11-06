@@ -2,6 +2,7 @@ export const RPC_AUTHENTICATE_ACCOUNT_METHOD = "authenticate_account";
 export const RPC_CREATE_ACCOUNT_METHOD = "create_account";
 export const RPC_GET_ACCOUNT_METHOD = "get_account";
 export const RPC_UPDATE_ACCOUNT_METHOD = "update_account";
+export const RPC_DELETE_ACCOUNT_METHOD = "delete_account";
 
 export const RPC_GET_ACCOUNTS_METHOD = "get_accounts";
 

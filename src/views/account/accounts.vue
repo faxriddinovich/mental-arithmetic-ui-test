@@ -45,7 +45,13 @@
             <b-input type="password" v-model="localAccount.password"></b-input>
           </b-field>
 
-          <div class="has-text-right">
+          <div class="buttons is-justify-content-right">
+            <b-button
+              icon-left="times"
+              type="is-danger"
+              @click="confirmDeleteAccount"
+              >Delete</b-button
+            >
             <b-button
               native-type="submit"
               icon-left="save"
@@ -132,6 +138,7 @@ import { rpc } from "@/services/rpc";
 import {
   RPC_GET_ACCOUNTS_METHOD,
   RPC_UPDATE_ACCOUNT_METHOD,
+  RPC_DELETE_ACCOUNT_METHOD,
 } from "@/services/rpc/methods";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
@@ -174,6 +181,25 @@ export default class Accounts extends Vue {
       this.account = Object.assign({}, this.localAccount);
       showToastMessage("Successfully updated!", ToastType.Success);
     });
+  }
+
+  public confirmDeleteAccount() {
+    this.$buefy.dialog.confirm({
+      message: "Do you really want to delete this account?",
+      onConfirm: () => this.deleteAccount(),
+      type: "is-danger",
+      hasIcon: true,
+      icon: "times",
+    });
+  }
+
+  public deleteAccount() {
+    rpc
+      .call(RPC_DELETE_ACCOUNT_METHOD, { accountId: this.account.id })
+      .then(() => {
+        showToastMessage("Successfully deleted!", ToastType.Warning);
+        this.$router.push({ name: "Accounts" });
+      });
   }
 
   //FIXME: fix typescript types

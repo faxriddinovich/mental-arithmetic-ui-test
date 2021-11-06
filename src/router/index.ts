@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
 // #!if __MOBILE__
-import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { App, URLOpenListenerEvent } from "@capacitor/app";
 
 /*
 App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
@@ -12,7 +12,6 @@ App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
 console.log(slug);
 });
 */
-
 
 // #endif
 
