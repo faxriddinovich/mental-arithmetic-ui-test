@@ -1,6 +1,21 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
+// #!if __MOBILE__
+import { App, URLOpenListenerEvent } from '@capacitor/app';
+
+/*
+App.addListener('appUrlOpen', function (event: URLOpenListenerEvent) {
+  // Example url: https://beerswift.app/tabs/tabs2
+  // slug = /tabs/tabs2
+  const slug = event.url.split('.app').pop();
+console.log(slug);
+});
+*/
+
+
+// #endif
+
 import Store from "@/store";
 
 import Home from "@/views/home.vue";

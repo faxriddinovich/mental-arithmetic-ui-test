@@ -91,7 +91,7 @@ export default class Upload extends Vue {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        this.$emit("upload", response.data);
+        this.$emit("upload", response.data.filename);
         this.uploadState = "uploaded";
       })
       .catch((error) => {

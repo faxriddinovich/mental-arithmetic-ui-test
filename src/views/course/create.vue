@@ -71,7 +71,7 @@
           <b-field label="Image:" horizontal>
             <upload
               accept=".jpg,.jpeg,.png"
-              @upload="imageUploaded"
+              @upload="upload"
               @fileSizeError="fileSizeError"
               @uploadError="uploadError"
             />
