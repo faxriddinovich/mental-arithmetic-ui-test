@@ -1,5 +1,5 @@
 <template>
-  <div class="is-unselectable">
+  <div class="is-unselectable" ref="container">
     <router-view :key="$route.fullPath" />
   </div>
 </template>

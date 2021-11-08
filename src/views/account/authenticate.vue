@@ -6,10 +6,14 @@
     <div class="column is-5-desktop is-12-mobile is-9-tablet">
       <div class="box">
         <form @submit.prevent="authenticate">
-          <b-field v-if="enterMode === 'username'" key="1" label="Username">
+          <b-field
+            v-if="enterMode === 'username'"
+            key="1"
+            :label="$t('account.username')"
+          >
             <b-input
               type="text"
-              placeholder="Please enter your username"
+              :placeholder="$t('authenticate-username-input-placeholder')"
               icon="user"
               :has-counter="false"
               @icon-click="changeEnterMode"
@@ -19,10 +23,10 @@
               required
             />
           </b-field>
-          <b-field label="Email address" v-else>
+          <b-field :label="$t('account.email')" v-else>
             <b-input
               type="email"
-              placeholder="Please enter your email address"
+              :placeholder="$t('authenticate-email-input-placeholder')"
               icon="envelope"
               :has-counter="false"
               @icon-click="changeEnterMode"
@@ -33,9 +37,9 @@
               required
             />
           </b-field>
-          <b-field label="Password">
+          <b-field :label="$t('account.password')">
             <b-input
-              placeholder="Please enter your password"
+              :placeholder="$t('authenticate-password-input-placeholder')"
               type="password"
               icon="lock"
               maxlength="18"
@@ -60,7 +64,7 @@
             icon-right="user-check"
             :disabled="!canSubmit"
             expanded
-            >Authenticate</b-button
+            >{{ $t("account.authenticate") }}</b-button
           >
         </form>
       </div>
@@ -70,7 +74,7 @@
           :to="{ name: 'Home' }"
           icon-left="home"
           expanded
-          >Home</b-button
+          >{{ $t("home") }}</b-button
         >
         <b-button
           tag="router-link"
@@ -78,7 +82,7 @@
           class="ml-3"
           icon-left="user-plus"
           expanded
-          >Create an account</b-button
+          >{{ $t("account.create") }}</b-button
         >
       </div>
     </div>
@@ -135,13 +139,14 @@ export default class AuthenticateAccount extends Vue {
 
     rpc
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
-      //FIXME
       .then((account: any) => {
         this.$store
           .dispatch("addSession", account)
           .then(() => this.$store.dispatch("setActiveSession", account.id));
         showToastMessage(
-          `🎉 Success! Hey <b>${account.username}</b>!`,
+          this.$i18n.t("success-authentication", {
+            username: account.username,
+          }),
           ToastType.Success
         );
       })
@@ -150,7 +155,10 @@ export default class AuthenticateAccount extends Vue {
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
           if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
-            showToastMessage("Invalid credentials", ToastType.Danger);
+            showToastMessage(
+              this.$i18n.t("invalid-credentials"),
+              ToastType.Danger
+            );
           }
         }
       });
