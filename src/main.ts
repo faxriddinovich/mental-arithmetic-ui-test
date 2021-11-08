@@ -10,6 +10,7 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 // #!endif
 import router from "./router";
+import i18n from "./i18n";
 import store from "./store";
 
 import "./styles/styles.scss";
@@ -61,6 +62,7 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
+  i18n,
   render: (h) => h(App),
   // #!if __MOBILE__
   mounted() {

@@ -9,28 +9,28 @@
           aria-role="list"
         >
           <template #trigger>
-            <b-button icon-left="filter">Filter</b-button>
+            <b-button icon-left="filter">{{ $t("filter") }}</b-button>
           </template>
 
           <b-dropdown-item value="price" aria-role="listitem">
             <b-icon icon="dollar-alt" />
-            Price
+            {{ $t("price") }}
           </b-dropdown-item>
 
           <b-dropdown-item value="popular" aria-role="listitem">
             <b-icon icon="star" />
-            Popular
+            {{ $t("popular") }}
           </b-dropdown-item>
 
           <b-dropdown-item value="purchased" aria-role="listitem">
             <b-icon icon="shopping-basket" />
-            Purchased
+            {{ $t("purchased") }}
           </b-dropdown-item>
         </b-dropdown>
         <b-input
           v-model="searchText"
           class="is-flex-grow-1 ml-3"
-          placeholder="Course name, author name"
+          :placeholder="$t('course-search-placeholder')"
           icon="search"
         >
         </b-input>
@@ -39,14 +39,17 @@
           type="is-primary"
           class="ml-3"
           icon-left="search"
-          >Search</b-button
+          >{{ $t("search") }}</b-button
         >
       </form>
     </div>
 
     <div class="mt-5">
       <cloud-loading v-if="isLoading" />
-      <not-found-box text="No courses found" v-else-if="!courses.length" />
+      <not-found-box
+        :text="$t('no-courses-found')"
+        v-else-if="!courses.length"
+      />
       <div v-else>
         <div class="columns is-mobile is-multiline">
           <div
@@ -58,9 +61,9 @@
           </div>
         </div>
         <div class="my-3">
-          <b-button type="is-primary" icon-left="arrow-down" expanded
-            >Load more</b-button
-          >
+          <b-button type="is-primary" icon-left="arrow-down" expanded>{{
+            $t("load-more")
+          }}</b-button>
         </div>
       </div>
     </div>

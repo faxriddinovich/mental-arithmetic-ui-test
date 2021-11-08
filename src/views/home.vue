@@ -11,7 +11,7 @@
       <b-tab-item value="main">
         <template #header>
           <b-icon icon="abacus" class="mx-0" />
-          <span class="is-hidden-mobile">Mental arithmetic</span>
+          <span class="is-hidden-mobile">{{ $t("mental-arithmetic") }}</span>
         </template>
 
         <b-message
@@ -57,7 +57,7 @@
       <b-tab-item value="other">
         <template #header>
           <b-icon icon="cube" class="mx-0" />
-          <span class="is-hidden-mobile">Other resources</span>
+          <span class="is-hidden-mobile">{{ $t("other-resources") }}</span>
         </template>
 
         <div>
@@ -68,7 +68,7 @@
         <template #header>
           <b-icon icon="user" class="mx-0" />
           <span class="is-hidden-mobile">{{
-            activeSession ? activeSession.username : "Account"
+            activeSession ? $t("account.account") : $t("account.authenticate")
           }}</span>
         </template>
       </b-tab-item>
