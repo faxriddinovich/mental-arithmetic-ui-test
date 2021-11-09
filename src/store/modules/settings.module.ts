@@ -2,7 +2,10 @@ import { LocalStorage } from "@/services/local-storage";
 
 export default {
   state: {
-    defaultSettings: [{ key: "show_latest_event", value: true }],
+    defaultSettings: [
+      { key: "show_latest_event", value: true },
+      { key: "locale", value: "ru" },
+    ],
   },
   actions: {
     getSettings(context) {

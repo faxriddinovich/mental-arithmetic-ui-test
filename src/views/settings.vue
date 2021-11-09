@@ -3,23 +3,60 @@
     class="columns is-centered is-vcentered is-mobile m-0"
     style="height: 100vh"
   >
-    <div class="column is-4-desktop is-12-mobile is-9-tablet">
+    <div class="column is-5-desktop is-12-mobile is-9-tablet">
       <div class="columns is-multiline">
         <div class="column is-12">
           <div class="box mx-2">
             <form @submit.prevent="saveChanges">
-              <div v-for="setting of settings" :key="setting.key">
-                <b-field
-                  v-if="setting.key === 'show_latest_event'"
-                  label="Show the latest event"
+              <b-field>
+                <template #label>
+                  <b-icon icon="mailbox" /> Show latest event
+                </template>
+                <b-checkbox v-model="showLatestEvent">
+                  Will be {{ showLatestEvent ? "shown" : "hidden" }}
+                </b-checkbox>
+              </b-field>
+              <b-field>
+                <template #label>
+                  <b-icon icon="language" /> Select language
+                </template>
+                <b-radio-button
+                  v-model="locale"
+                  native-value="en"
+                  type="is-primary"
                 >
-                  <b-checkbox v-model="setting.value">
-                    Will be {{ setting.value ? "shown" : "hidden" }}
-                  </b-checkbox>
-                </b-field>
-              </div>
+                  <img
+                    :src="require('../../public/img/flags/united-states.svg')"
+                    width="30"
+                  />
+                  <span class="ml-2">English</span>
+                </b-radio-button>
+                <b-radio-button
+                  v-model="locale"
+                  native-value="uz"
+                  type="is-primary"
+                >
+                  <img
+                    :src="require('../../public/img/flags/uzbekistan.svg')"
+                    width="30"
+                  />
+                  <span class="ml-2">Uzbek</span>
+                </b-radio-button>
+                <b-radio-button
+                  v-model="locale"
+                  native-value="ru"
+                  type="is-primary"
+                >
+                  <img
+                    :src="require('../../public/img/flags/russia.svg')"
+                    width="30"
+                  />
+                  <span class="ml-2">Russian</span>
+                </b-radio-button>
+              </b-field>
+
               <b-button
-                class="mt-4"
+                class="mt-5"
                 native-type="submit"
                 type="is-primary"
                 icon-left="save"
@@ -52,16 +89,35 @@ import { Setting } from "@/store/interfaces/setting";
 @Component
 export default class Settings extends Vue {
   public showLatestEvent = false;
-  public settings: Setting[] | null = null;
+  public locale = "en";
 
   mounted() {
+    this.loadSettings();
+  }
+
+  public loadSettings() {
     this.$store.dispatch("getSettings").then((settings) => {
-      this.settings = settings;
+      for (const setting of settings) {
+        switch (setting.key) {
+          case "show_latest_event":
+            this.showLatestEvent = setting.value;
+            break;
+          case "locale":
+            this.locale = setting.value;
+            break;
+        }
+      }
     });
   }
 
   public saveChanges() {
-    this.$store.dispatch("updateSettings", this.settings).then(() => {
+    const settings: any[] = [];
+
+    settings.push({ key: "show_latest_event", value: this.showLatestEvent });
+    settings.push({ key: "locale", value: this.locale });
+    this.$i18n.locale = this.locale;
+
+    this.$store.dispatch("updateSettings", settings).then(() => {
       showToastMessage("Changes applied!", ToastType.Success);
     });
   }
