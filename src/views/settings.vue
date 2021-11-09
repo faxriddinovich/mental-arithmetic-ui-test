@@ -10,15 +10,15 @@
             <form @submit.prevent="saveChanges">
               <b-field>
                 <template #label>
-                  <b-icon icon="mailbox" /> Show latest event
+                  <b-icon icon="mailbox" /> {{ $t("latest-event") }}
                 </template>
                 <b-checkbox v-model="showLatestEvent">
-                  Will be {{ showLatestEvent ? "shown" : "hidden" }}
+                  {{ $t(showLatestEvent ? "will-be-shown" : "will-be-hidden") }}
                 </b-checkbox>
               </b-field>
               <b-field>
                 <template #label>
-                  <b-icon icon="language" /> Select language
+                  <b-icon icon="language" /> {{ $t("language") }}
                 </template>
                 <b-radio-button
                   v-model="locale"
@@ -40,7 +40,7 @@
                     :src="require('../../public/img/flags/uzbekistan.svg')"
                     width="30"
                   />
-                  <span class="ml-2">Uzbek</span>
+                  <span class="ml-2">O'zbekcha</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
@@ -51,7 +51,7 @@
                     :src="require('../../public/img/flags/russia.svg')"
                     width="30"
                   />
-                  <span class="ml-2">Russian</span>
+                  <span class="ml-2">Русский</span>
                 </b-radio-button>
               </b-field>
 
@@ -61,7 +61,7 @@
                 type="is-primary"
                 icon-left="save"
                 expanded
-                >Save changes</b-button
+                >{{ $t("save-changes") }}</b-button
               >
             </form>
           </div>
@@ -72,7 +72,7 @@
                 :to="{ name: 'Home' }"
                 icon-left="home"
                 expanded
-                >Home</b-button
+                >{{ $t("home") }}</b-button
               >
             </div>
           </div>
@@ -118,7 +118,7 @@ export default class Settings extends Vue {
     this.$i18n.locale = this.locale;
 
     this.$store.dispatch("updateSettings", settings).then(() => {
-      showToastMessage("Changes applied!", ToastType.Success);
+      showToastMessage(this.$i18n.t("changes-applied"), ToastType.Success);
     });
   }
 }

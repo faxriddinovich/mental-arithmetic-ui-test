@@ -26,6 +26,13 @@ const i18n = new VueI18n({
       "success-authentication": "Welcome {username}!",
       "invalid-credentials": "Invalid credentials",
 
+      "latest-event": "Show latest event",
+      "will-be-shown": "Will be shown",
+      "will-be-hidden": "Will be hidden",
+      language: "Language",
+      "save-changes": "Save changes",
+      "changes-applied": "Changes applied",
+
       account: {
         account: "Account",
         authenticate: "Authenticate",
@@ -55,6 +62,12 @@ const i18n = new VueI18n({
       "authenticate-password-input-placeholder": "Пожалуйста, напишите пароль",
       "success-authentication": "Добро пожаловать {username}!",
       "invalid-credentials": "Неверные учетные данные",
+      "latest-event": "Показать последнее событие",
+      "will-be-shown": "Будет показано",
+      "will-be-hidden": "Будет скрыто",
+      language: "Язык",
+      "save-changes": "Сохранить изменения",
+      "changes-applied": "Изменения внесены",
 
       account: {
         account: "Аккаунт",
@@ -85,6 +98,12 @@ const i18n = new VueI18n({
       "authenticate-password-input-placeholder": "Iltimos parol yozing",
       "success-authentication": "Hush kelibsiz {username}!",
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
+      "latest-event": "Ohirgi hodisani ko'rsatish",
+      "will-be-shown": "Ko'rsatiladi",
+      "will-be-hidden": "Ko'rsatilmaydi",
+      language: "Til",
+      "save-changes": "O'zgarishlarni saqlash",
+      "changes-applied": "Oʻzgarishlar qoʻllanildi",
 
       account: {
         account: "Akkaunt",
