@@ -68,7 +68,7 @@
         <template #header>
           <b-icon icon="user" class="mx-0" />
           <span class="is-hidden-mobile">{{
-            activeSession ? $t("account.account") : $t("account.authenticate")
+            activeSession ? $t("account") : $t("authenticate")
           }}</span>
         </template>
       </b-tab-item>

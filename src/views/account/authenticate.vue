@@ -9,11 +9,11 @@
           <b-field
             v-if="enterMode === 'username'"
             key="1"
-            :label="$t('account.username')"
+            :label="$t('username')"
           >
             <b-input
               type="text"
-              :placeholder="$t('authenticate-username-input-placeholder')"
+              :placeholder="$t('username-input-placeholder')"
               icon="user"
               :has-counter="false"
               @icon-click="changeEnterMode"
@@ -23,10 +23,10 @@
               required
             />
           </b-field>
-          <b-field :label="$t('account.email')" v-else>
+          <b-field :label="$t('email')" v-else>
             <b-input
               type="email"
-              :placeholder="$t('authenticate-email-input-placeholder')"
+              :placeholder="$t('email-input-placeholder')"
               icon="envelope"
               :has-counter="false"
               @icon-click="changeEnterMode"
@@ -37,9 +37,9 @@
               required
             />
           </b-field>
-          <b-field :label="$t('account.password')">
+          <b-field :label="$t('password')">
             <b-input
-              :placeholder="$t('authenticate-password-input-placeholder')"
+              :placeholder="$t('password-input-placeholder')"
               type="password"
               icon="lock"
               maxlength="18"
@@ -64,7 +64,7 @@
             icon-right="user-check"
             :disabled="!canSubmit"
             expanded
-            >{{ $t("account.authenticate") }}</b-button
+            >{{ $t("authenticate") }}</b-button
           >
         </form>
       </div>
@@ -82,7 +82,7 @@
           class="ml-3"
           icon-left="user-plus"
           expanded
-          >{{ $t("account.create") }}</b-button
+          >{{ $t("create-account") }}</b-button
         >
       </div>
     </div>

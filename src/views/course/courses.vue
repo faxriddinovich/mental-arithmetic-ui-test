@@ -30,7 +30,7 @@
         <b-input
           v-model="searchText"
           class="is-flex-grow-1 ml-3"
-          :placeholder="$t('course-search-placeholder')"
+          :placeholder="$t('course-search-input-placeholder')"
           icon="search"
         >
         </b-input>
