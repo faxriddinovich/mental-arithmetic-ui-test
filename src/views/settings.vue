@@ -118,6 +118,7 @@ export default class Settings extends Vue {
     this.$i18n.locale = this.locale;
 
     this.$store.dispatch("updateSettings", settings).then(() => {
+      this.$router.push({ name: 'Home' });
       showToastMessage(this.$i18n.t("changes-applied"), ToastType.Success);
     });
   }
