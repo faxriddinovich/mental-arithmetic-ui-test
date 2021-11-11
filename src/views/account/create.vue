@@ -6,10 +6,10 @@
     <div class="column is-5-desktop is-12-mobile is-9-tablet">
       <div class="box">
         <form @submit.prevent="createAccount">
-          <b-field label="Username">
+          <b-field :label="$t('username')">
             <b-input
               type="text"
-              placeholder="Please enter your username"
+              :placeholder="$t('username-input-placeholder')"
               icon="user"
               maxlength="18"
               :has-counter="false"
@@ -17,10 +17,10 @@
               required
             />
           </b-field>
-          <b-field label="Email address">
+          <b-field :label="$t('email')">
             <b-input
               type="email"
-              placeholder="Please enter your email address"
+              :placeholder="$t('email-input-placeholder')"
               icon="envelope"
               :has-counter="false"
               minlength="4"
@@ -28,15 +28,15 @@
               v-model="email"
             />
           </b-field>
-          <b-field label="Role">
-            <b-select placeholder="Select a role" v-model="role">
-              <option value="default">default</option>
-              <option value="teacher">teacher</option>
+          <b-field :label="$t('role')">
+            <b-select v-model="role">
+              <option value="default">{{ $t("roles.default") }}</option>
+              <option value="teacher">{{ $t("roles.teacher") }}</option>
             </b-select>
           </b-field>
-          <b-field label="Password">
+          <b-field :label="$t('password')">
             <b-input
-              placeholder="Please enter your password"
+              :placeholder="$t('password-input-placeholder')"
               type="password"
               icon="lock"
               maxlength="18"
@@ -61,7 +61,7 @@
             icon-right="plus"
             :disabled="!canSubmit"
             expanded
-            >Create</b-button
+            >{{ $t("create-account") }}</b-button
           >
         </form>
       </div>
@@ -71,7 +71,7 @@
           :to="{ name: 'Home' }"
           icon-left="home"
           expanded
-          >Home</b-button
+          >{{ $t("home") }}</b-button
         >
         <b-button
           tag="router-link"
@@ -79,7 +79,7 @@
           class="ml-3"
           icon-left="user-check"
           expanded
-          >Authenticate</b-button
+          >{{ $t("authenticate") }}</b-button
         >
       </div>
     </div>
