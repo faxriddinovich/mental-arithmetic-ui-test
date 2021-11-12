@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/deep-diff": "^1.0.1",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/mocha": "^5.2.4",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
