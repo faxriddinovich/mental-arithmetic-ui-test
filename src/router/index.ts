@@ -27,6 +27,8 @@ import CreateLesson from "@/views/lesson/create.vue";
 
 import Scores from "@/views/scores.vue";
 
+import GameNumbers from "@/views/games/numbers.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -102,6 +104,11 @@ const routes: Array<RouteConfig> = [
     path: "/account/blocked",
     name: "AccountBlocked",
     component: AccountBlocked,
+  },
+  {
+    path: "/games/numbers",
+    name: "GameNumbers",
+    component: GameNumbers,
   },
   {
     path: "/account/sessions",
