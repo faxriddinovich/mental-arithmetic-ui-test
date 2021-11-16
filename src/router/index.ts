@@ -27,7 +27,8 @@ import CreateLesson from "@/views/lesson/create.vue";
 
 import Scores from "@/views/scores.vue";
 
-import GameNumbers from "@/views/games/numbers.vue";
+import NumbersGame from "@/views/games/numbers/numbers.vue";
+import PlayNumbersGame from "@/views/games/numbers/play.vue";
 
 Vue.use(VueRouter);
 
@@ -107,8 +108,13 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/games/numbers",
-    name: "GameNumbers",
-    component: GameNumbers,
+    name: "NumbersGame",
+    component: NumbersGame,
+  },
+  {
+    path: "/games/numbers/play",
+    name: "PlayNumbersGame",
+    component: PlayNumbersGame,
   },
   {
     path: "/account/sessions",

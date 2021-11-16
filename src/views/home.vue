@@ -93,7 +93,7 @@ export default class Home extends Vue {
 
   public mainItems = [
     { title: "Abacus", icon: "abacus", link: "/" },
-    { title: "Numbers", icon: "10-plus", link: { name: "GameNumbers" } },
+    { title: "Numbers", icon: "10-plus", link: { name: "NumbersGame" } },
     { title: "Flash card", icon: "square-shape", link: "/" },
     { title: "Table", icon: "browser", link: "/" },
     { title: "Scores", icon: "chart-line", link: "/scores" },

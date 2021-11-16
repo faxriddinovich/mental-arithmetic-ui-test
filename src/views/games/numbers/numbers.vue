@@ -5,7 +5,7 @@
   >
     <div class="column is-5-widescreen is-6-desktop is-12-mobile is-9-tablet">
       <div class="box">
-        <form>
+        <form @submit.prevent="play">
           <b-field>
             <template #label> <b-icon icon="file" /> Theme </template>
             <b-autocomplete
@@ -64,7 +64,11 @@
             </template>
             <b-numberinput v-model="periodicity"></b-numberinput>
           </b-field>
-          <b-button type="is-primary mt-5" icon-left="play" expanded
+          <b-button
+            native-type="submit"
+            type="is-primary mt-5"
+            icon-left="play"
+            expanded
             >Play</b-button
           >
         </form>
@@ -86,7 +90,11 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class GameNumbers extends Vue {
   public digits = "1";
-  public periodicity = 0.3;
+  public periodicity = 4;
   public theme = "1";
+
+  public play() {
+    this.$router.push({ name: "PlayNumbersGame" });
+  }
 }
 </script>
