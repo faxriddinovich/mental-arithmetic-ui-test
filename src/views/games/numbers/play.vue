@@ -33,7 +33,8 @@
         </div>
       </div>
       <div>
-        <b-progress type="is-success" class="completed-progress" :value="40"> </b-progress>
+        <b-progress type="is-success" class="completed-progress" :value="40">
+        </b-progress>
       </div>
     </div>
 
@@ -41,17 +42,17 @@
       class="is-flex is-justify-content-center is-align-items-center"
       style="height: 100vh"
     >
-      <span class="is-center-screen">284</span>
+      <span class="is-center-screen">-284</span>
     </div>
   </div>
 </template>
 <style lang="scss">
-@import 'bulma/sass/utilities/mixins';
+@import "bulma/sass/utilities/mixins";
 
 .completed-progress > .progress {
   border-radius: 0px !important;
-	@include mobile {
-		height: 0.8rem;
+  @include mobile {
+    height: 0.8rem;
   }
 }
 
@@ -61,14 +62,15 @@
 }
 
 .is-controls-bar {
-	position: absolute !important;
-	width: 100% !important;
+  position: absolute !important;
+  width: 100% !important;
 }
 
 .is-center-screen {
   font-size: 140px;
-	@include mobile {
+  @include mobile {
     font-size: 100px;
   }
+  -webkit-transform: rotate(-180deg);
 }
 </style>
