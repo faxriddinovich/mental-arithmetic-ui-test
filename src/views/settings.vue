@@ -84,7 +84,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { Setting } from "@/store/interfaces/setting";
 
 @Component
 export default class Settings extends Vue {
