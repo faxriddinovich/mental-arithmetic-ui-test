@@ -153,8 +153,33 @@
           </b-field>
 
           <b-field>
+            <template #label> <b-icon icon="font" /> Font size </template>
+            <b-radio-button
+              v-model="fontSize"
+              :native-value="0"
+              type="is-primary"
+            >
+              <span class="is-font-1">123</span>
+            </b-radio-button>
+            <b-radio-button
+              v-model="fontSize"
+              :native-value="1"
+              type="is-primary"
+            >
+              <span class="is-font-2">123</span>
+            </b-radio-button>
+            <b-radio-button
+              v-model="fontSize"
+              :native-value="2"
+              type="is-primary"
+            >
+              <span class="is-font-3">123</span>
+            </b-radio-button>
+          </b-field>
+
+          <b-field>
             <template #label>
-              <b-icon icon="volume" /> Display & Sound
+              <b-icon icon="setting" /> Other settings
             </template>
             <b-checkbox v-model="displayNumbers">Display numbers</b-checkbox>
             <b-checkbox v-model="hasSound">Has sound</b-checkbox>
@@ -207,6 +232,7 @@ export default class GameNumbers extends Vue {
   public hasSound = true;
   public transformation = 0;
   public hexColor = this.colors[0];
+  public fontSize = 0;
 
   public play() {
     this.$router.push({ name: "PlayNumbersGame" });
@@ -218,6 +244,14 @@ export default class GameNumbers extends Vue {
 }
 </script>
 <style lang="scss">
+.is-font-2 {
+  font-size: 21px;
+}
+
+.is-font-3 {
+  font-size: 25px;
+}
+
 .is-color {
   display: inline-block;
   border-radius: 50%;
