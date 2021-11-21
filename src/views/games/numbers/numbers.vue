@@ -202,7 +202,7 @@ import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class GameNumbers extends Vue {
   public transformations = [9, 90, 180, 270];
-  public fontSizes = [8, 10, 12];
+  public fontSizes = [10, 15, 20];
   public colors = [
     "#34495e",
     "#1abc9c",

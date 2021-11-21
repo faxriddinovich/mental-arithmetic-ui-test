@@ -38,12 +38,13 @@
       </div>
     </div>
 
-    <div
-      class="is-flex is-justify-content-center is-align-items-center"
-      style="height: 100vh"
-    >
-      <span class="is-center-screen">-284</span>
-    </div>
+    <section class="hero is-fullheight">
+      <div class="hero-body p-0">
+        <div class="has-text-centered" style="width: 100%">
+          <span class="is-big-number is-3">+842983</span>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 <style lang="scss">
@@ -66,11 +67,23 @@
   width: 100% !important;
 }
 
-.is-center-screen {
-  font-size: 140px;
-  @include mobile {
-    font-size: 100px;
+.is-big-number.is-1 {
+  font-size: 10vmin;
+}
+
+.is-big-number.is-2 {
+  font-size: 15vmin;
+}
+
+.is-big-number.is-3 {
+  font-size: 20vmin;
+  @include tablet {
+    font-size: 18vh;
   }
-  -webkit-transform: rotate(-180deg);
+}
+
+.is-big-number {
+  display: inline-block;
+  -webkit-transform: rotate(-90deg);
 }
 </style>
