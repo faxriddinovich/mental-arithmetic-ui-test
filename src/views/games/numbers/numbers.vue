@@ -106,7 +106,10 @@
               <b-icon icon="palette" /> Numbers Color:
             </template>
             <span
-              :class="{ 'is-color': true, 'is-selected': color == hexColor }"
+              :class="{
+                'is-circled-color': true,
+                'is-selected': color == hexColor,
+              }"
               :style="'background: ' + color"
               v-for="(color, index) of colors"
               :key="index"
@@ -156,24 +159,12 @@
             <template #label> <b-icon icon="font" /> Font size </template>
             <b-radio-button
               v-model="fontSize"
-              :native-value="0"
               type="is-primary"
+              :native-value="font"
+              v-for="(font, index) of fontSizes"
+              :key="index"
             >
-              <span class="is-font-1">123</span>
-            </b-radio-button>
-            <b-radio-button
-              v-model="fontSize"
-              :native-value="1"
-              type="is-primary"
-            >
-              <span class="is-font-2">123</span>
-            </b-radio-button>
-            <b-radio-button
-              v-model="fontSize"
-              :native-value="2"
-              type="is-primary"
-            >
-              <span class="is-font-3">123</span>
+              <span :style="`font-size: ${16 + index * 4}px`">123</span>
             </b-radio-button>
           </b-field>
 
@@ -210,6 +201,8 @@
 import { Component, Vue } from "vue-property-decorator";
 @Component
 export default class GameNumbers extends Vue {
+  public transformations = [9, 90, 180, 270];
+  public fontSizes = [8, 10, 12];
   public colors = [
     "#34495e",
     "#1abc9c",
@@ -221,6 +214,7 @@ export default class GameNumbers extends Vue {
     "#e67e22",
     "#e74c3c",
   ];
+
   public currentTab = 0;
 
   public examplesCount = 10;
@@ -232,7 +226,7 @@ export default class GameNumbers extends Vue {
   public hasSound = true;
   public transformation = 0;
   public hexColor = this.colors[0];
-  public fontSize = 0;
+  public fontSize = this.fontSizes[0];
 
   public play() {
     this.$router.push({ name: "PlayNumbersGame" });
@@ -244,15 +238,7 @@ export default class GameNumbers extends Vue {
 }
 </script>
 <style lang="scss">
-.is-font-2 {
-  font-size: 21px;
-}
-
-.is-font-3 {
-  font-size: 25px;
-}
-
-.is-color {
+.is-circled-color {
   display: inline-block;
   border-radius: 50%;
   cursor: pointer;
@@ -261,7 +247,7 @@ export default class GameNumbers extends Vue {
   margin-right: 7px;
 }
 
-.is-color.is-selected {
+.is-circled-color.is-selected {
   border: 2px solid black;
 }
 </style>
