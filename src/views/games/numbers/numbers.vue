@@ -6,7 +6,7 @@
     <div class="column is-5-widescreen is-6-desktop is-12-mobile is-9-tablet">
       <div class="box">
         <template v-if="currentTab === 0">
-          <form @submit.prevent="play">
+          <form @submit.prevent="play" novalidate>
             <b-field>
               <template #label> <b-icon icon="file" /> Theme </template>
               <p class="control">
@@ -46,47 +46,58 @@
               </b-taglist>
             </b-field>
 
-            <b-field grouped>
-              <b-field label="Examples:" expanded>
-                <b-numberinput
-                  v-model="examplesCount"
-                  controls-position="compact"
-                  expanded
-                ></b-numberinput>
-              </b-field>
-              <b-field>
-                <template #label>&nbsp;</template>
-                <b-icon icon="align-center-h" size="is-medium" />
-              </b-field>
-              <b-field label="Interval:" expanded>
-                <b-numberinput
-                  v-model="examplesInterval"
-                  controls-position="compact"
-                  expanded
-                ></b-numberinput>
-              </b-field>
-            </b-field>
+            <div class="columns is-fullhd is-multiline is-gaples">
+              <div class="column is-6-fullhd pb-0">
+                <b-field label="Examples:" expanded>
+                  <b-numberinput
+                    v-model="examplesCount"
+                    controls-position="compact"
+                    min="1"
+                    max="100"
+                    expanded
+                  ></b-numberinput>
+                </b-field>
+              </div>
+              <div class="column is-6-fullhd pb-0">
+                <b-field label="Timeout:" expanded>
+                  <b-numberinput
+                    v-model="examplesTimeout"
+                    controls-position="compact"
+                    min="0.1"
+                    max="100"
+                    step="0.1"
+                    expanded
+                  ></b-numberinput>
+                </b-field>
+              </div>
+            </div>
 
-            <b-field grouped>
-              <b-field label="Rows:" expanded>
-                <b-numberinput
-                  v-model="rowsCount"
-                  controls-position="compact"
-                  expanded
-                ></b-numberinput>
-              </b-field>
-              <b-field>
-                <template #label>&nbsp;</template>
-                <b-icon icon="align-center-h" size="is-medium" />
-              </b-field>
-              <b-field label="Interval:" expanded>
-                <b-numberinput
-                  v-model="rowsInterval"
-                  controls-position="compact"
-                  expanded
-                ></b-numberinput>
-              </b-field>
-            </b-field>
+            <div class="columns is-fullhd is-multiline">
+              <div class="column is-6-fullhd pb-0">
+                <b-field label="Rows:" expanded>
+                  <b-numberinput
+                    v-model="rowsCount"
+                    controls-position="compact"
+                    min="1"
+                    max="100"
+                    expanded
+                  ></b-numberinput>
+                </b-field>
+              </div>
+              <div class="column is-6-fullhd pb-0">
+                <b-field label="Timeout:" expanded>
+                  <b-numberinput
+                    v-model="rowsTimeout"
+                    controls-position="compact"
+                    min="0.1"
+                    max="100"
+                    step="0.1"
+                    expanded
+                  ></b-numberinput>
+                </b-field>
+              </div>
+            </div>
+
             <div class="is-flex mt-5">
               <b-button icon-left="setting" @click="currentTab = 1" />
               <b-button
@@ -108,12 +119,12 @@
             <span
               :class="{
                 'is-circled-color': true,
-                'is-selected': color == hexColor,
+                'is-selected': color == fontColor,
               }"
               :style="'background: ' + color"
               v-for="(color, index) of colors"
               :key="index"
-              @click="hexColor = color"
+              @click="fontColor = color"
             />
           </b-field>
 
@@ -123,7 +134,7 @@
             </template>
 
             <b-radio-button
-              v-model="transformation"
+              v-model="fontTransformation"
               :native-value="0"
               type="is-primary"
             >
@@ -132,7 +143,7 @@
             </b-radio-button>
 
             <b-radio-button
-              v-model="transformation"
+              v-model="fontTransformation"
               :native-value="90"
               type="is-primary"
             >
@@ -141,7 +152,7 @@
             </b-radio-button>
 
             <b-radio-button
-              v-model="transformation"
+              v-model="fontTransformation"
               :native-value="180"
               type="is-primary"
             >
@@ -149,7 +160,7 @@
               <span style="-webkit-transform: rotate(180deg)">-123</span>
             </b-radio-button>
 
-            <b-radio-button v-model="transformation" :native-value="270">
+            <b-radio-button v-model="fontTransformation" :native-value="270">
               <b-icon icon="rotate-360"></b-icon>
               <span style="-webkit-transform: rotate(270deg)">-123</span>
             </b-radio-button>
@@ -199,10 +210,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { NumbersGameSettings } from "./interfaces";
+
 @Component
-export default class GameNumbers extends Vue {
-  public transformations = [9, 90, 180, 270];
-  public fontSizes = [10, 15, 20];
+export default class NumbersGame extends Vue {
+  public fontTransformations = [9, 90, 180, 270];
+  public fontSizes = [1, 2, 3];
   public colors = [
     "#34495e",
     "#1abc9c",
@@ -218,22 +231,35 @@ export default class GameNumbers extends Vue {
   public currentTab = 0;
 
   public examplesCount = 10;
-  public examplesInterval = 3.2;
+  public examplesTimeout = 1.0;
   public rowsCount = 10;
-  public rowsInterval = 0.3;
+  public rowsTimeout = 1.0;
 
   public displayNumbers = true;
   public hasSound = true;
-  public transformation = 0;
-  public hexColor = this.colors[0];
+  public fontTransformation = 0;
+  public fontColor = this.colors[0];
   public fontSize = this.fontSizes[0];
 
   public play() {
+    const settings: NumbersGameSettings = {
+      examplesCount: this.examplesCount,
+      examplesTimeout: this.examplesTimeout,
+      rowsCount: this.rowsCount,
+      rowsTimeout: this.rowsTimeout,
+      displayNumbers: this.displayNumbers,
+      hasSound: this.hasSound,
+      fontTransformation: this.fontTransformation,
+      fontColor: this.fontColor,
+      fontSize: this.fontSize,
+    };
+
+    this.$store.commit("GameModule/setSettings", settings);
     this.$router.push({ name: "PlayNumbersGame" });
   }
 
-  public changeColor(hexColor: string) {
-    this.hexColor = hexColor;
+  public changeColor(fontColor: string) {
+    this.fontColor = fontColor;
   }
 }
 </script>

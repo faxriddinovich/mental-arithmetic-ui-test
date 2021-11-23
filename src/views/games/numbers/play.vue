@@ -38,15 +38,42 @@
       </div>
     </div>
 
-    <section class="hero is-fullheight">
+    <section class="hero is-fullheight" v-if="settings.displayNumbers">
       <div class="hero-body p-0">
         <div class="has-text-centered" style="width: 100%">
-          <span class="is-big-number is-3">+842983</span>
+          <span :class="fontClasses" :style="fontStyles">+999999</span>
         </div>
       </div>
     </section>
   </div>
 </template>
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import { mapGetters } from "vuex";
+
+import { NumbersGameSettings } from "./interfaces";
+
+@Component({
+  computed: {
+    ...mapGetters("GameModule", { settings: "getSettings" }),
+  },
+})
+export default class PlayNumbersGame extends Vue {
+  public settings!: NumbersGameSettings;
+
+  get fontClasses() {
+    const classes: any = { "is-big-number": true };
+
+    classes[`is-${this.settings.fontSize}`] = true;
+    classes[`is-rotated-${this.settings.fontTransformation}`] = true;
+    return classes;
+  }
+
+  get fontStyles() {
+    return { color: this.settings.fontColor };
+  }
+}
+</script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
@@ -68,22 +95,39 @@
 }
 
 .is-big-number.is-1 {
-  font-size: 10vmin;
+  font-size: 6vw;
 }
 
 .is-big-number.is-2 {
-  font-size: 15vmin;
+  font-size: 13vw;
 }
 
 .is-big-number.is-3 {
-  font-size: 20vmin;
+  font-size: 20vw;
+}
+
+.is-rotated-90 {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
   @include tablet {
-    font-size: 18vh;
+    font-size: 18vh !important;
+  }
+}
+
+.is-rotated-180 {
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+
+.is-rotated-270 {
+  transform: rotate(270deg);
+  -webkit-transform: rotate(270deg);
+  @include tablet {
+    font-size: 18vh !important;
   }
 }
 
 .is-big-number {
   display: inline-block;
-  -webkit-transform: rotate(-90deg);
 }
 </style>
