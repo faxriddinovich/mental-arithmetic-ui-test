@@ -72,6 +72,23 @@
           }}</span>
         </template>
       </b-tab-item>
+      <div class="has-text-centered mt-6">
+        <div
+          class="mb-2 has-text-weight-semibold is-size-5-fullhd is-size-6-touch"
+        >
+          Download our offline application from the
+          <span class="is-underlined has-text-weight-bold">website</span> or:
+        </div>
+        <img
+          src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
+          width="150"
+        />
+        <img
+          src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
+          width="150"
+          class="ml-4"
+        />
+      </div>
     </b-tabs>
   </div>
 </template>
