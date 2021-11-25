@@ -100,6 +100,7 @@ import { rpc } from "@/services/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
 import { SessionContract } from "@/services/rpc/contracts/account";
 import { EventContract } from "@/services/rpc/contracts/event";
+import { Storage } from '@/services/platform';
 
 @Component({
   components: { Courses },
@@ -118,10 +119,11 @@ export default class Home extends Vue {
   ];
 
   mounted() {
-    this.$store.dispatch("getActiveSession").then((session) => {
-      this.activeSession = session;
-    });
+    this.getActiveSession();
+    this.loadLatestEvent();
+  }
 
+  public async loadLatestEvent() {
     this.$store.dispatch("getSetting", "show_latest_event").then((setting) => {
       if (setting.value === true) {
         rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event) => {
@@ -129,6 +131,10 @@ export default class Home extends Vue {
         });
       }
     });
+  }
+
+  public async getActiveSession() {
+    this.activeSession = await Storage.get("activeSession");
   }
 
   public changeTab(tab: string) {

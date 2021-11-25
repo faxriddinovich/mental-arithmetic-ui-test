@@ -124,18 +124,6 @@ const routes: Array<RouteConfig> = [
       { path: "/numbers/play", name: "PlayNumbersGame", component: PlayNumbersGame },
     ]
   },
-  /*
-  {
-    path: "/games/numbers",
-    name: "NumbersGame",
-    component: NumbersGame,
-  },
-  {
-    path: "/games/numbers/play",
-    name: "PlayNumbersGame",
-    component: PlayNumbersGame,
-  },
-  */
   {
     path: "/account/sessions",
     name: "AccountSessions",
