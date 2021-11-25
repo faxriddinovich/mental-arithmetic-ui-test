@@ -4,6 +4,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Store from "@/store";
 
 import Home from "@/views/home.vue";
+import PassThrough from '@/views/pass-through.vue';
 
 import CreateAccount from "@/views/account/create.vue";
 import Authenticate from "@/views/account/authenticate.vue";
@@ -107,6 +108,24 @@ const routes: Array<RouteConfig> = [
     component: AccountBlocked,
   },
   {
+    path: "/games",
+    name: "Games",
+    component: PassThrough,
+    beforeEnter: (to, from, next) => {
+      const settings = Store.getters['GameModule/getSettings'];
+      // FIXME: hardcode
+      if(/^Play\w+$/gi.test(to.name || "") && !settings)
+        return next({ name: 'Home' });
+
+      next();
+    },
+    children: [
+      { path: "/numbers", name: "NumbersGame", component: NumbersGame },
+      { path: "/numbers/play", name: "PlayNumbersGame", component: PlayNumbersGame },
+    ]
+  },
+  /*
+  {
     path: "/games/numbers",
     name: "NumbersGame",
     component: NumbersGame,
@@ -116,6 +135,7 @@ const routes: Array<RouteConfig> = [
     name: "PlayNumbersGame",
     component: PlayNumbersGame,
   },
+  */
   {
     path: "/account/sessions",
     name: "AccountSessions",
@@ -167,7 +187,7 @@ router.beforeEach(async (to, from, next) => {
 
     if (!activeSession) return next({ name: "Authenticate" });
 
-    if (to.meta.roles && !to.meta.roles.includes(activeSession.role))
+    if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
       return next({ name: "Home" });
   }
   next();
