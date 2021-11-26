@@ -1,4 +1,4 @@
-import {Plugins} from '@capacitor/core';
+import { Storage as CapStorage } from '@capacitor/storage';
 
 class StaticStorage {
 
@@ -7,16 +7,16 @@ class StaticStorage {
   }
 
   public async get<T = string>(key: string): Promise<T> {
-    return (await Plugins.Storage.get({key})).value as any as T;
+    return (await CapStorage.get({key})).value as any as T;
   }
 
   public async set(key: string, value: any): Promise<void> {
     const serialized = typeof value !== "string" ? this.serialize(value) : value;
-    return await Plugins.Storage.set({key, value: serialized});
+    return await CapStorage.set({key, value: serialized});
   }
 
   public clear(): Promise<void> {
-    return Plugins.Storage.clear();
+    return CapStorage.clear();
   }
 }
 

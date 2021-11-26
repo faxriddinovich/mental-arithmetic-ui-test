@@ -81,12 +81,15 @@
         </div>
         <img
           src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
+          class="is-clickable"
+          @click="openAppStore"
           width="150"
         />
         <img
           src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
+          class="is-clickable ml-4"
+          @click="openPlayMarket"
           width="150"
-          class="ml-4"
         />
       </div>
     </b-tabs>
@@ -95,6 +98,7 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import { Browser } from '@capacitor/browser';
 import Courses from "@/views/course/courses.vue";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
@@ -118,9 +122,17 @@ export default class Home extends Vue {
     { title: "Settings", icon: "setting", link: "/settings" },
   ];
 
-  mounted() {
+  async mounted() {
     this.getActiveSession();
     this.loadLatestEvent();
+  }
+
+  public openPlayMarket() {
+    Browser.open({ url: "market://details?=idorg.zwanoo.android.speedtest" });
+  }
+
+  public openAppStore() {
+    // pass
   }
 
   public async loadLatestEvent() {
