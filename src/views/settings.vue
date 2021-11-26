@@ -29,7 +29,7 @@
                     :src="require('../../public/img/flags/united-states.svg')"
                     width="30"
                   />
-                  <span class="ml-2">English</span>
+                  <span class="ml-2 is-hidden-mobile">English</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
@@ -40,7 +40,7 @@
                     :src="require('../../public/img/flags/uzbekistan.svg')"
                     width="30"
                   />
-                  <span class="ml-2">O'zbekcha</span>
+                  <span class="ml-2 is-hidden-mobile">O'zbekcha</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
@@ -51,7 +51,7 @@
                     :src="require('../../public/img/flags/russia.svg')"
                     width="30"
                   />
-                  <span class="ml-2">Русский</span>
+                  <span class="ml-2 is-hidden-mobile">Русский</span>
                 </b-radio-button>
               </b-field>
 
