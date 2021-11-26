@@ -65,8 +65,8 @@ new Vue({
   i18n,
   render: (h) => h(App),
   // #!if __MOBILE__
-  mounted() {
-    SplashScreen.hide();
+  async mounted() {
+    await SplashScreen.hide();
   },
   // #!endif
 }).$mount("#app");
