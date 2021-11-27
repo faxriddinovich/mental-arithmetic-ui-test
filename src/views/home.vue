@@ -72,27 +72,27 @@
           }}</span>
         </template>
       </b-tab-item>
-      <div class="has-text-centered mt-6">
-        <div
-          class="mb-2 has-text-weight-semibold is-size-5-fullhd is-size-6-touch"
-        >
-          Download our offline application from the
-          <span class="is-underlined has-text-weight-bold">website</span> or:
-        </div>
-        <img
-          src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
-          class="is-clickable"
-          @click="openAppStore"
-          width="150"
-        />
-        <img
-          src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
-          class="is-clickable ml-4"
-          @click="openPlayMarket"
-          width="150"
-        />
-      </div>
     </b-tabs>
+    <div class="has-text-centered mt-6">
+      <div
+        class="mb-2 has-text-weight-semibold is-size-5-fullhd is-size-6-touch"
+      >
+        Download our offline application from the
+        <span class="is-underlined has-text-weight-bold">website</span> or:
+      </div>
+      <img
+        src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
+        class="is-clickable"
+        @click="openAppStore"
+        width="150"
+      />
+      <img
+        src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
+        class="is-clickable ml-4"
+        @click="openPlayMarket"
+        width="150"
+      />
+    </div>
   </div>
 </template>
 
@@ -139,7 +139,7 @@ export default class Home extends Vue {
     SettingsStorage.getSetting("show_latest_event").then((canShow) => {
       if (canShow) {
         rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event: EventContract) => {
-            this.event = event;
+          this.event = event;
         });
       }
     });
