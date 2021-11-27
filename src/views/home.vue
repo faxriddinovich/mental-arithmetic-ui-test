@@ -98,19 +98,19 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import { Browser } from '@capacitor/browser';
+import { Browser } from "@capacitor/browser";
 import Courses from "@/views/course/courses.vue";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
-import { SessionContract } from "@/services/rpc/contracts/account";
 import { EventContract } from "@/services/rpc/contracts/event";
-import { Storage } from '@/services/platform';
+import { SettingsStorage } from "@/services/storages/settings";
+import { Session, SessionStorage } from "@/services/storages/session";
 
 @Component({
   components: { Courses },
 })
 export default class Home extends Vue {
-  public activeSession: SessionContract | null = null;
+  public activeSession: Session | null = null;
   public event: EventContract | null = null;
 
   public mainItems = [
@@ -135,18 +135,20 @@ export default class Home extends Vue {
     // pass
   }
 
-  public async loadLatestEvent() {
-    this.$store.dispatch("getSetting", "show_latest_event").then((setting) => {
-      if (setting.value === true) {
-        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event) => {
-          this.event = event as any as EventContract;
+  public loadLatestEvent() {
+    SettingsStorage.getSetting("show_latest_event").then((canShow) => {
+      if (canShow) {
+        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event: EventContract) => {
+            this.event = event;
         });
       }
     });
   }
 
-  public async getActiveSession() {
-    this.activeSession = await Storage.get("activeSession");
+  public getActiveSession() {
+    SessionStorage.getActiveSession().then((session) => {
+      this.activeSession = session;
+    });
   }
 
   public changeTab(tab: string) {

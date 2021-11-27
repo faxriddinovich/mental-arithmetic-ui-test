@@ -84,6 +84,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { showToastMessage, ToastType } from "@/services/toast";
+import { Setting, SettingsStorage } from "@/services/storages/settings";
 
 @Component
 export default class Settings extends Vue {
@@ -94,32 +95,36 @@ export default class Settings extends Vue {
     this.loadSettings();
   }
 
-  public loadSettings() {
-    this.$store.dispatch("getSettings").then((settings) => {
-      for (const setting of settings) {
-        switch (setting.key) {
-          case "show_latest_event":
-            this.showLatestEvent = setting.value;
-            break;
-          case "locale":
-            this.locale = setting.value;
-            break;
-        }
+  public async loadSettings() {
+    const settings = await SettingsStorage.getSettings();
+    for (const setting of settings) {
+      switch (setting.key) {
+        case "show_latest_event":
+          this.showLatestEvent = setting.value;
+          break;
+        case "locale":
+          this.locale = setting.value;
+          break;
       }
-    });
+    }
   }
 
-  public saveChanges() {
-    const settings: any[] = [];
+  public async saveChanges() {
+    const settings: Setting[] = [];
 
     settings.push({ key: "show_latest_event", value: this.showLatestEvent });
     settings.push({ key: "locale", value: this.locale });
-    this.$i18n.locale = this.locale;
 
-    this.$store.dispatch("updateSettings", settings).then(() => {
-      this.$router.push({ name: "Home" });
-      showToastMessage(this.$i18n.t("changes-applied"), ToastType.Success);
-    });
+    if (this.$i18n.locale != this.locale) {
+      this.$i18n.locale = this.locale;
+    }
+
+    await SettingsStorage.setSettings(settings);
+    this.$router.push({ name: "Home" });
+    showToastMessage(
+      this.$i18n.t("changes-applied") as string,
+      ToastType.Success
+    );
   }
 }
 </script>

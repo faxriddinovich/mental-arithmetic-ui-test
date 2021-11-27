@@ -53,28 +53,6 @@
             >
           </div>
         </article>
-
-        <!--
-
-      <div class="buttons">
-        <b-button
-          size="is-small"
-          type="is-danger"
-          icon-left="trash-alt"
-          @click="deleteSession(session.id)"
-          >Delete</b-button
-        >
-        <b-button
-          size="is-small"
-          type="is-primary"
-          icon-left="arrow-right"
-          v-if="!session.isActive"
-          @click="setActiveSession(session.id)"
-          >Enter</b-button
-        >
-      </div>
-    </div>
--->
       </div>
       <b-button
         class="mt-3"
@@ -89,29 +67,33 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { SessionContract } from "@/rpc/contracts/account";
+import { Session, SessionStorage } from "@/services/storages/session";
 
 @Component
 export default class Sessions extends Vue {
-  public sessions: SessionContract[] | null = null;
+  public sessions: Session[] | null = null;
 
-  async mounted() {
-    this.sessions = await this.$store.dispatch("getSessions");
+  mounted() {
+    this.getSessions();
   }
 
-  public async deleteSession(id: number) {
-    await this.$store.dispatch("deleteSession", id);
-    const currentSession = await this.$store.dispatch("getActiveSession");
-    if (!currentSession) {
-      this.$router.push({ name: "Home" });
-    } else {
-      this.$router.go(0);
-    }
+  public getSessions() {
+    SessionStorage.getSessions().then((sessions) => {
+      this.sessions = sessions;
+    });
   }
 
-  public async setActiveSession(id: number) {
-    await this.$store.dispatch("setActiveSession", id);
-    this.$router.go(0);
+  public async deleteSession(sessionId: number) {
+    SessionStorage.deleteSession(sessionId).then(() => {
+      SessionStorage.getActiveSession().then((activeSession) => {
+        if (!activeSession) return this.$router.push({ name: "Home" });
+        this.$router.go(0);
+      });
+    });
+  }
+
+  public setActiveSession(sessionId: number) {
+    SessionStorage.setActiveSession(sessionId).then(() => this.$router.go(0));
   }
 }
 </script>

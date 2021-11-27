@@ -6,6 +6,7 @@ import {
 } from "@/services/rpc/error-codes";
 import Router from "@/router/index";
 import Store from "@/store";
+import { SessionStorage } from '@/services/storages/session';
 import { showToastMessage, ToastType } from "@/services/toast";
 
 const axiosInstance = axios.create({
@@ -17,11 +18,11 @@ axiosInstance.interceptors.response.use(async (response) => {
   if (response.status === 200) {
     if (response.data.error) {
       const jsonrpcError = response.data.error;
-      const activeSession = await Store.dispatch("getActiveSession");
+      const activeSession = await SessionStorage.getActiveSession();
 
       if (activeSession) {
         if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
-          showToastMessage("Invalid session");
+          showToastMessage("Invalid session", ToastType.Danger);
           await Store.dispatch("deleteSession", activeSession.id);
           Router.push({ name: "Authenticate" });
           return;
@@ -40,7 +41,7 @@ axiosInstance.interceptors.response.use(async (response) => {
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const activeSession = await Store.dispatch("getActiveSession");
+  const activeSession = await SessionStorage.getActiveSession();
   // Hard code. Can we fix this ?
   if (
     !["Authenticate", "CreateAccount"].includes(Router.history.current.name) &&

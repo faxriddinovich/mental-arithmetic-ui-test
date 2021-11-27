@@ -117,7 +117,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { rpc } from "@/services/rpc";
 import { RPC_RATE_COURSE_METHOD } from "@/services/rpc/methods";
 import { CourseContract } from "@/services/rpc/contracts/course";
-import { SessionContract } from "@/services/rpc/contracts/account";
+import { Session, SessionStorage } from "@/services/storages/session";
 import { formatCurrency, fsBucketFactory } from "@/common/utils";
 
 @Component
@@ -126,18 +126,22 @@ export default class CourseCard extends Vue {
   @Prop({ type: Boolean, default: false }) public isLoading!: boolean;
   @Prop({ type: Boolean, default: false }) public detailed!: boolean;
 
-  public activeSession: SessionContract | null = null;
+  public activeSession: Session | null = null;
   public formatCurrency = formatCurrency;
   public fsBucketFactory = fsBucketFactory;
 
-  public get placeholderImg() {
-    return require("../../../public/img/placeholder.jpg");
+  mounted() {
+    this.getActiveSession();
   }
 
-  mounted() {
-    this.$store.dispatch("getActiveSession").then((session) => {
+  public getActiveSession() {
+    SessionStorage.getActiveSession().then((session) => {
       this.activeSession = session;
     });
+  }
+
+  public get placeholderImg() {
+    return require("../../../public/img/placeholder.jpg");
   }
 
   public rate(rating: number) {

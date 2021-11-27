@@ -151,7 +151,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
@@ -166,19 +166,18 @@ import {
 } from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
-  RPC_INSUFFICIENT_BALANCE_ERR_CODE,
-  RPC_NOT_PURCHASED_ERR_CODE,
+  RPC_INSUFFICIENT_BALANCE_ERR_CODE
 } from "@/services/rpc/error-codes";
-import { SessionContract } from "@/services/rpc/contracts/account";
 import { CourseContract } from "@/services/rpc/contracts/course";
 import { LessonContract } from "@/services/rpc/contracts/lesson";
 import { formatCurrency } from "@/common/utils";
+import { Session, SessionStorage } from '@/services/storages/session';
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
 })
 export default class Course extends Vue {
-  public activeSession: SessionContract | null = null;
+  public activeSession: Session | null = null;
 
   public course: CourseContract | null = null;
   public lessons: LessonContract[] = [];
@@ -193,11 +192,8 @@ export default class Course extends Vue {
   public formatCurrency = formatCurrency;
 
   mounted() {
-    this.$store.dispatch("getActiveSession").then((session) => {
-      this.activeSession = session;
-    });
-
     const courseId = Number(this.$route.params.id);
+    this.getActiveSession();
 
     rpc
       .call(RPC_GET_COURSE_METHOD, { courseId })
@@ -231,6 +227,12 @@ export default class Course extends Vue {
         }
       })
       .finally(() => (this.lessonsLoading = false));
+  }
+
+  public getActiveSession() {
+    SessionStorage.getActiveSession().then((session) => {
+      this.activeSession = session;
+    });
   }
 
   public confirmPurchase() {

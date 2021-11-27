@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
-import Store from "@/store";
 
 Vue.use(VueI18n);
 
@@ -117,10 +116,6 @@ const i18n = new VueI18n({
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
     },
   },
-});
-
-Store.dispatch("getSetting", "locale").then((setting) => {
-  i18n.locale = setting.value;
 });
 
 export default i18n;

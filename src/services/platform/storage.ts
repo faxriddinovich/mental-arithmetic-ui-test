@@ -2,7 +2,7 @@ import { Storage as CapStorage } from '@capacitor/storage';
 
 class StaticStorage {
 
-  private serialize(obj: any) {
+  public serialize(obj: any) {
     return JSON.stringify(obj);
   }
 

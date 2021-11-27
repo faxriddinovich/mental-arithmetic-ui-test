@@ -15,6 +15,8 @@ import store from "./store";
 
 import "./styles/styles.scss";
 
+import { SettingsStorage } from '@/services/storages/settings';
+
 const buefyOptions = {
   defaultIconPack: "uil",
   customIconPacks: {
@@ -64,9 +66,11 @@ new Vue({
   store,
   i18n,
   render: (h) => h(App),
-  // #!if __MOBILE__
   async mounted() {
+    const locale = await SettingsStorage.getSetting("locale");
+    this.$i18n.locale = locale;
+    // #!if __MOBILE__
     await SplashScreen.hide();
+    // #!endif
   },
-  // #!endif
 }).$mount("#app");

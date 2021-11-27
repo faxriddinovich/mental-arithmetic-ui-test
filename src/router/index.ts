@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
 import Store from "@/store";
+import { SessionStorage } from '@/services/storages/session';
 
 import Home from "@/views/home.vue";
 import PassThrough from '@/views/pass-through.vue';
@@ -171,10 +172,9 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const activeSession = await Store.dispatch("getActiveSession");
+    const activeSession = await SessionStorage.getActiveSession();
 
     if (!activeSession) return next({ name: "Authenticate" });
-
     if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
       return next({ name: "Home" });
   }

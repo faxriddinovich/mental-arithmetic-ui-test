@@ -124,19 +124,21 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import {
   AccountContract,
   SessionContract,
 } from "@/services/rpc/contracts/account";
+import { SessionStorage } from '@/services/storages/session';
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 @Component
 export default class Account extends Vue {
-  public activeSession!: SessionContract | null = null;
+  public activeSession: SessionContract | null = null;
   public account: AccountContract | null = null;
+
   // utils
   public formatCurrency = formatCurrency;
   public avatarFactory = avatarFactory;
@@ -147,7 +149,7 @@ export default class Account extends Vue {
   }
 
   public getActiveSession() {
-    this.$store.dispatch("getActiveSession").then((session) => {
+    SessionStorage.getActiveSession().then((session) => {
       this.activeSession = session;
     });
   }

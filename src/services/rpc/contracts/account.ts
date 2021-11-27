@@ -6,6 +6,14 @@ export interface AccountContract {
   blocked: boolean;
 }
 
+export interface AccountCredentialsContract {
+  // one of these fields must be included
+  username?: string,
+  email?: string,
+  password: string,
+  captcha: string
+}
+
 export interface SessionContract {
   id: number;
   username: string;

@@ -94,10 +94,14 @@ import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
-  RPC_INVALID_PARAMS_ERR_CODE,
-  RPC_INVALID_CREDENTIALS_ERR_CODE,
+  RPC_INVALID_CREDENTIALS_ERR_CODE
 } from "@/services/rpc/error-codes";
 import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import { SessionStorage } from "@/services/storages/session";
+import {
+  AccountCredentialsContract,
+  SessionContract,
+} from "@/services/rpc/contracts/account";
 
 @Component({ components: { VueHcaptcha } })
 export default class AuthenticateAccount extends Vue {
@@ -120,46 +124,48 @@ export default class AuthenticateAccount extends Vue {
     this.canSubmit = true;
   }
 
-  public onCaptchaExpire(response: string) {
+  public onCaptchaExpire() {
     this.canSubmit = false;
   }
 
-  public onCaptchaError(response: string) {
+  public onCaptchaError() {
     this.canSubmit = false;
   }
 
-  public resetHcaptcha() {
+  public resetCaptcha() {
     this.$refs.captcha.reset();
     this.canSubmit = false;
   }
 
-  public async authenticate() {
-    const credentials: any = { password: this.password, captcha: this.captcha };
+  public authenticate() {
+    const credentials: AccountCredentialsContract = {
+      password: this.password,
+      captcha: this.captcha,
+    };
     credentials[this.enterMode] = this.usernameOrEmail;
 
     rpc
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
-      .then((account: any) => {
-        this.$store
-          .dispatch("addSession", account)
-          .then(() => this.$store.dispatch("setActiveSession", account.id));
+      .then((session: SessionContract) => {
+        SessionStorage.addSession(session);
         showToastMessage(
           this.$i18n.t("success-authentication", {
-            username: account.username,
-          }),
+            username: session.username,
+          }) as string,
           ToastType.Success
         );
       })
       .catch((error) => {
-        this.resetHcaptcha();
+        this.resetCaptcha();
         if (error.jsonrpcError) {
           const { jsonrpcError } = error;
           if (jsonrpcError.code === RPC_INVALID_CREDENTIALS_ERR_CODE) {
             showToastMessage(
-              this.$i18n.t("invalid-credentials"),
+              this.$i18n.t("invalid-credentials") as string,
               ToastType.Danger
             );
           }
+          // handle other errors
         }
       });
   }

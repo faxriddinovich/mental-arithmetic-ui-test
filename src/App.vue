@@ -3,14 +3,6 @@
     <router-view :key="$route.fullPath" />
   </div>
 </template>
-
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-
-@Component
-export default class App extends Vue {}
-</script>
-
 <style lang="scss">
 @import "https://unicons.iconscout.com/release/v2.1.11/css/unicons.css";
 @import "https://unicons.iconscout.com/release/v4.0.0/css/solid.css";
