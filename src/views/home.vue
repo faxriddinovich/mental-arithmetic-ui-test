@@ -1,8 +1,36 @@
 <template>
-  <div class="container is-max-widescreen pt-4 px-3">
+  <div
+    class="container is-max-widescreen pt-4 px-3"
+    style="padding-bottom: 100px"
+  >
+    <nav
+      class="navbar is-fixed-bottom is-bordered p-2 is-justify-content-center"
+      role="navigation"
+    >
+      <div class="has-text-centered">
+        <div class="mb-2 is-size-6-fullhd is-size-7-touch">
+          Download our offline application from the
+          <span class="is-underlined has-text-weight-semibold">website</span>
+          or:
+        </div>
+        <img
+          src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
+          class="is-clickable"
+          @click="openAppStore"
+          width="140"
+        />
+        <img
+          src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
+          class="is-clickable ml-4"
+          @click="openPlayMarket"
+          width="140"
+        />
+      </div>
+    </nav>
+
     <b-tabs
       type="is-toggle"
-      class="is-main-tabs"
+      class="is-nav-tabs"
       :animated="false"
       @input="changeTab"
       destroy-on-hide
@@ -44,9 +72,7 @@
               "
             >
               <b-icon :icon="item.icon" type="is-primary" size="is-large" />
-              <span class="has-text-weight-semibold mt-1">{{
-                item.title
-              }}</span>
+              <span class="is-text-weight-semibold-tablet mt-1">{{ item.title }}</span>
             </router-link>
           </div>
         </div>
@@ -73,26 +99,6 @@
         </template>
       </b-tab-item>
     </b-tabs>
-    <div class="has-text-centered mt-6">
-      <div
-        class="mb-2 has-text-weight-semibold is-size-5-fullhd is-size-6-touch"
-      >
-        Download our offline application from the
-        <span class="is-underlined has-text-weight-bold">website</span> or:
-      </div>
-      <img
-        src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
-        class="is-clickable"
-        @click="openAppStore"
-        width="150"
-      />
-      <img
-        src="https://miro.medium.com/max/600/1*nZu0dsnlCQltPT1QMCHFAA.png"
-        class="is-clickable ml-4"
-        @click="openPlayMarket"
-        width="150"
-      />
-    </div>
   </div>
 </template>
 
@@ -153,26 +159,41 @@ export default class Home extends Vue {
 
   public changeTab(tab: string) {
     if (tab === "account") {
-      if (this.activeSession) this.$router.push({ name: "UpdateAccount" });
-      else this.$router.push({ name: "Authenticate" });
+      if (this.activeSession) {
+        this.$router.push({ name: "UpdateAccount" });
+      } else {
+        this.$router.push({ name: "Authenticate" });
+      }
     }
   }
 }
 </script>
 <style lang="scss">
-.is-main-tabs > .tabs {
+@import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/mixins";
+
+.is-nav-tabs > .tabs {
   background: white;
   border-radius: 0.25rem;
   box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
     0 0px 0 1px rgba(10, 10, 10, 0.02);
 }
 
-.is-main-tabs > .tab-content {
+.is-nav-tabs > .tab-content {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
 
-.is-main-tabs.b-tabs {
+.is-nav-tabs.b-tabs {
   margin-bottom: 0px !important;
+}
+
+// FIXME: rename me
+.is-games-menu-text {
+  font-weight: $weight-semibold;
+
+  @include mobile {
+    font-weight: $weight-normal;
+  }
 }
 </style>

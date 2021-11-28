@@ -12,7 +12,10 @@
               <p class="control">
                 <b-dropdown>
                   <template #trigger>
-                    <b-button label="Digits" icon-right="dialpad-alt" />
+                    <b-button>
+                      <b-icon icon="dialpad-alt" size="is-small" class="m-0" />
+                      <span class="is-hidden-mobile ml-1">Digits</span>
+                    </b-button>
                   </template>
 
                   <b-dropdown-item custom>Select Digits</b-dropdown-item>
@@ -26,16 +29,41 @@
                 </b-dropdown>
               </p>
               <b-autocomplete
-                rounded
                 placeholder="Search a theme"
                 icon="search"
-                clearable
+                :data="filteredThemes"
+                field="name"
+                v-model="theme"
+                keep-first
+                open-on-focus
                 expanded
               >
+                <template #header>
+                  <span
+                    >Found:
+                    <span class="has-text-weight-semibold">{{
+                      filteredThemes.length
+                    }}</span>
+                    theme(s)</span
+                  >
+                </template>
+
+                <template slot-scope="props">
+                  <div class="is-flex is-justify-content-space-between">
+                    <div><b-icon icon="file" /> {{ props.option.name }}</div>
+                    <div class="has-text-weight-semibold">
+                      {{ props.option.op }}
+                    </div>
+                  </div>
+                </template>
+
                 <template #empty>No results found</template>
               </b-autocomplete>
               <p class="control">
-                <b-button type="is-success" label="Queue" icon-left="plus" />
+                <b-button type="is-success">
+                  <b-icon icon="plus" size="is-small" class="m-0" />
+                  <span class="is-hidden-mobile ml-1">Add</span>
+                </b-button>
               </p>
             </b-field>
 
@@ -211,6 +239,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { NumbersGameSettings } from "./interfaces";
+import { themes } from "@mental-arithmetic/themes";
 
 @Component
 export default class NumbersGame extends Vue {
@@ -227,6 +256,24 @@ export default class NumbersGame extends Vue {
     "#e67e22",
     "#e74c3c",
   ];
+
+  public theme = "";
+  public selectedTheme = null;
+
+  get filteredThemes() {
+    return themes
+      .map((theme: any) => {
+        return { name: theme.loc, op: theme.metadata.operation };
+      })
+      .filter((theme: any) => {
+        return (
+          theme.name
+            .toString()
+            .toLowerCase()
+            .indexOf(this.theme.toLowerCase()) >= 0
+        );
+      });
+  }
 
   public currentTab = 0;
 
@@ -275,5 +322,8 @@ export default class NumbersGame extends Vue {
 
 .is-circled-color.is-selected {
   border: 2px solid black;
+}
+a.dropdown-item {
+  padding-right: 16px !important;
 }
 </style>

@@ -66,11 +66,12 @@ new Vue({
   store,
   i18n,
   render: (h) => h(App),
-  async mounted() {
-    const locale = await SettingsStorage.getSetting("locale");
-    this.$i18n.locale = locale;
+  mounted() {
+    SettingsStorage.getSetting("locale").then((locale) => {
+      this.$root.$i18n.locale = locale;
+    });
     // #!if __MOBILE__
-    await SplashScreen.hide();
+    SplashScreen.hide();
     // #!endif
   },
 }).$mount("#app");

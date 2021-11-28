@@ -1,46 +1,53 @@
 <template>
   <div>
     <div class="card p-3">
-      <form @submit.prevent="search" class="is-flex">
-        <b-dropdown
-          v-model="filter"
-          :mobile-modal="false"
-          multiple
-          aria-role="list"
-        >
-          <template #trigger>
-            <b-button icon-left="filter">{{ $t("filter") }}</b-button>
-          </template>
+      <form @submit.prevent="search">
+        <b-field>
+          <p class="control">
+            <b-dropdown v-model="filter" aria-role="list" multiple>
+              <template #trigger>
+                <b-button>
+                  <b-icon icon="filter" size="is-small" class="m-0" />
+                  <span class="is-hidden-mobile ml-1">{{ $t("filter") }}</span>
+                </b-button>
+              </template>
+              <!--
+              <b-dropdown-item aria-role="menuitem" custom>
+                <b-icon icon="filter" size="is-small" />
+                Filter options
+              </b-dropdown-item>
+              <hr class="dropdown-divider" />
+              -->
+              <b-dropdown-item value="price" aria-role="listitem">
+                <b-icon icon="dollar-alt" />
+                {{ $t("price") }}
+              </b-dropdown-item>
 
-          <b-dropdown-item value="price" aria-role="listitem">
-            <b-icon icon="dollar-alt" />
-            {{ $t("price") }}
-          </b-dropdown-item>
+              <b-dropdown-item value="popular" aria-role="listitem">
+                <b-icon icon="star" />
+                {{ $t("popular") }}
+              </b-dropdown-item>
 
-          <b-dropdown-item value="popular" aria-role="listitem">
-            <b-icon icon="star" />
-            {{ $t("popular") }}
-          </b-dropdown-item>
-
-          <b-dropdown-item value="purchased" aria-role="listitem">
-            <b-icon icon="shopping-basket" />
-            {{ $t("purchased") }}
-          </b-dropdown-item>
-        </b-dropdown>
-        <b-input
-          v-model="searchText"
-          class="is-flex-grow-1 ml-3"
-          :placeholder="$t('course-search-input-placeholder')"
-          icon="search"
-        >
-        </b-input>
-        <b-button
-          native-type="submit"
-          type="is-primary"
-          class="ml-3"
-          icon-left="search"
-          >{{ $t("search") }}</b-button
-        >
+              <b-dropdown-item value="purchased" aria-role="listitem">
+                <b-icon icon="shopping-basket" />
+                {{ $t("purchased") }}
+              </b-dropdown-item>
+            </b-dropdown>
+          </p>
+          <b-input
+            v-model="searchText"
+            class="is-flex-grow-1"
+            :placeholder="$t('course-search-input-placeholder')"
+            icon="search"
+          >
+          </b-input>
+          <p class="control">
+            <b-button native-type="submit" type="is-primary">
+              <b-icon icon="search" size="is-small" class="m-0" />
+              <span class="is-hidden-mobile ml-1">{{ $t("search") }}</span>
+            </b-button>
+          </p>
+        </b-field>
       </form>
     </div>
 

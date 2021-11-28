@@ -1,3 +1,5 @@
+@import "bulma/sass/utilities/initial-variables";
+
 $border-color: rgb(149, 165, 166);
 
 .is-bordered {
@@ -16,4 +18,10 @@ $border-color: rgb(149, 165, 166);
 
 .is-event {
   background-color: $white !important;
+}
+
+.is-text-weight-semibold-tablet {
+  @include tablet {
+    font-weight: $weight-semibold;
+  }
 }
