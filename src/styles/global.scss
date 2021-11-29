@@ -1,4 +1,5 @@
 @import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/mixins";
 
 $border-color: rgb(149, 165, 166);
 
@@ -20,8 +21,14 @@ $border-color: rgb(149, 165, 166);
   background-color: $white !important;
 }
 
-.is-text-weight-semibold-tablet {
+.has-text-weight-semibold-tablet {
   @include tablet {
     font-weight: $weight-semibold;
+  }
+}
+
+.hero > .hero-body {
+  @include touch {
+    padding: 1rem 0.5rem;
   }
 }

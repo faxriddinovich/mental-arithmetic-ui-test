@@ -1,240 +1,252 @@
 <template>
-  <div
-    class="columns is-centered is-vcentered is-mobile m-0"
-    style="height: 100vh"
-  >
-    <div class="column is-5-widescreen is-6-desktop is-12-mobile is-9-tablet">
-      <div class="box">
-        <template v-if="currentTab === 0">
-          <form @submit.prevent="play" novalidate>
-            <b-field>
-              <template #label> <b-icon icon="file" /> Theme </template>
-              <p class="control">
-                <b-dropdown>
-                  <template #trigger>
-                    <b-button>
-                      <b-icon icon="dialpad-alt" size="is-small" class="m-0" />
-                      <span class="is-hidden-mobile ml-1">Digits</span>
-                    </b-button>
-                  </template>
+  <section class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="columns is-gapless is-centered" style="min-width: 100%">
+        <div class="column is-half-fullhd is-three-quarters-desktop">
+          <div class="box">
+            <template v-if="currentTab === 0">
+              <form @submit.prevent="play" novalidate>
+                <b-field>
+                  <template #label> <b-icon icon="file" /> Theme </template>
+                  <p class="control">
+                    <b-dropdown>
+                      <template #trigger>
+                        <b-button>
+                          <b-icon
+                            icon="dialpad-alt"
+                            size="is-small"
+                            class="m-0"
+                          />
+                          <span class="is-hidden-mobile ml-1">Digits</span>
+                        </b-button>
+                      </template>
 
-                  <b-dropdown-item custom>Select Digits</b-dropdown-item>
-                  <b-dropdown-item separator></b-dropdown-item>
-                  <b-dropdown-item value="1">1</b-dropdown-item>
-                  <b-dropdown-item value="2">2</b-dropdown-item>
-                  <b-dropdown-item value="3">3</b-dropdown-item>
-                  <b-dropdown-item value="4">4</b-dropdown-item>
-                  <b-dropdown-item value="5">5</b-dropdown-item>
-                  <b-dropdown-item value="6">6</b-dropdown-item>
-                </b-dropdown>
-              </p>
-              <b-autocomplete
-                placeholder="Search a theme"
-                icon="search"
-                :data="filteredThemes"
-                field="name"
-                v-model="theme"
-                keep-first
-                open-on-focus
-                expanded
-              >
-                <template #header>
-                  <span
-                    >Found:
-                    <span class="has-text-weight-semibold">{{
-                      filteredThemes.length
-                    }}</span>
-                    theme(s)</span
+                      <b-dropdown-item custom>Select Digits</b-dropdown-item>
+                      <b-dropdown-item separator></b-dropdown-item>
+                      <b-dropdown-item value="1">1</b-dropdown-item>
+                      <b-dropdown-item value="2">2</b-dropdown-item>
+                      <b-dropdown-item value="3">3</b-dropdown-item>
+                      <b-dropdown-item value="4">4</b-dropdown-item>
+                      <b-dropdown-item value="5">5</b-dropdown-item>
+                      <b-dropdown-item value="6">6</b-dropdown-item>
+                    </b-dropdown>
+                  </p>
+                  <b-autocomplete
+                    placeholder="Search a theme"
+                    icon="search"
+                    :data="filteredThemes"
+                    field="name"
+                    v-model="theme"
+                    keep-first
+                    open-on-focus
+                    expanded
                   >
-                </template>
+                    <template #header>
+                      <span
+                        >Found:
+                        <span class="has-text-weight-semibold">{{
+                          filteredThemes.length
+                        }}</span>
+                        theme(s)</span
+                      >
+                    </template>
 
-                <template slot-scope="props">
-                  <div class="is-flex is-justify-content-space-between">
-                    <div><b-icon icon="file" /> {{ props.option.name }}</div>
-                    <div class="has-text-weight-semibold">
-                      {{ props.option.op }}
-                    </div>
+                    <template slot-scope="props">
+                      <div class="is-flex is-justify-content-space-between">
+                        <div>
+                          <b-icon icon="file" /> {{ props.option.name }}
+                        </div>
+                        <div class="has-text-weight-semibold">
+                          {{ props.option.op }}
+                        </div>
+                      </div>
+                    </template>
+
+                    <template #empty>No results found</template>
+                  </b-autocomplete>
+                  <p class="control">
+                    <b-button type="is-success">
+                      <b-icon icon="plus" size="is-small" class="m-0" />
+                      <span class="is-hidden-mobile ml-1">Add</span>
+                    </b-button>
+                  </p>
+                </b-field>
+
+                <b-field>
+                  <b-taglist>
+                    <b-tag type="is-primary" closable>Senior comrades</b-tag>
+                    <b-tag type="is-primary" closable>Junior comrades</b-tag>
+                  </b-taglist>
+                </b-field>
+
+                <div class="columns is-fullhd is-multiline is-gaples">
+                  <div class="column is-6-fullhd pb-0">
+                    <b-field label="Examples:" expanded>
+                      <b-numberinput
+                        v-model="examplesCount"
+                        controls-position="compact"
+                        min="1"
+                        max="100"
+                        expanded
+                      ></b-numberinput>
+                    </b-field>
                   </div>
+                  <div class="column is-6-fullhd pb-0">
+                    <b-field label="Timeout:" expanded>
+                      <b-numberinput
+                        v-model="examplesTimeout"
+                        controls-position="compact"
+                        min="0.1"
+                        max="100"
+                        step="0.1"
+                        expanded
+                      ></b-numberinput>
+                    </b-field>
+                  </div>
+                </div>
+
+                <div class="columns is-fullhd is-multiline">
+                  <div class="column is-6-fullhd pb-0">
+                    <b-field label="Rows:" expanded>
+                      <b-numberinput
+                        v-model="rowsCount"
+                        controls-position="compact"
+                        min="1"
+                        max="100"
+                        expanded
+                      ></b-numberinput>
+                    </b-field>
+                  </div>
+                  <div class="column is-6-fullhd pb-0">
+                    <b-field label="Timeout:" expanded>
+                      <b-numberinput
+                        v-model="rowsTimeout"
+                        controls-position="compact"
+                        min="0.1"
+                        max="100"
+                        step="0.1"
+                        expanded
+                      ></b-numberinput>
+                    </b-field>
+                  </div>
+                </div>
+
+                <div class="is-flex mt-5">
+                  <b-button icon-left="setting" @click="currentTab = 1" />
+                  <b-button
+                    type="is-primary"
+                    native-type="submit"
+                    class="ml-2"
+                    icon-left="play"
+                    expanded
+                    >Play</b-button
+                  >
+                </div>
+              </form>
+            </template>
+            <template v-else>
+              <b-field>
+                <template #label>
+                  <b-icon icon="palette" /> Numbers Color:
+                </template>
+                <span
+                  :class="{
+                    'is-circled-color': true,
+                    'is-selected': color == fontColor,
+                  }"
+                  :style="'background: ' + color"
+                  v-for="(color, index) of colors"
+                  :key="index"
+                  @click="fontColor = color"
+                />
+              </b-field>
+
+              <b-field>
+                <template #label>
+                  <b-icon icon="crop-alt-rotate-right" /> Numbers Transformation
                 </template>
 
-                <template #empty>No results found</template>
-              </b-autocomplete>
-              <p class="control">
-                <b-button type="is-success">
-                  <b-icon icon="plus" size="is-small" class="m-0" />
-                  <span class="is-hidden-mobile ml-1">Add</span>
-                </b-button>
-              </p>
-            </b-field>
+                <b-radio-button
+                  v-model="fontTransformation"
+                  :native-value="0"
+                  type="is-primary"
+                >
+                  <b-icon icon="rotate-360"></b-icon>
+                  <span style="-webkit-transform: rotate(0deg)">-123</span>
+                </b-radio-button>
 
-            <b-field>
-              <b-taglist>
-                <b-tag type="is-primary" closable>Senior comrades</b-tag>
-                <b-tag type="is-primary" closable>Junior comrades</b-tag>
-              </b-taglist>
-            </b-field>
+                <b-radio-button
+                  v-model="fontTransformation"
+                  :native-value="90"
+                  type="is-primary"
+                >
+                  <b-icon icon="rotate-360"></b-icon>
+                  <span style="-webkit-transform: rotate(90deg)">-123</span>
+                </b-radio-button>
 
-            <div class="columns is-fullhd is-multiline is-gaples">
-              <div class="column is-6-fullhd pb-0">
-                <b-field label="Examples:" expanded>
-                  <b-numberinput
-                    v-model="examplesCount"
-                    controls-position="compact"
-                    min="1"
-                    max="100"
-                    expanded
-                  ></b-numberinput>
-                </b-field>
-              </div>
-              <div class="column is-6-fullhd pb-0">
-                <b-field label="Timeout:" expanded>
-                  <b-numberinput
-                    v-model="examplesTimeout"
-                    controls-position="compact"
-                    min="0.1"
-                    max="100"
-                    step="0.1"
-                    expanded
-                  ></b-numberinput>
-                </b-field>
-              </div>
-            </div>
+                <b-radio-button
+                  v-model="fontTransformation"
+                  :native-value="180"
+                  type="is-primary"
+                >
+                  <b-icon icon="rotate-360"></b-icon>
+                  <span style="-webkit-transform: rotate(180deg)">-123</span>
+                </b-radio-button>
 
-            <div class="columns is-fullhd is-multiline">
-              <div class="column is-6-fullhd pb-0">
-                <b-field label="Rows:" expanded>
-                  <b-numberinput
-                    v-model="rowsCount"
-                    controls-position="compact"
-                    min="1"
-                    max="100"
-                    expanded
-                  ></b-numberinput>
-                </b-field>
-              </div>
-              <div class="column is-6-fullhd pb-0">
-                <b-field label="Timeout:" expanded>
-                  <b-numberinput
-                    v-model="rowsTimeout"
-                    controls-position="compact"
-                    min="0.1"
-                    max="100"
-                    step="0.1"
-                    expanded
-                  ></b-numberinput>
-                </b-field>
-              </div>
-            </div>
+                <b-radio-button
+                  v-model="fontTransformation"
+                  :native-value="270"
+                >
+                  <b-icon icon="rotate-360"></b-icon>
+                  <span style="-webkit-transform: rotate(270deg)">-123</span>
+                </b-radio-button>
+              </b-field>
 
-            <div class="is-flex mt-5">
-              <b-button icon-left="setting" @click="currentTab = 1" />
+              <b-field>
+                <template #label> <b-icon icon="font" /> Font size </template>
+                <b-radio-button
+                  v-model="fontSize"
+                  type="is-primary"
+                  :native-value="font"
+                  v-for="(font, index) of fontSizes"
+                  :key="index"
+                >
+                  <span :style="`font-size: ${16 + index * 4}px`">123</span>
+                </b-radio-button>
+              </b-field>
+
+              <b-field>
+                <template #label>
+                  <b-icon icon="setting" /> Other settings
+                </template>
+                <b-checkbox v-model="displayNumbers"
+                  >Display numbers</b-checkbox
+                >
+                <b-checkbox v-model="hasSound">Has sound</b-checkbox>
+              </b-field>
+
               <b-button
-                type="is-primary"
-                native-type="submit"
-                class="ml-2"
-                icon-left="play"
+                class="mt-5"
+                icon-left="arrow-left"
+                @click="currentTab = 0"
                 expanded
-                >Play</b-button
+                >Back</b-button
               >
-            </div>
-          </form>
-        </template>
-        <template v-else>
-          <b-field>
-            <template #label>
-              <b-icon icon="palette" /> Numbers Color:
             </template>
-            <span
-              :class="{
-                'is-circled-color': true,
-                'is-selected': color == fontColor,
-              }"
-              :style="'background: ' + color"
-              v-for="(color, index) of colors"
-              :key="index"
-              @click="fontColor = color"
-            />
-          </b-field>
-
-          <b-field>
-            <template #label>
-              <b-icon icon="crop-alt-rotate-right" /> Numbers Transformation
-            </template>
-
-            <b-radio-button
-              v-model="fontTransformation"
-              :native-value="0"
-              type="is-primary"
+          </div>
+          <div class="mx-2">
+            <b-button
+              tag="router-link"
+              :to="{ name: 'Home' }"
+              icon-left="home"
+              expanded
+              >{{ $t("home") }}</b-button
             >
-              <b-icon icon="rotate-360"></b-icon>
-              <span style="-webkit-transform: rotate(0deg)">-123</span>
-            </b-radio-button>
-
-            <b-radio-button
-              v-model="fontTransformation"
-              :native-value="90"
-              type="is-primary"
-            >
-              <b-icon icon="rotate-360"></b-icon>
-              <span style="-webkit-transform: rotate(90deg)">-123</span>
-            </b-radio-button>
-
-            <b-radio-button
-              v-model="fontTransformation"
-              :native-value="180"
-              type="is-primary"
-            >
-              <b-icon icon="rotate-360"></b-icon>
-              <span style="-webkit-transform: rotate(180deg)">-123</span>
-            </b-radio-button>
-
-            <b-radio-button v-model="fontTransformation" :native-value="270">
-              <b-icon icon="rotate-360"></b-icon>
-              <span style="-webkit-transform: rotate(270deg)">-123</span>
-            </b-radio-button>
-          </b-field>
-
-          <b-field>
-            <template #label> <b-icon icon="font" /> Font size </template>
-            <b-radio-button
-              v-model="fontSize"
-              type="is-primary"
-              :native-value="font"
-              v-for="(font, index) of fontSizes"
-              :key="index"
-            >
-              <span :style="`font-size: ${16 + index * 4}px`">123</span>
-            </b-radio-button>
-          </b-field>
-
-          <b-field>
-            <template #label>
-              <b-icon icon="setting" /> Other settings
-            </template>
-            <b-checkbox v-model="displayNumbers">Display numbers</b-checkbox>
-            <b-checkbox v-model="hasSound">Has sound</b-checkbox>
-          </b-field>
-
-          <b-button
-            class="mt-5"
-            icon-left="arrow-left"
-            @click="currentTab = 0"
-            expanded
-            >Back</b-button
-          >
-        </template>
-      </div>
-      <div class="mx-2">
-        <b-button
-          tag="router-link"
-          :to="{ name: 'Home' }"
-          icon-left="home"
-          expanded
-          >{{ $t("home") }}</b-button
-        >
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";

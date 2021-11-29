@@ -1,12 +1,9 @@
 <template>
-  <div
-    class="columns is-centered is-vcentered is-mobile m-0"
-    style="height: 100vh"
-  >
-    <div class="column is-5-desktop is-12-mobile is-9-tablet">
-      <div class="columns is-multiline">
-        <div class="column is-12">
-          <div class="box mx-2">
+  <section class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="columns is-gapless is-centered" style="min-width: 100%">
+        <div class="column is-half-fullhd is-three-quarters-desktop">
+          <div class="box">
             <form @submit.prevent="saveChanges">
               <b-field>
                 <template #label>
@@ -66,7 +63,7 @@
             </form>
           </div>
           <div>
-            <div class="mx-2">
+            <div class="mx-2 mt-4">
               <b-button
                 tag="router-link"
                 :to="{ name: 'Home' }"
@@ -79,7 +76,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";

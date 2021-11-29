@@ -72,7 +72,7 @@
               "
             >
               <b-icon :icon="item.icon" type="is-primary" size="is-large" />
-              <span class="is-text-weight-semibold-tablet mt-1">{{ item.title }}</span>
+              <span class="has-text-weight-semibold-tablet mt-1">{{ item.title }}</span>
             </router-link>
           </div>
         </div>
