@@ -5,7 +5,7 @@ export interface NumbersGameSettings {
   rowsTimeout: number,
   displayNumbers: boolean,
   hasSound: boolean,
-  fontTransformation: number,
+  fontRotation: number,
   fontColor: string,
   fontSize: number,
 };

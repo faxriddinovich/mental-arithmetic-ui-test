@@ -75,7 +75,6 @@
                 <b-field>
                   <b-taglist>
                     <b-tag type="is-primary" closable>Senior comrades</b-tag>
-                    <b-tag type="is-primary" closable>Junior comrades</b-tag>
                   </b-taglist>
                 </b-field>
 
@@ -155,7 +154,7 @@
                     'is-selected': color == fontColor,
                   }"
                   :style="'background: ' + color"
-                  v-for="(color, index) of colors"
+                  v-for="(color, index) of fontColors"
                   :key="index"
                   @click="fontColor = color"
                 />
@@ -167,7 +166,7 @@
                 </template>
 
                 <b-radio-button
-                  v-model="fontTransformation"
+                  v-model="fontRotation"
                   :native-value="0"
                   type="is-primary"
                 >
@@ -176,7 +175,7 @@
                 </b-radio-button>
 
                 <b-radio-button
-                  v-model="fontTransformation"
+                  v-model="fontRotation"
                   :native-value="90"
                   type="is-primary"
                 >
@@ -185,7 +184,7 @@
                 </b-radio-button>
 
                 <b-radio-button
-                  v-model="fontTransformation"
+                  v-model="fontRotation"
                   :native-value="180"
                   type="is-primary"
                 >
@@ -193,10 +192,7 @@
                   <span style="-webkit-transform: rotate(180deg)">-123</span>
                 </b-radio-button>
 
-                <b-radio-button
-                  v-model="fontTransformation"
-                  :native-value="270"
-                >
+                <b-radio-button v-model="fontRotation" :native-value="270">
                   <b-icon icon="rotate-360"></b-icon>
                   <span style="-webkit-transform: rotate(270deg)">-123</span>
                 </b-radio-button>
@@ -249,78 +245,84 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { NumbersGameSettings } from "./interfaces";
+import { watch, defineComponent, computed, ref, reactive, toRefs } from "@vue/composition-api";
 import { themes } from "@mental-arithmetic/themes";
+import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
 
-@Component
-export default class NumbersGame extends Vue {
-  public fontTransformations = [9, 90, 180, 270];
-  public fontSizes = [1, 2, 3];
-  public colors = [
-    "#34495e",
-    "#1abc9c",
-    "#27ae60",
-    "#2ecc71",
-    "#3498db",
-    "#9b59b6",
-    "#f1c40f",
-    "#e67e22",
-    "#e74c3c",
-  ];
+const lowerCase = (str: string) => str.toLowerCase();
+const matches = (str0: string, str1: string) => {
+  return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
+};
 
-  public theme = "";
-  public selectedTheme = null;
+export default defineComponent({
+  setup(_, { root }) {
+    const { useMutations } = createStoreHelper("GameModule");
+    const filteredThemes = computed(() => {
+      return themes
+        .filter((_theme) => {
+          // FIXME: this should be done using i18n
+          return matches(_theme.loc, settings.theme);
+        })
+        .map((_theme) => ({
+          name: _theme.loc,
+          op: _theme.metadata.operation,
+        }));
+    });
 
-  get filteredThemes() {
-    return themes
-      .map((theme: any) => {
-        return { name: theme.loc, op: theme.metadata.operation };
-      })
-      .filter((theme: any) => {
-        return (
-          theme.name
-            .toString()
-            .toLowerCase()
-            .indexOf(this.theme.toLowerCase()) >= 0
-        );
-      });
-  }
+    const options = reactive({
+      fontRotations: [0, 90, 180, 270],
+      fontSizes: [1, 2, 3],
+      fontColors: [
+        "#34495e",
+        "#1abc9c",
+        "#27ae60",
+        "#2ecc71",
+        "#3498db",
+        "#9b59b6",
+        "#f1c40f",
+        "#e67e22",
+        "#e74c3c",
+      ],
+    });
 
-  public currentTab = 0;
+    const settings = reactive({
+      theme: "",
+      examplesCount: 10,
+      examplesTimeout: 1.0,
+      rowsCount: 10,
+      rowsTimeout: 1.0,
+      displayNumbers: true,
+      hasSound: true,
+      fontRotation: options.fontRotations[0],
+      fontColor: options.fontColors[0],
+      fontSize: options.fontSizes[0],
+    });
 
-  public examplesCount = 10;
-  public examplesTimeout = 1.0;
-  public rowsCount = 10;
-  public rowsTimeout = 1.0;
+    /*
+     * This must not be called outside of `setup()`. Because `vuex-composition-helpers`
+     * uses `getCurrentInstance` to get the current instance of the component,
+     * which returns `null` when it is not called during setup.
+     *
+     * From the documentation:
+     *    "`getCurrentInstance` only works during setup or Lifecycle Hooks"
+     */
+    const { setSettings } = useMutations(["setSettings"]);
 
-  public displayNumbers = true;
-  public hasSound = true;
-  public fontTransformation = 0;
-  public fontColor = this.colors[0];
-  public fontSize = this.fontSizes[0];
-
-  public play() {
-    const settings: NumbersGameSettings = {
-      examplesCount: this.examplesCount,
-      examplesTimeout: this.examplesTimeout,
-      rowsCount: this.rowsCount,
-      rowsTimeout: this.rowsTimeout,
-      displayNumbers: this.displayNumbers,
-      hasSound: this.hasSound,
-      fontTransformation: this.fontTransformation,
-      fontColor: this.fontColor,
-      fontSize: this.fontSize,
+    const play = () => {
+      setSettings(settings);
+      root.$router.push({ name: "PlayNumbersGame" });
     };
 
-    this.$store.commit("GameModule/setSettings", settings);
-    this.$router.push({ name: "PlayNumbersGame" });
-  }
-
-  public changeColor(fontColor: string) {
-    this.fontColor = fontColor;
-  }
-}
+    return {
+      // too complicated thing
+      ...toRefs(options),
+      ...toRefs(settings),
+      currentTab: ref(0),
+      filteredThemes,
+      play,
+    };
+  },
+});
 </script>
 <style lang="scss">
 .is-circled-color {

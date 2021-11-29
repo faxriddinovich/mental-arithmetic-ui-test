@@ -61,7 +61,7 @@ export default defineComponent({
     const fontClasses = computed(() => {
       const classes: any = { "is-big-number": true };
       classes[`is-${settings.value.fontSize}`] = true;
-      classes[`is-rotated-${settings.value.fontTransformation}`] = true;
+      classes[`is-rotated-${settings.value.fontRotation}`] = true;
       return classes;
     });
 
