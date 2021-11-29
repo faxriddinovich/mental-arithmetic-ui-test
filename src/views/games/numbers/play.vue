@@ -48,31 +48,30 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { mapGetters } from "vuex";
-
+import { defineComponent, computed } from "@vue/composition-api";
 import { NumbersGameSettings } from "./interfaces";
+import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
 
-@Component({
-  computed: {
-    ...mapGetters("GameModule", { settings: "getSettings" }),
+export default defineComponent({
+  setup() {
+    const { useState } =
+      createStoreHelper<{ settings: NumbersGameSettings }>("GameModule");
+    const { settings } = useState(["settings"]);
+
+    const fontClasses = computed(() => {
+      const classes: any = { "is-big-number": true };
+      classes[`is-${settings.value.fontSize}`] = true;
+      classes[`is-rotated-${settings.value.fontTransformation}`] = true;
+      return classes;
+    });
+
+    const fontStyles = computed(() => {
+      return { color: settings.value.fontColor };
+    });
+
+    return { settings, fontClasses, fontStyles };
   },
-})
-export default class PlayNumbersGame extends Vue {
-  public settings!: NumbersGameSettings;
-
-  get fontClasses() {
-    const classes: any = { "is-big-number": true };
-
-    classes[`is-${this.settings.fontSize}`] = true;
-    classes[`is-rotated-${this.settings.fontTransformation}`] = true;
-    return classes;
-  }
-
-  get fontStyles() {
-    return { color: this.settings.fontColor };
-  }
-}
+});
 </script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";

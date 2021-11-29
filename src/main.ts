@@ -4,6 +4,10 @@ import Buefy from "buefy";
 import { Plugins } from "@capacitor/core";
 const { SplashScreen } = Plugins;
 // #!endif
+//
+import VueCompositionAPI from '@vue/composition-api'
+
+Vue.use(VueCompositionAPI)
 
 import App from "./App.vue";
 // #!if __BROWSER__
