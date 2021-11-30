@@ -9,9 +9,10 @@
     >
       <div class="has-text-centered">
         <div class="mb-2 is-size-6-fullhd is-size-7-touch">
-          Download our offline application from the
-          <span class="is-underlined has-text-weight-semibold">website</span>
-          or:
+          Download our offline
+          <span class="is-underlined has-text-weight-semibold">mobile</span> or
+          <span class="is-underlined has-text-weight-semibold">desktop</span>
+          app from the website or:
         </div>
         <img
           src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
@@ -72,7 +73,9 @@
               "
             >
               <b-icon :icon="item.icon" type="is-primary" size="is-large" />
-              <span class="has-text-weight-semibold-tablet mt-1">{{ item.title }}</span>
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                item.title
+              }}</span>
             </router-link>
           </div>
         </div>

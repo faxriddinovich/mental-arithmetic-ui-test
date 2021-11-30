@@ -1,12 +1,5 @@
 <template>
   <div>
-    <div class="is-bottom-left-screen p-3">
-      <b-button
-        icon-left="expand-arrows"
-        type="is-primary is-light"
-        size="is-large"
-      />
-    </div>
     <div class="card is-controls-bar">
       <div
         class="
@@ -21,7 +14,7 @@
           >
         </div>
         <div class="buttons">
-          <b-button type="is-primary is-light" icon-left="home" size="is-medium"
+          <b-button tag="router-link" :to="{ name: 'Home' }" type="is-primary is-light" icon-left="home" size="is-medium"
             >Home</b-button
           >
           <b-button
@@ -48,12 +41,15 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, computed } from "@vue/composition-api";
+import { defineComponent, computed, onMounted, ref } from "@vue/composition-api";
 import { NumbersGameSettings } from "./interfaces";
 import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
+import { themes } from '@mental-arithmetic/themes';
+
+const getTheme = (loc: string) => themes.find((theme) => theme.loc === loc);
 
 export default defineComponent({
-  setup() {
+  setup(_, { root }) {
     const { useState } =
       createStoreHelper<{ settings: NumbersGameSettings }>("GameModule");
     const { settings } = useState(["settings"]);
@@ -64,12 +60,18 @@ export default defineComponent({
       classes[`is-rotated-${settings.value.fontRotation}`] = true;
       return classes;
     });
-
     const fontStyles = computed(() => {
       return { color: settings.value.fontColor };
     });
 
-    return { settings, fontClasses, fontStyles };
+    const canEnterAnswer = ref<boolean>(false);
+    const showText = ref<string>('');
+
+    onMounted(() => {
+        //
+    });
+
+    return { settings, fontClasses, fontStyles, canEnterAnswer, showText };
   },
 });
 </script>
@@ -81,11 +83,6 @@ export default defineComponent({
   @include mobile {
     height: 0.8rem;
   }
-}
-
-.is-bottom-left-screen {
-  position: absolute;
-  bottom: 0px;
 }
 
 .is-controls-bar {

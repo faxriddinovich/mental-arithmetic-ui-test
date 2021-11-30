@@ -5,7 +5,7 @@
         <div class="column is-half-fullhd is-three-quarters-desktop">
           <div class="box">
             <template v-if="currentTab === 0">
-              <form @submit.prevent="play" novalidate>
+              <form @submit.prevent="play">
                 <b-field>
                   <template #label> <b-icon icon="file" /> Theme </template>
                   <p class="control">
@@ -40,6 +40,7 @@
                     keep-first
                     open-on-focus
                     expanded
+                    required
                   >
                     <template #header>
                       <span
@@ -64,20 +65,7 @@
 
                     <template #empty>No results found</template>
                   </b-autocomplete>
-                  <p class="control">
-                    <b-button type="is-success">
-                      <b-icon icon="plus" size="is-small" class="m-0" />
-                      <span class="is-hidden-mobile ml-1">Add</span>
-                    </b-button>
-                  </p>
                 </b-field>
-
-                <b-field>
-                  <b-taglist>
-                    <b-tag type="is-primary" closable>Senior comrades</b-tag>
-                  </b-taglist>
-                </b-field>
-
                 <div class="columns is-fullhd is-multiline is-gaples">
                   <div class="column is-6-fullhd pb-0">
                     <b-field label="Examples:" expanded>
@@ -104,7 +92,8 @@
                   </div>
                 </div>
 
-                <div class="columns is-fullhd is-multiline">
+                <!-- FIXME: mb-4 is a stupid idea -->
+                <div class="columns is-fullhd is-multiline mb-4">
                   <div class="column is-6-fullhd pb-0">
                     <b-field label="Rows:" expanded>
                       <b-numberinput
@@ -130,8 +119,36 @@
                   </div>
                 </div>
 
+                <b-field>
+                  <b-switch v-model="answerAtEnd">Answer at the end</b-switch>
+                </b-field>
+
+                <b-field
+                  label="Queue"
+                  v-if="settingsList.length"
+                >
+                  <b-taglist>
+                    <b-tag
+                      type="is-primary"
+                      closable
+                      v-for="(settings, index) of settingsList"
+                      :key="index"
+                      @close="removeFromSettingsList(index)"
+                      >{{ settings.theme }}</b-tag
+                    >
+                  </b-taglist>
+                </b-field>
+
                 <div class="is-flex mt-5">
                   <b-button icon-left="setting" @click="currentTab = 1" />
+                  <b-button
+                    type="is-success"
+                    icon-left="plus"
+                    @click="addToSettingsList"
+                    class="ml-2"
+                    :disabled="settingsList.length === 10"
+                    >Add to queue</b-button
+                  >
                   <b-button
                     type="is-primary"
                     native-type="submit"
@@ -245,15 +262,21 @@
   </section>
 </template>
 <script lang="ts">
-import { watch, defineComponent, computed, ref, reactive, toRefs } from "@vue/composition-api";
+import {
+  defineComponent,
+  computed,
+  ref,
+  reactive,
+  toRefs,
+} from "@vue/composition-api";
 import { themes } from "@mental-arithmetic/themes";
 import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
+import { NumbersGameSettings } from "@/views/games/numbers/interfaces";
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
   return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
 };
-
 export default defineComponent({
   setup(_, { root }) {
     const { useMutations } = createStoreHelper("GameModule");
@@ -269,6 +292,7 @@ export default defineComponent({
         }));
     });
 
+    const currentTab = ref(0);
     const options = reactive({
       fontRotations: [0, 90, 180, 270],
       fontSizes: [1, 2, 3],
@@ -285,7 +309,7 @@ export default defineComponent({
       ],
     });
 
-    const settings = reactive({
+    const settings = reactive<any>({
       theme: "",
       examplesCount: 10,
       examplesTimeout: 1.0,
@@ -293,10 +317,22 @@ export default defineComponent({
       rowsTimeout: 1.0,
       displayNumbers: true,
       hasSound: true,
+      answerAtEnd: false,
       fontRotation: options.fontRotations[0],
       fontColor: options.fontColors[0],
       fontSize: options.fontSizes[0],
     });
+
+    const settingsList = ref<NumbersGameSettings[]>([]);
+
+    const addToSettingsList = () => {
+      if (!settings.theme.length) settings.theme = themes[0].loc;
+      settingsList.value.push(Object.assign({}, settings));
+    };
+
+    const removeFromSettingsList = (index: number) => {
+      settingsList.value = settingsList.value.filter((_, idx) => idx !== index);
+    };
 
     /*
      * This must not be called outside of `setup()`. Because `vuex-composition-helpers`
@@ -309,16 +345,18 @@ export default defineComponent({
     const { setSettings } = useMutations(["setSettings"]);
 
     const play = () => {
-      setSettings(settings);
+      setSettings(settingsList);
       root.$router.push({ name: "PlayNumbersGame" });
     };
 
     return {
-      // too complicated thing
       ...toRefs(options),
       ...toRefs(settings),
-      currentTab: ref(0),
+      settingsList,
+      addToSettingsList,
+      removeFromSettingsList,
       filteredThemes,
+      currentTab,
       play,
     };
   },

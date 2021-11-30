@@ -1,7 +1,8 @@
 export interface NumbersGameSettings {
+  theme: string,
   examplesCount: number,
-  examplesTimeout: number,
   rowsCount: number,
+  examplesTimeout: number,
   rowsTimeout: number,
   displayNumbers: boolean,
   hasSound: boolean,
