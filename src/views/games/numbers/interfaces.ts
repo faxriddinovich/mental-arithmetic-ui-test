@@ -1,12 +1,19 @@
-export interface NumbersGameSettings {
+export interface Example {
+  numbers: (string | number)[],
+  answer: number
+}
+
+export interface QueueItem {
   theme: string,
-  examplesCount: number,
-  rowsCount: number,
-  examplesTimeout: number,
-  rowsTimeout: number,
-  displayNumbers: boolean,
+  examples: Example[],
   hasSound: boolean,
+  displayNumbers: boolean,
   fontRotation: number,
   fontColor: string,
   fontSize: number,
-};
+}
+
+export interface NumbersGameSettings {
+  answerAtEnd: boolean,
+  queue: QueueItem[]
+}

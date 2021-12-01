@@ -9,7 +9,7 @@
                 <b-field>
                   <template #label> <b-icon icon="file" /> Theme </template>
                   <p class="control">
-                    <b-dropdown>
+                    <b-dropdown v-model="digit">
                       <template #trigger>
                         <b-button>
                           <b-icon
@@ -123,17 +123,14 @@
                   <b-switch v-model="answerAtEnd">Answer at the end</b-switch>
                 </b-field>
 
-                <b-field
-                  label="Queue"
-                  v-if="settingsList.length"
-                >
+                <b-field label="Queue" v-if="queue.length">
                   <b-taglist>
                     <b-tag
                       type="is-primary"
                       closable
-                      v-for="(settings, index) of settingsList"
+                      v-for="(settings, index) of queue"
                       :key="index"
-                      @close="removeFromSettingsList(index)"
+                      @close="removeFromQueueList(index)"
                       >{{ settings.theme }}</b-tag
                     >
                   </b-taglist>
@@ -144,9 +141,9 @@
                   <b-button
                     type="is-success"
                     icon-left="plus"
-                    @click="addToSettingsList"
+                    @click="addToQueueList"
                     class="ml-2"
-                    :disabled="settingsList.length === 10"
+                    :disabled="queue.length === 10"
                     >Add to queue</b-button
                   >
                   <b-button
@@ -261,107 +258,7 @@
     </div>
   </section>
 </template>
-<script lang="ts">
-import {
-  defineComponent,
-  computed,
-  ref,
-  reactive,
-  toRefs,
-} from "@vue/composition-api";
-import { themes } from "@mental-arithmetic/themes";
-import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
-import { NumbersGameSettings } from "@/views/games/numbers/interfaces";
-
-const lowerCase = (str: string) => str.toLowerCase();
-const matches = (str0: string, str1: string) => {
-  return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
-};
-export default defineComponent({
-  setup(_, { root }) {
-    const { useMutations } = createStoreHelper("GameModule");
-    const filteredThemes = computed(() => {
-      return themes
-        .filter((_theme) => {
-          // FIXME: this should be done using i18n
-          return matches(_theme.loc, settings.theme);
-        })
-        .map((_theme) => ({
-          name: _theme.loc,
-          op: _theme.metadata.operation,
-        }));
-    });
-
-    const currentTab = ref(0);
-    const options = reactive({
-      fontRotations: [0, 90, 180, 270],
-      fontSizes: [1, 2, 3],
-      fontColors: [
-        "#34495e",
-        "#1abc9c",
-        "#27ae60",
-        "#2ecc71",
-        "#3498db",
-        "#9b59b6",
-        "#f1c40f",
-        "#e67e22",
-        "#e74c3c",
-      ],
-    });
-
-    const settings = reactive<any>({
-      theme: "",
-      examplesCount: 10,
-      examplesTimeout: 1.0,
-      rowsCount: 10,
-      rowsTimeout: 1.0,
-      displayNumbers: true,
-      hasSound: true,
-      answerAtEnd: false,
-      fontRotation: options.fontRotations[0],
-      fontColor: options.fontColors[0],
-      fontSize: options.fontSizes[0],
-    });
-
-    const settingsList = ref<NumbersGameSettings[]>([]);
-
-    const addToSettingsList = () => {
-      if (!settings.theme.length) settings.theme = themes[0].loc;
-      settingsList.value.push(Object.assign({}, settings));
-    };
-
-    const removeFromSettingsList = (index: number) => {
-      settingsList.value = settingsList.value.filter((_, idx) => idx !== index);
-    };
-
-    /*
-     * This must not be called outside of `setup()`. Because `vuex-composition-helpers`
-     * uses `getCurrentInstance` to get the current instance of the component,
-     * which returns `null` when it is not called during setup.
-     *
-     * From the documentation:
-     *    "`getCurrentInstance` only works during setup or Lifecycle Hooks"
-     */
-    const { setSettings } = useMutations(["setSettings"]);
-
-    const play = () => {
-      setSettings(settingsList);
-      root.$router.push({ name: "PlayNumbersGame" });
-    };
-
-    return {
-      ...toRefs(options),
-      ...toRefs(settings),
-      settingsList,
-      addToSettingsList,
-      removeFromSettingsList,
-      filteredThemes,
-      currentTab,
-      play,
-    };
-  },
-});
-</script>
+<script lang="ts" src="./numbers.ts" />
 <style lang="scss">
 .is-circled-color {
   display: inline-block;

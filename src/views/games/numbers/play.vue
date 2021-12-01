@@ -14,7 +14,12 @@
           >
         </div>
         <div class="buttons">
-          <b-button tag="router-link" :to="{ name: 'Home' }" type="is-primary is-light" icon-left="home" size="is-medium"
+          <b-button
+            tag="router-link"
+            :to="{ name: 'Home' }"
+            type="is-primary is-light"
+            icon-left="home"
+            size="is-medium"
             >Home</b-button
           >
           <b-button
@@ -31,50 +36,16 @@
       </div>
     </div>
 
-    <section class="hero is-fullheight" v-if="settings.displayNumbers">
+    <section class="hero is-fullheight">
       <div class="hero-body p-0">
         <div class="has-text-centered" style="width: 100%">
-          <span :class="fontClasses" :style="fontStyles">+999999</span>
+          <span :class="fontClasses" :style="fontStyles">{{ centerText }}</span>
         </div>
       </div>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, computed, onMounted, ref } from "@vue/composition-api";
-import { NumbersGameSettings } from "./interfaces";
-import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
-import { themes } from '@mental-arithmetic/themes';
-
-const getTheme = (loc: string) => themes.find((theme) => theme.loc === loc);
-
-export default defineComponent({
-  setup(_, { root }) {
-    const { useState } =
-      createStoreHelper<{ settings: NumbersGameSettings }>("GameModule");
-    const { settings } = useState(["settings"]);
-
-    const fontClasses = computed(() => {
-      const classes: any = { "is-big-number": true };
-      classes[`is-${settings.value.fontSize}`] = true;
-      classes[`is-rotated-${settings.value.fontRotation}`] = true;
-      return classes;
-    });
-    const fontStyles = computed(() => {
-      return { color: settings.value.fontColor };
-    });
-
-    const canEnterAnswer = ref<boolean>(false);
-    const showText = ref<string>('');
-
-    onMounted(() => {
-        //
-    });
-
-    return { settings, fontClasses, fontStyles, canEnterAnswer, showText };
-  },
-});
-</script>
+<script lang="ts" src="./play.ts" />
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
