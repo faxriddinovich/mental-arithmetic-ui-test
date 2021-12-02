@@ -3,27 +3,34 @@ import {
   computed,
   onMounted,
   ref,
+  reactive
 } from "@vue/composition-api";
 import {QueueItem} from "./interfaces";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
 // FIXME: this is the worst idea to keep the interfaces in the views folder. So this must be fixed in the future
-import { NumbersGameSettings } from '@/views/games/numbers/interfaces';
+import {NumbersGameSettings} from '@/views/games/numbers/interfaces';
+import {showToastMessage, ToastType} from '@/services/toast';
 
 // FIXME: this should be done using i18n
-const START_ATTENTION_TEXTS = ["text1", "text2", "text3"];
+const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
 
 export default defineComponent({
   setup(_, {root}) {
     const {useState} =
       createStoreHelper<{settings: NumbersGameSettings}>("GameModule");
     const {settings} = useState(["settings"]);
-    console.log(settings.value);
+
+    //these are not reactive
+    const queue = settings.value.queue
+    const currentQueueItemIndex = 0;
+    let currentExampleIndex = 0;
 
     const canEnterAnswer = ref<boolean>(false);
-    const currentQueueItem = ref<QueueItem>(settings.value.queue[0]);
     const centerText = ref<string | null>();
+    const answer = ref<number | null>();
 
     const fontClasses = computed(() => {
+      const currentQueueItem = ref(queue[currentQueueItemIndex]);
       const classes: any = {"is-big-number": true};
       classes[`is-${currentQueueItem.value.fontSize}`] = true;
       classes[`is-rotated-${currentQueueItem.value.fontSize}`] = true;
@@ -31,28 +38,55 @@ export default defineComponent({
     });
 
     const fontStyles = computed(() => {
-      return {color: currentQueueItem.value.fontColor};
+      // FIXME: not reactive
+      const currentQueueItem = queue[currentQueueItemIndex];
+      return {color: currentQueueItem.fontColor};
     });
 
-    const currentQueueItemIndex = 0;
 
     function showExamples() {
-      const currentExampleIndex = 0;
       let currentExampleRowIndex = 0;
-      const currentQueueItem = settings.value[currentQueueItemIndex];
+      const currentQueueItem = queue[currentQueueItemIndex];
 
-      // [ { [] }, { [] } ]
       const exampleRowInterval = setInterval(() => {
         const currentExample = currentQueueItem.examples[currentExampleIndex];
-        if(currentExampleRowIndex <= currentExample.numbers.length) {
-          centerText.value = currentExample.numbers[currentExampleRowIndex] as string;
+
+        // if there is a row
+        if (currentExample.numbers[currentExampleRowIndex]) {
+          centerText.value = currentExample.numbers[currentExampleRowIndex];
           currentExampleRowIndex++;
-          return;
-        } else if (!currentQueueItem.answerAtEnd) {
+        } else {
           clearInterval(exampleRowInterval);
-          alert('show the answer box');
+          centerText.value = null;
+          // currentExampleIndex actually is the next 
+          if (currentQueueItem.examples[currentExampleIndex]) {
+            canEnterAnswer.value = true;
+          }
         }
-      }, 1000); // FIXME
+        // FIXME: fix the interval time
+      }, 500);
+    }
+
+    function enterAnswer() {
+      const currentQueueItem = queue[currentQueueItemIndex];
+      const currentExample = currentQueueItem.examples[currentExampleIndex];
+
+      if (currentExample.answer == answer.value) {
+        showToastMessage('Correct!', ToastType.Success);
+      } else {
+        showToastMessage('Incorrect! The correct answer is: ' + currentExample.answer, ToastType.Danger);
+      }
+
+      canEnterAnswer.value = false;
+      answer.value = null;
+
+      if (currentQueueItem.examples[currentExampleIndex + 1]) {
+        currentExampleIndex++;
+        showExamples();
+      } else {
+        centerText.value = 'End!';
+      }
+
     }
 
     /*
@@ -81,6 +115,8 @@ export default defineComponent({
     });
 
     return {
+      answer,
+      enterAnswer,
       fontClasses,
       fontStyles,
       centerText,

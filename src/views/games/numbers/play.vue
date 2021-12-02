@@ -38,8 +38,55 @@
 
     <section class="hero is-fullheight">
       <div class="hero-body p-0">
-        <div class="has-text-centered" style="width: 100%">
-          <span :class="fontClasses" :style="fontStyles">{{ centerText }}</span>
+        <div style="width: 100%">
+
+        <!--
+          <div class="container is-max-widescreen">
+            <div class="box is-bordered">
+              <div class="has-text-centered is-size-3 mb-5">
+                Senior comrades
+              </div>
+
+              <div class="columns is-multiline is-centered is-mobile">
+                <div
+                  class="column is-2-desktop is-4-mobile"
+                  v-for="ans of [1, 2, 3, 4, 5, 6, 7, 8]"
+                  :key="ans"
+                >
+                  <div>
+                    <b-field>
+                      <b-numberinput :controls="false" expanded />
+                    </b-field>
+                    <b-field>
+                      <b-button type="is-primary" expanded>Answer</b-button>
+                    </b-field>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          -->
+          <div
+            class="is-flex is-flex-direction-column is-align-items-center"
+            v-if="canEnterAnswer"
+          >
+          <form @submit.prevent="enterAnswer">
+            <b-numberinput
+              v-model="answer"
+              class="is-answer-input"
+              :controls="false"
+            ></b-numberinput>
+            <b-button native-type="submit" type="is-primary" class="mt-4 is-answer-button"
+              >Answer</b-button
+            >
+            </form>
+          </div>
+          <div class="has-text-centered" v-else>
+            <span :class="fontClasses" :style="fontStyles"
+              >{{ centerText }}
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -48,6 +95,18 @@
 <script lang="ts" src="./play.ts" />
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
+
+$answer-input-desktop-font-size: 5rem;
+$answer-input-desktop-width: 16rem;
+$answer-input-desktop-height: 10rem;
+$answer-button-desktop-font-size: 2rem;
+$answer-button-desktop-width: 16rem;
+
+$answer-input-touch-font-size: 3rem;
+$answer-input-touch-width: 14rem;
+$answer-input-touch-height: 7rem;
+$answer-button-touch-font-size: 1rem;
+$answer-button-touch-width: 14rem;
 
 .completed-progress > .progress {
   border-radius: 0px !important;
@@ -96,5 +155,36 @@
 
 .is-big-number {
   display: inline-block;
+}
+
+.is-answer-input > .control > input[type="number"] {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+
+  @include touch {
+    font-size: $answer-input-touch-font-size !important;
+    width: $answer-input-touch-width !important;
+    height: $answer-input-touch-height !important;
+  }
+
+  @include desktop {
+    font-size: $answer-input-desktop-font-size !important;
+    width: $answer-input-desktop-width !important;
+    height: $answer-input-desktop-height !important;
+  }
+}
+
+.is-answer-button {
+  width: 250px;
+
+  @include touch {
+    font-size: $answer-button-touch-font-size !important;
+    width: $answer-button-touch-width !important;
+  }
+
+  @include desktop {
+    font-size: $answer-button-desktop-font-size !important;
+    width: $answer-button-desktop-width !important;
+  }
 }
 </style>
