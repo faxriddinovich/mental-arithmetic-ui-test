@@ -33,18 +33,21 @@ export default defineComponent({
     const centerText = ref<string | null>();
     const answer = ref<number | null>();
 
+    const pass = ref(0); // trick
+
     const fontClasses = computed(() => {
+      pass.value;
       const currentQueueItem = ref(queue[currentQueueItemIndex]);
       const classes: any = {"is-big-number": true};
       classes[`is-${currentQueueItem.value.fontSize}`] = true;
-      classes[`is-rotated-${currentQueueItem.value.fontSize}`] = true;
+      classes[`is-rotated-${currentQueueItem.value.fontRotation}`] = true;
       return classes;
     });
 
     const fontStyles = computed(() => {
-      // FIXME: not reactive
-      const currentQueueItem = queue[currentQueueItemIndex];
-      return {color: currentQueueItem.fontColor};
+      pass.value;
+      const currentQueueItem = ref(queue[currentQueueItemIndex]);
+      return {color: currentQueueItem.value.fontColor};
     });
 
     const examplesCount = computed(() => {
@@ -115,8 +118,8 @@ export default defineComponent({
             }, currentQueueItem.examplesTimeout * 1000);
           }
         });
-      } else if (queue[currentQueueItemIndex + 1]) {
-        /* if there are items in the queue */
+      } else if (queue[currentQueueItemIndex + 1]) {/* if there are items in the queue */
+        pass.value++; // trick
         /* go to the next queue item */
         currentQueueItemIndex++;
         /* clear the index */
@@ -125,6 +128,7 @@ export default defineComponent({
         setCenterText(queue[currentQueueItemIndex].theme);
         /* after 2 seconds show the examples of the next item in the queue */
         setTimeout(() => {
+          root.$forceUpdate();
           showExamples();
         }, 2000);
       } else {
