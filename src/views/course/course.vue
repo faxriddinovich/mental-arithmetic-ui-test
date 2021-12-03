@@ -166,12 +166,12 @@ import {
 } from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
-  RPC_INSUFFICIENT_BALANCE_ERR_CODE
+  RPC_INSUFFICIENT_BALANCE_ERR_CODE,
 } from "@/services/rpc/error-codes";
 import { CourseContract } from "@/services/rpc/contracts/course";
 import { LessonContract } from "@/services/rpc/contracts/lesson";
 import { formatCurrency } from "@/common/utils";
-import { Session, SessionStorage } from '@/services/storages/session';
+import { Session, SessionStorage } from "@/services/storages/session";
 
 @Component({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },

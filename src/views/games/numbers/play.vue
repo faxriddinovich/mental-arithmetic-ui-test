@@ -31,7 +31,7 @@
         </div>
       </div>
       <div>
-        <b-progress type="is-success" class="completed-progress" :value="40">
+        <b-progress type="is-success" class="completed-progress" :value="progressPercentage">
         </b-progress>
       </div>
     </div>
@@ -39,8 +39,7 @@
     <section class="hero is-fullheight">
       <div class="hero-body p-0">
         <div style="width: 100%">
-
-        <!--
+          <!--
           <div class="container is-max-widescreen">
             <div class="box is-bordered">
               <div class="has-text-centered is-size-3 mb-5">
@@ -71,15 +70,19 @@
             class="is-flex is-flex-direction-column is-align-items-center"
             v-if="canEnterAnswer"
           >
-          <form @submit.prevent="enterAnswer">
-            <b-numberinput
-              v-model="answer"
-              class="is-answer-input"
-              :controls="false"
-            ></b-numberinput>
-            <b-button native-type="submit" type="is-primary" class="mt-4 is-answer-button"
-              >Answer</b-button
-            >
+            <form @submit.prevent="enterAnswer">
+              <b-numberinput
+                v-model="answer"
+                class="is-answer-input"
+                :controls="false"
+                :autofocus="true"
+              ></b-numberinput>
+              <b-button
+                native-type="submit"
+                type="is-primary"
+                class="mt-4 is-answer-button"
+                >Answer</b-button
+              >
             </form>
           </div>
           <div class="has-text-centered" v-else>

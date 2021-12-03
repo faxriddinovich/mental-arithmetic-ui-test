@@ -5,9 +5,9 @@ import {
   reactive,
   toRefs,
 } from "@vue/composition-api";
-import {themes} from "@mental-arithmetic/themes";
-import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
-import {Example, NumbersGameSettings} from "@/views/games/numbers/interfaces";
+import { themes } from "@mental-arithmetic/themes";
+import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
+import { Example, NumbersGameSettings } from "@/views/games/numbers/interfaces";
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -33,8 +33,8 @@ const generateExamples = (
 };
 
 export default defineComponent({
-  setup(_, {root}) {
-    const {useMutations} = createStoreHelper("GameModule");
+  setup(_, { root }) {
+    const { useMutations } = createStoreHelper("GameModule");
     const filteredThemes = computed(() => {
       return themes
         .filter((_theme) => {
@@ -83,18 +83,25 @@ export default defineComponent({
 
     const gameSettings = reactive<NumbersGameSettings>({
       answerAtEnd: false,
-      queue: []
+      queue: [],
     });
 
     /*
      * Add to the queue list
      */
     const addToQueueList = () => {
-      const examples = generateExamples(settings.theme, settings.examplesCount, settings.rowsCount, settings.digit);
+      const examples = generateExamples(
+        settings.theme,
+        settings.examplesCount,
+        settings.rowsCount,
+        Number(settings.digit)
+      );
 
       gameSettings.queue.push({
         examples,
         theme: settings.theme,
+        examplesTimeout: settings.examplesTimeout,
+        rowsTimeout: settings.rowsTimeout,
         displayNumbers: settings.displayNumbers,
         hasSound: settings.hasSound,
         fontRotation: settings.fontRotation,
@@ -118,12 +125,12 @@ export default defineComponent({
      * From the documentation:
      *    "`getCurrentInstance` only works during setup or Lifecycle Hooks"
      */
-    const {setSettings} = useMutations(["setSettings"]);
+    const { setSettings } = useMutations(["setSettings"]);
 
     const play = () => {
       // FIXME add the first theme in the themes list when the theme input is empty ( or we can just disable the play button )
       setSettings(gameSettings);
-      root.$router.push({name: "PlayNumbersGame"});
+      root.$router.push({ name: "PlayNumbersGame" });
     };
 
     return {

@@ -6,7 +6,7 @@ import {
 } from "@/services/rpc/error-codes";
 import Router from "@/router/index";
 import Store from "@/store";
-import { SessionStorage } from '@/services/storages/session';
+import { SessionStorage } from "@/services/storages/session";
 import { showToastMessage, ToastType } from "@/services/toast";
 
 const axiosInstance = axios.create({

@@ -5,9 +5,9 @@ import { Plugins } from "@capacitor/core";
 const { SplashScreen } = Plugins;
 // #!endif
 //
-import VueCompositionAPI from '@vue/composition-api'
+import VueCompositionAPI from "@vue/composition-api";
 
-Vue.use(VueCompositionAPI)
+Vue.use(VueCompositionAPI);
 
 import App from "./App.vue";
 // #!if __BROWSER__
@@ -19,7 +19,7 @@ import store from "./store";
 
 import "./styles/styles.scss";
 
-import { SettingsStorage } from '@/services/storages/settings';
+import { SettingsStorage } from "@/services/storages/settings";
 
 const buefyOptions = {
   defaultIconPack: "uil",

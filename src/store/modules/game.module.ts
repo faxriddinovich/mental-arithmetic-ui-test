@@ -1,18 +1,18 @@
 interface State {
-  settings: any
+  settings: any;
 }
 
 export default {
   namespaced: true,
   state: {
-    settings: null
+    settings: null,
   },
   mutations: {
     setSettings: (state: State, settings: any) => {
       state.settings = settings;
-    }
+    },
   },
   getters: {
-    settings: (state: State) => state.settings
-  }
+    settings: (state: State) => state.settings,
+  },
 };

@@ -8,10 +8,10 @@ export interface AccountContract {
 
 export interface AccountCredentialsContract {
   // one of these fields must be included
-  username?: string,
-  email?: string,
-  password: string,
-  captcha: string
+  username?: string;
+  email?: string;
+  password: string;
+  captcha: string;
 }
 
 export interface SessionContract {

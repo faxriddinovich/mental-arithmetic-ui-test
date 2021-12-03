@@ -1,6 +1,6 @@
-import { Storage } from '@/services/platform';
+import { Storage } from "@/services/platform";
 
-export interface Setting { 
+export interface Setting {
   key: string;
   value: any;
 }
@@ -9,7 +9,7 @@ export class StaticSettingsStorage {
   private readonly storageKey = "settings";
   private defaultSettings: Setting[] = [
     { key: "show_latest_event", value: true },
-    { key: "locale", value: "en" }
+    { key: "locale", value: "en" },
   ];
 
   public async getSettings(): Promise<Setting[]> {
@@ -27,7 +27,7 @@ export class StaticSettingsStorage {
   }
 
   public async setSettings(settings: Setting[]): Promise<void> {
-    await Storage.set(this.storageKey, JSON.stringify(settings)); 
+    await Storage.set(this.storageKey, JSON.stringify(settings));
   }
 }
 

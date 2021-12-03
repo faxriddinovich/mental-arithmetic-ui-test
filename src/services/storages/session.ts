@@ -1,13 +1,13 @@
-import {Storage} from '@/services/platform';
-import {SessionContract} from '@/services/rpc/contracts/account';
+import { Storage } from "@/services/platform";
+import { SessionContract } from "@/services/rpc/contracts/account";
 
 export interface Session {
-  id: number,
-  username: string,
-  role: string,
-  session: string,
-  timestamp: number,
-  isActive: boolean
+  id: number;
+  username: string;
+  role: string;
+  session: string;
+  timestamp: number;
+  isActive: boolean;
 }
 
 export class StaticSessionStorage {
@@ -65,7 +65,6 @@ export class StaticSessionStorage {
         timestamp: timestamp,
         isActive: !sessions.length ? true : false,
       });
-
     }
 
     await this.setSessions(sessions);

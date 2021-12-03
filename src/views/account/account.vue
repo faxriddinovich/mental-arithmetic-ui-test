@@ -131,7 +131,7 @@ import {
   AccountContract,
   SessionContract,
 } from "@/services/rpc/contracts/account";
-import { SessionStorage } from '@/services/storages/session';
+import { SessionStorage } from "@/services/storages/session";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
 @Component

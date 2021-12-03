@@ -93,9 +93,7 @@ import { Component, Vue } from "vue-property-decorator";
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
-import {
-  RPC_INVALID_CREDENTIALS_ERR_CODE
-} from "@/services/rpc/error-codes";
+import { RPC_INVALID_CREDENTIALS_ERR_CODE } from "@/services/rpc/error-codes";
 import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import { SessionStorage } from "@/services/storages/session";
 import {
