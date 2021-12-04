@@ -68,11 +68,11 @@
           -->
           <div
             class="is-flex is-flex-direction-column is-align-items-center"
-            v-if="canEnterAnswer"
+            v-if="canShowAnswerForm"
           >
             <form @submit.prevent="enterAnswer">
               <b-numberinput
-                v-model="answer"
+                v-model="answerFormValue"
                 class="is-answer-input"
                 :controls="false"
                 :autofocus="true"
@@ -85,9 +85,14 @@
               >
             </form>
           </div>
-          <div class="has-text-centered" v-else>
+          <div class="has-text-centered" v-else-if="canShowNumber">
             <span :class="fontClasses" :style="fontStyles"
-              >{{ centerText }}
+              >{{ numberText }}
+            </span>
+          </div>
+          <div class="has-text-centered" v-else-if="canShowAttentionText">
+            <span class="is-big-number is-2"
+              >{{ attentionText }}
             </span>
           </div>
         </div>

@@ -29,14 +29,19 @@ export default defineComponent({
     const progressPercentage = ref(0);
 
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
-    const canEnterAnswer = ref<boolean>(false);
-    const centerText = ref<string | null>();
-    const answer = ref<number | null>();
+    const answerFormValue = ref<number | null>();
+
+    const attentionText = ref<string | null>(null);
+    const numberText = ref<number | string | null>();
+
+    const canShowAttentionText = ref<boolean>(true);
+    const canShowNumber = ref<boolean>(false);
+    const canShowAnswerForm = ref<boolean>(false);
 
     const pass = ref(0); // trick
 
     const fontClasses = computed(() => {
-      pass.value;
+      pass.value; // trick
       const currentQueueItem = ref(queue[currentQueueItemIndex]);
       const classes: any = {"is-big-number": true};
       classes[`is-${currentQueueItem.value.fontSize}`] = true;
@@ -45,48 +50,67 @@ export default defineComponent({
     });
 
     const fontStyles = computed(() => {
-      pass.value;
+      pass.value; // trick
       const currentQueueItem = ref(queue[currentQueueItemIndex]);
       return {color: currentQueueItem.value.fontColor};
     });
 
-    const examplesCount = computed(() => {
+    const calcExamplesCount = () => {
       let i = 0;
       /* FIXME: can we optimize this? */
       for (const queueItem of queue) {
         i += queueItem.examples.length;
       }
       return i;
-    });
+    }
 
-    const clearCenterText = () => (centerText.value = null);
-    const setCenterText = (text: any) => (centerText.value = text);
+    const showAttentionText = (text: string) => {
+      canShowAttentionText.value = true;
+      attentionText.value = text;
+      /* hide other things */
+      canShowNumber.value = false;
+      canShowAnswerForm.value = false;
+    }
+
+    const showNumber = (number: string | number) => {
+      canShowNumber.value = true;
+      numberText.value = number;
+      /* hide other things */
+      canShowAttentionText.value = false;
+      canShowAnswerForm.value = false;
+    }
+
     const showAnswerForm = () => {
-      answer.value = null;
-      canEnterAnswer.value = true;
-    };
-    const hideAnswerForm = () => (canEnterAnswer.value = false);
+      canShowAnswerForm.value = true;
+      /* hide other things */
+      canShowAttentionText.value = false;
+      canShowNumber.value = false;
+    }
 
     const increaseProgress = () => {
-      progressPercentage.value += 1 / examplesCount.value * 100;
+      progressPercentage.value += 1 / calcExamplesCount() * 100;
     }
 
     /*
      * Resolves the promise after showing all the rows
      */
-    function renderExampleRows(
-      rows: (string | number)[],
-      interval: number
+    function renderArrayItems(
+      arr: (string | number)[],
+      interval: number,
+      isAttention?: boolean
     ): Promise<void> {
-      let currentRowIndex = 0;
+      let currentArrayIndex = 0;
       return new Promise((resolve) => {
-        const rowsInterval = setInterval(() => {
-          if (rows[currentRowIndex]) {
-            setCenterText(rows[currentRowIndex]);
-            currentRowIndex++;
+        const intervalHandle = setInterval(() => {
+          if (arr[currentArrayIndex]) {
+            if(isAttention)
+              showAttentionText(arr[currentArrayIndex]);
+            else
+              showNumber(arr[currentArrayIndex]);
+            currentArrayIndex++;
           } else {
-            clearInterval(rowsInterval); // remove the handle
-            currentRowIndex = 0; // free
+            clearInterval(intervalHandle); // remove the handle
+            currentArrayIndex = 0; // free
             resolve();
           }
         }, interval);
@@ -101,12 +125,12 @@ export default defineComponent({
       /* if the current example exists */
       if (currentExample) {
         /* show all the rows of the current example */
-        renderExampleRows(
+        renderArrayItems(
           currentExample.numbers,
           currentQueueItem.rowsTimeout * 1000
         ).then(() => {
           /* clear after showing all the rows */
-          clearCenterText();
+          //clearCenterText(); // FIXME
           currentExampleIndex++;
           /* if `answerAtEnd` is true, then we should show the answer form */
           if (!settings.value.answerAtEnd) {
@@ -125,7 +149,7 @@ export default defineComponent({
         /* clear the index */
         currentExampleIndex = 0;
         /* show the name of the next item in the queue */
-        setCenterText(queue[currentQueueItemIndex].theme);
+        showAttentionText(queue[currentQueueItemIndex].theme);
         /* after 2 seconds show the examples of the next item in the queue */
         setTimeout(() => {
           root.$forceUpdate();
@@ -140,7 +164,7 @@ export default defineComponent({
     function enterAnswer() {
       const currentQueueItem = queue[currentQueueItemIndex];
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
-      if (prevExample.answer == answer.value) {
+      if (prevExample.answer == answerFormValue.value) {
         if (currentExampleIndex % 2 === 0) {
           Notification.open({
             type: "is-success",
@@ -159,22 +183,23 @@ export default defineComponent({
       }
 
       increaseProgress();
-      hideAnswerForm();
       showExamples();
     }
 
     onMounted(() => {
-      /* FIXME: renderExampleRows is not funny */
-      renderExampleRows(START_ATTENTION_TEXTS, 800).then(() => showExamples());
+      renderArrayItems(START_ATTENTION_TEXTS, 800, true).then(() => showExamples());
     });
 
     return {
-      answer,
+      answerFormValue,
+      attentionText,
+      canShowAnswerForm,
+      canShowNumber,
+      canShowAttentionText,
+      numberText,
       enterAnswer,
       fontClasses,
       fontStyles,
-      centerText,
-      canEnterAnswer,
       answerAtEnd,
       progressPercentage
     };
