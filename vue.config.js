@@ -35,6 +35,8 @@ module.exports = {
         },
         verbose: false,
       })
-      .end();
+      .end()
+      .rule("ts")
+      .include.add(/vuex-composition-helpers/);
   },
 };

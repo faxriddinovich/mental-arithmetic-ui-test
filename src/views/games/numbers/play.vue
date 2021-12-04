@@ -31,12 +31,16 @@
         </div>
       </div>
       <div>
-        <b-progress type="is-success" class="completed-progress" :value="progressPercentage">
+        <b-progress
+          type="is-success"
+          class="completed-progress"
+          :value="progressPercentage"
+        >
         </b-progress>
       </div>
     </div>
 
-    <section class="hero is-fullheight">
+    <section class="hero is-fullheight" ref="heroSection">
       <div class="hero-body p-0">
         <div style="width: 100%">
           <!--
@@ -91,9 +95,7 @@
             </span>
           </div>
           <div class="has-text-centered" v-else-if="canShowAttentionText">
-            <span class="is-big-number is-2"
-              >{{ attentionText }}
-            </span>
+            <span class="is-big-number is-2">{{ attentionText }} </span>
           </div>
         </div>
       </div>
@@ -193,6 +195,32 @@ $answer-button-touch-width: 14rem;
   @include desktop {
     font-size: $answer-button-desktop-font-size !important;
     width: $answer-button-desktop-width !important;
+  }
+}
+
+.hero.is-correct-answer {
+  animation: correct-answer-fade 1s;
+}
+
+.hero.is-incorrect-answer {
+  animation: incorrect-answer-fade 1s;
+}
+
+@keyframes correct-answer-fade {
+  0% {
+    background: rgba(72, 199, 116, 0.8);
+  }
+  100% {
+    background: rgba(72, 199, 116, 0);
+  }
+}
+
+@keyframes incorrect-answer-fade {
+  0% {
+    background: rgba(255, 56, 96, 0.8);
+  }
+  100% {
+    background: rgba(255, 56, 96, 0);
   }
 }
 </style>

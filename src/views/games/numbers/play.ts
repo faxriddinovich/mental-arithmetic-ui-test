@@ -6,6 +6,8 @@ import {
 } from "@vue/composition-api";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
 import {NotificationProgrammatic as Notification} from "buefy";
+import CorrectAnswerSoundSrc from '../../../../public/sounds/correct-answer.mp3'
+import IncorrectAnswerSoundSrc from '../../../../public/sounds/incorrect-answer.mp3'
 
 /*
  * FIXME: this is the worst idea to keep the interfaces in the
@@ -28,11 +30,16 @@ export default defineComponent({
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
 
+    const correctAnswerSound = new Audio(CorrectAnswerSoundSrc);
+    const incorrectAnswerSound = new Audio(IncorrectAnswerSoundSrc);
+
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
 
     const attentionText = ref<string | null>(null);
     const numberText = ref<number | string | null>();
+
+    const heroSection = ref();
 
     const canShowAttentionText = ref<boolean>(true);
     const canShowNumber = ref<boolean>(false);
@@ -64,6 +71,20 @@ export default defineComponent({
       return i;
     }
 
+    const showCorrectAnswerFade = () => {
+      heroSection.value.classList.add('is-correct-answer');
+      setTimeout(() => {
+        heroSection.value.classList.remove('is-correct-answer');
+      }, 1000);
+    }
+
+    const showIncorrectAnswerFade = () => {
+      heroSection.value.classList.add('is-incorrect-answer');
+      setTimeout(() => {
+        heroSection.value.classList.remove('is-incorrect-answer');
+      }, 1000);
+    }
+
     const showAttentionText = (text: string) => {
       canShowAttentionText.value = true;
       attentionText.value = text;
@@ -81,6 +102,7 @@ export default defineComponent({
     }
 
     const showAnswerForm = () => {
+      answerFormValue.value = null;
       canShowAnswerForm.value = true;
       /* hide other things */
       canShowAttentionText.value = false;
@@ -165,6 +187,9 @@ export default defineComponent({
       const currentQueueItem = queue[currentQueueItemIndex];
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
       if (prevExample.answer == answerFormValue.value) {
+        showCorrectAnswerFade();
+        correctAnswerSound.play();
+        /*
         if (currentExampleIndex % 2 === 0) {
           Notification.open({
             type: "is-success",
@@ -172,9 +197,12 @@ export default defineComponent({
             message: "Keep going!",
           });
         }
+        */
 
         showToastMessage("Correct!", ToastType.Success);
       } else {
+        showIncorrectAnswerFade();
+        incorrectAnswerSound.play();
         showToastMessage(
           `Incorrect! The correct answer was: <b>
           ${prevExample.answer}</b>`,
@@ -196,12 +224,13 @@ export default defineComponent({
       canShowAnswerForm,
       canShowNumber,
       canShowAttentionText,
+      progressPercentage,
       numberText,
       enterAnswer,
       fontClasses,
+      heroSection,
       fontStyles,
       answerAtEnd,
-      progressPercentage
     };
   },
 });
