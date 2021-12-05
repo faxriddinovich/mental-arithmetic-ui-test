@@ -23,8 +23,10 @@
     "@capacitor/ios": "^3.3.2",
     "@capacitor/storage": "^1.2.3",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
+    "@mental-arithmetic/themes": "file:../themes",
     "@theta-rpc/http-client": "file:../../rpc/packages/http-client",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
+    "@vue/composition-api": "^1.4.0",
     "buefy": "^0.9.10",
     "chart.js": "^2.9.4",
     "deep-diff": "^1.0.2",
@@ -38,7 +40,8 @@
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
     "vue-unicons": "^3.2.1",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "vuex-composition-helpers": "^1.0.26"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",

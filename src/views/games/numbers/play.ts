@@ -20,6 +20,14 @@ import {showToastMessage, ToastType} from "@/services/toast";
 // FIXME: this should be done using i18n
 const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
 
+function playCorrectAnswerSound() {
+  return new Audio(CorrectAnswerSoundSrc).play();
+}
+
+function playIncorrectAnswerSound() {
+  return new Audio(IncorrectAnswerSoundSrc).play();
+}
+
 export default defineComponent({
   setup(_, {root}) {
     const {useState} =
@@ -31,8 +39,6 @@ export default defineComponent({
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
 
-    const correctAnswerSound = new Audio(CorrectAnswerSoundSrc);
-    const incorrectAnswerSound = new Audio(IncorrectAnswerSoundSrc);
 
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
@@ -61,7 +67,6 @@ export default defineComponent({
 
     const currentExample = computed(() => {
       const currentQueueItem = queue[currentQueueItemIndex];
-      console.log(currentQueueItemIndex);
       /*
        * Every time when `display.value` is changed, `currentExample`
        * is recomputed
@@ -185,13 +190,15 @@ export default defineComponent({
       }
     }
 
+
     function enterAnswer() {
       const currentQueueItem = queue[currentQueueItemIndex];
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
       completeExample();
+
       if (prevExample.answer == answerFormValue.value) {
         displayCorrectAnswerFade();
-        correctAnswerSound.play();
+        playCorrectAnswerSound();
         /*
         if (currentExampleIndex % 2 === 0) {
           Notification.open({
@@ -206,7 +213,7 @@ export default defineComponent({
         showExamples();
       } else {
         displayIncorrectAnswerFade();
-        incorrectAnswerSound.play();
+        playIncorrectAnswerSound();
         displayAnswer();
         showToastMessage(
           `Incorrect! The correct answer was: <b>
