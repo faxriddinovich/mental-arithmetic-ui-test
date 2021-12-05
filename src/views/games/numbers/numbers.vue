@@ -160,14 +160,14 @@
             <template v-else>
               <b-field>
                 <template #label>
-                  <b-icon icon="palette" /> Numbers Color:
+                  <b-icon icon="palette" /> Color:
                 </template>
                 <span
                   :class="{
                     'is-circled-color': true,
                     'is-selected': color == fontColor,
+                    ['is-' + color + '-bg-color']: true
                   }"
-                  :style="'background: ' + color"
                   v-for="(color, index) of fontColors"
                   :key="index"
                   @click="fontColor = color"
@@ -176,7 +176,7 @@
 
               <b-field>
                 <template #label>
-                  <b-icon icon="crop-alt-rotate-right" /> Numbers Transformation
+                  <b-icon icon="crop-alt-rotate-right" /> Rotation
                 </template>
 
                 <b-radio-button
@@ -184,7 +184,6 @@
                   :native-value="0"
                   type="is-primary"
                 >
-                  <b-icon icon="rotate-360"></b-icon>
                   <span style="-webkit-transform: rotate(0deg)">-123</span>
                 </b-radio-button>
 
@@ -193,7 +192,6 @@
                   :native-value="90"
                   type="is-primary"
                 >
-                  <b-icon icon="rotate-360"></b-icon>
                   <span style="-webkit-transform: rotate(90deg)">-123</span>
                 </b-radio-button>
 
@@ -202,12 +200,10 @@
                   :native-value="180"
                   type="is-primary"
                 >
-                  <b-icon icon="rotate-360"></b-icon>
                   <span style="-webkit-transform: rotate(180deg)">-123</span>
                 </b-radio-button>
 
                 <b-radio-button v-model="fontRotation" :native-value="270">
-                  <b-icon icon="rotate-360"></b-icon>
                   <span style="-webkit-transform: rotate(270deg)">-123</span>
                 </b-radio-button>
               </b-field>

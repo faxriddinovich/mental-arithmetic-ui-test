@@ -54,15 +54,13 @@ export default defineComponent({
       fontRotations: [0, 90, 180, 270],
       fontSizes: [1, 2, 3],
       fontColors: [
-        "#34495e",
-        "#1abc9c",
-        "#27ae60",
-        "#2ecc71",
-        "#3498db",
-        "#9b59b6",
-        "#f1c40f",
-        "#e67e22",
-        "#e74c3c",
+        "black",
+        "green",
+        "blue",
+        "purple",
+        "yellow",
+        "orange",
+        "red",
       ],
     });
 

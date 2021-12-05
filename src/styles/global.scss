@@ -32,3 +32,70 @@ $border-color: rgb(149, 165, 166);
     padding: 1rem 0.5rem;
   }
 }
+
+
+/* game colors */
+$is-black-color: #34495e;
+$is-green-color: #27ae60;;
+$is-blue-color: #3498db;
+$is-purple-color: #9b59b6;
+$is-yellow-color: #f1c40f;
+$is-orange-color: #e67e22;
+$is-red-color: #e74c3c;
+
+.is-black-color {
+  color: $is-black-color;
+}
+
+.is-green-color {
+  color: $is-green-color;
+}
+
+.is-blue-color {
+  color: $is-blue-color;
+}
+
+.is-purple-color {
+  color: $is-purple-color;
+}
+
+.is-yellow-color {
+  color: $is-yellow-color;
+}
+
+.is-orange-color {
+  color: $is-orange-color;
+}
+
+.is-red-color {
+  color: $is-red-color;
+}
+
+
+.is-black-bg-color {
+  background: $is-black-color;
+}
+
+.is-green-bg-color {
+  background: $is-green-color;
+}
+
+.is-blue-bg-color {
+  background: $is-blue-color;
+}
+
+.is-purple-bg-color {
+  background: $is-purple-color;
+}
+
+.is-yellow-bg-color {
+  background: $is-yellow-color;
+}
+
+.is-orange-bg-color {
+  background: $is-orange-color;
+}
+
+.is-red-bg-color {
+  background: $is-red-color;
+}

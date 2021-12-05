@@ -2,10 +2,12 @@ import {
   defineComponent,
   computed,
   onMounted,
-  ref,
+  reactive,
+  ref
 } from "@vue/composition-api";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
 import {NotificationProgrammatic as Notification} from "buefy";
+import {Example, QueueItem} from '@/views/games/numbers/interfaces';
 import CorrectAnswerSoundSrc from '../../../../public/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '../../../../public/sounds/incorrect-answer.mp3'
 
@@ -36,30 +38,40 @@ export default defineComponent({
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
 
-    const attentionText = ref<string | null>(null);
-    const numberText = ref<number | string | null>();
-
     const heroSection = ref();
 
-    const canShowAttentionText = ref<boolean>(true);
-    const canShowNumber = ref<boolean>(false);
     const canShowAnswerForm = ref<boolean>(false);
 
-    const pass = ref(0); // trick
+    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'result'>('attention');
+    const display = ref<string | number | null>(null);
 
-    const fontClasses = computed(() => {
-      pass.value; // trick
-      const currentQueueItem = ref(queue[currentQueueItemIndex]);
-      const classes: any = {"is-big-number": true};
-      classes[`is-${currentQueueItem.value.fontSize}`] = true;
-      classes[`is-rotated-${currentQueueItem.value.fontRotation}`] = true;
+    const displayClasses = computed(() => {
+      const currentQueueItem = queue[currentQueueItemIndex];
+      console.log(currentQueueItem);
+      const classes: string[] = [];
+      console.log(currentQueueItem);
+      if (displayMode.value === 'number') {
+        const {fontSize, fontRotation, fontColor} = currentQueueItem;
+        classes.push('is-big-number');
+        classes.push(`is-${fontSize}`);
+        classes.push(`is-rotated-${fontRotation}`);
+        classes.push(`is-${fontColor}-color`);
+      } else if(displayMode.value === 'attention') {
+        classes.push('is-big-number');
+        classes.push('is-2');
+      }
+
       return classes;
     });
 
-    const fontStyles = computed(() => {
-      pass.value; // trick
-      const currentQueueItem = ref(queue[currentQueueItemIndex]);
-      return {color: currentQueueItem.value.fontColor};
+    const currentExample = computed(() => {
+      const currentQueueItem = queue[currentQueueItemIndex];
+      /*
+       * Every time when `display.value` is changed, `currentExample`
+       * is recomputed
+       */
+      if (display.value === 'number')
+        return currentQueueItem.examples[currentExampleIndex];
     });
 
     const calcExamplesCount = () => {
@@ -71,45 +83,36 @@ export default defineComponent({
       return i;
     }
 
-    const showCorrectAnswerFade = () => {
+    const displayCorrectAnswerFade = () => {
       heroSection.value.classList.add('is-correct-answer');
       setTimeout(() => {
         heroSection.value.classList.remove('is-correct-answer');
       }, 1000);
     }
 
-    const showIncorrectAnswerFade = () => {
+    const displayIncorrectAnswerFade = () => {
       heroSection.value.classList.add('is-incorrect-answer');
       setTimeout(() => {
         heroSection.value.classList.remove('is-incorrect-answer');
       }, 1000);
     }
 
-    const showAttentionText = (text: string) => {
-      canShowAttentionText.value = true;
-      attentionText.value = text;
-      /* hide other things */
-      canShowNumber.value = false;
-      canShowAnswerForm.value = false;
+    const displayAttentionText = (text: string | number) => {
+      displayMode.value = 'attention';
+      display.value = text;
     }
 
-    const showNumber = (number: string | number) => {
-      canShowNumber.value = true;
-      numberText.value = number;
-      /* hide other things */
-      canShowAttentionText.value = false;
-      canShowAnswerForm.value = false;
+    const displayNumber = (number: string | number) => {
+      displayMode.value = 'number';
+      display.value = number;
     }
 
-    const showAnswerForm = () => {
-      answerFormValue.value = null;
-      canShowAnswerForm.value = true;
-      /* hide other things */
-      canShowAttentionText.value = false;
-      canShowNumber.value = false;
+    const displayAnswerForm = () => {
+      answerFormValue.value = null; // clear
+      displayMode.value = 'answer-form';
     }
 
-    const increaseProgress = () => {
+    const completeExample = () => {
       progressPercentage.value += 1 / calcExamplesCount() * 100;
     }
 
@@ -125,14 +128,14 @@ export default defineComponent({
       return new Promise((resolve) => {
         const intervalHandle = setInterval(() => {
           if (arr[currentArrayIndex]) {
-            if(isAttention)
-              showAttentionText(arr[currentArrayIndex]);
+            if (isAttention)
+              displayAttentionText(arr[currentArrayIndex]);
             else
-              showNumber(arr[currentArrayIndex]);
+              displayNumber(arr[currentArrayIndex]);
             currentArrayIndex++;
           } else {
             clearInterval(intervalHandle); // remove the handle
-            currentArrayIndex = 0; // free
+            currentArrayIndex = 0;
             resolve();
           }
         }, interval);
@@ -156,7 +159,7 @@ export default defineComponent({
           currentExampleIndex++;
           /* if `answerAtEnd` is true, then we should show the answer form */
           if (!settings.value.answerAtEnd) {
-            showAnswerForm();
+            displayAnswerForm();
           } else {
             /* otherwise after n seconds we show the rows of the next example */
             setTimeout(() => {
@@ -165,13 +168,12 @@ export default defineComponent({
           }
         });
       } else if (queue[currentQueueItemIndex + 1]) {/* if there are items in the queue */
-        pass.value++; // trick
         /* go to the next queue item */
         currentQueueItemIndex++;
         /* clear the index */
         currentExampleIndex = 0;
         /* show the name of the next item in the queue */
-        showAttentionText(queue[currentQueueItemIndex].theme);
+        displayAttentionText(queue[currentQueueItemIndex].theme);
         /* after 2 seconds show the examples of the next item in the queue */
         setTimeout(() => {
           root.$forceUpdate();
@@ -179,7 +181,7 @@ export default defineComponent({
         }, 2000);
       } else {
         /* there are no queue items left */
-        if (settings.value.answerAtEnd) showAnswerForm();
+        if (settings.value.answerAtEnd) displayAnswerForm();
       }
     }
 
@@ -187,7 +189,7 @@ export default defineComponent({
       const currentQueueItem = queue[currentQueueItemIndex];
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
       if (prevExample.answer == answerFormValue.value) {
-        showCorrectAnswerFade();
+        displayCorrectAnswerFade();
         correctAnswerSound.play();
         /*
         if (currentExampleIndex % 2 === 0) {
@@ -201,7 +203,7 @@ export default defineComponent({
 
         showToastMessage("Correct!", ToastType.Success);
       } else {
-        showIncorrectAnswerFade();
+        displayIncorrectAnswerFade();
         incorrectAnswerSound.play();
         showToastMessage(
           `Incorrect! The correct answer was: <b>
@@ -210,7 +212,7 @@ export default defineComponent({
         );
       }
 
-      increaseProgress();
+      completeExample();
       showExamples();
     }
 
@@ -219,18 +221,16 @@ export default defineComponent({
     });
 
     return {
-      answerFormValue,
-      attentionText,
-      canShowAnswerForm,
-      canShowNumber,
-      canShowAttentionText,
-      progressPercentage,
-      numberText,
-      enterAnswer,
-      fontClasses,
-      heroSection,
-      fontStyles,
       answerAtEnd,
+      answerFormValue,
+      canShowAnswerForm,
+      currentExample,
+      display,
+      displayClasses,
+      displayMode,
+      enterAnswer,
+      heroSection,
+      progressPercentage,
     };
   },
 });

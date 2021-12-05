@@ -70,10 +70,21 @@
             </div>
           </div>
           -->
+{{ currentExample }}
           <div
             class="is-flex is-flex-direction-column is-align-items-center"
-            v-if="canShowAnswerForm"
+            v-if="displayMode === 'answer-form'"
           >
+          <!--
+            <div class="has-text-centered">
+            <div class="container">
+              <div class="card p-2 m-2 is-bordered">
+                <div style="font-size: 30px; word-break: break-all">
+                </div>
+              </div>
+              </div>
+            </div>
+            -->
             <form @submit.prevent="enterAnswer">
               <b-numberinput
                 v-model="answerFormValue"
@@ -89,13 +100,10 @@
               >
             </form>
           </div>
-          <div class="has-text-centered" v-else-if="canShowNumber">
-            <span :class="fontClasses" :style="fontStyles"
-              >{{ numberText }}
+          <div class="has-text-centered" v-else-if="displayMode === 'number' || displayMode === 'attention'">
+            <span :class="displayClasses"
+              >{{ display }}
             </span>
-          </div>
-          <div class="has-text-centered" v-else-if="canShowAttentionText">
-            <span class="is-big-number is-2">{{ attentionText }} </span>
           </div>
         </div>
       </div>
