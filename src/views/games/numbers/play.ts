@@ -2,7 +2,6 @@ import {
   defineComponent,
   computed,
   onMounted,
-  reactive,
   ref
 } from "@vue/composition-api";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
@@ -38,25 +37,21 @@ export default defineComponent({
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
 
-    const heroSection = ref();
-
-    const canShowAnswerForm = ref<boolean>(false);
+    const displayParent = ref();
 
     const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'result'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
       const currentQueueItem = queue[currentQueueItemIndex];
-      console.log(currentQueueItem);
       const classes: string[] = [];
-      console.log(currentQueueItem);
       if (displayMode.value === 'number') {
         const {fontSize, fontRotation, fontColor} = currentQueueItem;
         classes.push('is-big-number');
         classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
-      } else if(displayMode.value === 'attention') {
+      } else if (displayMode.value === 'attention') {
         classes.push('is-big-number');
         classes.push('is-2');
       }
@@ -66,12 +61,13 @@ export default defineComponent({
 
     const currentExample = computed(() => {
       const currentQueueItem = queue[currentQueueItemIndex];
+      console.log(currentQueueItemIndex);
       /*
        * Every time when `display.value` is changed, `currentExample`
        * is recomputed
        */
-      if (display.value === 'number')
-        return currentQueueItem.examples[currentExampleIndex];
+      if (display.value)
+        return currentQueueItem.examples[currentExampleIndex - 1];
     });
 
     const calcExamplesCount = () => {
@@ -84,16 +80,16 @@ export default defineComponent({
     }
 
     const displayCorrectAnswerFade = () => {
-      heroSection.value.classList.add('is-correct-answer');
+      displayParent.value.classList.add('is-correct-answer');
       setTimeout(() => {
-        heroSection.value.classList.remove('is-correct-answer');
+        displayParent.value.classList.remove('is-correct-answer');
       }, 1000);
     }
 
     const displayIncorrectAnswerFade = () => {
-      heroSection.value.classList.add('is-incorrect-answer');
+      displayParent.value.classList.add('is-incorrect-answer');
       setTimeout(() => {
-        heroSection.value.classList.remove('is-incorrect-answer');
+        displayParent.value.classList.remove('is-incorrect-answer');
       }, 1000);
     }
 
@@ -110,6 +106,10 @@ export default defineComponent({
     const displayAnswerForm = () => {
       answerFormValue.value = null; // clear
       displayMode.value = 'answer-form';
+    }
+
+    const displayAnswer = () => {
+      displayMode.value = 'answer';
     }
 
     const completeExample = () => {
@@ -188,6 +188,7 @@ export default defineComponent({
     function enterAnswer() {
       const currentQueueItem = queue[currentQueueItemIndex];
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
+      completeExample();
       if (prevExample.answer == answerFormValue.value) {
         displayCorrectAnswerFade();
         correctAnswerSound.play();
@@ -202,9 +203,11 @@ export default defineComponent({
         */
 
         showToastMessage("Correct!", ToastType.Success);
+        showExamples();
       } else {
         displayIncorrectAnswerFade();
         incorrectAnswerSound.play();
+        displayAnswer();
         showToastMessage(
           `Incorrect! The correct answer was: <b>
           ${prevExample.answer}</b>`,
@@ -212,7 +215,9 @@ export default defineComponent({
         );
       }
 
-      completeExample();
+    }
+
+    function nextExample() {
       showExamples();
     }
 
@@ -223,13 +228,13 @@ export default defineComponent({
     return {
       answerAtEnd,
       answerFormValue,
-      canShowAnswerForm,
       currentExample,
       display,
       displayClasses,
       displayMode,
       enterAnswer,
-      heroSection,
+      nextExample,
+      displayParent,
       progressPercentage,
     };
   },

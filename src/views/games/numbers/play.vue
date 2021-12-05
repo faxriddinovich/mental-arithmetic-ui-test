@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <section class="hero is-fullheight" ref="heroSection">
+    <section class="hero is-fullheight" ref="displayParent">
       <div class="hero-body p-0">
         <div style="width: 100%">
           <!--
@@ -70,20 +70,11 @@
             </div>
           </div>
           -->
-{{ currentExample }}
           <div
             class="is-flex is-flex-direction-column is-align-items-center"
             v-if="displayMode === 'answer-form'"
           >
-          <!--
-            <div class="has-text-centered">
-            <div class="container">
-              <div class="card p-2 m-2 is-bordered">
-                <div style="font-size: 30px; word-break: break-all">
-                </div>
-              </div>
-              </div>
-            </div>
+            <!--
             -->
             <form @submit.prevent="enterAnswer">
               <b-numberinput
@@ -100,10 +91,38 @@
               >
             </form>
           </div>
-          <div class="has-text-centered" v-else-if="displayMode === 'number' || displayMode === 'attention'">
-            <span :class="displayClasses"
-              >{{ display }}
-            </span>
+          <div
+            class="has-text-centered"
+            v-else-if="displayMode === 'number' || displayMode === 'attention'"
+          >
+            <span :class="displayClasses">{{ display }} </span>
+          </div>
+          <div v-else-if="displayMode === 'answer'">
+            <div class="has-text-centered">
+              <div class="container is-max-widescreen">
+                <div class="card p-2 m-2 is-bordered">
+                  <div style="font-size: 30px; word-break: break-all">
+                    {{ currentExample.numbers.join("") }} <br />
+                    <strong>= {{ currentExample.answer.toString() }}</strong>
+                    <br />
+                    <span class="is-size-4"
+                      >Your answer is:
+                      <span class="has-text-weight-semibold">{{
+                        answerFormValue
+                      }}</span></span
+                    >
+                    <hr style="margin-top: 20px" />
+                    <b-button
+                      type="is-primary"
+                      size="is-medium"
+                      icon-left="arrow-right"
+                      @click="nextExample"
+                      >Next example</b-button
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
