@@ -10,6 +10,7 @@ import {NotificationProgrammatic as Notification} from "buefy";
 import {Example, QueueItem} from '@/views/games/numbers/interfaces';
 import CorrectAnswerSoundSrc from '../../../../public/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '../../../../public/sounds/incorrect-answer.mp3'
+import FinishSoundSrc from '../../../../public/sounds/finish.mp3'
 
 /*
  * FIXME: this is the worst idea to keep the interfaces in the
@@ -29,6 +30,10 @@ function playIncorrectAnswerSound() {
   return new Audio(IncorrectAnswerSoundSrc).play();
 }
 
+function playFinishSound() {
+  return new Audio(FinishSoundSrc).play();
+}
+
 export default defineComponent({
   setup(_, {root}) {
     const {useState} =
@@ -43,8 +48,13 @@ export default defineComponent({
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
 
-    const displayParent = ref();
+    const incorrectAnswersCount = ref<number>(0);
+    const correctAnswersCount = ref<number>(0);
+    const correctAnswersPercent = computed(() => {
+      return correctAnswersCount.value / (correctAnswersCount.value + incorrectAnswersCount.value) * 100
+    });
 
+    const displayParent = ref();
     const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'result'>('attention');
     const display = ref<string | number | null>(null);
 
@@ -117,11 +127,15 @@ export default defineComponent({
       displayMode.value = 'answer';
     }
 
+    const displayResult = () => {
+      displayMode.value = 'result';
+    }
+
     const completeExample = () => {
       progressPercentage.value += 1 / calcExamplesCount() * 100;
     }
 
-    const timerHandles: Map<number, NodeJS.Timer> = new Map();
+    const timerHandles: Set<NodeJS.Timer> = new Set();
 
     /*
      * Resolves the promise after showing all the rows
@@ -134,7 +148,6 @@ export default defineComponent({
       let currentArrayIndex = 0;
       return new Promise((resolve) => {
         const timerHandle = setInterval(() => {
-          console.log(1);
           if (arr[currentArrayIndex]) {
             if (isAttention)
               displayAttentionText(arr[currentArrayIndex]);
@@ -147,7 +160,7 @@ export default defineComponent({
             resolve();
           }
         }, interval);
-        timerHandles.set(0, timerHandle);
+        timerHandles.add(timerHandle);
       });
     }
 
@@ -188,10 +201,15 @@ export default defineComponent({
           root.$forceUpdate();
           showExamples();
         }, 2000);
-        timerHandles.set(1, timerHandle);
+        timerHandles.add(timerHandle);
       } else {
         /* there are no queue items left */
         if (settings.value.answerAtEnd) displayAnswerForm();
+        const timerHandle = setTimeout(() => {
+          displayResult();
+          playFinishSound();
+        }, 1000);
+        timerHandles.add(timerHandle);
       }
     }
 
@@ -202,6 +220,7 @@ export default defineComponent({
       completeExample();
 
       if (prevExample.answer == answerFormValue.value) {
+        correctAnswersCount.value++;
         displayCorrectAnswerFade();
         playCorrectAnswerSound();
         /*
@@ -213,20 +232,13 @@ export default defineComponent({
           });
         }
         */
-
-        showToastMessage("Correct!", ToastType.Success);
         showExamples();
       } else {
+        incorrectAnswersCount.value++;
         displayIncorrectAnswerFade();
         playIncorrectAnswerSound();
         displayAnswer();
-        showToastMessage(
-          `Incorrect! The correct answer was: <b>
-          ${prevExample.answer}</b>`,
-          ToastType.Danger
-        );
       }
-
     }
 
     function nextExample() {
@@ -254,6 +266,9 @@ export default defineComponent({
       nextExample,
       displayParent,
       progressPercentage,
+      correctAnswersCount,
+      incorrectAnswersCount,
+      correctAnswersPercent
     };
   },
 });

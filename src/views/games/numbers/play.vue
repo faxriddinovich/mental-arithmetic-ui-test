@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card is-controls-bar">
+    <div class="card is-controls-bar" v-if="displayMode !== 'result'">
       <div
         class="
           is-flex is-justify-content-space-between is-align-items-center
@@ -77,13 +77,13 @@
             <!--
             -->
             <form @submit.prevent="enterAnswer">
-            <b-field>
-              <b-numberinput
-                v-model="answerFormValue"
-                class="is-answer-input"
-                :controls="false"
-                :autofocus="true"
-              ></b-numberinput>
+              <b-field>
+                <b-numberinput
+                  v-model="answerFormValue"
+                  class="is-answer-input"
+                  :controls="false"
+                  :autofocus="true"
+                ></b-numberinput>
               </b-field>
               <b-button
                 native-type="submit"
@@ -99,21 +99,79 @@
           >
             <span :class="displayClasses">{{ display }} </span>
           </div>
+          <div
+            class="is-flex is-flex-direction-column is-align-items-center"
+            v-else-if="displayMode === 'result'"
+          >
+            <div>
+              <img
+                :src="require('../../../../public/img/star-full.svg')"
+                class="is-star is-2 has-shadow"
+              />
+              <img
+                :src="require('../../../../public/img/star-full.svg')"
+                class="is-star is-1 has-shadow mb-4"
+              />
+              <img
+                :src="require('../../../../public/img/empty-star.svg')"
+                class="is-star is-2"
+              />
+            </div>
+
+            <div
+              :class="{
+                'is-result-text': true,
+                'has-text-success':
+                  correctAnswersPercent >= 60 && correctAnswersPercent <= 100,
+                'has-text-warning':
+                  correctAnswersPercent < 60 && correctAnswersPercent >= 30,
+                'has-text-danger':
+                  correctAnswersPercent < 30 && correctAnswersPercent >= 0,
+                'has-text-weight-semibold': true,
+              }"
+            >
+              {{ correctAnswersPercent }}%
+            </div>
+            <div class="is-size-4">
+              (Correct:
+              <span class="has-text-weight-semibold has-text-success">{{
+                correctAnswersCount
+              }}</span>
+              / Incorrect:
+              <span class="has-text-weight-semibold has-text-danger">{{
+                incorrectAnswersCount
+              }}</span
+              >)
+            </div>
+
+            <div class="buttons mt-4">
+              <b-button size="is-medium" icon-left="refresh">Repeat</b-button>
+              <b-button
+                size="is-medium"
+                icon-left="home"
+                tag="router-link"
+                :to="{ name: 'Home' }"
+                >Home</b-button
+              >
+            </div>
+          </div>
           <div v-else-if="displayMode === 'answer'">
             <div class="has-text-centered">
               <div class="container is-max-widescreen">
-                <div class="card p-2 m-2 is-bordered">
+                <div class="card px-2 py-4 m-2 is-bordered">
                   <div style="font-size: 30px; word-break: break-all">
                     {{ currentExample.numbers.join("") }} <br />
-                    <strong>= {{ currentExample.answer.toString() }}</strong>
+                    <strong class="has-text-success"
+                      >= {{ currentExample.answer.toString() }}</strong
+                    >
                     <br />
                     <span class="is-size-4"
                       >Your answer is:
-                      <span class="has-text-weight-semibold">{{
+                      <span class="has-text-danger has-text-weight-semibold">{{
                         answerFormValue
                       }}</span></span
                     >
-                    <hr style="margin-top: 20px" />
+                    <hr />
                     <b-button
                       type="is-primary"
                       size="is-medium"
@@ -250,6 +308,44 @@ $answer-button-touch-width: 14rem;
   }
   100% {
     background: rgba(255, 56, 96, 0);
+  }
+}
+
+.is-result-text {
+  font-size: 80px;
+}
+
+.is-star {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.is-star.has-shadow {
+  filter: drop-shadow(0px 0px 25px hsl(48, 100%, 67%));
+}
+
+.is-star.is-1 {
+  width: 200px;
+
+  @include tablet-only {
+    width: 150px;
+  }
+
+  @include mobile {
+    width: 100px;
+  }
+}
+
+.is-star.is-2 {
+  width: 150px;
+
+  @include tablet-only {
+    width: 120px;
+  }
+
+  @include mobile {
+    width: 80px;
   }
 }
 </style>
