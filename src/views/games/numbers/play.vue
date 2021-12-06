@@ -77,12 +77,14 @@
             <!--
             -->
             <form @submit.prevent="enterAnswer">
+            <b-field>
               <b-numberinput
                 v-model="answerFormValue"
                 class="is-answer-input"
                 :controls="false"
                 :autofocus="true"
               ></b-numberinput>
+              </b-field>
               <b-button
                 native-type="submit"
                 type="is-primary"

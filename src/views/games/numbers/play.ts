@@ -2,6 +2,7 @@ import {
   defineComponent,
   computed,
   onMounted,
+  onUnmounted,
   ref
 } from "@vue/composition-api";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
@@ -38,7 +39,6 @@ export default defineComponent({
     let currentQueueItemIndex = 0;
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
-
 
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
@@ -121,6 +121,8 @@ export default defineComponent({
       progressPercentage.value += 1 / calcExamplesCount() * 100;
     }
 
+    const timerHandles: Map<number, NodeJS.Timer> = new Map();
+
     /*
      * Resolves the promise after showing all the rows
      */
@@ -131,7 +133,8 @@ export default defineComponent({
     ): Promise<void> {
       let currentArrayIndex = 0;
       return new Promise((resolve) => {
-        const intervalHandle = setInterval(() => {
+        const timerHandle = setInterval(() => {
+          console.log(1);
           if (arr[currentArrayIndex]) {
             if (isAttention)
               displayAttentionText(arr[currentArrayIndex]);
@@ -139,11 +142,12 @@ export default defineComponent({
               displayNumber(arr[currentArrayIndex]);
             currentArrayIndex++;
           } else {
-            clearInterval(intervalHandle); // remove the handle
+            clearInterval(timerHandle); // remove the handle
             currentArrayIndex = 0;
             resolve();
           }
         }, interval);
+        timerHandles.set(0, timerHandle);
       });
     }
 
@@ -180,10 +184,11 @@ export default defineComponent({
         /* show the name of the next item in the queue */
         displayAttentionText(queue[currentQueueItemIndex].theme);
         /* after 2 seconds show the examples of the next item in the queue */
-        setTimeout(() => {
+        const timerHandle = setTimeout(() => {
           root.$forceUpdate();
           showExamples();
         }, 2000);
+        timerHandles.set(1, timerHandle);
       } else {
         /* there are no queue items left */
         if (settings.value.answerAtEnd) displayAnswerForm();
@@ -230,6 +235,12 @@ export default defineComponent({
 
     onMounted(() => {
       renderArrayItems(START_ATTENTION_TEXTS, 800, true).then(() => showExamples());
+    });
+
+    onUnmounted(() => {
+      timerHandles.forEach((handle) => {
+        clearInterval(handle);
+      });
     });
 
     return {
