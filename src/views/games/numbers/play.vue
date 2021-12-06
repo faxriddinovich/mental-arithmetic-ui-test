@@ -105,16 +105,10 @@
           >
             <div>
               <img
-                :src="require('../../../../public/img/star-full.svg')"
-                class="is-star is-2 has-shadow"
-              />
-              <img
-                :src="require('../../../../public/img/star-full.svg')"
-                class="is-star is-1 has-shadow mb-4"
-              />
-              <img
-                :src="require('../../../../public/img/empty-star.svg')"
-                class="is-star is-2"
+                v-for="(star, index) of finalStars"
+                :key="index"
+                :src="star.src"
+                :class="star.classes"
               />
             </div>
 

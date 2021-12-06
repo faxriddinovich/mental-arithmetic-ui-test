@@ -6,8 +6,12 @@ import {
   ref
 } from "@vue/composition-api";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
+import {NumbersGameSettings} from "@/views/games/numbers/interfaces";
+/*
 import {NotificationProgrammatic as Notification} from "buefy";
 import {Example, QueueItem} from '@/views/games/numbers/interfaces';
+import {showToastMessage, ToastType} from "@/services/toast";
+*/
 import CorrectAnswerSoundSrc from '../../../../public/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '../../../../public/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '../../../../public/sounds/finish.mp3'
@@ -16,8 +20,6 @@ import FinishSoundSrc from '../../../../public/sounds/finish.mp3'
  * FIXME: this is the worst idea to keep the interfaces in the
  * views folder. So this must be fixed in the future
  */
-import {NumbersGameSettings} from "@/views/games/numbers/interfaces";
-import {showToastMessage, ToastType} from "@/services/toast";
 
 // FIXME: this should be done using i18n
 const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
@@ -32,6 +34,11 @@ function playIncorrectAnswerSound() {
 
 function playFinishSound() {
   return new Audio(FinishSoundSrc).play();
+}
+
+interface Star {
+  src: string,
+  classes: string[]
 }
 
 export default defineComponent({
@@ -83,6 +90,52 @@ export default defineComponent({
        */
       if (display.value)
         return currentQueueItem.examples[currentExampleIndex - 1];
+    });
+
+    const finalStars = computed(() => {
+      const {value} = correctAnswersPercent;
+      const stars: Star[] = [];
+      for (let i = 0; i < 3; i++) { // FIXME: static stars count
+        const star: Star = {src: '', classes: []};
+        let filled = false;
+
+        /* FIXME: fix this chaos */
+        if (i === 0)
+          if (value >= 20)
+            filled = true;
+          else
+            filled = false;
+        else if (i === 1)
+          if (value >= 40)
+            filled = true;
+          else
+            filled = false
+        else if (i === 2)
+          if (value >= 80)
+            filled = true;
+          else
+            filled = false;
+
+        star.src = require(`../../../../public/img/${filled ? 'filled' : 'empty'
+          }-star.svg`);
+        console.log(i, value, filled);
+
+        star.classes.push('is-star');
+
+        if (filled)
+          star.classes.push('has-shadow');
+
+        if (i === 1)
+          star.classes.push('is-1', 'mb-4');
+        else
+          star.classes.push('is-2');
+
+        stars.push(star);
+      }
+
+      console.log(stars);
+
+      return stars;
     });
 
     const calcExamplesCount = () => {
@@ -264,6 +317,7 @@ export default defineComponent({
       displayMode,
       enterAnswer,
       nextExample,
+      finalStars,
       displayParent,
       progressPercentage,
       correctAnswersCount,
