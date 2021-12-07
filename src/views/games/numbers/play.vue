@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card is-controls-bar" v-if="displayMode !== 'result'">
+    <div class="card is-controls-bar" v-if="displayMode !== 'result' && displayMode !== 'answer-forms'">
       <div
         class="
           is-flex is-justify-content-space-between is-align-items-center
@@ -43,39 +43,65 @@
     <section class="hero is-fullheight" ref="displayParent">
       <div class="hero-body p-0">
         <div style="width: 100%">
-          <!--
-          <div class="container is-max-widescreen">
-            <div class="box is-bordered">
-              <div class="has-text-centered is-size-3 mb-5">
-                Senior comrades
+          <div
+            class="container is-max-widescreen"
+            v-if="displayMode === 'answer-forms'"
+          >
+            <div
+              class="box is-bordered m-4"
+              v-for="(queueItem, queueIndex) of queue"
+              :key="queueIndex"
+            >
+              <div class="has-text-weight-semibold has-text-centered is-size-3 mb-5">
+{{ queueIndex + 1 }}. {{ queueItem.theme }}
               </div>
 
               <div class="columns is-multiline is-centered is-mobile">
                 <div
                   class="column is-2-desktop is-4-mobile"
-                  v-for="ans of [1, 2, 3, 4, 5, 6, 7, 8]"
-                  :key="ans"
+                  v-for="(example, index) of queueItem.examples"
+                  :key="index"
                 >
-                  <div>
-                    <b-field>
-                      <b-numberinput :controls="false" expanded />
-                    </b-field>
-                    <b-field>
-                      <b-button type="is-primary" expanded>Answer</b-button>
-                    </b-field>
+                  <div class="has-text-centered has-text-weight-semibold">
+                  - {{ index+1 }} -
                   </div>
+                    <form @submit.prevent="enterAnswer2($event, queueIndex, index)">
+                      <b-field>
+                        <b-numberinput :controls="false" :id="queueIndex + '-' + index" expanded />
+                      </b-field>
+                      <div class="buttons">
+                      <b-button icon-left="arrow-right" type="is-primary" expanded>Answer</b-button>
+                      <!--
+                      <b-button size="is-small" expanded>Show answer</b-button>
+                      -->
+                      </div>
+                    </form>
                 </div>
               </div>
 
+              <!--
+              <div class="columns is-multiline is-centered is-mobile">
+                <div
+                  class="column is-2-desktop is-4-mobile has-text-centered"
+                  v-for="ans of [1, 2, 3, 4, 5, 6, 7, 8]"
+                  :key="ans"
+                >
+                  <div class="has-text-weight-semibold mb-1">-{{ ans }}-</div>
+                  <form @submit.prevent="enterAnswer($event)">
+                    <b-field>
+                      <b-numberinput :controls="false" expanded />
+                    </b-field>
+                    <b-button type="is-primary" expanded>Answer</b-button>
+                  </form>
+                </div>
+              </div>
+              -->
             </div>
           </div>
-          -->
           <div
             class="is-flex is-flex-direction-column is-align-items-center"
             v-if="displayMode === 'answer-form'"
           >
-            <!--
-            -->
             <form @submit.prevent="enterAnswer">
               <b-field>
                 <b-numberinput

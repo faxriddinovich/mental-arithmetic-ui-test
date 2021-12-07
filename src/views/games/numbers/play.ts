@@ -47,10 +47,11 @@ export default defineComponent({
       createStoreHelper<{settings: NumbersGameSettings}>("GameModule");
     const {settings} = useState(["settings"]);
 
-    const queue = settings.value.queue;
     let currentQueueItemIndex = 0;
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
+
+    const queue = ref(settings.value.queue); //reactive
 
     const answerAtEnd = ref<boolean>(settings.value.answerAtEnd);
     const answerFormValue = ref<number | null>();
@@ -62,11 +63,11 @@ export default defineComponent({
     });
 
     const displayParent = ref();
-    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'result'>('attention');
+    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'result'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
-      const currentQueueItem = queue[currentQueueItemIndex];
+      const currentQueueItem = queue.value[currentQueueItemIndex];
       const classes: string[] = [];
       if (displayMode.value === 'number') {
         const {fontSize, fontRotation, fontColor} = currentQueueItem;
@@ -83,7 +84,7 @@ export default defineComponent({
     });
 
     const currentExample = computed(() => {
-      const currentQueueItem = queue[currentQueueItemIndex];
+      const currentQueueItem = queue.value[currentQueueItemIndex];
       /*
        * Every time when `display.value` is changed, `currentExample`
        * is recomputed
@@ -118,7 +119,6 @@ export default defineComponent({
 
         star.src = require(`../../../../public/img/${filled ? 'filled' : 'empty'
           }-star.svg`);
-        console.log(i, value, filled);
 
         star.classes.push('is-star');
 
@@ -133,15 +133,13 @@ export default defineComponent({
         stars.push(star);
       }
 
-      console.log(stars);
-
       return stars;
     });
 
     const calcExamplesCount = () => {
       let i = 0;
       /* FIXME: can we optimize this? */
-      for (const queueItem of queue) {
+      for (const queueItem of queue.value) {
         i += queueItem.examples.length;
       }
       return i;
@@ -174,6 +172,10 @@ export default defineComponent({
     const displayAnswerForm = () => {
       answerFormValue.value = null; // clear
       displayMode.value = 'answer-form';
+    }
+
+    const displayAnswerForms = () => {
+      displayMode.value = 'answer-forms';
     }
 
     const displayAnswer = () => {
@@ -219,7 +221,7 @@ export default defineComponent({
 
 
     function showExamples() {
-      const currentQueueItem = queue[currentQueueItemIndex];
+      const currentQueueItem = queue.value[currentQueueItemIndex];
       const currentExample = currentQueueItem.examples[currentExampleIndex];
 
       /* if the current example exists */
@@ -242,22 +244,24 @@ export default defineComponent({
             }, currentQueueItem.examplesTimeout * 1000);
           }
         });
-      } else if (queue[currentQueueItemIndex + 1]) {/* if there are items in the queue */
+      } else if (queue.value[currentQueueItemIndex + 1]) {/* if there are items in the queue */
         /* go to the next queue item */
         currentQueueItemIndex++;
         /* clear the index */
         currentExampleIndex = 0;
         /* show the name of the next item in the queue */
-        displayAttentionText(queue[currentQueueItemIndex].theme);
+        displayAttentionText(queue.value[currentQueueItemIndex].theme);
         /* after 2 seconds show the examples of the next item in the queue */
         const timerHandle = setTimeout(() => {
-          root.$forceUpdate();
           showExamples();
         }, 2000);
         timerHandles.add(timerHandle);
       } else {
         /* there are no queue items left */
-        if (settings.value.answerAtEnd) displayAnswerForm();
+        if (settings.value.answerAtEnd) {
+          displayAnswerForms();
+          return;
+        }
         const timerHandle = setTimeout(() => {
           displayResult();
           playFinishSound();
@@ -266,10 +270,46 @@ export default defineComponent({
       }
     }
 
+    function enterAnswer2(event: any /* FIXME */, queueItemIndex: number, exampleIndex: number) {
+      if (queue.value[queueItemIndex]?.examples[exampleIndex]) {
+        const example = queue.value[queueItemIndex].examples[exampleIndex];
+        const input = event.target[0];
+        const button = event.target[1];
+        input.setAttribute('disabled', true);
+        button.setAttribute('disabled', true);
+
+        if (BigInt(input.value) === example.answer) {
+          button.innerText = 'Correct!';
+          button.classList.add('is-success');
+          input.classList.add('is-success');
+          correctAnswersCount.value++;
+          displayCorrectAnswerFade();
+          playCorrectAnswerSound();
+        } else {
+          button.innerText = 'Incorrect!';
+          button.classList.add('is-danger');
+          input.classList.add('is-danger');
+          incorrectAnswersCount.value++;
+          displayIncorrectAnswerFade();
+          playIncorrectAnswerSound();
+        }
+
+        if(correctAnswersCount.value + incorrectAnswersCount.value === calcExamplesCount()) {
+          const timerHandle = setTimeout(() => {
+            displayResult();
+            playFinishSound();
+          }, 1000);
+          timerHandles.add(timerHandle);
+        }
+      }
+    }
 
     function enterAnswer() {
-      const currentQueueItem = queue[currentQueueItemIndex];
+      //console.log($event.srcElement[1].setAttribute('disabled', true));
+      const currentQueueItem = queue.value[currentQueueItemIndex];
+      // FIXME
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
+
       completeExample();
 
       if (prevExample.answer == answerFormValue.value) {
@@ -313,9 +353,11 @@ export default defineComponent({
       answerFormValue,
       currentExample,
       display,
+      queue,
       displayClasses,
       displayMode,
       enterAnswer,
+      enterAnswer2,
       nextExample,
       finalStars,
       displayParent,
