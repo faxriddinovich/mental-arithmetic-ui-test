@@ -123,14 +123,23 @@
                   <b-switch v-model="answerAtEnd">Answer at the end</b-switch>
                 </b-field>
 
-                <b-field label="Queue" v-if="queue.length">
+                <b-field>
+                  <b-switch v-model="multiplayerMode"
+                    >Multiplayer mode</b-switch
+                  >
+                </b-field>
+
+                <b-field
+                  :label="multiplayerMode ? 'Players' : 'Queue'"
+                  v-if="queue.length"
+                >
                   <b-taglist>
                     <b-tag
-                      type="is-primary"
-                      closable
+                      type="is-link"
                       v-for="(settings, index) of queue"
                       :key="index"
                       @close="removeFromQueueList(index)"
+                      closable
                       >{{ settings.theme }}</b-tag
                     >
                   </b-taglist>
@@ -140,11 +149,15 @@
                   <b-button icon-left="setting" @click="currentTab = 1" />
                   <b-button
                     type="is-success"
-                    icon-left="plus"
+                    :icon-left="multiplayerMode ? 'user-plus' : 'plus'"
                     @click="addToQueueList"
                     class="ml-2"
-                    :disabled="queue.length === 10"
-                    >Add to queue</b-button
+                    :disabled="
+                      multiplayerMode ? queue.length === 9 : queue.length === 10
+                    "
+                    >{{
+                      multiplayerMode ? "Add to players list" : "Add to queue"
+                    }}</b-button
                   >
                   <b-button
                     type="is-primary"
@@ -159,14 +172,12 @@
             </template>
             <template v-else>
               <b-field>
-                <template #label>
-                  <b-icon icon="palette" /> Color:
-                </template>
+                <template #label> <b-icon icon="palette" /> Color: </template>
                 <span
                   :class="{
                     'is-circled-color': true,
                     'is-selected': color == fontColor,
-                    ['is-' + color + '-bg-color']: true
+                    ['is-' + color + '-bg-color']: true,
                   }"
                   v-for="(color, index) of fontColors"
                   :key="index"
@@ -216,6 +227,7 @@
                   :native-value="font"
                   v-for="(font, index) of fontSizes"
                   :key="index"
+                  :disabled="multiplayerMode"
                 >
                   <span :style="`font-size: ${16 + index * 4}px`">123</span>
                 </b-radio-button>
@@ -225,10 +237,12 @@
                 <template #label>
                   <b-icon icon="setting" /> Other settings
                 </template>
-                <b-checkbox v-model="displayNumbers"
+                <b-checkbox v-model="displayNumbers" :disabled="multiplayerMode"
                   >Display numbers</b-checkbox
                 >
-                <b-checkbox v-model="hasSound">Has sound</b-checkbox>
+                <b-checkbox v-model="hasSound" :disabled="multiplayerMode"
+                  >Has sound</b-checkbox
+                >
               </b-field>
 
               <b-button
