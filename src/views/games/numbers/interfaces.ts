@@ -17,5 +17,6 @@ export interface QueueItem {
 
 export interface NumbersGameSettings {
   answerAtEnd: boolean;
+  multiplayerMode: boolean,
   queue: QueueItem[];
 }

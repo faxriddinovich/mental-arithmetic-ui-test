@@ -32,9 +32,12 @@ import Scores from "@/views/scores.vue";
 import NumbersGame from "@/views/games/numbers/numbers.vue";
 import PlayNumbersGame from "@/views/games/numbers/play.vue";
 
+import Test from '@/views/test';
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
+{ path: '/test', component: Test },
   {
     path: "/",
     name: "Home",

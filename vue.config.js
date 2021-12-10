@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   pluginOptions: {
     electronBuilder: {
@@ -21,6 +23,10 @@ module.exports = {
     config.plugins.delete('fork-ts-checker');
     config.plugins.delete('ts');
     */
+
+    // public path
+    config.resolve.alias
+      .set('@@', path.resolve(__dirname, 'public'));
 
     config.module
       .rule("preprocessor")

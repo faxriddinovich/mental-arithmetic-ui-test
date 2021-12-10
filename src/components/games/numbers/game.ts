@@ -3,23 +3,13 @@ import {
   computed,
   onMounted,
   onUnmounted,
-  ref
+  ref,
+  PropType
 } from "@vue/composition-api";
-import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
 import {NumbersGameSettings, QueueItem} from "@/views/games/numbers/interfaces";
-/*
-import {NotificationProgrammatic as Notification} from "buefy";
-import {Example, QueueItem} from '@/views/games/numbers/interfaces';
-import {showToastMessage, ToastType} from "@/services/toast";
-*/
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
-
-/*
- * FIXME: this is the worst idea to keep the interfaces in the
- * views folder. So this must be fixed in the future
- */
 
 // FIXME: this should be done using i18n
 const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
@@ -45,29 +35,63 @@ export default defineComponent({
   props: {
     answerAtEnd: {
       type: Boolean,
-      required: true
+      default: false,
+      required: false
     },
     queue: {
-      type: Array,
+      type: Array as PropType<QueueItem[]>,
       required: true
     },
-    split: {
+    soundEffects: {
       type: Boolean,
-      default: false
-    }
+      default: true,
+      required: false
+    },
+    animationFade: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    showFinalScores: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    topBar: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    progressIndicator: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
+    onExampleFinish: {
+      type: Function as PropType<(exampleId: number) => void>,
+      required: false
+    },
+    onQueueItemFinish: {
+      type: Function as PropType<(queueIndex: number) => void>,
+      required: false
+    },
+    onQueueFinish: {
+      type: Function as PropType<(queueIndex: number) => void>,
+      required: false
+    },
+    multiplayerMode: {
+type: Boolean,
+                       default: false,
+      required: false
+                     }
   },
-  setup(props, {root}) {
-    const {useState} =
-      createStoreHelper<{settings: NumbersGameSettings}>("GameModule");
-    const {settings} = useState(["settings"]);
-
+  setup(props) {
     let currentQueueItemIndex = 0;
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
 
     const queue = ref(props.queue as QueueItem[]); //reactive
 
-    const answerAtEnd = ref<boolean>(props.answerAtEnd);
     const answerFormValue = ref<number | null>();
 
     const incorrectAnswersCount = ref<number>(0);
@@ -245,6 +269,10 @@ export default defineComponent({
           currentExample.numbers,
           currentQueueItem.rowsTimeout * 1000
         ).then(() => {
+
+          if (props.onExampleFinish)
+            props.onExampleFinish(currentExampleIndex);
+
           /* clear after showing all the rows */
           //clearCenterText(); // FIXME
           currentExampleIndex++;
@@ -259,6 +287,8 @@ export default defineComponent({
           }
         });
       } else if (queue.value[currentQueueItemIndex + 1]) {/* if there are items in the queue */
+        if (props.onQueueItemFinish)
+          props.onQueueItemFinish(currentQueueItemIndex);
         /* go to the next queue item */
         currentQueueItemIndex++;
         /* clear the index */
@@ -270,17 +300,23 @@ export default defineComponent({
           showExamples();
         }, 2000);
         timerHandles.add(timerHandle);
-      } else {
-        /* there are no queue items left */
+      } else { /* there are no queue items left */
+        if (props.onQueueFinish)
+          props.onQueueFinish(currentQueueItemIndex);
+
         if (props.answerAtEnd) {
           displayAnswerForms();
           return;
         }
-        const timerHandle = setTimeout(() => {
-          displayResult();
-          playFinishSound();
-        }, 1000);
-        timerHandles.add(timerHandle);
+
+        if (props.showFinalScores) {
+          const timerHandle = setTimeout(() => {
+            displayResult();
+            if (props.soundEffects)
+              playFinishSound();
+          }, 1000);
+          timerHandles.add(timerHandle);
+        }
       }
     }
 
@@ -297,29 +333,33 @@ export default defineComponent({
           button.classList.add('is-success');
           input.classList.add('is-success');
           correctAnswersCount.value++;
-          displayCorrectAnswerFade();
+          if (props.animationFade)
+            displayCorrectAnswerFade();
           playCorrectAnswerSound();
         } else {
           button.innerText = 'Incorrect!';
           button.classList.add('is-danger');
           input.classList.add('is-danger');
           incorrectAnswersCount.value++;
-          displayIncorrectAnswerFade();
+          if (props.animationFade)
+            displayIncorrectAnswerFade();
           playIncorrectAnswerSound();
         }
 
-        if(correctAnswersCount.value + incorrectAnswersCount.value === calcExamplesCount()) {
-          const timerHandle = setTimeout(() => {
-            displayResult();
-            playFinishSound();
-          }, 1000);
-          timerHandles.add(timerHandle);
+        if (correctAnswersCount.value + incorrectAnswersCount.value === calcExamplesCount()) {
+          if (props.showFinalScores) {
+            const timerHandle = setTimeout(() => {
+              displayResult();
+              if (props.soundEffects)
+                playFinishSound();
+            }, 1000);
+            timerHandles.add(timerHandle);
+          }
         }
       }
     }
 
     function enterAnswer() {
-      //console.log($event.srcElement[1].setAttribute('disabled', true));
       const currentQueueItem = queue.value[currentQueueItemIndex];
       // FIXME
       const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
@@ -330,15 +370,6 @@ export default defineComponent({
         correctAnswersCount.value++;
         displayCorrectAnswerFade();
         playCorrectAnswerSound();
-        /*
-        if (currentExampleIndex % 2 === 0) {
-          Notification.open({
-            type: "is-success",
-            position: "is-bottom",
-            message: "Keep going!",
-          });
-        }
-        */
         showExamples();
       } else {
         incorrectAnswersCount.value++;
@@ -363,11 +394,9 @@ export default defineComponent({
     });
 
     return {
-      //answerAtEnd,
       answerFormValue,
       currentExample,
       display,
-      //queue,
       displayClasses,
       displayMode,
       enterAnswer,

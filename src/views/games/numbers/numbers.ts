@@ -81,6 +81,7 @@ export default defineComponent({
 
     const gameSettings = reactive<NumbersGameSettings>({
       answerAtEnd: false,
+      multiplayerMode: false,
       queue: [],
     });
 
