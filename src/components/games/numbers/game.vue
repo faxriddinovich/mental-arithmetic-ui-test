@@ -1,22 +1,11 @@
 <template>
   <div>
-    <div
-      class="card is-controls-bar"
-      v-if="topBar && displayMode !== 'result' && displayMode !== 'answer-forms'"
-    >
-      <div
-        class="
-          is-flex is-justify-content-space-between is-align-items-center
-          p-3
-        "
-      >
-        <div class="is-flex is-align-items-center">
-          <b-icon icon="10-plus" size="is-large" type="is-primary" />
-          <span class="is-size-4 ml-2 has-text-weight-semibold is-hidden-mobile"
-            >Numbers</span
-          >
-        </div>
-        <div class="buttons">
+    <!-- controls bar -->
+    <section class="card is-bordered is-controls-bar" v-if="!multiplayerMode">
+      <div class="p-2">
+        <div
+          class="is-flex is-align-items-center is-justify-content-space-between"
+        >
           <b-button
             tag="router-link"
             :to="{ name: 'Home' }"
@@ -25,6 +14,13 @@
             size="is-medium"
             >Home</b-button
           >
+          <div class="is-flex is-align-items-center">
+            <b-icon icon="10-plus" size="is-medium" type="is-primary" />
+            <span
+              class="is-size-5 ml-2 has-text-weight-semibold is-hidden-mobile"
+              >Numbers</span
+            >
+          </div>
           <b-button
             type="is-primary is-light"
             icon-left="refresh"
@@ -38,12 +34,134 @@
           type="is-success"
           class="completed-progress"
           :value="progressPercentage"
-        >
-        </b-progress>
+        />
       </div>
-    </div>
+    </section>
+    <!-- end controls bar -->
+    <!-- display screen -->
+    <section
+      :class="{ hero: true, 'is-fullheight': !multiplayerMode }"
+      ref="displayParent"
+    >
+      <div class="hero-body p-1">
+        <!-- attention | number display mode -->
+        <div
+          v-if="displayMode === 'attention' || displayMode === 'number'"
+          class="has-text-centered"
+        >
+          {{ display }}
+        </div>
+        <!-- end attention | number display mode -->
 
-    <section :class="{ hero: true, 'is-fullheight': !multiplayerMode }" ref="displayParent">
+        <!-- answer form display mode -->
+        <div v-else-if="displayMode === 'answer-form'" class="mx-auto">
+          <form @submit.prevent="enterAnswer">
+            <b-field>
+              <b-numberinput :controls="false" v-model="answerFormValue" />
+            </b-field>
+            <b-button native-type="submit" type="is-primary" expanded
+              >Enter</b-button
+            >
+          </form>
+        </div>
+        <!-- end answer form display mode -->
+
+        <!-- answer display mode -->
+        <div v-else-if="displayMode === 'answer'" style="width: 100%">
+          <div class="columns is-centered is-marginless">
+            <div :class="{ column: true, 'is-6-desktop': !multiplayerMode }">
+              <div class="card is-bordered p-2">
+                <div class="has-text-centered">
+                  <div
+                    class="is-size-4 has-text-weight-semibold"
+                    style="word-break: break-all"
+                  >
+                    {{ currentExample.numbers.join("") }}
+                  </div>
+                  <div class="is-size-3 has-text-weight-bold has-text-success">
+                    = {{ currentExample.answer }}
+                  </div>
+                  <div>
+                    Your answer is:
+                    <span class="has-text-weight-bold has-text-danger">{{
+                      answerFormValue
+                    }}</span>
+                  </div>
+                </div>
+
+                <hr class="my-1" />
+                <b-button
+                  type="is-success"
+                  icon-right="arrow-right"
+                  @click="nextExample"
+                  expanded
+                  outlined
+                  >Next</b-button
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end answer display mode -->
+
+        <!-- answer forms display mode -->
+        <div v-else-if="displayMode === 'answer-forms'">answer forms</div>
+        <!-- end answer forms display mode -->
+
+        <!-- result display mode -->
+        <div
+          v-else-if="displayMode === 'result'"
+          class="mx-auto has-text-centered"
+        >
+          <div v-if="!multiplayerMode">
+            <img
+              v-for="(star, index) of finalStars"
+              :key="index"
+              :src="star.src"
+              :class="star.classes"
+            />
+          </div>
+          <div :class="resultScoreTextClasses">
+            {{ correctAnswersPercent }}%
+          </div>
+          <div class="is-size-4">
+            (Correct:
+            <span class="has-text-weight-semibold has-text-success">{{
+              correctAnswersCount
+            }}</span>
+            / Incorrect:
+            <span class="has-text-weight-semibold has-text-danger">{{
+              incorrectAnswersCount
+            }}</span
+            >)
+          </div>
+          <div class="mt-2" v-if="multiplayerMode">
+            <div
+              :class="{
+                'is-color-indicator': true,
+                'is-bordered': true,
+                ['is-' + queue[0].fontColor + '-bg-color']: true,
+              }"
+            ></div>
+          </div>
+        </div>
+        <!-- result display mode -->
+        <!-- wait display mode -->
+        <div v-else-if="displayMode === 'wait'">
+          <b-icon icon="hourglass" size="is-large" /> <br />
+          Waiting other players..
+        </div>
+        <!-- end wait display mode -->
+      </div>
+    </section>
+    <!-- end display screen -->
+  </div>
+  <!--
+  <div>
+    <section
+      :class="{ hero: true, 'is-fullheight': !multiplayerMode }"
+      ref="displayParent"
+    >
       <div class="hero-body p-0">
         <div style="width: 100%">
           <div
@@ -78,10 +196,7 @@
                     @submit.prevent="enterAnswer2($event, queueIndex, index)"
                   >
                     <b-field>
-                      <b-numberinput
-                        :controls="false"
-                        expanded
-                      />
+                      <b-numberinput :controls="false" expanded />
                     </b-field>
                     <div class="buttons">
                       <b-button
@@ -139,7 +254,7 @@
 
             <div
               :class="{
-                'is-result-text': true,
+                'is-result-score-text': true,
                 'has-text-success':
                   correctAnswersPercent >= 60 && correctAnswersPercent <= 100,
                 'has-text-warning':
@@ -163,8 +278,13 @@
               >)
             </div>
             <div class="mt-2" v-if="multiplayerMode">
-            <div style="padding: 10px; width: 100px" :class="{ ['is-' + queue[0].fontColor + '-bg-color' ]: true, 'is-bordered': true }">
-            </div>
+              <div
+                style="padding: 10px; width: 100px"
+                :class="{
+                  ['is-' + queue[0].fontColor + '-bg-color']: true,
+                  'is-bordered': true,
+                }"
+              ></div>
             </div>
 
             <div class="buttons mt-4" v-if="!multiplayerMode">
@@ -183,12 +303,17 @@
               <div class="container is-max-widescreen">
                 <div class="card px-2 py-4 m-2 is-bordered">
                   <div>
-                  <div style="font-size: 30px; word-break: break-all" v-if="!multiplayerMode">
-                    {{ currentExample.numbers.join("") }} <br />
-                    </div>
-                    <div class="is-size-3 has-text-weight-bold has-text-success"
-                      >= {{ currentExample.answer.toString() }}</div
+                    <div
+                      style="font-size: 30px; word-break: break-all"
+                      v-if="!multiplayerMode"
                     >
+                      {{ currentExample.numbers.join("") }} <br />
+                    </div>
+                    <div
+                      class="is-size-3 has-text-weight-bold has-text-success"
+                    >
+                      = {{ currentExample.answer.toString() }}
+                    </div>
                     <span class="is-size-4"
                       >Your answer is:
                       <span class="has-text-danger has-text-weight-semibold">{{
@@ -212,6 +337,7 @@
       </div>
     </section>
   </div>
+  -->
 </template>
 <script lang="ts" src="./game.ts" />
 <style lang="scss">
@@ -239,6 +365,12 @@ $answer-button-touch-width: 14rem;
 .is-controls-bar {
   position: absolute !important;
   width: 100% !important;
+}
+
+.is-color-indicator {
+  display: inline-block;
+  padding: 10px;
+  width: 100px;
 }
 
 .is-big-number.is-1 {
@@ -321,7 +453,7 @@ $answer-button-touch-width: 14rem;
   }
 }
 
-.is-result-text {
+.is-result-score-text {
   font-size: 80px;
 }
 

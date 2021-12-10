@@ -80,10 +80,10 @@ export default defineComponent({
       required: false
     },
     multiplayerMode: {
-type: Boolean,
-                       default: false,
+      type: Boolean,
+      default: false,
       required: false
-                     }
+    }
   },
   setup(props) {
     let currentQueueItemIndex = 0;
@@ -117,6 +117,23 @@ type: Boolean,
         classes.push('is-big-number');
         classes.push('is-2');
       }
+
+      return classes;
+    });
+
+    const resultScoreTextClasses = computed(() => {
+      const classes: string[] = [];
+      const {value} = correctAnswersPercent;
+
+      classes.push('is-result-score-text');
+      classes.push('has-text-weight-semibold');
+
+      if (value >= 60 && value <= 100)
+        classes.push('has-text-success');
+      else if (value < 60 && value >= 30)
+        classes.push('has-text-warning');
+      else if (value < 30 && value >= 0)
+        classes.push('has-text-danger');
 
       return classes;
     });
@@ -407,7 +424,8 @@ type: Boolean,
       progressPercentage,
       correctAnswersCount,
       incorrectAnswersCount,
-      correctAnswersPercent
+      correctAnswersPercent,
+      resultScoreTextClasses
     };
   },
 });
