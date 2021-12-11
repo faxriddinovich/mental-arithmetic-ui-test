@@ -129,6 +129,12 @@
                   >
                 </b-field>
 
+                <b-field v-if="multiplayerMode">
+                  <b-switch v-model="sameExamples"
+                    >Same examples for all players</b-switch
+                  >
+                </b-field>
+
                 <b-field
                   :label="multiplayerMode ? 'Players' : 'Queue'"
                   v-if="queue.length"

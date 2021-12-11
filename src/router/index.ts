@@ -1,11 +1,10 @@
 import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
+import VueRouter, {RouteConfig} from "vue-router";
 
 import Store from "@/store";
-import { SessionStorage } from "@/services/storages/session";
+import {SessionStorage} from "@/services/storages/session";
 
 import Home from "@/views/home.vue";
-import PassThrough from "@/views/pass-through.vue";
 
 import CreateAccount from "@/views/account/create.vue";
 import Authenticate from "@/views/account/authenticate.vue";
@@ -56,39 +55,37 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/account",
-    name: "Account",
     component: Account,
     children: [
       {
-        path: "",
+        path: "/",
         name: "UpdateAccount",
         component: UpdateAccount,
-        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
+        meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
       },
       {
         path: "subscription",
         name: "AccountSubscription",
         component: AccountSubscription,
-        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
+        meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
       },
       {
         path: "platform-settings",
         name: "PlatformSettings",
         component: PlatformSettings,
-        meta: { requiresAuth: true, roles: ["root"] },
+        meta: {requiresAuth: true, roles: ["root"]},
       },
       {
         path: "accounts",
         name: "Accounts",
         component: Accounts,
-        meta: { requiresAuth: true, roles: ["root"] },
+        meta: {requiresAuth: true, roles: ["root"]},
       },
       {
         path: "manage-events",
         name: "ManageEvents",
         component: ManageEvents,
-
-        meta: { requiresAuth: true, roles: ["root"] },
+        meta: {requiresAuth: true, roles: ["root"]},
       },
     ],
   },
@@ -108,40 +105,29 @@ const routes: Array<RouteConfig> = [
     name: "AccountBlocked",
     component: AccountBlocked,
   },
-{
-path: "/games/big-numbers/form",
-      name: "BigNumbersGameForm",
-      component: BigNumbersGameForm
-
-},
- {
-path: "/games/big-numbers/play",
-      name: "PlayBigNumbersGame",
-      component: PlayBigNumbersGame
- },
- /*
   {
-    path: "/games",
-    name: "Games",
-    component: PassThrough,
-    beforeEnter: (to, from, next) => {
-      const settings = Store.getters["GameModule/getSettings"];
-      // FIXME: hardcode
-      if (/^Play\w+$/gi.test(to.name || "") && !settings)
-        return next({ name: "Home" });
+    path: "/games/big-numbers/form",
+    name: "BigNumbersGameForm",
+    component: BigNumbersGameForm
 
-      next();
-    },
-    children: [
-      { path: "/numbers", name: "NumbersGame", component: NumbersGame },
-      {
-        path: "/numbers/play",
-        name: "PlayNumbersGame",
-        component: PlayNumbersGame,
-      },
-    ],
   },
-  */
+  {
+    path: "/games/big-numbers/play",
+    name: "PlayBigNumbersGame",
+    component: PlayBigNumbersGame,
+    props: true,
+    beforeEnter: (to, from, next) => {
+      const settings = Store.getters["GameModule/settings"];
+
+      if (!settings)
+        return next({name: 'BigNumbersGameForm'});
+
+      to.params.answerAtEnd = settings.answerAtEnd;
+      to.params.queue = settings.queue;
+      to.params.multiplayerMode = settings.multiplayerMode;
+      next();
+    }
+  },
   {
     path: "/account/sessions",
     name: "AccountSessions",
@@ -156,13 +142,13 @@ path: "/games/big-numbers/play",
     path: "/course/create",
     name: "CreateCourse",
     component: CreateCourse,
-    meta: { requiresAuth: true, roles: ["root", "teacher"] },
+    meta: {requiresAuth: true, roles: ["root", "teacher"]},
   },
   {
     path: "/courses/:id/update",
     name: "UpdateCourse",
     component: UpdateCourse,
-    meta: { requiresAuth: true, roles: ["root", "teacher"] },
+    meta: {requiresAuth: true, roles: ["root", "teacher"]},
   },
   {
     path: "/lessons/:id",
@@ -191,9 +177,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const activeSession = await SessionStorage.getActiveSession();
 
-    if (!activeSession) return next({ name: "Authenticate" });
+    if (!activeSession) return next({name: "Authenticate"});
     if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
-      return next({ name: "Home" });
+      return next({name: "Home"});
   }
   next();
 });

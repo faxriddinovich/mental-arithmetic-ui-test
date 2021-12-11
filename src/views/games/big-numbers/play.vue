@@ -6,31 +6,24 @@
         is-marginless is-mobile is-multiline is-centered is-vcentered
       "
       style="height: 100vh"
+      v-if="multiplayerMode"
     >
       <div
         :class="columnClasses"
-        v-for="(player, index) of [1, 2, 3, 4, 5, 6, 7, 8, 9]"
-        :key="index"
+        v-for="(queueItem, queueIndex) of queue"
+        :key="queueIndex"
       >
         <BigNumbersGame
           :multiplayerMode="true"
-          :answerAtEnd="true"
+          :answerAtEnd="answerAtEnd"
           :topBar="false"
           :onQueueFinish="incrementWaitingInstances"
-          :queue="[
-            {
-              theme: 'theme1',
-              examples: [{ numbers: ['1', '324'], answer: 325 }, { numbers: ['1', '324'], answer: 325 }],
-              examplesTimeout: 1,
-              rowsTimeout: 0.9,
-              displayNumbers: true,
-              fontRotation: 180,
-              fontColor: 'green',
-              fontSize: 1,
-            },
-          ]"
+          :queue="[queueItem]"
         />
       </div>
+    </div>
+    <div v-else>
+      <BigNumbersGame :queue="queue" />
     </div>
   </div>
 </template>
@@ -43,18 +36,23 @@ export default defineComponent({
   components: { BigNumbersGame },
   props: {
     answerAtEnd: {
-    type: Boolean,
-    requied:  false
+      type: Boolean,
+      requied: false,
     },
-  queue: {
-    type: Array as PropType<QueueItem[]>,
-    requied: true,
+    queue: {
+      type: Array as PropType<QueueItem[]>,
+      requied: true,
+    },
+    multiplayerMode: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
   },
-  },
-  setup(_, context) {
+  setup(props, context) {
     const waitingGameInstancesCount = ref<number>(0);
     const hasFinished = computed(() => {
-      return waitingGameInstancesCount.value === 9; // FIXME: static value
+      return waitingGameInstancesCount.value === props.queue?.length; // FIXME: static value
     });
 
     const columnClasses = computed(() => {

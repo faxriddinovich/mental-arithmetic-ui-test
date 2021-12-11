@@ -5,9 +5,9 @@ import {
   reactive,
   toRefs,
 } from "@vue/composition-api";
-import { themes } from "@mental-arithmetic/themes";
-import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
-import { Example, NumbersGameSettings } from "@/views/games/big-numbers/interfaces";
+import {themes} from "@mental-arithmetic/themes";
+import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
+import {Example, BigNumbersGameSettings} from "@/views/games/big-numbers/interfaces";
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -23,9 +23,9 @@ const generateExamples = (
   const theme = themes.find((theme) => theme.loc == loc);
   if (!theme) return [];
 
-  const examples = [];
+  const examples: Example[] = [];
   for (let i = 0; i < examplesCount; i++) {
-    examples[i] = theme.generate(rowsCount, digit);
+    examples[i] = theme.generate(rowsCount, digit) as any as Example; // FIXME
   }
 
   // FIXME: fix the type error
@@ -33,8 +33,8 @@ const generateExamples = (
 };
 
 export default defineComponent({
-  setup(_, { root }) {
-    const { useMutations } = createStoreHelper("GameModule");
+  setup(_, {root}) {
+    const {useMutations} = createStoreHelper("GameModule");
     const filteredThemes = computed(() => {
       return themes
         .filter((_theme) => {
@@ -79,22 +79,45 @@ export default defineComponent({
       fontSize: options.fontSizes[0],
     });
 
-    const gameSettings = reactive<NumbersGameSettings>({
+    const gameSettings = reactive<BigNumbersGameSettings>({
       answerAtEnd: false,
       multiplayerMode: false,
+      sameExamples: false,
       queue: [],
     });
+
+    const examplesCache: {theme: string, examples: Example[]}[] = [];
 
     /*
      * Add to the queue list
      */
     const addToQueueList = () => {
-      const examples = generateExamples(
-        settings.theme,
-        settings.examplesCount,
-        settings.rowsCount,
-        Number(settings.digit)
-      );
+
+      let examples: Example[];
+
+      if (gameSettings.sameExamples) {
+        const cachedExamples = examplesCache.find((example) => example.theme === settings.theme);
+
+        if (cachedExamples) {
+          examples = cachedExamples.examples;
+        } else {
+          const _examples = generateExamples(
+            settings.theme,
+            settings.examplesCount,
+            settings.rowsCount,
+            Number(settings.digit)
+          );
+          examples = _examples
+          examplesCache.push({theme: settings.theme, examples: _examples});
+        }
+      } else {
+        examples = generateExamples(
+          settings.theme,
+          settings.examplesCount,
+          settings.rowsCount,
+          Number(settings.digit)
+        );
+      }
 
       gameSettings.queue.push({
         examples,
@@ -124,12 +147,12 @@ export default defineComponent({
      * From the documentation:
      *    "`getCurrentInstance` only works during setup or Lifecycle Hooks"
      */
-    const { setSettings } = useMutations(["setSettings"]);
+    const {setSettings} = useMutations(["setSettings"]);
 
     const play = () => {
       // FIXME add the first theme in the themes list when the theme input is empty ( or we can just disable the play button )
       setSettings(gameSettings);
-      root.$router.push({ name: "PlayBigNumbersGame" });
+      root.$router.push({name: "PlayBigNumbersGame"});
     };
 
     return {

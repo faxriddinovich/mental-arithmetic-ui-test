@@ -15,8 +15,9 @@ export interface QueueItem {
   fontSize: number;
 }
 
-export interface NumbersGameSettings {
+export interface BigNumbersGameSettings {
   answerAtEnd: boolean;
   multiplayerMode: boolean,
+  sameExamples: boolean,
   queue: QueueItem[];
 }
