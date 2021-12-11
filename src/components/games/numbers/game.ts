@@ -42,39 +42,6 @@ export default defineComponent({
       type: Array as PropType<QueueItem[]>,
       required: true
     },
-    soundEffects: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    animationFade: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    showFinalScores: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    topBar: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    progressIndicator: {
-      type: Boolean,
-      default: true,
-      required: false
-    },
-    onExampleFinish: {
-      type: Function as PropType<(exampleId: number) => void>,
-      required: false
-    },
-    onQueueItemFinish: {
-      type: Function as PropType<(queueIndex: number) => void>,
-      required: false
-    },
     onQueueFinish: {
       type: Function as PropType<(queueIndex: number) => void>,
       required: false
@@ -85,10 +52,14 @@ export default defineComponent({
       required: false
     }
   },
-  setup(props) {
+  setup(props, context) {
     let currentQueueItemIndex = 0;
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
+
+    context.root.$on('test', () => {
+      alert('emitted');
+    });
 
     const queue = ref(props.queue as QueueItem[]); //reactive
 
@@ -101,7 +72,7 @@ export default defineComponent({
     });
 
     const displayParent = ref();
-    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'result'>('attention');
+    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'result' | 'wait'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
@@ -109,12 +80,12 @@ export default defineComponent({
       const classes: string[] = [];
       if (displayMode.value === 'number') {
         const {fontSize, fontRotation, fontColor} = currentQueueItem;
-        classes.push('is-big-number');
+        classes.push('is-display-text');
         classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
       } else if (displayMode.value === 'attention') {
-        classes.push('is-big-number');
+        classes.push('is-display-text');
         classes.push('is-2');
       }
 
@@ -172,6 +143,7 @@ export default defineComponent({
           else
             filled = false;
 
+        // FIXME: use path aliases
         star.src = require(`../../../../public/img/${filled ? 'filled' : 'empty'
           }-star.svg`);
 
@@ -241,9 +213,19 @@ export default defineComponent({
       displayMode.value = 'result';
     }
 
+    const displayWait = () => {
+      displayMode.value = 'wait';
+    }
+
     const completeExample = () => {
       progressPercentage.value += 1 / calcExamplesCount() * 100;
     }
+
+    // FIXME: do not use the global instance
+    context.root.$once('numbers-game:show-answers-form', () => {
+      if (displayMode.value === 'wait')
+        displayAnswerForms();
+    });
 
     const timerHandles: Set<NodeJS.Timer> = new Set();
 
@@ -286,10 +268,6 @@ export default defineComponent({
           currentExample.numbers,
           currentQueueItem.rowsTimeout * 1000
         ).then(() => {
-
-          if (props.onExampleFinish)
-            props.onExampleFinish(currentExampleIndex);
-
           /* clear after showing all the rows */
           //clearCenterText(); // FIXME
           currentExampleIndex++;
@@ -304,8 +282,6 @@ export default defineComponent({
           }
         });
       } else if (queue.value[currentQueueItemIndex + 1]) {/* if there are items in the queue */
-        if (props.onQueueItemFinish)
-          props.onQueueItemFinish(currentQueueItemIndex);
         /* go to the next queue item */
         currentQueueItemIndex++;
         /* clear the index */
@@ -321,19 +297,21 @@ export default defineComponent({
         if (props.onQueueFinish)
           props.onQueueFinish(currentQueueItemIndex);
 
+        if (props.multiplayerMode && props.answerAtEnd) {
+          displayWait();
+          return;
+        }
+
         if (props.answerAtEnd) {
           displayAnswerForms();
           return;
         }
 
-        if (props.showFinalScores) {
-          const timerHandle = setTimeout(() => {
-            displayResult();
-            if (props.soundEffects)
-              playFinishSound();
-          }, 1000);
-          timerHandles.add(timerHandle);
-        }
+        const timerHandle = setTimeout(() => {
+          displayResult();
+          playFinishSound();
+        }, 1000);
+        timerHandles.add(timerHandle);
       }
     }
 
@@ -345,33 +323,28 @@ export default defineComponent({
         input.setAttribute('disabled', true);
         button.setAttribute('disabled', true);
 
-        if (BigInt(input.value) === example.answer) {
+        if (input.value.toString() === example.answer.toString()) {
           button.innerText = 'Correct!';
           button.classList.add('is-success');
           input.classList.add('is-success');
           correctAnswersCount.value++;
-          if (props.animationFade)
-            displayCorrectAnswerFade();
+          displayCorrectAnswerFade();
           playCorrectAnswerSound();
         } else {
           button.innerText = 'Incorrect!';
           button.classList.add('is-danger');
           input.classList.add('is-danger');
           incorrectAnswersCount.value++;
-          if (props.animationFade)
-            displayIncorrectAnswerFade();
+          displayIncorrectAnswerFade();
           playIncorrectAnswerSound();
         }
 
         if (correctAnswersCount.value + incorrectAnswersCount.value === calcExamplesCount()) {
-          if (props.showFinalScores) {
-            const timerHandle = setTimeout(() => {
-              displayResult();
-              if (props.soundEffects)
-                playFinishSound();
-            }, 1000);
-            timerHandles.add(timerHandle);
-          }
+          const timerHandle = setTimeout(() => {
+            displayResult();
+            playFinishSound();
+          }, 1000);
+          timerHandles.add(timerHandle);
         }
       }
     }

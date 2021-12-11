@@ -29,13 +29,11 @@
           >
         </div>
       </div>
-      <div v-if="progressIndicator">
-        <b-progress
-          type="is-success"
-          class="completed-progress"
-          :value="progressPercentage"
-        />
-      </div>
+      <b-progress
+        type="is-success"
+        class="completed-progress"
+        :value="progressPercentage"
+      />
     </section>
     <!-- end controls bar -->
     <!-- display screen -->
@@ -48,19 +46,32 @@
         <div
           v-if="displayMode === 'attention' || displayMode === 'number'"
           class="has-text-centered"
+          style="width: 100%"
         >
-          {{ display }}
+          <span :class="displayClasses">{{ display }}</span>
         </div>
         <!-- end attention | number display mode -->
 
         <!-- answer form display mode -->
-        <div v-else-if="displayMode === 'answer-form'" class="mx-auto">
+        <!-- FIXME: this is  not ok -->
+        <div
+          v-else-if="displayMode === 'answer-form'"
+          class="mx-auto is-flex is-justify-content-center"
+        >
           <form @submit.prevent="enterAnswer">
             <b-field>
-              <b-numberinput :controls="false" v-model="answerFormValue" />
+              <b-numberinput
+                :controls="false"
+                v-model="answerFormValue"
+                style="width: inherit"
+                class="is-answer-form-input"
+              />
             </b-field>
-            <b-button native-type="submit" type="is-primary" expanded
-              >Enter</b-button
+            <b-button
+              native-type="submit"
+              type="is-primary"
+              class="is-answer-form-button"
+              >Check the answer</b-button
             >
           </form>
         </div>
@@ -83,9 +94,10 @@
                   </div>
                   <div>
                     Your answer is:
-                    <span class="has-text-weight-bold has-text-danger">{{
-                      answerFormValue
-                    }}</span>
+                    <span
+                      class="is-size-4 has-text-weight-bold has-text-danger"
+                      >{{ answerFormValue }}</span
+                    >
                   </div>
                 </div>
 
@@ -105,7 +117,49 @@
         <!-- end answer display mode -->
 
         <!-- answer forms display mode -->
-        <div v-else-if="displayMode === 'answer-forms'">answer forms</div>
+        <div v-else-if="displayMode === 'answer-forms'" style="width: 100%">
+          <div class="columns is-multiline is-centered is-vcentered">
+            <div
+              class="column"
+              v-for="(queueItem, queueIndex) of queue"
+              :key="queueIndex"
+            >
+              <div class="card p-2 is-bordered">
+                <div class="has-text-centered">
+                  <div class="is-size-3">
+                    {{ queueItem.theme }}
+                  </div>
+                  <div
+                    :class="{
+                      'is-color-indicator': true,
+                      'is-bordered': true,
+                      ['is-' + queue[0].fontColor + '-bg-color']: true,
+                    }"
+                  ></div>
+                </div>
+                <div class="columns is-multiline is-mobile is-centered is-vcentered">
+                  <div
+                    class="column is-6-mobile is-4-desktop"
+                    v-for="(example, exampleIndex) of queueItem.examples"
+                    :key="exampleIndex"
+                  >
+                    <div class="has-text-centered has-text-weight-semibold">
+                      {{ exampleIndex + 1 }}.
+                    </div>
+                    <form @submit.prevent="enterAnswer2($event, queueIndex, exampleIndex)">
+                      <b-field>
+                        <b-numberinput :controls="false" placeholder="Your answer" />
+                      </b-field>
+                      <b-button native-type="submit" type="is-primary" expanded
+                        >Check</b-button
+                      >
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- end answer forms display mode -->
 
         <!-- result display mode -->
@@ -147,9 +201,9 @@
         </div>
         <!-- result display mode -->
         <!-- wait display mode -->
-        <div v-else-if="displayMode === 'wait'">
-          <b-icon icon="hourglass" size="is-large" /> <br />
-          Waiting other players..
+        <div v-else-if="displayMode === 'wait'" class="has-text-centered">
+          <img :src="require('@@/img/hourglass.svg')" width="80px" /> <br />
+          <span class="is-size-5">Waiting other players..</span>
         </div>
         <!-- end wait display mode -->
       </div>
@@ -343,18 +397,6 @@
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
-$answer-input-desktop-font-size: 5rem;
-$answer-input-desktop-width: 15rem;
-$answer-input-desktop-height: 8rem;
-$answer-button-desktop-font-size: 2rem;
-$answer-button-desktop-width: 16rem;
-
-$answer-input-touch-font-size: 3rem;
-$answer-input-touch-width: 14rem;
-$answer-input-touch-height: 7rem;
-$answer-button-touch-font-size: 1rem;
-$answer-button-touch-width: 14rem;
-
 .completed-progress > .progress {
   border-radius: 0px !important;
   @include mobile {
@@ -369,19 +411,19 @@ $answer-button-touch-width: 14rem;
 
 .is-color-indicator {
   display: inline-block;
-  padding: 10px;
-  width: 100px;
+  padding: 8px;
+  width: 80px;
 }
 
-.is-big-number.is-1 {
+.is-display-text.is-1 {
   font-size: 6vw;
 }
 
-.is-big-number.is-2 {
+.is-display-text.is-2 {
   font-size: 10vw;
 }
 
-.is-big-number.is-3 {
+.is-display-text.is-3 {
   font-size: 20vw;
 }
 
@@ -406,24 +448,32 @@ $answer-button-touch-width: 14rem;
   }
 }
 
-.is-big-number {
-  display: inline-block;
-}
-
-.is-answer-input > .control > input[type="number"] {
+.is-answer-form-input > .control > input[type="number"] {
   padding-left: 10px !important;
   padding-right: 10px !important;
 
   @include touch {
-    font-size: $answer-input-touch-font-size !important;
-    width: $answer-input-touch-width !important;
-    height: $answer-input-touch-height !important;
+    width: 200px;
+    height: 100px;
+    font-size: 3.4rem;
   }
 
   @include desktop {
-    font-size: $answer-input-desktop-font-size !important;
-    width: $answer-input-desktop-width !important;
-    height: $answer-input-desktop-height !important;
+    width: 300px;
+    height: 150px;
+    font-size: 5.4rem;
+  }
+}
+
+.is-answer-form-button {
+  width: 100% !important;
+
+  @include touch {
+    width: 200px !important;
+  }
+
+  @include desktop {
+    width: 300px !important;
   }
 }
 
