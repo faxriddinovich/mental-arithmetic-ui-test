@@ -6,7 +6,7 @@ import {
   ref,
   PropType
 } from "@vue/composition-api";
-import {NumbersGameSettings, QueueItem} from "@/views/games/numbers/interfaces";
+import {NumbersGameSettings, QueueItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'

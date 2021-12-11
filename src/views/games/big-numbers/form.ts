@@ -7,7 +7,7 @@ import {
 } from "@vue/composition-api";
 import { themes } from "@mental-arithmetic/themes";
 import { createNamespacedHelpers as createStoreHelper } from "vuex-composition-helpers";
-import { Example, NumbersGameSettings } from "@/views/games/numbers/interfaces";
+import { Example, NumbersGameSettings } from "@/views/games/big-numbers/interfaces";
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -129,7 +129,7 @@ export default defineComponent({
     const play = () => {
       // FIXME add the first theme in the themes list when the theme input is empty ( or we can just disable the play button )
       setSettings(gameSettings);
-      root.$router.push({ name: "PlayNumbersGame" });
+      root.$router.push({ name: "PlayBigNumbersGame" });
     };
 
     return {

@@ -268,7 +268,7 @@
     </div>
   </section>
 </template>
-<script lang="ts" src="./numbers.ts" />
+<script lang="ts" src="./form.ts" />
 <style lang="scss">
 .is-circled-color {
   display: inline-block;

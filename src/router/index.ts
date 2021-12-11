@@ -29,15 +29,12 @@ import CreateLesson from "@/views/lesson/create.vue";
 
 import Scores from "@/views/scores.vue";
 
-import NumbersGame from "@/views/games/numbers/numbers.vue";
-import PlayNumbersGame from "@/views/games/numbers/play.vue";
-
-import Test from '@/views/test';
+import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
+import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-{ path: '/test', component: Test },
   {
     path: "/",
     name: "Home",
@@ -111,6 +108,18 @@ const routes: Array<RouteConfig> = [
     name: "AccountBlocked",
     component: AccountBlocked,
   },
+{
+path: "/games/big-numbers/form",
+      name: "BigNumbersGameForm",
+      component: BigNumbersGameForm
+
+},
+ {
+path: "/games/big-numbers/play",
+      name: "PlayBigNumbersGame",
+      component: PlayBigNumbersGame
+ },
+ /*
   {
     path: "/games",
     name: "Games",
@@ -132,6 +141,7 @@ const routes: Array<RouteConfig> = [
       },
     ],
   },
+  */
   {
     path: "/account/sessions",
     name: "AccountSessions",
