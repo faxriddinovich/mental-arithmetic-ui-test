@@ -4,6 +4,8 @@ import {
   ref,
   reactive,
   toRefs,
+  watch,
+  watchEffect
 } from "@vue/composition-api";
 import {themes} from "@mental-arithmetic/themes";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
@@ -49,7 +51,6 @@ export default defineComponent({
 
     const currentTab = ref(0);
 
-    // these are atomics
     const options = reactive({
       fontRotations: [0, 90, 180, 270],
       fontSizes: [1, 2, 3],
@@ -87,6 +88,18 @@ export default defineComponent({
     });
 
     const examplesCache: {theme: string, examples: Example[]}[] = [];
+
+    function resetDefaults() {
+      settings.fontRotation = options.fontRotations[0];
+      settings.fontColor = options.fontColors[0];
+      settings.fontSize = options.fontSizes[0];
+      settings.displayNumbers = true;
+      settings.hasSound = false;
+    }
+
+    watch(() => gameSettings.multiplayerMode, () => {
+      resetDefaults();
+    });
 
     /*
      * Add to the queue list

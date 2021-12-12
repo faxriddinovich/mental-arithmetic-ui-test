@@ -159,7 +159,7 @@
                     @click="addToQueueList"
                     class="ml-2"
                     :disabled="
-                      multiplayerMode ? queue.length === 9 : queue.length === 10
+                      (multiplayerMode ? queue.length === 9 : queue.length === 10)
                     "
                     >{{
                       multiplayerMode ? "Add to players list" : "Add to queue"
@@ -200,6 +200,7 @@
                   v-model="fontRotation"
                   :native-value="0"
                   type="is-primary"
+                  :disabled="multiplayerMode"
                 >
                   <span style="-webkit-transform: rotate(0deg)">-123</span>
                 </b-radio-button>
@@ -208,6 +209,7 @@
                   v-model="fontRotation"
                   :native-value="90"
                   type="is-primary"
+                  :disabled="multiplayerMode"
                 >
                   <span style="-webkit-transform: rotate(90deg)">-123</span>
                 </b-radio-button>
@@ -216,11 +218,17 @@
                   v-model="fontRotation"
                   :native-value="180"
                   type="is-primary"
+                  :disabled="multiplayerMode"
                 >
                   <span style="-webkit-transform: rotate(180deg)">-123</span>
                 </b-radio-button>
 
-                <b-radio-button v-model="fontRotation" :native-value="270">
+                <b-radio-button
+                  v-model="fontRotation"
+                  :native-value="270"
+                  type="is-primary"
+                  :disabled="multiplayerMode"
+                >
                   <span style="-webkit-transform: rotate(270deg)">-123</span>
                 </b-radio-button>
               </b-field>
