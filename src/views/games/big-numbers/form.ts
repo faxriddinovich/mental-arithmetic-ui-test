@@ -4,8 +4,7 @@ import {
   ref,
   reactive,
   toRefs,
-  watch,
-  watchEffect
+  watch
 } from "@vue/composition-api";
 import {themes} from "@mental-arithmetic/themes";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
@@ -30,7 +29,6 @@ const generateExamples = (
     examples[i] = theme.generate(rowsCount, digit) as any as Example; // FIXME
   }
 
-  // FIXME: fix the type error
   return examples;
 };
 
@@ -74,7 +72,7 @@ export default defineComponent({
       rowsTimeout: 1,
       answerAtEnd: false,
       displayNumbers: true,
-      hasSound: false,
+      speechSound: false,
       fontRotation: options.fontRotations[0],
       fontColor: options.fontColors[0],
       fontSize: options.fontSizes[0],
@@ -94,7 +92,7 @@ export default defineComponent({
       settings.fontColor = options.fontColors[0];
       settings.fontSize = options.fontSizes[0];
       settings.displayNumbers = true;
-      settings.hasSound = false;
+      settings.speechSound = false;
     }
 
     watch(() => gameSettings.multiplayerMode, () => {
@@ -105,31 +103,23 @@ export default defineComponent({
      * Add to the queue list
      */
     const addToQueueList = () => {
+      const cachedExamples = examplesCache.find((example) => example.theme === settings.theme);
 
-      let examples: Example[];
+      settings.theme = filteredThemes.value.length === 0 ? themes[0].loc : filteredThemes.value[0].name;
+
+      let examples: Example[] = generateExamples(
+        settings.theme,
+        settings.examplesCount,
+        settings.rowsCount,
+        Number(settings.digit)
+      );
 
       if (gameSettings.sameExamples) {
-        const cachedExamples = examplesCache.find((example) => example.theme === settings.theme);
-
         if (cachedExamples) {
           examples = cachedExamples.examples;
         } else {
-          const _examples = generateExamples(
-            settings.theme,
-            settings.examplesCount,
-            settings.rowsCount,
-            Number(settings.digit)
-          );
-          examples = _examples
-          examplesCache.push({theme: settings.theme, examples: _examples});
+          examplesCache.push({theme: settings.theme, examples});
         }
-      } else {
-        examples = generateExamples(
-          settings.theme,
-          settings.examplesCount,
-          settings.rowsCount,
-          Number(settings.digit)
-        );
       }
 
       gameSettings.queue.push({
@@ -138,7 +128,7 @@ export default defineComponent({
         examplesTimeout: settings.examplesTimeout,
         rowsTimeout: settings.rowsTimeout,
         displayNumbers: settings.displayNumbers,
-        hasSound: settings.hasSound,
+        speechSound: settings.speechSound,
         fontRotation: settings.fontRotation,
         fontColor: settings.fontColor,
         fontSize: settings.fontSize,
@@ -163,7 +153,9 @@ export default defineComponent({
     const {setSettings} = useMutations(["setSettings"]);
 
     const play = () => {
-      // FIXME add the first theme in the themes list when the theme input is empty ( or we can just disable the play button )
+      if(gameSettings.queue.length === 0)
+        addToQueueList();
+
       setSettings(gameSettings);
       root.$router.push({name: "PlayBigNumbersGame"});
     };

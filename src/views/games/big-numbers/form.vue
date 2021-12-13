@@ -254,8 +254,8 @@
                 <b-checkbox v-model="displayNumbers" :disabled="multiplayerMode"
                   >Display numbers</b-checkbox
                 >
-                <b-checkbox v-model="hasSound" :disabled="multiplayerMode"
-                  >Has sound</b-checkbox
+                <b-checkbox v-model="speechSound" :disabled="multiplayerMode"
+                  >Speech sound</b-checkbox
                 >
               </b-field>
 
