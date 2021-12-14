@@ -16,6 +16,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@capacitor-community/text-to-speech": "^1.1.1",
     "@capacitor/android": "^3.3.2",
     "@capacitor/browser": "^1.0.6",
     "@capacitor/cli": "^3.3.2",

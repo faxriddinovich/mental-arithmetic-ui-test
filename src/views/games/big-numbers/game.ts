@@ -12,7 +12,6 @@ import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
 import {SettingsStorage} from '@/services/storages/settings';
 
-import {TextToSpeech} from '@capacitor-community/text-to-speech';
 import {speak} from '@/services/tts';
 
 // FIXME: this should be done using i18n
@@ -239,6 +238,12 @@ export default defineComponent({
 
     const timerHandles: Set<NodeJS.Timer> = new Set();
 
+    function speechSpeak(text: string | number) {
+      const currentQueueItem = queue.value[currentQueueItemIndex];
+      const speechRate = currentQueueItem.rowsTimeout >= 1 ? 1 : 1 + currentQueueItem.rowsTimeout + (String(text).length / 2);
+      speak(text, language.value, speechRate);
+    }
+
     /*
      * Resolves the promise after showing all the rows
      */
@@ -256,8 +261,8 @@ export default defineComponent({
             if (isAttention) {
               displayAttentionText(arr[currentArrayIndex]);
             } else {
-              if(speechSound)
-                speak(arr[currentArrayIndex] as string, language.value, 1);
+              if (speechSound)
+                speechSpeak(arr[currentArrayIndex]);
               displayNumber(arr[currentArrayIndex]);
             }
             currentArrayIndex++;
@@ -332,8 +337,10 @@ export default defineComponent({
     }
 
     function enterAnswer2(event: any /* FIXME */, queueItemIndex: number, exampleIndex: number) {
-      if (queue.value[queueItemIndex]?.examples[exampleIndex]) {
-        const example = queue.value[queueItemIndex].examples[exampleIndex];
+      const queueItem = queue.value[queueItemIndex];
+      if (queueItem.examples[exampleIndex]) {
+        const example = queueItem.examples[exampleIndex];
+
         const input = event.target[0];
         const button = event.target[1];
         input.setAttribute('disabled', true);

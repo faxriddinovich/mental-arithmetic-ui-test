@@ -31,13 +31,15 @@ async function getVoiceIndex(lang: string): Promise<number> {
   return 0;
 }
 
-export async function speak(text: string | number, lang: string, speed: number) {
+export async function speak(text: string | number, lang: string, rate: number) {
   const voiceIndex = await getVoiceIndex(lang);
   const language = await getLanguage(lang);
 
-  TextToSpeech.speak({
+  await TextToSpeech.speak({
     text: String(text),
     lang: language,
+    pitch: 0.5,
+    rate,
     voice: voiceIndex
   }).catch(() => {
     console.error('[tts]: tts error raised');
