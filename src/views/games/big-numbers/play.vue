@@ -5,7 +5,7 @@
         columns
         is-marginless is-mobile is-multiline is-centered is-vcentered
       "
-      style="height: 100vh"
+      style="min-height: 100vh"
       v-if="multiplayerMode"
     >
       <div

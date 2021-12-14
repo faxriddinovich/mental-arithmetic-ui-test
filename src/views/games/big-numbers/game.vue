@@ -15,11 +15,7 @@
             >Home</b-button
           >
           <div class="is-flex is-align-items-center">
-            <b-icon icon="10-plus" size="is-medium" type="is-primary" />
-            <span
-              class="is-size-5 ml-2 has-text-weight-semibold is-hidden-mobile"
-              >Numbers</span
-            >
+            <b-icon icon="10-plus" size="is-large" type="is-primary" />
           </div>
           <b-button
             type="is-primary is-light"

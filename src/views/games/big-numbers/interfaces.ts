@@ -8,10 +8,10 @@ export interface QueueItem {
   examples: Example[];
   examplesTimeout: number;
   rowsTimeout: number;
-  speechSound: boolean;
   displayNumbers: boolean;
   fontRotation: number;
   fontColor: string;
+  speechSound: boolean;
   fontSize: number;
 }
 

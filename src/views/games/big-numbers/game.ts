@@ -6,10 +6,14 @@ import {
   ref,
   PropType
 } from "@vue/composition-api";
-import {NumbersGameSettings, QueueItem} from "@/views/games/big-numbers/interfaces";
+import {QueueItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
+import {SettingsStorage} from '@/services/storages/settings';
+
+import {TextToSpeech} from '@capacitor-community/text-to-speech';
+import {speak} from '@/services/tts';
 
 // FIXME: this should be done using i18n
 const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
@@ -172,6 +176,12 @@ export default defineComponent({
       return i;
     }
 
+    const language = ref<string>('en');
+
+    SettingsStorage.getSetting('locale').then((loc) => {
+      language.value = loc;
+    });
+
     const displayCorrectAnswerFade = () => {
       displayParent.value.classList.add('is-correct-answer');
       setTimeout(() => {
@@ -235,16 +245,21 @@ export default defineComponent({
     function renderArrayItems(
       arr: (string | number)[],
       interval: number,
-      isAttention?: boolean
+      isAttention?: boolean,
+      speechSound?: boolean
     ): Promise<void> {
       let currentArrayIndex = 0;
       return new Promise((resolve) => {
         const timerHandle = setInterval(() => {
           if (arr[currentArrayIndex]) {
-            if (isAttention)
+
+            if (isAttention) {
               displayAttentionText(arr[currentArrayIndex]);
-            else
+            } else {
+              if(speechSound)
+                speak(arr[currentArrayIndex] as string, language.value, 1);
               displayNumber(arr[currentArrayIndex]);
+            }
             currentArrayIndex++;
           } else {
             clearInterval(timerHandle); // remove the handle
@@ -266,7 +281,8 @@ export default defineComponent({
         /* show all the rows of the current example */
         renderArrayItems(
           currentExample.numbers,
-          currentQueueItem.rowsTimeout * 1000
+          currentQueueItem.rowsTimeout * 1000,
+          false, currentQueueItem.speechSound
         ).then(() => {
           /* clear after showing all the rows */
           //clearCenterText(); // FIXME
