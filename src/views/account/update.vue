@@ -1,6 +1,6 @@
 <template>
   <div class="card p-4 is-bordered">
-    <form @submit.prevent="saveChanges" v-if="account">
+    <form @submit.prevent="updateAccount" v-if="account">
       <b-field label="Username">
         <b-input
           v-model="localAccount.username"
@@ -30,7 +30,7 @@
           native-type="submit"
           icon-left="save"
           type="is-success"
-          :disabled="!fieldDiff"
+          :disabled="!changed"
           >Save</b-button
         >
       </div>
@@ -38,7 +38,12 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {
+  defineComponent,
+  computed,
+  ref,
+  onMounted,
+} from "@vue/composition-api";
 import { diff } from "deep-diff";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
@@ -46,40 +51,48 @@ import {
   RPC_GET_ACCOUNT_METHOD,
   RPC_UPDATE_ACCOUNT_METHOD,
 } from "@/services/rpc/methods";
-import { AccountContract } from "@/services/rpc/contracts/account";
+import {
+  AccountContract,
+  UpdateAccountContract,
+} from "@/services/rpc/contracts/account";
 
-@Component
-export default class UpdateAccount extends Vue {
-  public account: AccountContract | null = null;
-  public localAccount: AccountContract | null = null;
+export default defineComponent({
+  setup() {
+    const localAccount = ref<AccountContract | null>();
+    const account = ref<AccountContract | null>(null);
 
-  mounted() {
-    this.getAccount();
-  }
-
-  public get fieldDiff() {
-    return diff(this.account, this.localAccount);
-  }
-
-  public getAccount() {
-    rpc.call(RPC_GET_ACCOUNT_METHOD).then((account) => {
-      this.account = account;
-      this.localAccount = Object.assign({}, account);
+    const changed = computed(() => {
+      return diff(localAccount.value, account.value);
     });
-  }
 
-  // FIXME: fix typescript types
-  public saveChanges() {
-    const params = {};
-    for (const field of this.fieldDiff) {
-      params[field.path[0]] = field.rhs;
-    }
+    const getAccount = () => {
+      rpc
+        .call(RPC_GET_ACCOUNT_METHOD)
+        .then((remoteAccount: AccountContract) => {
+          account.value = remoteAccount;
+          localAccount.value = Object.assign({}, remoteAccount);
+        });
+    };
 
-    rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
-      // after updating the account, "local account" becomes "actual account"
-      this.account = Object.assign({}, this.localAccount);
-      showToastMessage("Successfully saved!", ToastType.Success);
+    const updateAccount = () => {
+      const params: UpdateAccountContract = {};
+
+      for (const change of changed.value!) {
+        params[change!.path![0]] = (change as any).lhs; // FIXME
+      }
+
+      rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
+        showToastMessage("Successfully saved!", ToastType.Success);
+      }).catch(() => {
+        showToastMessage('Unable to save changes', ToastType.Danger);
+      });;
+    };
+
+    onMounted(() => {
+      getAccount();
     });
-  }
-}
+
+    return { localAccount, account, changed, updateAccount };
+  },
+});
 </script>

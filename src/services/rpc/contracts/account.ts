@@ -20,3 +20,9 @@ export interface SessionContract {
   role: string;
   session: string;
 }
+
+export interface UpdateAccountContract {
+  username?: string,
+  email?: string,
+  password?: string
+}
