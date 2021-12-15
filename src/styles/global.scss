@@ -42,6 +42,8 @@ $is-purple-color: #9b59b6;
 $is-yellow-color: #f1c40f;
 $is-orange-color: #e67e22;
 $is-red-color: #e74c3c;
+$is-teal-color: #1dabb8;
+$is-brown-color: #651a1a;
 
 .is-black-color {
   color: $is-black-color;
@@ -71,6 +73,14 @@ $is-red-color: #e74c3c;
   color: $is-red-color;
 }
 
+.is-teal-color {
+  color: $is-teal-color;
+}
+
+.is-brown-color {
+  color: $is-brown-color;
+}
+
 
 .is-black-bg-color {
   background: $is-black-color;
@@ -98,4 +108,12 @@ $is-red-color: #e74c3c;
 
 .is-red-bg-color {
   background: $is-red-color;
+}
+
+.is-teal-bg-color {
+  background: $is-teal-color;
+}
+
+.is-brown-bg-color {
+  background: $is-brown-color;
 }

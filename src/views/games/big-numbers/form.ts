@@ -60,6 +60,8 @@ export default defineComponent({
         "yellow",
         "orange",
         "red",
+        "teal",
+        "brown"
       ],
     });
 
