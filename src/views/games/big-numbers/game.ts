@@ -201,8 +201,11 @@ export default defineComponent({
     }
 
     const displayNumber = (number: string | number) => {
-      displayMode.value = 'number';
-      display.value = number;
+      display.value = null;
+      setTimeout(() => {
+        displayMode.value = 'number';
+        display.value = number;
+      }, 35);
     }
 
     const displayAnswerForm = () => {
