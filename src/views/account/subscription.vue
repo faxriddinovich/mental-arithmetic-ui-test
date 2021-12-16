@@ -4,18 +4,25 @@
       <div class="level-item has-text-centered">
         <div v-if="subscription">
           <p class="heading">Your subscription expires</p>
-          <p class="title" v-if="subscription">{{ subscription.date }}</p>
-          <p class="mt-5 buttons">
+          <p class="title" v-if="subscription">
+            {{ formatDate(subscription.date) }}
+          </p>
+          <p class="mt-5">
+            <!--
             <b-button type="is-primary" icon-left="pen"
               >Renew subscription</b-button
             >
-            <b-button type="is-warning" icon-left="times" @click="confirmCancel"
+            -->
+            <b-button
+              type="is-warning"
+              icon-left="times"
+              @click="displayCancelDialog"
               >Cancel subscription</b-button
             >
           </p>
         </div>
         <div v-else>
-          <form @submit.prevent="confirmPurchase">
+          <form @submit.prevent="displayConfirmDialog">
             <p class="mb-4">
               <b-field label="For how many days?">
                 <b-numberinput v-model="days" minlength="32"></b-numberinput>
@@ -33,23 +40,10 @@
         </div>
       </div>
     </nav>
-
-    <hr class="m-0" />
-    <div class="px-2 py-4">
-      <div class="has-text-weight-semibold">Subscription features:</div>
-      <div>
-        - You will be able to use games such as ... (even without internet
-        connection)
-      </div>
-      <div>
-        - If your role is "teacher" on the platform, then you will be able to
-        create courses
-      </div>
-    </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
@@ -58,62 +52,82 @@ import {
   RPC_PURCHASE_SUBSCRIPTION_METHOD,
 } from "@/services/rpc/methods";
 import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from "@/services/rpc/error-codes";
+import moment from "moment";
+import { SettingsStorage } from "@/services/storages/settings";
 
-@Component
-export default class Subscription extends Vue {
-  public subscription = null;
-  public hasSubscription = false;
-  public days = 30;
+export default defineComponent({
+  setup(_, context) {
+    const subscription = ref(null);
+    const days = ref<number>(0);
+    const locale = ref<string>("en");
 
-  mounted() {
-    this.getSubscription();
-  }
-
-  public getSubscription() {
-    rpc.call(RPC_GET_SUBSCRIPTION_METHOD).then((subscription) => {
-      this.subscription = subscription;
-      this.hasSubscription = true;
+    SettingsStorage.getSetting("locale").then((result) => {
+      locale.value = result;
     });
-  }
 
-  public confirmCancel() {
-    this.$buefy.dialog.confirm({
-      title: "Cancel the subscription",
-      message: "Do you really want to cancel the subscription?",
-      type: "is-warning",
-      onConfirm: () => this.cancelSubscription(),
-    });
-  }
-
-  public confirmPurchase() {
-    this.$buefy.dialog.confirm({
-      title: "Purchase a subscription",
-      message: "Do you really want to purchase ?",
-      type: "is-warning",
-      onConfirm: () => this.purchaseSubscription(),
-    });
-  }
-
-  public cancelSubscription() {
-    rpc.call(RPC_CANCEL_SUBSCRIPTION_METHOD).then(() => {
-      this.$router.go(0);
-    });
-  }
-
-  public purchaseSubscription() {
-    rpc
-      .call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: this.days })
-      .then(() => {
-        this.$router.go(0);
-      })
-      .catch((error) => {
-        if (error.jsonrpcError) {
-          const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
-            showToastMessage("Insufficient balance", ToastType.Danger);
-          }
-        }
+    function getSubscription() {
+      rpc.call(RPC_GET_SUBSCRIPTION_METHOD).then((result) => {
+        subscription.value = result;
       });
-  }
-}
+    }
+
+    function formatDate(date: number) {
+      return moment(new Date(Number(date)))
+        .locale(locale.value)
+        .format("MMMM Do YYYY, h:mm a");
+    }
+
+    function cancelSubscription() {
+      rpc.call(RPC_CANCEL_SUBSCRIPTION_METHOD).then(() => {
+        context.root.$router.go(0);
+      });
+    }
+
+    function displayCancelDialog() {
+      context.root.$buefy.dialog.confirm({
+        title: "Cancel the subscription",
+        message: "Do you really want to cancel the subscription?",
+        type: "is-warning",
+        onConfirm: () => cancelSubscription(),
+      });
+    }
+
+    function displayConfirmDialog() {
+      context.root.$buefy.dialog.confirm({
+        title: "Purchase a subscription",
+        message: "Do you really want to purchase ?",
+        type: "is-warning",
+        onConfirm: () => purchaseSubscription(),
+      });
+    }
+
+    function purchaseSubscription() {
+      rpc
+        .call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: days.value })
+        .then(() => {
+          context.root.$router.go(0);
+        })
+        .catch((error) => {
+          if (error.jsonrpcError) {
+            const { jsonrpcError } = error;
+            if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
+              showToastMessage("Insufficient balance", ToastType.Danger);
+            }
+          }
+        });
+    }
+
+    onMounted(() => {
+      getSubscription();
+    });
+
+    return {
+      displayConfirmDialog,
+      displayCancelDialog,
+      subscription,
+      days,
+      formatDate,
+    };
+  },
+});
 </script>
