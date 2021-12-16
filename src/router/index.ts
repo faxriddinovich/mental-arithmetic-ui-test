@@ -64,6 +64,11 @@ const routes: Array<RouteConfig> = [
         meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
       },
       {
+        path: "/account/sessions",
+        name: "AccountSessions",
+        component: AccountSessions,
+      },
+      {
         path: "subscription",
         name: "AccountSubscription",
         component: AccountSubscription,
@@ -127,11 +132,6 @@ const routes: Array<RouteConfig> = [
       to.params.multiplayerMode = settings.multiplayerMode;
       next();
     }
-  },
-  {
-    path: "/account/sessions",
-    name: "AccountSessions",
-    component: AccountSessions,
   },
   {
     path: "/courses/:id",

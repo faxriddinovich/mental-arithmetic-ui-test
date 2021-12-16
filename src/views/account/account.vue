@@ -3,9 +3,8 @@
     <div class="px-2 py-2">
       <div class="columns is-desktop is-multiline">
         <div class="column is-12-mobile is-4-desktop">
-          <div class="card is-bordered">
+          <div class="card is-bordered" v-if="activeSession">
             <div class="has-background-primary" style="height: 100px"></div>
-
             <div
               class="
                 is-flex is-flex-direction-column is-align-items-center
@@ -36,25 +35,39 @@
               <b-skeleton width="160px" position="is-centered" />
               <b-skeleton width="200px" position="is-centered" />
             </div>
-          </div>
+            <div>
+              <hr class="is-marginless" />
 
-          <div class="card mt-2 p-2 is-bordered">
-            <nav class="level">
-              <div class="level-item has-text-centered">
-                <div>
-                  <p class="heading">Balance (in sums)</p>
-                  <!-- <p class="title">28.000</p> -->
-                  <p class="title">
-                    <span v-if="account">{{
-                      formatCurrency(account.balance)
-                    }}</span>
-                    <b-skeleton width="150px" height="36px" v-else />
-                  </p>
+              <nav class="level p-3">
+                <div class="level-item has-text-centered">
+                  <div>
+                    <p class="heading">Balance (in sums)</p>
+                    <!-- <p class="title">28.000</p> -->
+                    <p class="title">
+                      <span v-if="account">{{
+                        formatCurrency(account.balance)
+                      }}</span>
+                      <b-skeleton width="150px" height="36px" v-else />
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </nav>
+              </nav>
+            </div>
           </div>
           <div class="card mt-2 p-2 is-bordered">
+            <b-menu :activable="false">
+              <b-menu-list>
+                <b-menu-item
+                  icon="users-alt"
+                  label="Sessions"
+                  tag="router-link"
+                  :to="{ name: 'AccountSessions' }"
+                  :active="$route.name === 'AccountSessions'"
+                ></b-menu-item>
+              </b-menu-list>
+            </b-menu>
+          </div>
+          <div class="card mt-2 p-2 is-bordered" v-if="activeSession">
             <b-menu :activable="false">
               <b-menu-list label="Account">
                 <b-menu-item
@@ -70,12 +83,6 @@
                   tag="router-link"
                   :to="{ name: 'AccountSubscription' }"
                   :active="$route.name === 'AccountSubscription'"
-                ></b-menu-item>
-                <b-menu-item
-                  icon="users-alt"
-                  label="Sessions"
-                  tag="router-link"
-                  :to="{ name: 'AccountSessions' }"
                 ></b-menu-item>
               </b-menu-list>
               <b-menu-list
@@ -124,7 +131,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import {
@@ -134,30 +141,29 @@ import {
 import { SessionStorage } from "@/services/storages/session";
 import { avatarFactory, formatCurrency } from "@/common/utils";
 
-@Component
-export default class Account extends Vue {
-  public activeSession: SessionContract | null = null;
-  public account: AccountContract | null = null;
+export default defineComponent({
+  setup() {
+    const activeSession = ref<SessionContract | null>(null);
+    const account = ref<AccountContract | null>(null);
 
-  // utils
-  public formatCurrency = formatCurrency;
-  public avatarFactory = avatarFactory;
+    function getActiveSession() {
+      SessionStorage.getActiveSession().then((result) => {
+        activeSession.value = result;
+      });
+    }
 
-  mounted() {
-    this.getActiveSession();
-    this.getAccount();
-  }
+    function getAccount() {
+      rpc.call(RPC_GET_ACCOUNT_METHOD).then((result) => {
+        account.value = result;
+      });
+    }
 
-  public getActiveSession() {
-    SessionStorage.getActiveSession().then((session) => {
-      this.activeSession = session;
+    onMounted(() => {
+      getActiveSession();
+      getAccount();
     });
-  }
 
-  public getAccount() {
-    rpc.call(RPC_GET_ACCOUNT_METHOD).then((account) => {
-      this.account = account;
-    });
-  }
-}
+    return { activeSession, account, avatarFactory, formatCurrency };
+  },
+});
 </script>
