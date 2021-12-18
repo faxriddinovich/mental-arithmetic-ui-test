@@ -21,7 +21,8 @@
             type="is-primary is-light"
             icon-left="refresh"
             size="is-medium"
-            >Repeat</b-button
+            @click="refresh"
+            >Refresh</b-button
           >
         </div>
       </div>
@@ -133,7 +134,12 @@
                     }"
                   ></div>
                 </div>
-                <div class="columns is-multiline is-mobile is-centered is-vcentered">
+                <div
+                  class="
+                    columns
+                    is-multiline is-mobile is-centered is-vcentered
+                  "
+                >
                   <div
                     class="column is-6-mobile is-4-desktop"
                     v-for="(example, exampleIndex) of queueItem.examples"
@@ -142,9 +148,16 @@
                     <div class="has-text-centered has-text-weight-semibold">
                       {{ exampleIndex + 1 }}.
                     </div>
-                    <form @submit.prevent="enterAnswer2($event, queueIndex, exampleIndex)">
+                    <form
+                      @submit.prevent="
+                        enterAnswer2($event, queueIndex, exampleIndex)
+                      "
+                    >
                       <b-field>
-                        <b-numberinput :controls="false" placeholder="Your answer" />
+                        <b-numberinput
+                          :controls="false"
+                          placeholder="Your answer"
+                        />
                       </b-field>
                       <b-button native-type="submit" type="is-primary" expanded
                         >Check</b-button

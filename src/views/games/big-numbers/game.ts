@@ -60,10 +60,6 @@ export default defineComponent({
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
 
-    context.root.$on('test', () => {
-      alert('emitted');
-    });
-
     const queue = ref(props.queue as QueueItem[]); //reactive
 
     const answerFormValue = ref<number | null>();
@@ -399,17 +395,44 @@ export default defineComponent({
       showExamples();
     }
 
-    onMounted(() => {
-      renderArrayItems(START_ATTENTION_TEXTS, 800, true).then(() => showExamples());
-    });
-
-    onUnmounted(() => {
+    function cleanTimerHandles() {
       timerHandles.forEach((handle) => {
         clearInterval(handle);
       });
+    }
+
+    function cleanCurrentState() {
+      cleanTimerHandles();
+      currentQueueItemIndex = 0;
+      currentExampleIndex = 0;
+      progressPercentage.value = 0;
+      answerFormValue.value = null;
+
+      incorrectAnswersCount.value = 0;
+      correctAnswersCount.value = 0;
+      display.value = null;
+    }
+
+    function refresh() {
+      cleanCurrentState();
+      startGame();
+    }
+
+    function startGame() {
+      renderArrayItems(START_ATTENTION_TEXTS, 800, true)
+        .then(() => showExamples());
+    }
+
+    onMounted(() => {
+      startGame();
+    });
+
+    onUnmounted(() => {
+      cleanTimerHandles();
     });
 
     return {
+      refresh,
       answerFormValue,
       currentExample,
       display,
@@ -427,4 +450,4 @@ export default defineComponent({
       resultScoreTextClasses
     };
   },
-});
+});;
