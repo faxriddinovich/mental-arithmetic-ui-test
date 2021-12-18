@@ -80,7 +80,7 @@
           </div>
         </div>
 
-        <courses res="main" />
+        <courses :kind="0" />
       </b-tab-item>
 
       <b-tab-item value="other">
@@ -90,7 +90,7 @@
         </template>
 
         <div>
-          <courses res="other" />
+          <courses :kind="1" />
         </div>
       </b-tab-item>
       <b-tab-item value="account">

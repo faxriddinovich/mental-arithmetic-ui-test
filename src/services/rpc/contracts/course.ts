@@ -46,8 +46,9 @@ export interface UpdateCourseContract {
   courseId: number;
 }
 
+export type PossibleKinds = 0 | 1;
 export interface GetCoursesContract {
-  res: string;
+  kind?: PossibleKinds;
   searchText?: string;
   filter?: string[];
 }

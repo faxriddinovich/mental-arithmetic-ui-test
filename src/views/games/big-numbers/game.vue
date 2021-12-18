@@ -412,15 +412,15 @@
 }
 
 .is-display-text.is-1 {
-  font-size: 6vw;
+  font-size: 15vmin;
 }
 
 .is-display-text.is-2 {
-  font-size: 10vw;
+  font-size: 20vmin;
 }
 
 .is-display-text.is-3 {
-  font-size: 20vw;
+  font-size: 26vmin;
 }
 
 .is-rotated-90 {

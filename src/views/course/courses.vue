@@ -52,7 +52,7 @@
     </div>
 
     <div class="mt-5">
-      <cloud-loading v-if="isLoading" />
+      <cloud-loading v-if="isFetching" />
       <not-found-box
         :text="$t('no-courses-found')"
         v-else-if="!courses.length"
@@ -76,9 +76,13 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  PropType,
+} from "@vue/composition-api";
 import CourseCard from "@/components/course/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
 import NotFoundBox from "@/components/not-found-box.vue";
@@ -87,40 +91,56 @@ import { RPC_GET_COURSES_METHOD } from "@/services/rpc/methods";
 import {
   CourseContract,
   GetCoursesContract,
+  PossibleKinds,
 } from "@/services/rpc/contracts/course";
 
-@Component({
+export default defineComponent({
   components: { CourseCard, CloudLoading, NotFoundBox },
-})
-export default class Courses extends Vue {
-  @Prop(String) public res!: string;
-  public filter = [];
-  public searchText = "";
-  public isLoading = false;
-  public courses: CourseContract[] = [];
+  props: {
+    kind: {
+      type: Number as PropType<PossibleKinds>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const filter = ref<string[]>([]);
+    const searchText = ref<string>("");
+    const isFetching = ref<boolean>(false);
+    const courses = ref<CourseContract[]>([]);
 
-  mounted() {
-    this.isLoading = true;
-    rpc
-      .call(RPC_GET_COURSES_METHOD, { res: this.res })
-      .then((courses) => {
-        this.courses = courses as any as CourseContract[];
-      })
-      .finally(() => (this.isLoading = false));
-  }
+    function getCourses() {
+      isFetching.value = true;
+      rpc
+        .call(RPC_GET_COURSES_METHOD, { kind: props.kind })
+        .then((result) => {
+          courses.value = result as any as CourseContract[]; // FIXME: fix the any type
+        })
+        .finally(() => {
+          isFetching.value = false;
+        });
+    }
 
-  public search() {
-    const params: GetCoursesContract = { res: this.res };
-    if (this.filter.length) params["filter"] = this.filter;
-    if (this.searchText.length) params["searchText"] = this.searchText;
+    function search() {
+      isFetching.value = true;
+      const params: GetCoursesContract = { kind: props.kind as PossibleKinds };
+      if (filter.value.length) params["filter"] = filter.value;
+      if (searchText.value.length) params["searchText"] = searchText.value;
 
-    this.isLoading = true;
-    rpc
-      .call(RPC_GET_COURSES_METHOD, params)
-      .then((courses) => {
-        this.courses = courses as any as CourseContract[];
-      })
-      .finally(() => (this.isLoading = false));
-  }
-}
+      rpc
+        .call(RPC_GET_COURSES_METHOD, params)
+        .then((result) => {
+          courses.value = result as any as CourseContract[]; // FIXME: fix the any type
+        })
+        .finally(() => {
+          isFetching.value = false;
+        });
+    }
+
+    onMounted(() => {
+      getCourses();
+    });
+
+    return { filter, searchText, isFetching, courses, search };
+  },
+});
 </script>
