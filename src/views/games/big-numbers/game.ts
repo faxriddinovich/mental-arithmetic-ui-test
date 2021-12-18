@@ -274,7 +274,7 @@ export default defineComponent({
             currentArrayIndex = 0;
             resolve();
           }
-        }, interval);
+        }, currentArrayIndex == 0 ? 1000 : interval);
         timerHandles.add(timerHandle);
       });
     }
