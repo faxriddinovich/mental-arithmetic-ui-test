@@ -78,11 +78,10 @@
         <div v-else-if="displayMode === 'answer'" style="width: 100%">
           <div class="columns is-centered is-marginless">
             <div :class="{ column: true, 'is-6-desktop': !multiplayerMode }">
-              <div class="card is-bordered p-2">
+              <div class="card is-bordered p-2 is-word-break">
                 <div class="has-text-centered">
                   <div
                     class="is-size-4 has-text-weight-semibold"
-                    style="word-break: break-all"
                   >
                     {{ currentExample.numbers.join("") }}
                   </div>
@@ -548,5 +547,9 @@
   @include mobile {
     width: 80px;
   }
+}
+
+.is-word-break {
+  word-break: break-all;
 }
 </style>
