@@ -2,9 +2,7 @@
   <div class="container">
     <div class="mx-2 pt-2">
       <div class="columns">
-        <div
-          class="column is-12-mobile is-6-tablet is-5-desktop is-4-widescreen"
-        >
+        <div class="column is-12-touch is-5-desktop is-4-widescreen">
           <course-card :course="course" :isLoading="courseLoading" detailed />
           <div class="mt-3">
             <div class="card p-3" v-if="courseLoading">
@@ -18,8 +16,8 @@
                 <b-button
                   type="is-success"
                   icon-left="shopping-basket"
-                  @click="confirmPurchase"
-                  :loading="purchaseButtonLoading"
+                  @click="displayPurchaseDialog"
+                  :loading="purchaseButtonSpinner"
                   expanded
                   >Purchase
                   <span
@@ -46,13 +44,13 @@
                       >I have a coupon code</b-button
                     >
                   </template>
-                  <form @submit.prevent="purchaseUsingCoupon" class="is-flex">
+                  <form @submit.prevent="purchase(true)" class="is-flex">
                     <b-field class="is-flex-grow-1">
                       <b-input
                         icon="ticket"
                         size="is-small"
                         placeholder="Please write the coupon code her"
-                        v-model="coupon"
+                        v-model="couponText"
                         required
                       ></b-input>
                     </b-field>
@@ -62,7 +60,7 @@
                       type="is-success"
                       size="is-small"
                       class="ml-2"
-                      :loading="couponButtonLoading"
+                      :loading="couponButtonSpinner"
                       >Purchase</b-button
                     >
                   </form>
@@ -97,9 +95,13 @@
         </div>
         <div class="column">
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
-          <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
+          <not-found-box text="No lessons found" v-else-if="!lessons.length" />
           <div class="mb-2" v-for="(lesson, idx) of lessons" :key="lesson.id">
-            <lesson-card :lesson="lesson" :idx="idx + 1" />
+            <lesson-card
+              :lesson="lesson"
+              :index="idx + 1"
+              :canClick="course.purchased || lesson.isTrial"
+            />
           </div>
         </div>
       </div>
@@ -107,7 +109,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
@@ -118,7 +120,6 @@ import {
   RPC_GET_COURSE_METHOD,
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
-  RPC_DELETE_COURSE_METHOD,
 } from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
@@ -129,147 +130,128 @@ import { LessonContract } from "@/services/rpc/contracts/lesson";
 import { formatCurrency } from "@/common/utils";
 import { Session, SessionStorage } from "@/services/storages/session";
 
-@Component({
+export default defineComponent({
   components: { CourseCard, LessonCard, CloudLoading, NotFoundBox },
-})
-export default class Course extends Vue {
-  public activeSession: Session | null = null;
+  setup(_, context) {
+    const course = ref<CourseContract | null>(null);
+    const lessons = ref<LessonContract[] | null>(null);
+    const courseLoading = ref<boolean>(true);
+    const lessonsLoading = ref<boolean>(true);
+    const purchaseButtonSpinner = ref<boolean>(false);
+    const couponButtonSpinner = ref<boolean>(false);
 
-  public course: CourseContract | null = null;
-  public lessons: LessonContract[] = [];
-  public courseLoading = true;
-  public lessonsLoading = true;
-  public purchaseButtonLoading = false;
-  public couponButtonLoading = false;
-  public coupon = "";
-  public searchText = "";
+    const couponText = ref<string>("");
+    const searchText = ref<string>("");
 
-  // utils
-  public formatCurrency = formatCurrency;
+    const activeSession = ref<Session | null>(null);
 
-  mounted() {
-    const courseId = Number(this.$route.params.id);
-    this.getActiveSession();
+    const routeParams = context.root.$route.params;
 
-    rpc
-      .call(RPC_GET_COURSE_METHOD, { courseId })
-      .then((course) => {
-        this.course = course as any as CourseContract;
-      })
-      .catch((error) => {
-        if (error.jsonrpcError) {
-          const { jsonrpcError } = error;
-          console.log(jsonrpcError);
-          if (jsonrpcError.code === RPC_RESOURCE_NOT_FOUND_ERR_CODE) {
-            this.$router.push("/");
-          }
-        }
-      })
-      .finally(() => {
-        this.courseLoading = false;
+    function getActiveSession() {
+      SessionStorage.getActiveSession().then((session) => {
+        activeSession.value = session;
       });
+    }
 
-    rpc
-      .call(RPC_GET_LESSONS_METHOD, { courseId })
-      .then((lessons) => {
-        this.lessons = lessons as any as LessonContract[];
-      })
-      .catch((error) => {
-        if (error.jsonrpcError) {
-          const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_RESOURCE_NOT_FOUND_ERR_CODE) {
-            this.$router.push("/");
+    function getCourse() {
+      rpc
+        .call(RPC_GET_COURSE_METHOD, { courseId: routeParams.id })
+        .then((result) => {
+          course.value = result;
+        })
+        .catch((error) => {
+          if (error.jsonrpcError) {
+            const { jsonrpcError } = error;
+            if (jsonrpcError.code === RPC_RESOURCE_NOT_FOUND_ERR_CODE) {
+              context.root.$router.push("/");
+            }
           }
-        }
-      })
-      .finally(() => (this.lessonsLoading = false));
-  }
+        })
+        .finally(() => {
+          courseLoading.value = false;
+        });
+    }
 
-  public getActiveSession() {
-    SessionStorage.getActiveSession().then((session) => {
-      this.activeSession = session;
-    });
-  }
-
-  public confirmPurchase() {
-    this.$buefy.dialog.confirm({
-      message:
-        'Do you really want to purchase this course ?<br><span class="has-text-weight-semibold">After purchasing the course you cannot cancel this operation!</span>',
-      onConfirm: () => this.purchase(),
-      confirmText: "Purchase",
-      hasIcon: true,
-      icon: "shopping-basket",
-    });
-  }
-
-  public confirmDeleteCourse() {
-    this.$buefy.dialog.confirm({
-      title: "Deleting course",
-      message: "Are you sure you want to <b>delete</b> this course?",
-      confirmText: "Delete Course",
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => this.deleteCourse(),
-    });
-  }
-
-  public purchaseUsingCoupon() {
-    const courseId = Number(this.$route.params.id);
-    this.couponButtonLoading = true;
-    rpc
-      .call(RPC_PURCHASE_COURSE_METHOD, {
-        courseId,
-        coupon: this.coupon,
-      })
-      .then(() => {
-        this.$router.go(0);
-      })
-      .catch(() => {
-        showToastMessage(
-          "This operation cannot be performed",
-          ToastType.Danger
-        );
-      })
-      .finally(() => (this.couponButtonLoading = false));
-  }
-
-  public purchase() {
-    this.purchaseButtonLoading = true;
-    rpc
-      .call(RPC_PURCHASE_COURSE_METHOD, {
-        courseId: Number(this.$route.params.id),
-      })
-      .then(() => {
-        this.$router.go(0);
-      })
-      .catch((error) => {
-        if (error.jsonrpcError) {
-          const { jsonrpcError } = error;
-          if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
-            showToastMessage("Insufficient balance", ToastType.Danger);
-            return;
+    function getLessons() {
+      rpc
+        .call(RPC_GET_LESSONS_METHOD, { courseId: routeParams.id })
+        .then((result) => {
+          lessons.value = result;
+        })
+        .catch((error) => {
+          if (error.jsonrpcError) {
+            const { jsonrpcError } = error;
+            if (jsonrpcError.code === RPC_RESOURCE_NOT_FOUND_ERR_CODE) {
+              context.root.$router.push("/");
+            }
           }
-        }
-        showToastMessage(
-          "This operation cannot be performed",
-          ToastType.Danger
-        );
-      })
-      .finally(() => (this.purchaseButtonLoading = false));
-  }
+        })
+        .finally(() => {
+          lessonsLoading.value = false;
+        });
+    }
 
-  public deleteCourse() {
-    const courseId = Number(this.$route.params.id);
+    function purchase(usingCoupon = false) {
+      if (usingCoupon) couponButtonSpinner.value = true;
+      else purchaseButtonSpinner.value = true;
+      const params: any = { courseId: routeParams.id }; // FIXME: fix the any type
+      if (usingCoupon) params["coupon"] = couponText.value;
+      rpc
+        .call(RPC_PURCHASE_COURSE_METHOD, params)
+        .then(() => {
+          context.root.$router.go(0);
+        })
+        .catch((error) => {
+          if (error.jsonrpcError) {
+            const { jsonrpcError } = error;
+            if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
+              showToastMessage("Insufficient balance", ToastType.Danger);
+              return;
+            }
+            // TODO: maybe we should handle RPC_PURCHASE_INVALID_COUPON_ERR_CODE here ?
+            showToastMessage(
+              "This operation cannot be performed",
+              ToastType.Danger
+            );
+          }
+        })
+        .finally(() => {
+          purchaseButtonSpinner.value = false;
+          if (usingCoupon) couponButtonSpinner.value = false;
+        });
+    }
 
-    rpc
-      .call(RPC_DELETE_COURSE_METHOD, { courseId })
-      .then(() => {
-        this.$router.push({ name: "Home" });
-        showToastMessage("Successfully deleted!", ToastType.Warning);
-      })
-      .catch(() => {
-        showToastMessage("Unable to delete the course!", ToastType.Danger);
+    function displayPurchaseDialog() {
+      context.root.$buefy.dialog.confirm({
+        message:
+          'Do you really want to purchase this course ?<br><span class="has-text-weight-semibold">After purchasing the course you cannot cancel this operation!</span>',
+        onConfirm: () => purchase(),
+        confirmText: "Purchase",
+        hasIcon: true,
+        icon: "shopping-basket",
       });
-  }
-}
+    }
+
+    onMounted(() => {
+      getActiveSession();
+      getCourse();
+      getLessons();
+    });
+
+    return {
+      activeSession,
+      course,
+      lessons,
+      purchaseButtonSpinner,
+      couponButtonSpinner,
+      lessonsLoading,
+      courseLoading,
+      couponText,
+      searchText,
+      formatCurrency,
+      displayPurchaseDialog,
+      purchase,
+    };
+  },
+});
 </script>
