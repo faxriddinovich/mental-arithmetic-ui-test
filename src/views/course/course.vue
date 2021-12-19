@@ -96,50 +96,6 @@
           >
         </div>
         <div class="column">
-          <div
-            class="card p-2 mb-2 is-bordered"
-            v-if="
-              activeSession &&
-              !courseLoading &&
-              course.author.id === activeSession.id
-            "
-          >
-            <div
-              class="
-                is-flex is-justify-content-space-between is-align-items-center
-              "
-            >
-              <div>
-                <b-button
-                  icon-left="chart-line"
-                  size="is-small"
-                  type="is-primary"
-                  >Scores</b-button
-                >
-                <b-button
-                  tag="router-link"
-                  :to="{ name: 'UpdateCourse' }"
-                  class="ml-2"
-                  icon-left="pen"
-                  size="is-small"
-                  type="is-primary"
-                  >Update course</b-button
-                >
-                <b-button
-                  class="ml-2"
-                  icon-left="trash-alt"
-                  size="is-small"
-                  type="is-danger"
-                  @click="confirmDeleteCourse"
-                  >Delete course</b-button
-                >
-              </div>
-
-              <b-button icon-left="plus" size="is-small" type="is-success"
-                >Add lesson</b-button
-              >
-            </div>
-          </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <NotFoundBox text="No lessons found" v-else-if="!lessons.length" />
           <div class="mb-2" v-for="(lesson, idx) of lessons" :key="lesson.id">
