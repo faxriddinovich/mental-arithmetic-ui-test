@@ -77,9 +77,9 @@
             <span class="has-text-success" v-if="course.price === 0"
               >*FREE</span
             >
-            <span class="has-text-primary" v-else>{{
+            <span class="has-text-primary is-size-4" v-else>{{
               formatCurrency(course.price)
-            }}</span>
+            }}</span> <span class="has-text-weight-light">uzs</span>
           </span>
         </div>
       </div>

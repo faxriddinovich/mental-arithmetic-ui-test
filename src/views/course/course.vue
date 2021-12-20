@@ -20,11 +20,6 @@
                   :loading="purchaseButtonSpinner"
                   expanded
                   >Purchase
-                  <span
-                    class="has-text-weight-semibold"
-                    v-if="course.price !== 0"
-                    >{{ formatCurrency(course.price) }}</span
-                  >
                 </b-button>
 
                 <b-collapse
@@ -49,7 +44,7 @@
                       <b-input
                         icon="ticket"
                         size="is-small"
-                        placeholder="Please write the coupon code her"
+                        placeholder="Please write the coupon code here"
                         v-model="couponText"
                         required
                       ></b-input>
