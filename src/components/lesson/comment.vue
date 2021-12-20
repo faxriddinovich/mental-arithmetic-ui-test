@@ -2,17 +2,18 @@
   <article class="media my-2 py-2">
     <figure class="media-left">
       <p class="image is-64x64">
-        <b-skeleton height="64px" v-if="isLoading" circle />
+        <b-skeleton height="64px" v-if="!comment" circle />
         <b-image
           class="is-64x64"
           :src="avatarFactory(comment.creator.username)"
           rounded
+          v-else
         />
       </p>
     </figure>
     <div class="media-content">
       <div class="content">
-        <b-skeleton width="200px" v-if="isLoading" />
+        <b-skeleton width="200px" v-if="!comment" />
         <span v-else>
           <strong :class="comment.creator.isBlocked && 'is-blocked'">{{
             comment.creator.username
@@ -29,14 +30,14 @@
           </span>
         </span>
 
-        <b-skeleton :count="3" v-if="isLoading" />
+        <b-skeleton :count="3" v-if="!comment" />
         <div v-else>
           {{ comment.body }}
         </div>
       </div>
       <nav class="level is-mobile">
         <div class="level-left">
-          <b-skeleton width="80px" v-if="isLoading" />
+          <b-skeleton width="80px" v-if="!comment" />
 
           <b-button
             icon-left="corner-up-left"
@@ -56,49 +57,65 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Base } from "@/mixins/base.mixin";
-import { CommentContract } from "@/rpc/contracts/lesson";
-import { SessionContract } from "@/rpc/contracts/account";
+import {
+  defineComponent,
+  PropType,
+  onMounted,
+  ref,
+  computed,
+} from "@vue/composition-api";
+import { CommentContract } from "@/services/rpc/contracts/comment";
+import { SessionStorage, Session } from "@/services/storages/session";
 import { avatarFactory } from "@/common/utils";
 
-@Component
-export default class Comment extends Vue {
-  @Prop(Object) public comment!: CommentContract;
+export default defineComponent({
+  props: {
+    comment: {
+      type: Object as PropType<CommentContract>,
+      reqiured: false,
+    },
+  },
+  setup(props, context) {
+    const activeSession = ref<Session | null>(null);
 
-  public activeSession!: SessionContract | null = null;
-  public avatarFactory = avatarFactory;
-
-  public get isLoading() {
-    return !this.comment;
-  }
-
-  public get canDelete() {
-    const { activeSession, comment, isLoading } = this;
-    return (
-      activeSession &&
-      !isLoading &&
-      (activeSession.role === "root" || comment.creator.id === activeSession.id)
-    );
-  }
-
-  public get canReply() {
-    const { activeSession, comment } = this;
-    return activeSession && comment.creator.id !== activeSession.id;
-  }
-
-  mounted() {
-    this.$store.dispatch("getActiveSession").then((session) => {
-      this.activeSession = session;
+    const canDelete = computed(() => {
+      const role = activeSession.value?.role;
+      const isCreator = props.comment?.creator.id === activeSession.value?.id;
+      return (
+        (activeSession.value &&
+          props.comment &&
+          activeSession.value &&
+          role == "root") ||
+        isCreator
+      );
     });
-  }
 
-  public emitReply() {
-    this.$emit("reply", this.comment.creator.username);
-  }
+    const canReply = computed(() => {
+      const activeSessionId = activeSession.value?.id;
+      return (
+        activeSession.value && props.comment?.creator.id !== activeSessionId
+      );
+    });
 
-  public emitDelete() {
-    this.$emit("delete", this.comment.id);
-  }
-}
+    function getActiveSession() {
+      SessionStorage.getActiveSession().then((session) => {
+        activeSession.value = session;
+      });
+    }
+
+    function emitDelete() {
+      context.emit("delete", props.comment!.id);
+    }
+
+    function emitReply() {
+      context.emit("reply", props.comment!.creator.username);
+    }
+
+    onMounted(() => {
+      getActiveSession();
+    });
+
+    return { avatarFactory, canDelete, canReply, emitDelete, emitReply };
+  },
+});
 </script>
