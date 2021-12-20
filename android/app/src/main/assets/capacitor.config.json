@@ -1,1 +1,6 @@
-{"appId":"org.mental.arithmetic.app","appName":"Mental arithmetic","bundledWebRuntime":false,"webDir":"dist","server":{"url":"http://192.168.1.104:8080"}}
+{
+	"appId": "org.mental.arithmetic.app",
+	"appName": "Mental arithmetic",
+	"bundledWebRuntime": false,
+	"webDir": "dist"
+}

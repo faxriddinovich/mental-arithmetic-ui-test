@@ -1,0 +1,45 @@
+dependencies: \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPlugin.m \
+  /Users/mhw0/cc/mental/ui/ios/DerivedData/6F654BC6-2465-42F1-9E8D-55F44F576BCB/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/module.modulemap \
+  /Users/mhw0/cc/mental/ui/ios/App/Pods/Target\ Support\ Files/Capacitor/Capacitor-prefix.pch \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/kcdata.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/uuid.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/netinet6.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/machine.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/device.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/mach_debug.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/mach_machine.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/mach.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/bank.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/darwin_posix_sys_types.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/netinet.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/net.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/darwin_cdefs.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/mach-o/compact_unwind_encoding.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk/usr/include/mach-o/dyld.modulemap \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPlugin.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgedJSTypes.h \
+  /Users/mhw0/cc/mental/ui/ios/DerivedData/6F654BC6-2465-42F1-9E8D-55F44F576BCB/Build/Products/Debug-iphonesimulator/Capacitor/Capacitor.framework/Headers/Capacitor-Swift.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/Capacitor.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPluginCall.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgedPlugin.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPPluginMethod.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.h \
+  /Users/mhw0/cc/mental/ui/ios/DerivedData/6F654BC6-2465-42F1-9E8D-55F44F576BCB/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/CapacitorCordova.build/module.modulemap \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/NSDictionary+CordovaPreferences.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVPlugin+Resources.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVConfigParser.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVPluginManager.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVCommandDelegateImpl.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVScreenOrientationDelegate.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVURLProtocol.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVInvokedUrlCommand.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVCommandDelegate.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVPluginResult.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVPlugin.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVAvailability.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDV.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVViewController.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/CapacitorCordova.h \
+  /Users/mhw0/cc/mental/ui/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceConfiguration.h
