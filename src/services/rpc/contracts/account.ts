@@ -22,6 +22,15 @@ export interface SessionContract {
 }
 
 export interface UpdateAccountContract {
+  accountId: number,
+  username?: string,
+  email?: string,
+  password?: string,
+  role?: string,
+  balance?: number,
+}
+
+export interface UpdateOwnAccountContract {
   username?: string,
   email?: string,
   password?: string

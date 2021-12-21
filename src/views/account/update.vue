@@ -53,7 +53,7 @@ import {
 } from "@/services/rpc/methods";
 import {
   AccountContract,
-  UpdateAccountContract,
+  UpdateOwnAccountContract ,
 } from "@/services/rpc/contracts/account";
 
 export default defineComponent({
@@ -75,7 +75,7 @@ export default defineComponent({
     };
 
     const updateAccount = () => {
-      const params: UpdateAccountContract = {};
+      const params: UpdateOwnAccountContract = {};
 
       for (const change of changed.value!) {
         params[change!.path![0]] = (change as any).lhs; // FIXME

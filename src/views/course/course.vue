@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="mx-2 pt-2">
-      <div class="columns">
+      <div class="columns is-multiline">
         <div class="column is-12-touch is-5-desktop is-4-widescreen">
           <course-card :course="course" :isLoading="courseLoading" detailed />
           <div class="mt-3">

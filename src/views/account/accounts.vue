@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="account">
+    <div v-if="pickedAccount">
       <div class="card p-3 mb-3 is-bordered">
-        <form @submit.prevent="saveChanges">
+        <form @submit.prevent="updateAccount">
           <b-field label="Username">
             <b-input
               v-model="localAccount.username"
@@ -49,25 +49,25 @@
             <b-button
               icon-left="times"
               type="is-danger"
-              @click="confirmDeleteAccount"
+              @click="displayDeleteAccountDialog"
               >Delete</b-button
             >
             <b-button
               native-type="submit"
               icon-left="save"
               type="is-success"
-              :disabled="!fieldDiff"
+              :disabled="!changed"
               >Save</b-button
             >
           </div>
         </form>
       </div>
-      <b-button icon-left="arrow-left" @click="account = null" expanded
+      <b-button icon-left="arrow-left" @click="pickedAccount = null" expanded
         >Back</b-button
       >
     </div>
 
-    <div v-if="!account">
+    <div v-if="!pickedAccount">
       <div class="card p-3 mb-3 is-bordered">
         <form @submit.prevent="getAccounts" class="is-flex">
           <b-input
@@ -87,7 +87,7 @@
         </form>
       </div>
       <div class="card px-3 py-2 is-bordered">
-        <div v-if="accounts.length">
+        <div v-if="accounts && accounts.length">
           <article
             class="media m-0 py-2"
             v-for="(account, index) of accounts"
@@ -131,7 +131,12 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  ref,
+} from "@vue/composition-api";
 import { diff } from "deep-diff";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
@@ -140,76 +145,90 @@ import {
   RPC_UPDATE_ACCOUNT_METHOD,
   RPC_DELETE_ACCOUNT_METHOD,
 } from "@/services/rpc/methods";
-import { avatarFactory, formatCurrency } from "@/common/utils";
+import { avatarFactory } from "@/common/utils";
+import {
+  AccountContract,
+  UpdateAccountContract,
+} from "@/services/rpc/contracts/account";
 
-@Component
-export default class Accounts extends Vue {
-  public searchText = "";
-  public accounts = [];
+export default defineComponent({
+  setup(_, context) {
+    const accounts = ref<AccountContract[] | null>(null);
+    const searchText = ref<string>("");
 
-  public localAccount = null;
-  public account = null;
+    const localAccount = ref<AccountContract | null>(null);
+    const pickedAccount = ref<AccountContract | null>(null); // TODO: is this ok?
 
-  public avatarFactory = avatarFactory;
-  public formatCurrency = formatCurrency;
+    const changed = computed(() => {
+      return diff(localAccount.value, pickedAccount.value);
+    });
 
-  public get fieldDiff() {
-    return diff(this.account, this.localAccount);
-  }
-
-  mounted() {
-    this.getAccounts();
-  }
-
-  public pickAccount(index: number) {
-    const account = this.accounts[index];
-    this.account = Object.assign({}, account);
-    this.localAccount = Object.assign({}, account);
-  }
-
-  //FIXME: fix typescript types
-  public saveChanges() {
-    const params = {
-      accountId: this.account.id,
-    };
-
-    for (const diff of this.fieldDiff) {
-      params[diff.path[0]] = diff.rhs;
+    function pickAccount(index: number) {
+      const account = accounts.value![index];
+      pickedAccount.value = Object.assign({}, account);
+      localAccount.value = Object.assign({}, account);
     }
 
-    rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
-      this.account = Object.assign({}, this.localAccount);
-      showToastMessage("Successfully updated!", ToastType.Success);
-    });
-  }
-
-  public confirmDeleteAccount() {
-    this.$buefy.dialog.confirm({
-      message: "Do you really want to delete this account?",
-      onConfirm: () => this.deleteAccount(),
-      type: "is-danger",
-      hasIcon: true,
-      icon: "times",
-    });
-  }
-
-  public deleteAccount() {
-    rpc
-      .call(RPC_DELETE_ACCOUNT_METHOD, { accountId: this.account.id })
-      .then(() => {
-        showToastMessage("Successfully deleted!", ToastType.Warning);
-        this.$router.push({ name: "Accounts" });
+    function getAccounts() {
+      const params = searchText.value.length
+        ? { searchText: searchText.value }
+        : undefined;
+      rpc.call(RPC_GET_ACCOUNTS_METHOD, params).then((result) => {
+        accounts.value = result;
       });
-  }
+    }
 
-  //FIXME: fix typescript types
-  public getAccounts() {
-    const params = this.searchText.length
-      ? { text: this.searchText }
-      : undefined;
-    rpc.call(RPC_GET_ACCOUNTS_METHOD, params).then((accounts) => {
-      this.accounts = accounts;
+    function deleteAccount() {
+      rpc
+        .call(RPC_DELETE_ACCOUNT_METHOD, { accountId: pickedAccount.value!.id })
+        .then(() => {
+          showToastMessage("Successfully deleted!", ToastType.Warning);
+          context.root.$router.push({ name: "Accounts" });
+        });
+    }
+
+    function displayDeleteAccountDialog() {
+      context.root.$buefy.dialog.confirm({
+        message: "Do you really want to delete this account?",
+        onConfirm: () => deleteAccount(),
+        type: "is-danger",
+        hasIcon: true,
+        icon: "times",
+      });
+    }
+
+    function updateAccount() {
+      const params: UpdateAccountContract = {
+        accountId: pickedAccount.value!.id,
+      };
+      console.log(changed.value);
+
+      for (const change of changed.value!) {
+        params[change.path[0]] = (change as any).lhs; // FIXME
+      }
+
+      rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
+        pickedAccount.value = Object.assign({}, localAccount.value);
+        showToastMessage("Successfully updated!", ToastType.Success);
+      });
+    }
+
+    onMounted(() => {
+      getAccounts();
     });
-  }
-}
+
+    return {
+      changed,
+      accounts,
+      localAccount,
+      pickedAccount,
+      searchText,
+      displayDeleteAccountDialog,
+      getAccounts,
+      updateAccount,
+      pickAccount,
+      avatarFactory,
+    };
+  },
+});
 </script>
