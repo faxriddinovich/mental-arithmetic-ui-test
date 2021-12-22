@@ -145,10 +145,14 @@ export default class CreateCourse extends Vue {
   public createCourse() {
     this.createButtonLoading = true;
 
+    const queryParams = this.$root.$route.query;
+    const kind = queryParams.kind ? Number(queryParams.kind) : 0; // TODO: queryParams.kind may not be a string number
+
     const course: CreateCourseContract = {
       title: this.title,
       description: this.description,
       category: this.category,
+      kind
     };
 
     if (this.coupon.length) course["coupon"] = this.coupon;

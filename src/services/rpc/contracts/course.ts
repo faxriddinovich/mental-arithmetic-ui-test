@@ -40,6 +40,7 @@ export interface CreateCourseContract {
   coupon?: string;
   price?: number;
   image?: string;
+  kind: number
 }
 
 export interface UpdateCourseContract {
