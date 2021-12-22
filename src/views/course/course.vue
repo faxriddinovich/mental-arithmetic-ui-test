@@ -99,21 +99,35 @@
             "
             v-if="canManageCourse"
           >
-            <b-button type="is-primary" icon-left="chart">Statistics</b-button>
-            <div class="buttons">
-              <b-button
-                type="is-warning"
-                tag="router-link"
-                :to="{ name: 'UpdateCourse', params: { id: $route.params.id } }"
-                icon-left="pen"
-                >Update the course</b-button
-              >
-              <b-button
-                type="is-danger"
-                icon-left="trash"
-                @click="displayConfirmDeleteDialog"
-                >Delete the course</b-button
-              >
+            <div>
+              <div class="buttons">
+                <b-button type="is-primary" icon-left="chart"
+                  >Statistics</b-button
+                >
+                <b-button type="is-success" icon-left="plus"
+                  >Add lesson</b-button
+                >
+              </div>
+            </div>
+            <div>
+              <div class="buttons">
+                <b-button
+                  type="is-warning"
+                  tag="router-link"
+                  :to="{
+                    name: 'UpdateCourse',
+                    params: { id: $route.params.id },
+                  }"
+                  icon-left="pen"
+                  >Update</b-button
+                >
+                <b-button
+                  type="is-danger"
+                  icon-left="trash"
+                  @click="displayConfirmDeleteDialog"
+                  >Delete</b-button
+                >
+              </div>
             </div>
           </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
@@ -123,6 +137,7 @@
               :lesson="lesson"
               :index="idx + 1"
               :canClick="course.purchased || lesson.isTrial"
+              :canManage="canManageCourse"
             />
           </div>
         </div>

@@ -7,32 +7,39 @@
       <span class="is-size-6">
         <span class="has-text-weight-bold" v-if="index">{{ index }}. </span>
         <span class="has-text-weight-semibold">{{ lesson.title }} </span>
+        <b-tag
+          type="is-primary"
+          class="has-text-weight-bold ml-1"
+          v-if="lesson.isTrial"
+          >TRIAL</b-tag
+        >
+        <b-tag
+          type="is-success"
+          class="has-text-weight-bold ml-1"
+          v-if="isNewLesson(lesson.createdAt)"
+          >NEW</b-tag
+        >
       </span>
       <hr class="mt-1 mb-1" />
-      <div>
-        <span class="has-text-weight-semibold"
-          ><b-icon icon="paperclip" />{{ lesson.attachmentsCount }}</span
-        >
-        <span class="ml-1 has-text-weight-semibold"
-          ><b-icon icon="ruler" />{{ lesson.tasksCount }}</span
-        >
-        <span class="ml-1 has-text-weight-semibold"
-          ><b-icon icon="comment-dots" />{{ lesson.commentsCount }}</span
-        >
-        <span class="ml-1">
-          <b-tag
-            type="is-primary"
-            class="has-text-weight-bold ml-1"
-            v-if="lesson.isTrial"
-            >TRIAL</b-tag
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
+        <div>
+          <span class="ml-1"> </span>
+          <span class="has-text-weight-semibold"
+            ><b-icon icon="paperclip" />{{ lesson.attachmentsCount }}</span
           >
-          <b-tag
-            type="is-success"
-            class="has-text-weight-bold ml-1"
-            v-if="isNewLesson(lesson.createdAt)"
-            >NEW</b-tag
+          <span class="ml-1 has-text-weight-semibold"
+            ><b-icon icon="ruler" />{{ lesson.tasksCount }}</span
           >
-        </span>
+          <span class="ml-1 has-text-weight-semibold"
+            ><b-icon icon="comment-dots" />{{ lesson.commentsCount }}</span
+          >
+        </div>
+        <div>
+          <div class="buttons" v-if="canManage">
+            <b-button tag="router-link" to="/" size="is-small" icon-left="pen" />
+            <b-button  tag="router-link" to="/" size="is-small" icon-left="trash" />
+          </div>
+        </div>
       </div>
     </div>
   </router-link>
@@ -56,6 +63,11 @@ export default defineComponent({
       default: true,
       required: false,
     },
+canManage: {
+ type: Boolean,
+ default: false,
+required: false
+}
   },
   setup(props) {
     const cardClasses = computed(() => {
