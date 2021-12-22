@@ -77,9 +77,13 @@
             <span class="has-text-success" v-if="course.price === 0"
               >*FREE</span
             >
-            <span :class="priceClasses" v-else>{{
-              formatCurrency(course.price)
-            }}</span> <span class="has-text-weight-light">uzs</span>
+            <span v-else
+              >
+              <span :class="priceClasses">
+               {{ formatCurrency(course.price) }}
+                <span class="has-text-weight-light">uzs</span>
+              </span></span
+            >
           </span>
         </div>
       </div>
@@ -135,11 +139,9 @@ export default class CourseCard extends Vue {
   }
 
   public get priceClasses() {
-    const classes: string[] = ['has-text-primary'];
-    if(this.detailed)
-      classes.push('is-size-4');
-    else
-      classes.push('is-size-5');
+    const classes: string[] = ["has-text-primary"];
+    if (this.detailed) classes.push("is-size-4");
+    else classes.push("is-size-5");
 
     return classes;
   }
