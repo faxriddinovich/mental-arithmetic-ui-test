@@ -39,7 +39,7 @@
                       >I have a coupon code</b-button
                     >
                   </template>
-                  <form @submit.prevent="purchase(true)" class="is-flex">
+                  <form @submit.prevent="purchaseCourse(true)" class="is-flex">
                     <b-field class="is-flex-grow-1">
                       <b-input
                         icon="ticket"
@@ -89,6 +89,33 @@
           >
         </div>
         <div class="column">
+          <div
+            class="
+              is-flex is-justify-content-space-between
+              card
+              mb-2
+              p-2
+              is-bordered
+            "
+            v-if="canManageCourse"
+          >
+            <b-button type="is-primary" icon-left="chart">Statistics</b-button>
+            <div class="buttons">
+              <b-button
+                type="is-warning"
+                tag="router-link"
+                :to="{ name: 'UpdateCourse', params: { id: $route.params.id } }"
+                icon-left="pen"
+                >Update the course</b-button
+              >
+              <b-button
+                type="is-danger"
+                icon-left="trash"
+                @click="displayConfirmDeleteDialog"
+                >Delete the course</b-button
+              >
+            </div>
+          </div>
           <cloud-loading class="mt-2" v-if="lessonsLoading" />
           <not-found-box text="No lessons found" v-else-if="!lessons.length" />
           <div class="mb-2" v-for="(lesson, idx) of lessons" :key="lesson.id">
@@ -104,7 +131,12 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "@vue/composition-api";
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  ref,
+} from "@vue/composition-api";
 import CourseCard from "@/components/course/card.vue";
 import LessonCard from "@/components/lesson/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";
@@ -115,6 +147,7 @@ import {
   RPC_GET_COURSE_METHOD,
   RPC_GET_LESSONS_METHOD,
   RPC_PURCHASE_COURSE_METHOD,
+  RPC_DELETE_COURSE_METHOD,
 } from "@/services/rpc/methods";
 import {
   RPC_RESOURCE_NOT_FOUND_ERR_CODE,
@@ -141,6 +174,15 @@ export default defineComponent({
     const activeSession = ref<Session | null>(null);
 
     const routeParams = context.root.$route.params;
+
+    const canManageCourse = computed(() => {
+      const isRoot = activeSession.value && activeSession.value.role === "root";
+      const isCourseAuthor =
+        activeSession.value &&
+        course.value &&
+        course.value.author.id === activeSession.value.id;
+      return isRoot || isCourseAuthor;
+    });
 
     function getActiveSession() {
       SessionStorage.getActiveSession().then((session) => {
@@ -186,7 +228,7 @@ export default defineComponent({
         });
     }
 
-    function purchase(usingCoupon = false) {
+    function purchaseCourse(usingCoupon = false) {
       if (usingCoupon) couponButtonSpinner.value = true;
       else purchaseButtonSpinner.value = true;
       const params: any = { courseId: routeParams.id }; // FIXME: fix the any type
@@ -216,14 +258,30 @@ export default defineComponent({
         });
     }
 
+    function deleteCourse() {
+      rpc
+        .call(RPC_DELETE_COURSE_METHOD, { courseId: Number(routeParams.id) })
+        .then(() => {
+          showToastMessage("Course successfully deleted!", ToastType.Warning);
+          context.root.$router.push({ name: "Home" });
+        });
+    }
+
     function displayPurchaseDialog() {
       context.root.$buefy.dialog.confirm({
         message:
           'Do you really want to purchase this course ?<br><span class="has-text-weight-semibold">After purchasing the course you cannot cancel this operation!</span>',
-        onConfirm: () => purchase(),
+        onConfirm: () => purchaseCourse(),
         confirmText: "Purchase",
         hasIcon: true,
         icon: "shopping-basket",
+      });
+    }
+    function displayConfirmDeleteDialog() {
+      context.root.$buefy.dialog.confirm({
+        message: "Do you really want to delete this course ?",
+        onConfirm: () => deleteCourse(),
+        confirmText: "Delete",
       });
     }
 
@@ -237,6 +295,7 @@ export default defineComponent({
       activeSession,
       course,
       lessons,
+      canManageCourse,
       purchaseButtonSpinner,
       couponButtonSpinner,
       lessonsLoading,
@@ -244,8 +303,9 @@ export default defineComponent({
       couponText,
       searchText,
       formatCurrency,
+      displayConfirmDeleteDialog,
       displayPurchaseDialog,
-      purchase,
+      purchaseCourse,
     };
   },
 });
