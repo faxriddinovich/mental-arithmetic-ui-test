@@ -22,7 +22,7 @@
             </div>
             <b-skeleton width="350px" v-if="lessonLoading" />
             <nav
-              class="breadcrumb has-arrow-separator"
+              class="breadcrumb has-arrow-separator is-clipped"
               aria-label="breadcrumbs"
               v-else
             >
