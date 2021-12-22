@@ -18,7 +18,9 @@
       <div class="has-text-weight-semibold is-size-5">
         <b-skeleton width="70%" v-if="isLoading" />
         <div :class="!detailed && 'is-card-title'" v-else>
-          <span v-if="detailed">{{ course.title }}</span>
+          <span class="is-clickable" @click="copyCourseLink" v-if="detailed"
+            >{{ course.title }} <b-icon icon="clipboard-alt" />
+          </span>
           <router-link
             :to="{ name: 'Course', params: { id: course.id } }"
             class="has-text-dark"
@@ -77,10 +79,9 @@
             <span class="has-text-success" v-if="course.price === 0"
               >*FREE</span
             >
-            <span v-else
-              >
+            <span v-else>
               <span :class="priceClasses">
-               {{ formatCurrency(course.price) }}
+                {{ formatCurrency(course.price) }}
                 <span class="has-text-weight-light">uzs</span>
               </span></span
             >
@@ -123,6 +124,9 @@ import { RPC_RATE_COURSE_METHOD } from "@/services/rpc/methods";
 import { CourseContract } from "@/services/rpc/contracts/course";
 import { Session, SessionStorage } from "@/services/storages/session";
 import { formatCurrency, fsBucketFactory } from "@/common/utils";
+import { showToastMessage, ToastType } from "@/services/toast";
+import { writeToClipboard } from "@/services/clipboard";
+import { isNative } from "@/services/platform";
 
 @Component
 export default class CourseCard extends Vue {
@@ -136,6 +140,7 @@ export default class CourseCard extends Vue {
 
   mounted() {
     this.getActiveSession();
+    console.log(this.$route.path);
   }
 
   public get priceClasses() {
@@ -150,6 +155,15 @@ export default class CourseCard extends Vue {
     SessionStorage.getActiveSession().then((session) => {
       this.activeSession = session;
     });
+  }
+
+  public async copyCourseLink() {
+    const currentPath = this.$route.path;
+    const url = isNative()
+      ? "mental-arithmetic:/" + currentPath
+      : "http://production-ui.url" + currentPath
+    await writeToClipboard({ url });
+    showToastMessage("Copied to clipboard", ToastType.Success);
   }
 
   public get placeholderImg() {

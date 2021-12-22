@@ -1,1 +1,2 @@
-export { Storage } from "./storage";
+export * from "./storage";
+export * from './platform';
