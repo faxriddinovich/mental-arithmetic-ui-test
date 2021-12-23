@@ -52,4 +52,5 @@ export interface GetCoursesContract {
   kind?: PossibleKinds;
   searchText?: string;
   filter?: string[];
+  page?: number
 }

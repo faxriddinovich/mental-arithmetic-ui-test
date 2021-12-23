@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="card p-3">
-      <form @submit.prevent="search">
+      <form @submit.prevent="getCourses(true)">
         <b-field>
           <p class="control">
             <b-dropdown v-model="filter" aria-role="list" multiple>
@@ -106,16 +106,33 @@ export default defineComponent({
     const canLoadMore = ref<boolean>(true);
     const currentPage = ref<number>(1);
 
-    function getCourses() {
+    function getCourses(search = false) {
       isFetching.value = true;
+      const params: GetCoursesContract = { kind: props.kind };
+
+      if(searchText.value.length)
+        params.searchText = searchText.value;
+
+      if(filter.value.length)
+        params.filter = filter.value;
+
+      if(search) {
+        currentPage.value = 1;
+        canLoadMore.value = true;
+      }
+
+      params.page = currentPage.value;
+
       rpc
-        .call(RPC_GET_COURSES_METHOD, {
-          kind: props.kind,
-          page: currentPage.value,
-        })
+        .call(RPC_GET_COURSES_METHOD, params)
         .then((result) => {
-          if (result.length) courses.value.push(...result);
-          else canLoadMore.value = false;
+          if(search)
+            return courses.value = result;
+
+          if(result.length)
+            courses.value.push(...result);
+          else
+            canLoadMore.value = false;
         })
         .finally(() => {
           isFetching.value = false;
@@ -127,22 +144,6 @@ export default defineComponent({
       getCourses();
     }
 
-    function search() {
-      isFetching.value = true;
-      const params: GetCoursesContract = { kind: props.kind as PossibleKinds };
-      if (filter.value.length) params["filter"] = filter.value;
-      if (searchText.value.length) params["searchText"] = searchText.value;
-
-      rpc
-        .call(RPC_GET_COURSES_METHOD, params)
-        .then((result) => {
-          courses.value = result;
-        })
-        .finally(() => {
-          isFetching.value = false;
-        });
-    }
-
     onMounted(() => {
       getCourses();
     });
@@ -152,7 +153,7 @@ export default defineComponent({
       searchText,
       isFetching,
       courses,
-      search,
+      getCourses,
       canLoadMore,
       loadMore,
     };
