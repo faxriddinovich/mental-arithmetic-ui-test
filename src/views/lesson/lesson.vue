@@ -17,8 +17,8 @@
 
           <div>
             <b-skeleton width="200px" v-if="lessonLoading" />
-            <div class="is-size-5 has-text-weight-semibold" v-else>
-              {{ lesson.title }}
+            <div class="is-size-5 has-text-weight-semibold is-clickable" @click="copyLessonLink" v-else>
+              {{ lesson.title }} <b-icon icon="clipboard-alt" />
             </div>
             <b-skeleton width="350px" v-if="lessonLoading" />
             <nav
@@ -59,7 +59,10 @@
                   :key="index"
                 >
                   <div v-if="pickedAttachmentIndex === index">
-                    <div class="is-flex is-justify-content-center p-2" v-if="attachment.type === 'audio'">
+                    <div
+                      class="is-flex is-justify-content-center p-2"
+                      v-if="attachment.type === 'audio'"
+                    >
                       <audio controls>
                         <source :src="fsBucketFactory(attachment.fguid)" />
                       </audio>
@@ -242,6 +245,8 @@ import { CommentContract } from "@/services/rpc/contracts/comment";
 import { LessonContract } from "@/services/rpc/contracts/lesson";
 import { SessionStorage, Session } from "@/services/storages/session";
 import { fsBucketFactory } from "@/common/utils";
+import { isNative } from "@/services/platform";
+import { writeToClipboard } from "@/services/clipboard";
 
 export default defineComponent({
   components: { LessonCard, LessonTask, LessonComment },
@@ -378,6 +383,15 @@ export default defineComponent({
       return "volume";
     }
 
+    async function copyLessonLink() {
+      const currentPath = context.root.$route.path;
+      const url = isNative()
+        ? "mental-arithmetic:/" + currentPath
+        : "http://production-ui.url" + currentPath;
+      await writeToClipboard({ url });
+      showToastMessage("Copied to clipboard", ToastType.Success);
+    }
+
     onMounted(() => {
       getActiveSession();
       getLesson();
@@ -392,6 +406,7 @@ export default defineComponent({
       commentTextarea,
       changeTab,
       attachmentIcon,
+      copyLessonLink,
       pickedAttachmentIndex,
       attachmentClass,
       lessonLoading,
@@ -404,6 +419,7 @@ export default defineComponent({
   },
 });
 </script>
+
 <style lang="scss">
 $border-color: rgb(149, 165, 166);
 
