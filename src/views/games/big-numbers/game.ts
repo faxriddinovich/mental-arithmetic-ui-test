@@ -10,6 +10,7 @@ import {QueueItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
+import BubbleSoundSrc from '@@/sounds/bubble.mp3';
 import {SettingsStorage} from '@/services/storages/settings';
 
 import {speak} from '@/services/tts';
@@ -23,6 +24,10 @@ function playCorrectAnswerSound() {
 
 function playIncorrectAnswerSound() {
   return new Audio(IncorrectAnswerSoundSrc).play();
+}
+
+function playBubbleSound() {
+  return new Audio(BubbleSoundSrc).play();
 }
 
 function playFinishSound() {
@@ -60,7 +65,7 @@ export default defineComponent({
     let currentExampleIndex = 0;
     const progressPercentage = ref(0);
 
-    const queue = ref(props.queue as QueueItem[]); //reactive
+    const queue = ref(props.queue as QueueItem[]);
 
     const answerFormValue = ref<number | null>();
 
@@ -256,13 +261,13 @@ export default defineComponent({
       return new Promise((resolve) => {
         const timerHandle = setInterval(() => {
           if (arr[currentArrayIndex]) {
-
             if (isAttention) {
               displayAttentionText(arr[currentArrayIndex]);
             } else {
               if (speechSound)
                 speechSpeak(arr[currentArrayIndex]);
               displayNumber(arr[currentArrayIndex]);
+              playBubbleSound();
             }
             currentArrayIndex++;
           } else {
