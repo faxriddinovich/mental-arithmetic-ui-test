@@ -11,13 +11,6 @@
                   <span class="is-hidden-mobile ml-1">{{ $t("filter") }}</span>
                 </b-button>
               </template>
-              <!--
-              <b-dropdown-item aria-role="menuitem" custom>
-                <b-icon icon="filter" size="is-small" />
-                Filter options
-              </b-dropdown-item>
-              <hr class="dropdown-divider" />
-              -->
               <b-dropdown-item value="price" aria-role="listitem">
                 <b-icon icon="dollar-alt" />
                 {{ $t("price") }}
@@ -53,25 +46,27 @@
 
     <div class="mt-5">
       <cloud-loading v-if="isFetching" />
-      <not-found-box
-        :text="$t('no-courses-found')"
-        v-else-if="!courses.length"
-      />
-      <div v-else>
-        <div class="columns is-mobile is-multiline">
-          <div
-            class="column is-12-mobile is-6-tablet is-4-desktop"
-            v-for="course of courses"
-            :key="course.id"
-          >
-            <course-card :course="course" />
-          </div>
+
+      <not-found-box :text="$t('no-courses-found')" v-if="!courses.length" />
+      <div class="columns is-mobile is-multiline" v-else>
+        <div
+          class="column is-12-mobile is-6-tablet is-4-desktop"
+          v-for="course of courses"
+          :key="course.id"
+        >
+          <course-card :course="course" />
         </div>
-        <div class="my-3">
-          <b-button type="is-primary" icon-left="arrow-down" expanded>{{
-            $t("load-more")
-          }}</b-button>
-        </div>
+      </div>
+
+      <div class="my-3" v-if="canLoadMore && courses.length">
+        <b-button
+          type="is-primary"
+          icon-left="arrow-down"
+          @click="loadMore"
+          :disabled="isFetching"
+          expanded
+          >{{ $t("load-more") }}</b-button
+        >
       </div>
     </div>
   </div>
@@ -108,16 +103,28 @@ export default defineComponent({
     const isFetching = ref<boolean>(false);
     const courses = ref<CourseContract[]>([]);
 
+    const canLoadMore = ref<boolean>(true);
+    const currentPage = ref<number>(1);
+
     function getCourses() {
       isFetching.value = true;
       rpc
-        .call(RPC_GET_COURSES_METHOD, { kind: props.kind })
+        .call(RPC_GET_COURSES_METHOD, {
+          kind: props.kind,
+          page: currentPage.value,
+        })
         .then((result) => {
-          courses.value = result as any as CourseContract[]; // FIXME: fix the any type
+          if (result.length) courses.value.push(...result);
+          else canLoadMore.value = false;
         })
         .finally(() => {
           isFetching.value = false;
         });
+    }
+
+    function loadMore() {
+      currentPage.value++;
+      getCourses();
     }
 
     function search() {
@@ -129,7 +136,7 @@ export default defineComponent({
       rpc
         .call(RPC_GET_COURSES_METHOD, params)
         .then((result) => {
-          courses.value = result as any as CourseContract[]; // FIXME: fix the any type
+          courses.value = result;
         })
         .finally(() => {
           isFetching.value = false;
@@ -140,7 +147,15 @@ export default defineComponent({
       getCourses();
     });
 
-    return { filter, searchText, isFetching, courses, search };
+    return {
+      filter,
+      searchText,
+      isFetching,
+      courses,
+      search,
+      canLoadMore,
+      loadMore,
+    };
   },
 });
 </script>

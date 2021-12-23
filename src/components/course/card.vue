@@ -140,7 +140,6 @@ export default class CourseCard extends Vue {
 
   mounted() {
     this.getActiveSession();
-    console.log(this.$route.path);
   }
 
   public get priceClasses() {
