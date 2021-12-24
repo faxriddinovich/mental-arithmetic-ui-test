@@ -2,13 +2,17 @@ import {
   defineComponent,
   computed,
   ref,
-  reactive,
-  toRefs,
-  watch
 } from "@vue/composition-api";
 import {themes} from "@mental-arithmetic/themes";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
-import {Example, BigNumbersGameSettings} from "@/views/games/big-numbers/interfaces";
+import {Example, SequenceItem} from "@/views/games/big-numbers/interfaces";
+
+interface ThemeCache {
+  theme: string,
+  examplesCount: number,
+  rowsCount: number,
+  examples: Example[];
+}
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -39,7 +43,7 @@ export default defineComponent({
       return themes
         .filter((_theme) => {
           // FIXME: this should be done using i18n
-          return matches(_theme.loc, settings.theme);
+          return matches(_theme.loc, theme.value);
         })
         .map((_theme) => ({
           name: _theme.loc,
@@ -47,102 +51,131 @@ export default defineComponent({
         }));
     });
 
-    const currentTab = ref(0);
+    const currentTab = ref<number>(0); // TODO: rename me
+    const fontRotations = ref<number[]>([0, 90, 180, 270]);
+    const fontSizes = ref<number[]>([1, 2, 3]);
+    const fontColors = ref<string[]>([
+      "black",
+      "green",
+      "blue",
+      "purple",
+      "yellow",
+      "orange",
+      "red",
+      "teal",
+      "brown"
+    ]);
 
-    const options = reactive({
-      fontRotations: [0, 90, 180, 270],
-      fontSizes: [1, 2, 3],
-      fontColors: [
-        "black",
-        "green",
-        "blue",
-        "purple",
-        "yellow",
-        "orange",
-        "red",
-        "teal",
-        "brown"
-      ],
+    const theme = ref<string>('');
+    const digit = ref<number>(1);
+    const examplesCount = ref<number>(10);
+    const examplesTimeout = ref<number>(1);
+    const rowsCount = ref<number>(10);
+    const rowsTimeout = ref<number>(1);
+    const answerAtEnd = ref<boolean>(false);
+    const displayNumbers = ref<boolean>(true);
+    const speechSound = ref<boolean>(false);
+    const fontRotation = ref<number>(fontRotations.value[0]);
+    const fontSize = ref<number>(fontSizes.value[0]);
+    const fontColor = ref<string>(fontColors.value[0]);
+
+    const multiplayerMode = ref<boolean>(false);
+    const sameExamples = ref<boolean>(false);
+
+    const instances = ref<SequenceItem[][]>([]);
+    const sequence = ref<SequenceItem[]>([]);
+
+    const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
+    const MAX_ALLOWED_INSTANCES_COUNT = 9;
+
+    const canAddSequenceItem = computed(() => {
+      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT && instances.value.length < MAX_ALLOWED_INSTANCES_COUNT;
     });
 
-    const settings = reactive({
-      theme: "",
-      digit: 1,
-      examplesCount: 10,
-      examplesTimeout: 1,
-      rowsCount: 10,
-      rowsTimeout: 1,
-      answerAtEnd: false,
-      displayNumbers: true,
-      speechSound: false,
-      fontRotation: options.fontRotations[0],
-      fontColor: options.fontColors[0],
-      fontSize: options.fontSizes[0],
+    const canAddInstanceItem = computed(() => {
+      return instances.value.length < MAX_ALLOWED_INSTANCES_COUNT && sequence.value.length;
     });
 
-    const gameSettings = reactive<BigNumbersGameSettings>({
-      answerAtEnd: false,
-      multiplayerMode: false,
-      sameExamples: false,
-      queue: [],
-    });
 
-    const examplesCache: {theme: string, examples: Example[]}[] = [];
+    const themeCaches: ThemeCache[] = [];
 
-    function resetDefaults() {
-      settings.fontRotation = options.fontRotations[0];
-      settings.fontColor = options.fontColors[0];
-      settings.fontSize = options.fontSizes[0];
-      settings.displayNumbers = true;
-      settings.speechSound = false;
+    function resetForm() {
+      fontRotation.value = fontRotations.value[0];
+      fontColor.value = fontColors.value[0];
+      fontSize.value = fontSizes.value[0];
+      displayNumbers.value = true;
+      speechSound.value = false;
     }
 
-    watch(() => gameSettings.multiplayerMode, () => {
-      resetDefaults();
-    });
-
     /*
-     * Add to the queue list
-     */
-    const addToQueueList = () => {
-      const cachedExamples = examplesCache.find((example) => example.theme === settings.theme);
+    watch(() => , () => {
+      resetForm();
+    });
+    */
 
-      settings.theme = filteredThemes.value.length === 0 ? themes[0].loc : filteredThemes.value[0].name;
+    function addInstanceItem() {
+      console.log(instances.value);
+      if (sequence.value.length) {
+        instances.value.push(sequence.value);
+        sequence.value = [];
+      }
+    }
 
-      let examples: Example[] = generateExamples(
-        settings.theme,
-        settings.examplesCount,
-        settings.rowsCount,
-        Number(settings.digit)
+    function addSequenceItem() {
+      if (filteredThemes.value.length === 0)
+        theme.value = themes[0].loc;
+      else
+        theme.value = filteredThemes.value[0].name;
+
+      const cachedTheme = themeCaches.find((cache) => {
+        const sameExamplesCount = cache.examplesCount === examplesCount.value;
+        const sameRowsCount = cache.rowsCount === rowsCount.value;
+        const sameThemeName = cache.theme === theme.value;
+        return sameThemeName && sameExamplesCount && sameRowsCount;
+      });
+
+      let examples: Example[] = [];
+
+      examples = generateExamples(
+        theme.value,
+        examplesCount.value,
+        rowsCount.value,
+        digit.value
       );
 
-      if (gameSettings.sameExamples) {
-        if (cachedExamples) {
-          examples = cachedExamples.examples;
+      if (sameExamples.value) {
+        if (cachedTheme) {
+          examples = cachedTheme.examples;
         } else {
-          examplesCache.push({theme: settings.theme, examples});
+          themeCaches.push({
+            theme: theme.value,
+            examplesCount: examplesCount.value,
+            rowsCount: rowsCount.value,
+            examples
+          });
         }
       }
 
-      gameSettings.queue.push({
+      sequence.value.push({
         examples,
-        theme: settings.theme,
-        examplesTimeout: settings.examplesTimeout,
-        rowsTimeout: settings.rowsTimeout,
-        displayNumbers: settings.displayNumbers,
-        speechSound: settings.speechSound,
-        fontRotation: settings.fontRotation,
-        fontColor: settings.fontColor,
-        fontSize: settings.fontSize,
+        theme: theme.value,
+        examplesTimeout: examplesTimeout.value,
+        rowsTimeout: rowsTimeout.value,
+        displayNumbers: displayNumbers.value,
+        fontRotation: fontRotation.value,
+        fontColor: fontColor.value,
+        fontSize: fontSize.value,
+        speechSound: speechSound.value,
       });
+    }
+
+    const removeSequenceItem = (index: number) => {
+      sequence.value = sequence.value.filter((_, idx) => idx !== index);
     };
 
-    /*
-     * Remove item from the queue
-     */
-    const removeFromQueueList = (index: number) => {
-      gameSettings.queue = gameSettings.queue.filter((_, idx) => idx !== index);
-    };
+    const removeInstanceItem = (index: number) => {
+      instances.value = instances.value.filter((_, idx) => idx !== index);
+    }
 
     /*
      * This must not be called outside of `setup()`. Because `vuex-composition-helpers`
@@ -155,21 +188,41 @@ export default defineComponent({
     const {setSettings} = useMutations(["setSettings"]);
 
     const play = () => {
-      if(gameSettings.queue.length === 0)
-        addToQueueList();
-
-      setSettings(gameSettings);
+      setSettings(instances);
       root.$router.push({name: "PlayBigNumbersGame"});
     };
 
     return {
-      ...toRefs(options),
-      ...toRefs(settings),
-      ...toRefs(gameSettings),
-      addToQueueList,
-      removeFromQueueList,
-      filteredThemes,
+      theme,
+      digit,
+      examplesCount,
+      examplesTimeout,
+      rowsCount,
+      rowsTimeout,
+      answerAtEnd,
+      displayNumbers,
+      speechSound,
+      fontRotation,
+      fontSize,
+      fontColor,
+      sameExamples,
+      multiplayerMode,
+
       currentTab,
+      fontRotations,
+      fontSizes,
+      fontColors,
+      canAddSequenceItem,
+      canAddInstanceItem,
+
+      sequence,
+      instances,
+
+      addInstanceItem,
+      addSequenceItem,
+      removeSequenceItem,
+      removeInstanceItem,
+      filteredThemes,
       play,
     };
   },

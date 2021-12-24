@@ -117,8 +117,8 @@
           <div class="columns is-multiline is-centered is-vcentered">
             <div
               class="column"
-              v-for="(queueItem, queueIndex) of queue"
-              :key="queueIndex"
+              v-for="(sequenceItem, sequenceItemIndex) of sequences"
+              :key="sequenceItemIndex"
             >
               <div class="card p-2 is-bordered">
                 <div class="has-text-centered">
@@ -202,7 +202,7 @@
               :class="{
                 'is-color-indicator': true,
                 'is-bordered': true,
-                ['is-' + queue[0].fontColor + '-bg-color']: true,
+                ['is-' + sequences[0].fontColor + '-bg-color']: true,
               }"
             ></div>
           </div>

@@ -135,36 +135,71 @@
                   >
                 </b-field>
 
-                <b-field
-                  :label="multiplayerMode ? 'Players' : 'Queue'"
-                  v-if="queue.length"
-                >
+                <b-field v-if="sequence.length">
+                <template #label>
+                <b-icon icon="file" /> Themes
+                </template>
                   <b-taglist>
                     <b-tag
+                      v-for="(sequenceItem, sequenceItemIndex) of sequence"
+                      :key="sequenceItemIndex"
+                      @close="removeSequenceItem(sequenceItemIndex)"
                       type="is-link"
-                      v-for="(settings, index) of queue"
-                      :key="index"
-                      @close="removeFromQueueList(index)"
                       closable
-                      >{{ settings.theme }}</b-tag
+                      >{{ sequenceItem.theme }}</b-tag
                     >
                   </b-taglist>
                 </b-field>
 
-                <div class="is-flex mt-5">
-                  <b-button icon-left="setting" @click="currentTab = 1" />
-                  <b-button
-                    type="is-success"
-                    :icon-left="multiplayerMode ? 'user-plus' : 'plus'"
-                    @click="addToQueueList"
-                    class="ml-2"
-                    :disabled="
-                      (multiplayerMode ? queue.length === 9 : queue.length === 10)
-                    "
-                    >{{
-                      multiplayerMode ? "Add to players list" : "Add to queue"
-                    }}</b-button
+                <div v-if="multiplayerMode && instances.length">
+                  <b-field
+                    v-for="(instanceItem, instanceItemIndex) of instances"
+                    :key="instanceItemIndex"
+                    class="m-0"
                   >
+                    <template #label>
+                      <span :class="{['is-' + instanceItem[0].fontColor + '-color']: true }">{{ instanceItemIndex + 1 }}. Player</span>
+                      <b-icon icon="trash" class="is-clickable" @click.native="removeInstanceItem(instanceItemIndex)"/>
+                    </template>
+
+                    <b-taglist class="mb-1">
+                      <b-tag
+                        v-for="(
+                          sequenceItem, sequenceItemIndex
+                        ) of instanceItem"
+                        :key="sequenceItemIndex"
+                        ><span class="has-text-weight-semibold">{{
+                          sequenceItemIndex + 1
+                        }}</span
+                        >. {{ sequenceItem.theme }}</b-tag
+                      >
+                    </b-taglist>
+                  </b-field>
+                  <hr class="m-1" />
+                </div>
+
+                <div class="is-flex mt-2">
+                  <b-button icon-left="setting" @click="currentTab = 1" />
+
+                  <div class="field has-addons ml-2">
+                    <p class="control">
+                      <b-button
+                        icon-left="plus"
+                        :disabled="!canAddSequenceItem"
+                        @click="addSequenceItem"
+                        >Add theme</b-button
+                      >
+                    </p>
+                    <p class="control" v-if="multiplayerMode">
+                      <b-button
+                        icon-left="user-plus"
+                        :disabled="!canAddInstanceItem"
+                        @click="addInstanceItem"
+                        >Add player</b-button
+                      >
+                    </p>
+                  </div>
+
                   <b-button
                     type="is-primary"
                     native-type="submit"

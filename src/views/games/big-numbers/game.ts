@@ -6,7 +6,7 @@ import {
   ref,
   PropType
 } from "@vue/composition-api";
-import {QueueItem} from "@/views/games/big-numbers/interfaces";
+import {SequenceItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
@@ -46,12 +46,12 @@ export default defineComponent({
       default: false,
       required: false
     },
-    queue: {
-      type: Array as PropType<QueueItem[]>,
+    sequence: {
+      type: Array as PropType<SequenceItem[]>,
       required: true
     },
-    onQueueFinish: {
-      type: Function as PropType<(queueIndex: number) => void>,
+    onSequenceFinish: {
+      type: Function as PropType<(sequenceIndex: number) => void>,
       required: false
     },
     multiplayerMode: {
@@ -61,11 +61,15 @@ export default defineComponent({
     }
   },
   setup(props, context) {
-    let currentQueueItemIndex = 0;
-    let currentExampleIndex = 0;
-    const progressPercentage = ref(0);
+    const currentSequenceItemIndex = ref<number>(0);
+    const currentExampleIndex = ref<number>(0);
+    const progressPercentage = ref<number>(0);
 
-    const queue = ref(props.queue as QueueItem[]);
+    const sequence = ref<SequenceItem[]>(props.sequence);
+
+    const currentSequenceItem = computed(() => {
+      return sequence.value[currentSequenceItemIndex.value];
+    });
 
     const answerFormValue = ref<number | null>();
 
@@ -80,10 +84,9 @@ export default defineComponent({
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
-      const currentQueueItem = queue.value[currentQueueItemIndex];
       const classes: string[] = [];
       if (displayMode.value === 'number') {
-        const {fontSize, fontRotation, fontColor} = currentQueueItem;
+        const {fontSize, fontRotation, fontColor} = currentSequenceItem.value;
         classes.push('is-display-text');
         classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
@@ -114,13 +117,12 @@ export default defineComponent({
     });
 
     const currentExample = computed(() => {
-      const currentQueueItem = queue.value[currentQueueItemIndex];
       /*
        * Every time when `display.value` is changed, `currentExample`
        * is recomputed
        */
       if (display.value)
-        return currentQueueItem.examples[currentExampleIndex - 1];
+        return currentSequenceItem.value.examples[currentExampleIndex.value - 1];
     });
 
     const finalStars = computed(() => {
@@ -170,8 +172,8 @@ export default defineComponent({
     const calcExamplesCount = () => {
       let i = 0;
       /* FIXME: can we optimize this? */
-      for (const queueItem of queue.value) {
-        i += queueItem.examples.length;
+      for (const sequenceItem of sequence.value) {
+        i += sequenceItem.examples.length;
       }
       return i;
     }
@@ -243,8 +245,7 @@ export default defineComponent({
     const timerHandles: Set<NodeJS.Timer> = new Set();
 
     function speechSpeak(text: string | number) {
-      const currentQueueItem = queue.value[currentQueueItemIndex];
-      const speechRate = currentQueueItem.rowsTimeout >= 1 ? 1 : 1 + currentQueueItem.rowsTimeout + (String(text).length / 2);
+      const speechRate = currentSequenceItem.value.rowsTimeout >= 1 ? 1 : 1 + currentSequenceItem.value.rowsTimeout + (String(text).length / 2);
       speak(text, language.value, speechRate);
     }
 
@@ -282,20 +283,19 @@ export default defineComponent({
 
 
     function showExamples() {
-      const currentQueueItem = queue.value[currentQueueItemIndex];
-      const currentExample = currentQueueItem.examples[currentExampleIndex];
+      const currentExample = currentSequenceItem.value.examples[currentExampleIndex.value];
 
       /* if the current example exists */
       if (currentExample) {
         /* show all the rows of the current example */
         renderArrayItems(
           currentExample.numbers,
-          currentQueueItem.rowsTimeout * 1000,
-          false, currentQueueItem.speechSound
+          currentSequenceItem.value.rowsTimeout * 1000,
+          false, currentSequenceItem.value.speechSound
         ).then(() => {
           /* clear after showing all the rows */
           //clearCenterText(); // FIXME
-          currentExampleIndex++;
+          currentExampleIndex.value++;
           /* if `answerAtEnd` is true, then we should show the answer form */
           if (!props.answerAtEnd) {
             displayAnswerForm();
@@ -303,26 +303,26 @@ export default defineComponent({
             /* otherwise after n seconds we show the rows of the next example */
             setTimeout(() => {
               showExamples();
-            }, currentQueueItem.examplesTimeout * 1000);
+            }, currentSequenceItem.value.examplesTimeout * 1000);
           }
         });
-      } else if (queue.value[currentQueueItemIndex + 1]) {/* if there are items in the queue */
+      } else if (sequence.value[currentSequenceItemIndex.value + 1]) {/* if there are items in the queue */
         /* go to the next queue item */
-        currentQueueItemIndex++;
+        currentSequenceItemIndex.value++;
         /* clear the index */
-        currentExampleIndex = 0;
+        currentExampleIndex.value = 0;
         /* show the name of the next item in the queue */
-        displayAttentionText(queue.value[currentQueueItemIndex].theme);
+        displayAttentionText(sequence.value[currentSequenceItemIndex.value].theme);
         /* after 2 seconds show the examples of the next item in the queue */
         const timerHandle = setTimeout(() => {
           showExamples();
         }, 2000);
         timerHandles.add(timerHandle);
       } else { /* there are no queue items left */
-        if (props.onQueueFinish)
-          props.onQueueFinish(currentQueueItemIndex);
+        if (props.onSequenceFinish)
+          props.onSequenceFinish(currentSequenceItemIndex.value);
 
-        if (props.multiplayerMode && props.answerAtEnd) {
+        if (sequence.value.length > 1 && props.answerAtEnd) {
           displayWait();
           return;
         }
@@ -340,10 +340,10 @@ export default defineComponent({
       }
     }
 
-    function enterAnswer2(event: any /* FIXME */, queueItemIndex: number, exampleIndex: number) {
-      const queueItem = queue.value[queueItemIndex];
-      if (queueItem.examples[exampleIndex]) {
-        const example = queueItem.examples[exampleIndex];
+    function enterAnswer2(event: any /* FIXME */, sequenceItemIndex: number, exampleIndex: number) {
+      const sequenceItem = sequence.value[sequenceItemIndex];
+      if (sequenceItem.examples[exampleIndex]) {
+        const example = sequenceItem.examples[exampleIndex];
 
         const input = event.target[0];
         const button = event.target[1];
@@ -377,9 +377,8 @@ export default defineComponent({
     }
 
     function enterAnswer() {
-      const currentQueueItem = queue.value[currentQueueItemIndex];
       // FIXME
-      const prevExample = currentQueueItem.examples[currentExampleIndex - 1];
+      const prevExample = currentSequenceItem.value.examples[currentExampleIndex.value - 1];
 
       completeExample();
 
@@ -408,8 +407,8 @@ export default defineComponent({
 
     function cleanCurrentState() {
       cleanTimerHandles();
-      currentQueueItemIndex = 0;
-      currentExampleIndex = 0;
+      currentSequenceItemIndex.value = 0;
+      currentExampleIndex.value = 0;
       progressPercentage.value = 0;
       answerFormValue.value = null;
 

@@ -10,27 +10,27 @@
     >
       <div
         :class="columnClasses"
-        v-for="(queueItem, queueIndex) of queue"
-        :key="queueIndex"
+        v-for="(sequenceItem, sequenceItemIndex) of sequences"
+        :key="sequenceItemIndex"
       >
         <BigNumbersGame
           :multiplayerMode="true"
           :answerAtEnd="answerAtEnd"
           :topBar="false"
-          :onQueueFinish="incrementWaitingInstances"
-          :queue="[queueItem]"
+          :onSequenceFinish="incrementWaitingInstances"
+          :sequence="[sequenceItem]"
         />
       </div>
     </div>
     <div v-else>
-      <BigNumbersGame :queue="queue" />
+      <BigNumbersGame :sequence="sequence" />
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { QueueItem } from "@/views/games/big-numbers/interfaces";
+import { SequenceItem } from "@/views/games/big-numbers/interfaces";
 
 export default defineComponent({
   components: { BigNumbersGame },
@@ -39,8 +39,8 @@ export default defineComponent({
       type: Boolean,
       requied: false,
     },
-    queue: {
-      type: Array as PropType<QueueItem[]>,
+    sequence: {
+      type: Array as PropType<SequenceItem[]>,
       requied: true,
     },
     multiplayerMode: {
@@ -52,7 +52,7 @@ export default defineComponent({
   setup(props, context) {
     const waitingGameInstancesCount = ref<number>(0);
     const hasFinished = computed(() => {
-      return waitingGameInstancesCount.value === props.queue?.length; // FIXME: static value
+      return waitingGameInstancesCount.value === props.sequence?.length; // FIXME: static value
     });
 
     const columnClasses = computed(() => {

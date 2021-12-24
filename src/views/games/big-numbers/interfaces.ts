@@ -3,7 +3,7 @@ export interface Example {
   answer: number;
 }
 
-export interface QueueItem {
+export interface SequenceItem {
   theme: string;
   examples: Example[];
   examplesTimeout: number;
@@ -19,5 +19,5 @@ export interface BigNumbersGameSettings {
   answerAtEnd: boolean;
   multiplayerMode: boolean,
   sameExamples: boolean,
-  queue: QueueItem[];
+  instances: SequenceItem[][]
 }
