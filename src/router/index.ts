@@ -128,7 +128,7 @@ const routes: Array<RouteConfig> = [
         return next({name: 'BigNumbersGameForm'});
 
       to.params.answerAtEnd = settings.answerAtEnd;
-      to.params.sequence = settings.sequence;
+      to.params.instances= settings.instances;
       to.params.multiplayerMode = settings.multiplayerMode;
       next();
     }

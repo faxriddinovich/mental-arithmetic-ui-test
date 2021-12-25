@@ -10,20 +10,20 @@
     >
       <div
         :class="columnClasses"
-        v-for="(sequenceItem, sequenceItemIndex) of sequences"
-        :key="sequenceItemIndex"
+        v-for="(instanceItem, instanceItemIndex) of instances"
+        :key="instanceItemIndex"
       >
         <BigNumbersGame
           :multiplayerMode="true"
           :answerAtEnd="answerAtEnd"
           :topBar="false"
-          :onSequenceFinish="incrementWaitingInstances"
-          :sequence="[sequenceItem]"
+          :onFinish="addWaitingInstance"
+          :sequence="instanceItem.sequence"
         />
       </div>
     </div>
     <div v-else>
-      <BigNumbersGame :sequence="sequence" />
+      <BigNumbersGame :sequence="instances[0].sequence" :answerAtEnd="instances[0].answerAtEnd" />
     </div>
   </div>
 </template>
@@ -39,8 +39,8 @@ export default defineComponent({
       type: Boolean,
       requied: false,
     },
-    sequence: {
-      type: Array as PropType<SequenceItem[]>,
+    instances: {
+      type: Array as PropType<SequenceItem[][]>,
       requied: true,
     },
     multiplayerMode: {
@@ -50,9 +50,10 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const waitingGameInstancesCount = ref<number>(0);
-    const hasFinished = computed(() => {
-      return waitingGameInstancesCount.value === props.sequence?.length; // FIXME: static value
+    const waitingInstancesCount= ref<number>(0);
+
+    const allInstancesFinished = computed(() => {
+        return waitingInstancesCount.value === props.instances?.length
     });
 
     const columnClasses = computed(() => {
@@ -61,8 +62,8 @@ export default defineComponent({
       classes.push("column");
       classes.push("is-12-mobile");
 
-      if (hasFinished.value) {
-        classes.push("is-6-tablet");
+      if (allInstancesFinished.value) {
+        classes.push("is-12-mobile");
         classes.push("is-6-desktop");
       } else {
         classes.push("is-6-tablet");
@@ -72,21 +73,19 @@ export default defineComponent({
       return classes;
     });
 
-    function incrementWaitingInstances() {
-      waitingGameInstancesCount.value++;
+    function addWaitingInstance() {
+      waitingInstancesCount.value++;
 
-      if (hasFinished.value) {
-        // FIXME: do not use the global instance
+      if(allInstancesFinished.value)  {
         context.root.$nextTick(() => {
-          context.root.$emit("numbers-game:show-answers-form");
+          context.root.$emit('display-answer-form')
         });
       }
     }
 
     return {
-      incrementWaitingInstances,
+      addWaitingInstance,
       columnClasses,
-      hasFinished,
     };
   },
 });

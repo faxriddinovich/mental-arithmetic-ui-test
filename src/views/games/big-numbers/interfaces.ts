@@ -15,9 +15,7 @@ export interface SequenceItem {
   fontSize: number;
 }
 
-export interface BigNumbersGameSettings {
-  answerAtEnd: boolean;
-  multiplayerMode: boolean,
-  sameExamples: boolean,
-  instances: SequenceItem[][]
+export interface InstanceItem {
+  answerAtEnd: boolean,
+  sequence: SequenceItem[]
 }

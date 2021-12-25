@@ -118,9 +118,8 @@
                     </b-field>
                   </div>
                 </div>
-
                 <b-field>
-                  <b-switch v-model="answerAtEnd">Answer at the end</b-switch>
+                  <b-switch v-model="answerAtEnd" @disabled="instances.length > 1">Answer at the end</b-switch>
                 </b-field>
 
                 <b-field>
@@ -158,7 +157,7 @@
                     class="m-0"
                   >
                     <template #label>
-                      <span :class="{['is-' + instanceItem[0].fontColor + '-color']: true }">{{ instanceItemIndex + 1 }}. Player</span>
+                      <span :class="{['is-' + instanceItem.sequence[0].fontColor + '-color']: true }">{{ instanceItemIndex + 1 }}. Player</span>
                       <b-icon icon="trash" class="is-clickable" @click.native="removeInstanceItem(instanceItemIndex)"/>
                     </template>
 
@@ -166,7 +165,7 @@
                       <b-tag
                         v-for="(
                           sequenceItem, sequenceItemIndex
-                        ) of instanceItem"
+                        ) of instanceItem.sequence"
                         :key="sequenceItemIndex"
                         ><span class="has-text-weight-semibold">{{
                           sequenceItemIndex + 1

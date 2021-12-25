@@ -5,7 +5,7 @@ import {
 } from "@vue/composition-api";
 import {themes} from "@mental-arithmetic/themes";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
-import {Example, SequenceItem} from "@/views/games/big-numbers/interfaces";
+import {InstanceItem, Example, SequenceItem} from "@/views/games/big-numbers/interfaces";
 
 interface ThemeCache {
   theme: string,
@@ -82,7 +82,7 @@ export default defineComponent({
     const multiplayerMode = ref<boolean>(false);
     const sameExamples = ref<boolean>(false);
 
-    const instances = ref<SequenceItem[][]>([]);
+    const instances = ref<InstanceItem[]>([]);
     const sequence = ref<SequenceItem[]>([]);
 
     const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
@@ -95,7 +95,6 @@ export default defineComponent({
     const canAddInstanceItem = computed(() => {
       return instances.value.length < MAX_ALLOWED_INSTANCES_COUNT && sequence.value.length;
     });
-
 
     const themeCaches: ThemeCache[] = [];
 
@@ -114,9 +113,11 @@ export default defineComponent({
     */
 
     function addInstanceItem() {
-      console.log(instances.value);
       if (sequence.value.length) {
-        instances.value.push(sequence.value);
+        instances.value.push({
+          answerAtEnd: answerAtEnd.value,
+          sequence: sequence.value
+        });
         sequence.value = [];
       }
     }
@@ -188,7 +189,19 @@ export default defineComponent({
     const {setSettings} = useMutations(["setSettings"]);
 
     const play = () => {
-      setSettings(instances);
+      if (!sequence.value.length)
+        addSequenceItem();
+
+      if (!instances.value.length)
+        addInstanceItem();
+
+      setSettings({
+        answerAtEnd: answerAtEnd.value,
+        multiplayerMode: multiplayerMode.value,
+        sameExamples: sameExamples.value,
+        instances: instances.value
+      });
+
       root.$router.push({name: "PlayBigNumbersGame"});
     };
 

@@ -4,7 +4,7 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  PropType
+  PropType,
 } from "@vue/composition-api";
 import {SequenceItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
@@ -50,7 +50,7 @@ export default defineComponent({
       type: Array as PropType<SequenceItem[]>,
       required: true
     },
-    onSequenceFinish: {
+    onFinish: {
       type: Function as PropType<(sequenceIndex: number) => void>,
       required: false
     },
@@ -66,6 +66,7 @@ export default defineComponent({
     const progressPercentage = ref<number>(0);
 
     const sequence = ref<SequenceItem[]>(props.sequence);
+    console.log(sequence.value);
 
     const currentSequenceItem = computed(() => {
       return sequence.value[currentSequenceItemIndex.value];
@@ -237,7 +238,7 @@ export default defineComponent({
     }
 
     // FIXME: do not use the global instance
-    context.root.$once('numbers-game:show-answers-form', () => {
+    context.root.$once('display-answer-form', () => {
       if (displayMode.value === 'wait')
         displayAnswerForms();
     });
@@ -319,10 +320,10 @@ export default defineComponent({
         }, 2000);
         timerHandles.add(timerHandle);
       } else { /* there are no queue items left */
-        if (props.onSequenceFinish)
-          props.onSequenceFinish(currentSequenceItemIndex.value);
+        if (props.onFinish)
+          props.onFinish(currentSequenceItemIndex.value);
 
-        if (sequence.value.length > 1 && props.answerAtEnd) {
+        if (props.multiplayerMode) {
           displayWait();
           return;
         }
