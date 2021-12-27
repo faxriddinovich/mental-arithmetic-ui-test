@@ -3,9 +3,9 @@ import {
   computed,
   ref,
 } from "@vue/composition-api";
-import {themes} from "@mental-arithmetic/themes";
 import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
-import {InstanceItem, Example, SequenceItem} from "@/views/games/big-numbers/interfaces";
+import {getThemes, generateExamples, Example} from '@/services/generator';
+import {InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
 
 interface ThemeCache {
   theme: string,
@@ -19,28 +19,12 @@ const matches = (str0: string, str1: string) => {
   return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
 };
 
-const generateExamples = (
-  loc: string,
-  examplesCount: number,
-  rowsCount: number,
-  digit: number
-): Example[] => {
-  const theme = themes.find((theme) => theme.loc == loc);
-  if (!theme) return [];
-
-  const examples: Example[] = [];
-  for (let i = 0; i < examplesCount; i++) {
-    examples[i] = theme.generate(rowsCount, digit) as any as Example; // FIXME
-  }
-
-  return examples;
-};
-
 export default defineComponent({
   setup(_, {root}) {
     const {useMutations} = createStoreHelper("GameModule");
+
     const filteredThemes = computed(() => {
-      return themes
+      return getThemes()
         .filter((_theme) => {
           // FIXME: this should be done using i18n
           return matches(_theme.loc, theme.value);
@@ -124,7 +108,7 @@ export default defineComponent({
 
     function addSequenceItem() {
       if (filteredThemes.value.length === 0)
-        theme.value = themes[0].loc;
+        theme.value = getThemes()[0].loc;
       else
         theme.value = filteredThemes.value[0].name;
 
@@ -160,7 +144,10 @@ export default defineComponent({
       sequence.value.push({
         examples,
         theme: theme.value,
+        digit: digit.value,
+        examplesCount: examplesCount.value,
         examplesTimeout: examplesTimeout.value,
+        rowsCount: rowsCount.value,
         rowsTimeout: rowsTimeout.value,
         displayNumbers: displayNumbers.value,
         fontRotation: fontRotation.value,

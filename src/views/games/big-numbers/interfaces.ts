@@ -13,6 +13,9 @@ export interface SequenceItem {
   fontColor: string;
   speechSound: boolean;
   fontSize: number;
+  examplesCount: number;
+  rowsCount: number;
+  digit: number;
 }
 
 export interface InstanceItem {
