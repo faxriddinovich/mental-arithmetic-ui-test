@@ -23,6 +23,7 @@
     "@capacitor/clipboard": "^1.0.6",
     "@capacitor/core": "^3.3.2",
     "@capacitor/ios": "^3.3.2",
+    "@capacitor/splash-screen": "^1.2.0",
     "@capacitor/storage": "^1.2.3",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
     "@mental-arithmetic/themes": "file:../themes",

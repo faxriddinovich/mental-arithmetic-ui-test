@@ -12,6 +12,10 @@ export function isIOS() {
   return Capacitor.getPlatform() === 'ios';
 }
 
+export function isMobile() {
+  return isAndroid() && isIOS();
+}
+
 /* Source: https://stackoverflow.com/a/61725416 */
 export function isElectron() {
   if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {

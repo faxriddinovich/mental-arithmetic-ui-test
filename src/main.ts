@@ -1,9 +1,7 @@
 import Vue from "vue";
 import Buefy from "buefy";
-// #!if __MOBILE__
-import { Plugins } from "@capacitor/core";
-const { SplashScreen } = Plugins;
-// #!endif
+import { isMobile } from '@/services/platform';
+import { SplashScreen } from '@capacitor/splash-screen';
 //
 import VueCompositionAPI from "@vue/composition-api";
 
@@ -74,8 +72,8 @@ new Vue({
     SettingsStorage.getSetting("locale").then((locale) => {
       this.$root.$i18n.locale = locale;
     });
-    // #!if __MOBILE__
-    SplashScreen.hide();
-    // #!endif
+
+    if(isMobile())
+      SplashScreen.hide();
   },
 }).$mount("#app");
