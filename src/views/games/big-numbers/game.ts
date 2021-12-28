@@ -7,6 +7,8 @@ import {
   onMounted,
   ref,
   PropType,
+  Ref,
+  onUnmounted
 } from "@vue/composition-api";
 import {SequenceItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
@@ -67,24 +69,40 @@ export default defineComponent({
     const progressPercentage = ref<number>(0);
     const answerFormValue = ref<number | null>();
 
+    const v = <T extends Ref<infer K>, K>(ref: Ref<K>): K => ref.value
+
     // these refs holds the current state of the game, so that we can use it
-    const currentSequenceItem = ref<SequenceItem>(props.sequence[0]);
-    const currentExample = ref<Example>(props.sequence[0].examples[0]);
+    const currentSequenceItemIndex = ref<number>(0);
+    const currentSequenceItem = computed(() => {
+      return props.sequence[v(currentSequenceItemIndex)];
+    });
+
+    const currentExampleIndex = ref<number>(0);
+    const currentExample = computed(() => {
+      return v(currentSequenceItem).examples[v(currentExampleIndex)];
+    });
 
     const incorrectAnswersCount = ref<number>(0);
     const correctAnswersCount = ref<number>(0);
-    const correctAnswersPercent = computed(() => {
-      return correctAnswersCount.value / (correctAnswersCount.value + incorrectAnswersCount.value) * 100
+    const correctAnswersPercent = computed<number>(() => {
+      return v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100
+    });
+    const totalExamplesCount = computed<number>(() => {
+      let total = 0;
+      for (const sequenceItem of props.sequence) {
+        total += sequenceItem.examplesCount;
+      }
+      return total;
     });
 
-    const displayParent = ref();
-    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'result' | 'wait'>('attention');
+    const displayParent = ref<HTMLElement>();
+    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores' | 'wait'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
       const classes: string[] = [];
       if (displayMode.value === 'number') {
-        const {fontSize, fontRotation, fontColor} = currentSequenceItem.value;
+        const {fontSize, fontRotation, fontColor} = v(currentSequenceItem);
         classes.push('is-display-text');
         classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
@@ -97,18 +115,18 @@ export default defineComponent({
       return classes;
     });
 
-    const resultScoreTextClasses = computed(() => {
+    const resultScoreTextClasses = computed<string[]>(() => {
       const classes: string[] = [];
-      const {value} = correctAnswersPercent;
+      const percent = v(correctAnswersPercent);
 
       classes.push('is-result-score-text');
       classes.push('has-text-weight-semibold');
 
-      if (value >= 60 && value <= 100)
+      if (percent >= 60 && percent <= 100)
         classes.push('has-text-success');
-      else if (value < 60 && value >= 30)
+      else if (percent < 60 && percent >= 30)
         classes.push('has-text-warning');
-      else if (value < 30 && value >= 0)
+      else if (percent < 30 && percent >= 0)
         classes.push('has-text-danger');
 
       return classes;
@@ -158,34 +176,22 @@ export default defineComponent({
       return stars;
     });
 
-    function calculateTotalExamplesCount(): number {
-      let i = 0;
-      for (const sequenceItem of props.sequence) {
-        i += sequenceItem.examples.length;
-      }
-
-      return i;
-    }
-
-    const totalExamplesCount = calculateTotalExamplesCount();
-
     const language = ref<string>('en');
-
     SettingsStorage.getSetting('locale').then((loc) => {
       language.value = loc;
     });
 
     const displayCorrectAnswerFade = () => {
-      displayParent.value.classList.add('is-correct-answer');
+      v(displayParent)!.classList.add('is-correct-answer');
       setTimeout(() => {
-        displayParent.value.classList.remove('is-correct-answer');
+        displayParent.value!.classList.remove('is-correct-answer');
       }, 1000);
     }
 
     const displayIncorrectAnswerFade = () => {
-      displayParent.value.classList.add('is-incorrect-answer');
+      displayParent.value!.classList.add('is-incorrect-answer');
       setTimeout(() => {
-        displayParent.value.classList.remove('is-incorrect-answer');
+        displayParent.value!.classList.remove('is-incorrect-answer');
       }, 1000);
     }
 
@@ -194,9 +200,19 @@ export default defineComponent({
       display.value = text;
     }
 
+    const soundEffects = true;
+
     const displayNumber = (value: string | number | null) => {
       displayMode.value = 'number';
-      display.value = value;
+      display.value = null;
+      setTimeout(() => {
+        if (soundEffects && value)
+          playBubbleSound();
+        if (v(currentSequenceItem).speechSound && value)
+          speechSpeak(value!);
+
+        display.value = value;
+      }, 40);
     }
 
     const displayAnswerForm = () => {
@@ -212,8 +228,9 @@ export default defineComponent({
       displayMode.value = 'answer';
     }
 
-    const displayResult = () => {
-      displayMode.value = 'result';
+    const displayScores = () => {
+      playFinishSound();
+      displayMode.value = 'scores';
     }
 
     const displayWait = () => {
@@ -227,134 +244,124 @@ export default defineComponent({
     });
 
     function speechSpeak(text: string | number) {
-      const speechRate = currentSequenceItem.value.rowsTimeout >= 1 ? 1 : 1 + currentSequenceItem.value.rowsTimeout + (String(text).length / 2);
+      const speechRate = currentSequenceItem.value.rowsTimeout >= 1
+        ? 1 : 1 + currentSequenceItem.value.rowsTimeout + (String(text).length / 2);
       speak(text, language.value, speechRate);
     }
 
-    function sleep(ms: number) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    const timerHandles = new Set<NodeJS.Timeout>();
+
+    function displayAttentionTexts() {
+      let currentAttentionTextIndex = 0;
+      const timerHandle = setInterval(() => {
+        if (START_ATTENTION_TEXTS[currentAttentionTextIndex]) {
+          displayAttentionText(START_ATTENTION_TEXTS[currentAttentionTextIndex]);
+          currentAttentionTextIndex++;
+        } else {
+          timerHandles.add(setTimeout(() => {
+            displayExamples();
+          }, 1000));
+          clearInterval(timerHandle);
+          timerHandles.delete(timerHandle);
+        }
+      }, 800);
+      timerHandles.add(timerHandle);
     }
 
-    let answerResolveCallback: ((answer: number) => void) | null = null;
-    let answersResolveCallback: (() => void) | null = null;
-    let nextExampleResolveCallback: (() => void) | null = null;
+    function displayExamples() {
+      /* if there are no examples left */
+      if ((v(currentExampleIndex) + 1) > v(currentSequenceItem).examples.length) {
+        /* if there are no sequence items left */
+        if ((v(currentSequenceItemIndex) + 1) >= props.sequence.length) {
+          if (props.answerAtEnd) {
+            /* display the answer forms */
+            displayAnswerForms();
+          } else {
+            /* otherwise display the scores */
+            displayScores();
+          }
+        } else {
+          /* go to the next sequence item */
+          currentSequenceItemIndex.value++;
+          displayExamples();
+        }
 
-    function waitForNextExampleSubmit() {
-      return new Promise<void>((resolve) => {
-        nextExampleResolveCallback = resolve;
-      })
-    }
-
-    function waitForAnswerSubmit() {
-      return new Promise<number>((resolve) => {
-        answerResolveCallback = resolve;
-      });
-    }
-
-    function waitForAnswerForms() {
-      return new Promise<void>((resolve) => {
-        answersResolveCallback = resolve;
-      });
-    }
-
-    async function displayAttentionTexts(texts: string[]) {
-      for (const [index, text] of texts.entries()) {
-        if (index === 0) await sleep(1000);
-        displayAttentionText(text);
-        await sleep(800);
+        return;
       }
+
+      let currentRowIndex = 0;
+      const timerHandle = setInterval(function callback() {
+        /* if there are not displayed row items */
+        if (v(currentExample).numbers[currentRowIndex]) {
+          /* we just display the row item */
+          displayNumber(v(currentExample).numbers[currentRowIndex]);
+          currentRowIndex++;
+        } else { /* there are no row items left */
+
+          if (props.answerAtEnd) {
+            displayNumber(null);
+            /* after n seconds we display the next examples */
+            timerHandles.add(setTimeout(() => {
+              /* go to the next example */
+              currentExampleIndex.value++;
+              displayExamples();
+            }, v(currentSequenceItem).examplesTimeout * 1000))
+          } else {
+            /* otherwwise we just display the answer form */
+            displayAnswerForm();
+          }
+
+          if (timerHandle!) { /* TODO: not safe */
+            clearInterval(timerHandle);
+          }
+        }
+
+        return callback;
+      }(), v(currentSequenceItem).rowsTimeout * 1000);
+
+      timerHandles.add(timerHandle);
     }
 
-    async function displaySpecificExample(
-      example: Example,
-      interval: number,
-      speechSound: boolean,
-      bubbleSound: boolean
-    ): Promise<void> {
-      for (const row of example.numbers) {
-        await sleep(interval);
-        displayNumber(null);
-        await sleep(40); // fade effect
-        if (!speechSound && bubbleSound)
-          playBubbleSound();
-        if (!bubbleSound && speechSound)
-          speechSpeak(row);
+    /* it does some common things */
+    function completeExample(correct: boolean) {
+      progressPercentage.value += 1 / v(totalExamplesCount) * 100;
+      console.log('complete');
 
-        displayNumber(row);
-      }
-    }
-
-    function completeExample(correct: boolean, soundEffect: boolean) {
-      progressPercentage.value += 1 / totalExamplesCount * 100;
       if (correct) {
         correctAnswersCount.value++;
         displayCorrectAnswerFade();
-        if (soundEffect)
+        if (soundEffects)
           playCorrectAnswerSound();
 
       } else {
         incorrectAnswersCount.value++;
         displayIncorrectAnswerFade();
-        if (soundEffect)
+        if (soundEffects)
           playIncorrectAnswerSound();
       }
     }
 
-    async function displaySpecificSequenceItem(
-      sequenceItem: SequenceItem,
-      skipAnswerForm: boolean,
-      soundEffects = true
-    ): Promise<void> {
-      for (const example of sequenceItem.examples) {
-        currentExample.value = example;
-        await displaySpecificExample(
-          example,
-          sequenceItem.rowsTimeout * 1000,
-          sequenceItem.speechSound,
-          soundEffects
-        );
-        if (!skipAnswerForm) {
-          await sleep(1000);
-          displayAnswerForm();
-          const answer = await waitForAnswerSubmit();
-          if (answer.toString() === example.answer.toString()) {
-            completeExample(true, soundEffects);
-          } else {
-            completeExample(false, soundEffects);
-            displayAnswer();
-            await waitForNextExampleSubmit();
-          }
-        } else {
-          await sleep(sequenceItem.examplesTimeout * 1000);
-        }
-      }
-    }
-
-    async function displaySequenceItems(
-      sequence: SequenceItem[],
-      answerAtEnd: boolean
-    ) {
-      for (const sequenceItem of sequence) {
-        currentSequenceItem.value = sequenceItem;
-        await displaySpecificSequenceItem(
-          sequenceItem,
-          props.answerAtEnd, true
-        );
-      }
-
-      if (answerAtEnd) {
-        displayAnswerForms();
-        await waitForAnswerForms();
-      }
-
-      await sleep(500);
-      playFinishSound();
-      displayResult();
+    function compareAnswer(userAnswer: any, answer: any) {
+      return userAnswer.toString() === answer.toString();
     }
 
     function enterAnswer() {
-      if (answerResolveCallback)
-        answerResolveCallback(answerFormValue.value!); // FIXME: not type safe
+      /* if the answer is correct */
+      if (compareAnswer(v(answerFormValue), v(currentExample).answer)) {
+        completeExample(true);
+        /* clear the screen ( this is not the best way to achieve that ) */
+        displayNumber(null);
+        /* after 1 second we display the next examples */
+        timerHandles.add(setTimeout(() => {
+          /* go to the next example */
+          currentExampleIndex.value++;
+          displayExamples();
+        }, 1000));
+      } else {
+        completeExample(false);
+        /* display the answer of the current example */
+        displayAnswer();
+      }
     }
 
     // TODO: this name does not make any sense
@@ -372,46 +379,63 @@ export default defineComponent({
       answerInput.setAttribute('disabled', '');
       answerButton.setAttribute('disabled', '');
 
-      if (targetExample.answer.toString() === answerInput.value.toString()) {
+      if (compareAnswer(targetExample.answer, answerInput.value)) {
         answerInput.classList.add('is-success', 'is-disabled');
         answerButton.innerText = '';
         answerButton.classList.add('is-success', 'is-disabled');
 
-        completeExample(true, true);
+        completeExample(true);
       } else {
         answerInput.classList.add('is-danger');
         answerButton.innerText = '';
         answerButton.classList.add('is-danger');
 
-        completeExample(false, true);
+        completeExample(false);
       }
 
-      const allExamplesCompleted =correctAnswersCount.value + incorrectAnswersCount.value === totalExamplesCount;
-
-      if (allExamplesCompleted && answersResolveCallback) {
-        answersResolveCallback();
+      /* if this is the last example */
+      if (v(correctAnswersCount) + v(incorrectAnswersCount) === v(totalExamplesCount)) {
+        /* after 1 second we display the result of the game */
+        timerHandles.add(setTimeout(() => {
+          displayScores();
+        }, 1000));
       }
     }
 
     function nextExample() {
-      if (nextExampleResolveCallback)
-        nextExampleResolveCallback();
+      displayNumber(null); // dirty way to clean the scsreen
+
+      currentExampleIndex.value++;
+      displayExamples();
     }
 
     function refresh() {
-      console.log('not implemented yet');
+      displayNumber(null); // dirty way to clean the scsreen
+
+      resetGameStaet();
+      startGame();
     }
 
     function startGame() {
-      displayAttentionTexts(START_ATTENTION_TEXTS).then(() => {
-        displaySequenceItems(props.sequence, props.answerAtEnd).then(() => {
-          // finished! do something
-        });
-      });
+      displayAttentionTexts();
+    }
+
+    function resetGameStaet() {
+      progressPercentage.value = 0;
+      currentSequenceItemIndex.value = 0;
+      currentExampleIndex.value = 0;
+      correctAnswersCount.value = 0;
+      incorrectAnswersCount.value = 0;
+      for (const handle of timerHandles.keys())
+        clearInterval(handle);
     }
 
     onMounted(() => {
       startGame();
+    });
+
+    onUnmounted(() => {
+      resetGameStaet();
     });
 
     return {

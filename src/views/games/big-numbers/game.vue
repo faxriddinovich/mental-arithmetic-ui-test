@@ -62,6 +62,7 @@
                 v-model="answerFormValue"
                 style="width: inherit"
                 class="is-answer-form-input"
+                required
               />
             </b-field>
             <b-button
@@ -170,9 +171,9 @@
         </div>
         <!-- end answer forms display mode -->
 
-        <!-- result display mode -->
+        <!-- scores display mode -->
         <div
-          v-else-if="displayMode === 'result'"
+          v-else-if="displayMode === 'scores'"
           class="mx-auto has-text-centered"
         >
           <div v-if="!multiplayerMode">
