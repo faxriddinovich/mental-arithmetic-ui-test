@@ -85,7 +85,7 @@ export default defineComponent({
     const incorrectAnswersCount = ref<number>(0);
     const correctAnswersCount = ref<number>(0);
     const correctAnswersPercent = computed<number>(() => {
-      return v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100
+      return (v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100).toFixed(2);
     });
     const totalExamplesCount = computed<number>(() => {
       let total = 0;
