@@ -117,7 +117,7 @@
         <div v-else-if="displayMode === 'answer-forms'" style="width: 100%">
           <div class="columns is-multiline is-centered is-vcentered">
             <div
-              class="column"
+              :class="answerFormsColumnClasses"
               v-for="(sequenceItem, sequenceItemIndex) of sequence"
               :key="sequenceItemIndex"
             >

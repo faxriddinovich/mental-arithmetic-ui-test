@@ -112,6 +112,17 @@ export default defineComponent({
       return classes;
     });
 
+    const answerFormsColumnClasses = computed<string[]>(() => {
+      const classes: string[] = ['column']
+      if(props.multiplayerMode) {
+        classes.push('is-12');
+      } else {
+        classes.push('is-12-mobile is-8-desktop');
+      }
+
+      return classes;
+    });
+
     const resultScoreTextClasses = computed<string[]>(() => {
       const classes: string[] = [];
       const percent = v(correctAnswersPercent);
@@ -202,12 +213,15 @@ export default defineComponent({
     const displayNumber = (value: string | number | null) => {
       displayMode.value = 'number';
       display.value = null;
-      setTimeout(() => {
-        if (soundEffects && value)
-          playBubbleSound();
-        if (v(currentSequenceItem).speechSound && value)
-          speechSpeak(value!);
+      if (soundEffects && value)
+        playBubbleSound();
+      if (v(currentSequenceItem).speechSound && value)
+        speechSpeak(value!);
 
+      if(!v(currentSequenceItem).displayNumbers && !props.multiplayerMode)
+        return;
+
+      setTimeout(() => {
         display.value = value;
       }, 40);
     }
@@ -449,6 +463,7 @@ export default defineComponent({
       correctAnswersCount,
       incorrectAnswersCount,
       correctAnswersPercent,
+      answerFormsColumnClasses,
       resultScoreTextClasses
     };
   },
