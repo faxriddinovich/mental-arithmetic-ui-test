@@ -7,13 +7,6 @@ import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-hel
 import {getThemes, generateExamples, Example} from '@/services/generator';
 import {InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
 
-interface ThemeCache {
-  theme: string,
-  examplesCount: number,
-  rowsCount: number,
-  examples: Example[];
-}
-
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
   return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
@@ -80,8 +73,6 @@ export default defineComponent({
       return instances.value.length < MAX_ALLOWED_INSTANCES_COUNT && sequence.value.length;
     });
 
-    const themeCaches: ThemeCache[] = [];
-
     function resetForm() {
       fontRotation.value = fontRotations.value[0];
       fontColor.value = fontColors.value[0];
@@ -112,37 +103,9 @@ export default defineComponent({
       else
         theme.value = filteredThemes.value[0].name;
 
-      const cachedTheme = themeCaches.find((cache) => {
-        const sameExamplesCount = cache.examplesCount === examplesCount.value;
-        const sameRowsCount = cache.rowsCount === rowsCount.value;
-        const sameThemeName = cache.theme === theme.value;
-        return sameThemeName && sameExamplesCount && sameRowsCount;
-      });
-
-      let examples: Example[] = [];
-
-      examples = generateExamples(
-        theme.value,
-        examplesCount.value,
-        rowsCount.value,
-        digit.value
-      );
-
-      if (sameExamples.value) {
-        if (cachedTheme) {
-          examples = cachedTheme.examples;
-        } else {
-          themeCaches.push({
-            theme: theme.value,
-            examplesCount: examplesCount.value,
-            rowsCount: rowsCount.value,
-            examples
-          });
-        }
-      }
 
       sequence.value.push({
-        examples,
+        examples: [],
         theme: theme.value,
         digit: digit.value,
         examplesCount: examplesCount.value,
@@ -189,7 +152,11 @@ export default defineComponent({
         instances: instances.value
       });
 
-      root.$router.push({name: "PlayBigNumbersGame"});
+      const query: { [key: string]: any } = {};
+      if(sameExamples.value)
+        query['sameExamples'] = true;
+
+      root.$router.push({name: "PlayBigNumbersGame", query });
     };
 
     return {

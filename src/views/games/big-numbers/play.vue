@@ -23,14 +23,18 @@
       </div>
     </div>
     <div v-else>
-      <BigNumbersGame :sequence="instances[0].sequence" :answerAtEnd="instances[0].answerAtEnd" />
+      <BigNumbersGame
+        :sequence="instances[0].sequence"
+        :answerAtEnd="instances[0].answerAtEnd"
+      />
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { SequenceItem } from "@/views/games/big-numbers/interfaces";
+import { InstanceItem } from "@/views/games/big-numbers/interfaces";
+import { generateExamples, Example } from "@/services/generator";
 
 export default defineComponent({
   components: { BigNumbersGame },
@@ -40,7 +44,8 @@ export default defineComponent({
       requied: false,
     },
     instances: {
-      type: Array as PropType<SequenceItem[][]>,
+      type: Array as PropType<InstanceItem[]>,
+      default: [],
       requied: true,
     },
     multiplayerMode: {
@@ -50,11 +55,46 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const waitingInstancesCount= ref<number>(0);
-
+    const waitingInstancesCount = ref<number>(0);
     const allInstancesFinished = computed(() => {
-        return waitingInstancesCount.value === props.instances?.length
+      return waitingInstancesCount.value === props.instances?.length;
     });
+
+    interface ThemeCache {
+      theme: string;
+      examplesCount: number;
+      rowsCount: number;
+      examples: Example[];
+    }
+
+    const themeCaches: ThemeCache[] = [];
+
+    for (const instance of props.instances) {
+      for (const sequenceItem of instance.sequence) {
+        const { examplesCount, rowsCount, theme, digit } = sequenceItem;
+
+        if (props.instances!.length > 1 && context.root.$route.query.sameExamples) {
+          const cachedTheme = themeCaches.find((cache) => {
+            const sameExamplesCount = cache.examplesCount === examplesCount;
+            const sameRowsCount = cache.rowsCount === rowsCount;
+            const sameThemeName = cache.theme === theme;
+            return sameThemeName && sameExamplesCount && sameRowsCount;
+          });
+
+          if(cachedTheme) {
+            sequenceItem.examples = cachedTheme.examples;
+          } else {
+            const examples = generateExamples(theme, examplesCount, rowsCount, digit);
+            sequenceItem.examples = examples;
+            themeCaches.push({ theme, examplesCount, rowsCount, examples });
+          }
+
+          console.log(sequenceItem.examples);
+        } else {
+          sequenceItem.examples = generateExamples(theme, examplesCount, rowsCount, digit);
+        }
+      }
+    }
 
     const columnClasses = computed(() => {
       const classes: string[] = [];
@@ -76,9 +116,9 @@ export default defineComponent({
     function addWaitingInstance() {
       waitingInstancesCount.value++;
 
-      if(allInstancesFinished.value)  {
+      if (allInstancesFinished.value) {
         context.root.$nextTick(() => {
-          context.root.$emit('display-answer-forms')
+          context.root.$emit("display-answer-forms");
         });
       }
     }
