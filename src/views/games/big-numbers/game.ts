@@ -1,6 +1,3 @@
-/*
- * Note: There may be performance issues in this game, but this approach keeps the source code compact and clean.
- */
 import {
   defineComponent,
   computed,
@@ -56,7 +53,7 @@ export default defineComponent({
       required: true
     },
     onFinish: {
-      type: Function as PropType<(sequenceIndex: number) => void>,
+      type: Function as PropType<() => void>,
       required: false
     },
     multiplayerMode: {
@@ -85,7 +82,7 @@ export default defineComponent({
     const incorrectAnswersCount = ref<number>(0);
     const correctAnswersCount = ref<number>(0);
     const correctAnswersPercent = computed<number>(() => {
-      return (v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100).toFixed(2);
+      return (v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100); // FIXME: tofixed
     });
     const totalExamplesCount = computed<number>(() => {
       let total = 0;
@@ -96,7 +93,7 @@ export default defineComponent({
     });
 
     const displayParent = ref<HTMLElement>();
-    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores' | 'wait'>('attention');
+    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
@@ -233,14 +230,9 @@ export default defineComponent({
       displayMode.value = 'scores';
     }
 
-    const displayWait = () => {
-      displayMode.value = 'wait';
-    }
-
     // FIXME: do not use the global instance
-    context.root.$once('display-answer-form', () => {
-      if (displayMode.value === 'wait')
-        displayAnswerForms();
+    context.root.$once('display-answer-forms', () => {
+      displayAnswerForms();
     });
 
     function speechSpeak(text: string | number) {
@@ -273,9 +265,13 @@ export default defineComponent({
       if ((v(currentExampleIndex) + 1) > v(currentSequenceItem).examples.length) {
         /* if there are no sequence items left */
         if ((v(currentSequenceItemIndex) + 1) >= props.sequence.length) {
+          if(props.onFinish)
+            props.onFinish();
+
           if (props.answerAtEnd) {
-            /* display the answer forms */
-            displayAnswerForms();
+            if(!props.multiplayerMode)
+              /* display the answer forms */
+              displayAnswerForms();
           } else {
             /* otherwise display the scores */
             displayScores();
@@ -325,7 +321,6 @@ export default defineComponent({
     /* it does some common things */
     function completeExample(correct: boolean) {
       progressPercentage.value += 1 / v(totalExamplesCount) * 100;
-      console.log('complete');
 
       if (correct) {
         correctAnswersCount.value++;

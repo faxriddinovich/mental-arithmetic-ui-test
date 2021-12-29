@@ -78,7 +78,7 @@ export default defineComponent({
 
       if(allInstancesFinished.value)  {
         context.root.$nextTick(() => {
-          context.root.$emit('display-answer-form')
+          context.root.$emit('display-answer-forms')
         });
       }
     }

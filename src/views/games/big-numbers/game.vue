@@ -209,12 +209,6 @@
           </div>
         </div>
         <!-- result display mode -->
-        <!-- wait display mode -->
-        <div v-else-if="displayMode === 'wait'" class="has-text-centered">
-          <img :src="require('@@/img/hourglass.svg')" width="80px" /> <br />
-          <span class="is-size-5">Waiting other players..</span>
-        </div>
-        <!-- end wait display mode -->
       </div>
     </section>
     <!-- end display screen -->
