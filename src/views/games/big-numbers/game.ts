@@ -100,10 +100,16 @@ export default defineComponent({
       const classes: string[] = [];
       if (displayMode.value === 'number') {
         const {fontSize, fontRotation, fontColor} = v(currentSequenceItem);
+        console.log(fontSize);
+
+        const displayCharsCount= String(v(display)).length;
+        classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
+                     /*
         classes.push('is-display-text');
         classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
+        */
       } else if (displayMode.value === 'attention') {
         classes.push('is-display-text');
         classes.push('is-2');
@@ -213,7 +219,7 @@ export default defineComponent({
     const displayNumber = (value: string | number | null) => {
       displayMode.value = 'number';
       display.value = null;
-      if (soundEffects && value)
+      if (soundEffects && value && !props.multiplayerMode)
         playBubbleSound();
       if (v(currentSequenceItem).speechSound && value)
         speechSpeak(value!);

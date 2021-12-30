@@ -81,9 +81,7 @@
             <div :class="{ column: true, 'is-6-desktop': !multiplayerMode }">
               <div class="card is-bordered p-2 is-word-break">
                 <div class="has-text-centered">
-                  <div
-                    class="is-size-4 has-text-weight-semibold"
-                  >
+                  <div class="is-size-4 has-text-weight-semibold">
                     {{ currentExample.numbers.join("") }}
                   </div>
                   <div class="is-size-3 has-text-weight-bold has-text-success">
@@ -268,6 +266,39 @@
     font-size: 18vh !important;
   }
 }
+
+$font-sizes: (
+  font-max-size-char-1: 45vmin,
+  font-max-size-char-2: 45vmin,
+  font-max-size-char-3: 45vmin,
+  font-max-size-char-4: 40vmin,
+  font-max-size-char-5: 41vmin,
+  font-max-size-char-6: 26vmin,
+  font-max-size-char-7: 20vmin,
+);
+
+@each $font-size in $font-sizes {
+    $index: index($font-sizes, $font-size);
+    $font-size: nth($font-size, 2);
+
+    .is-display-number-#{$index}-1 {
+      font-size: $font-size - 7;
+    }
+
+    .is-display-number-#{$index}-2 {
+      font-size: $font-size - 10;
+    }
+
+    .is-display-number-#{$index}-3 {
+      font-size: $font-size;
+    }
+
+    .is-display-number-#{$index}-3.is-rotatedd-90 {
+      transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+    }
+}
+
 
 .is-answer-form-input > .control > input[type="number"] {
   padding-left: 10px !important;

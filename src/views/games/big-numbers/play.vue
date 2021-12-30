@@ -1,28 +1,25 @@
 <template>
   <div>
     <div
-      class="
-        columns
-        is-marginless is-mobile is-multiline is-centered is-vcentered
-      "
+      class="columns is-marginless is-mobile is-multiline is-centered is-vcentered"
       style="min-height: 100vh"
       v-if="multiplayerMode"
     >
       <div
-        :class="columnClasses"
+        class="column is-12-mobile is-4-tablet"
         v-for="(instanceItem, instanceItemIndex) of instances"
         :key="instanceItemIndex"
       >
         <BigNumbersGame
           :multiplayerMode="true"
           :answerAtEnd="answerAtEnd"
-          :topBar="false"
           :onFinish="addWaitingInstance"
           :sequence="instanceItem.sequence"
         />
       </div>
     </div>
-    <div v-else>
+
+    <div class="min-height: 100vh" v-else>
       <BigNumbersGame
         :sequence="instances[0].sequence"
         :answerAtEnd="instances[0].answerAtEnd"
@@ -83,7 +80,9 @@ export default defineComponent({
             const sameRowsCount = cache.rowsCount === rowsCount;
             const sameThemeName = cache.theme === theme;
             const sameDigit = cache.digit === digit;
-            return sameThemeName && sameExamplesCount && sameRowsCount && sameDigit
+            return (
+              sameThemeName && sameExamplesCount && sameRowsCount && sameDigit
+            );
           });
 
           if (cachedTheme) {
@@ -96,7 +95,13 @@ export default defineComponent({
               digit
             );
             sequenceItem.examples = examples;
-            themeCaches.push({ theme, examplesCount, rowsCount, examples, digit });
+            themeCaches.push({
+              theme,
+              examplesCount,
+              rowsCount,
+              examples,
+              digit,
+            });
           }
 
           console.log(sequenceItem.examples);
@@ -145,3 +150,8 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.column {
+  border: 1px dashed gray;
+}
+</style>
