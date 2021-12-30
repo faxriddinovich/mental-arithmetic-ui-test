@@ -36,6 +36,14 @@ import BigNumbersGame from "@/views/games/big-numbers/game.vue";
 import { InstanceItem } from "@/views/games/big-numbers/interfaces";
 import { generateExamples, Example } from "@/services/generator";
 
+interface ThemeCache {
+  theme: string;
+  examplesCount: number;
+  rowsCount: number;
+  digit: number;
+  examples: Example[];
+}
+
 export default defineComponent({
   components: { BigNumbersGame },
   props: {
@@ -60,38 +68,45 @@ export default defineComponent({
       return waitingInstancesCount.value === props.instances?.length;
     });
 
-    interface ThemeCache {
-      theme: string;
-      examplesCount: number;
-      rowsCount: number;
-      examples: Example[];
-    }
-
     const themeCaches: ThemeCache[] = [];
 
     for (const instance of props.instances) {
       for (const sequenceItem of instance.sequence) {
         const { examplesCount, rowsCount, theme, digit } = sequenceItem;
 
-        if (props.instances!.length > 1 && context.root.$route.query.sameExamples) {
+        if (
+          props.instances!.length > 1 &&
+          context.root.$route.query.sameExamples
+        ) {
           const cachedTheme = themeCaches.find((cache) => {
             const sameExamplesCount = cache.examplesCount === examplesCount;
             const sameRowsCount = cache.rowsCount === rowsCount;
             const sameThemeName = cache.theme === theme;
-            return sameThemeName && sameExamplesCount && sameRowsCount;
+            const sameDigit = cache.digit === digit;
+            return sameThemeName && sameExamplesCount && sameRowsCount && sameDigit
           });
 
-          if(cachedTheme) {
+          if (cachedTheme) {
             sequenceItem.examples = cachedTheme.examples;
           } else {
-            const examples = generateExamples(theme, examplesCount, rowsCount, digit);
+            const examples = generateExamples(
+              theme,
+              examplesCount,
+              rowsCount,
+              digit
+            );
             sequenceItem.examples = examples;
-            themeCaches.push({ theme, examplesCount, rowsCount, examples });
+            themeCaches.push({ theme, examplesCount, rowsCount, examples, digit });
           }
 
           console.log(sequenceItem.examples);
         } else {
-          sequenceItem.examples = generateExamples(theme, examplesCount, rowsCount, digit);
+          sequenceItem.examples = generateExamples(
+            theme,
+            examplesCount,
+            rowsCount,
+            digit
+          );
         }
       }
     }

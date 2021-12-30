@@ -103,11 +103,10 @@ export default defineComponent({
       else
         theme.value = filteredThemes.value[0].name;
 
-
       sequence.value.push({
         examples: [],
         theme: theme.value,
-        digit: digit.value,
+        digit: Number(digit.value),
         examplesCount: examplesCount.value,
         examplesTimeout: examplesTimeout.value,
         rowsCount: rowsCount.value,
