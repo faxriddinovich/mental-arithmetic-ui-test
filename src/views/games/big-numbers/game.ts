@@ -97,19 +97,15 @@ export default defineComponent({
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
-      const classes: string[] = [];
+      const classes: string[] = ['is-display-text'];
       if (displayMode.value === 'number') {
         const {fontSize, fontRotation, fontColor} = v(currentSequenceItem);
-        console.log(fontSize);
 
         const displayCharsCount= String(v(display)).length;
         classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
-                     /*
-        classes.push('is-display-text');
-        classes.push(`is-${fontSize}`);
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
-        */
+
       } else if (displayMode.value === 'attention') {
         classes.push('is-display-text');
         classes.push('is-2');

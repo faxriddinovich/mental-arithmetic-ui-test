@@ -246,12 +246,13 @@
   font-size: 26vmin;
 }
 
+.is-display-text {
+  display: inline-block;
+}
+
 .is-rotated-90 {
   transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
-  @include tablet {
-    font-size: 18vh !important;
-  }
 }
 
 .is-rotated-180 {
@@ -262,43 +263,39 @@
 .is-rotated-270 {
   transform: rotate(270deg);
   -webkit-transform: rotate(270deg);
-  @include tablet {
-    font-size: 18vh !important;
-  }
 }
 
-$font-sizes: (
-  font-max-size-char-1: 45vmin,
-  font-max-size-char-2: 45vmin,
-  font-max-size-char-3: 45vmin,
-  font-max-size-char-4: 40vmin,
-  font-max-size-char-5: 41vmin,
-  font-max-size-char-6: 26vmin,
-  font-max-size-char-7: 20vmin,
+$font-sizes-h: (
+    1: 60vmin,
+    2: 60vmin,
+    3: 45vmin,
+    4: 40vmin,
+    5: 32vmin,
+    6: 26vmin,
+    7: 22vmin,
 );
 
-@each $font-size in $font-sizes {
-    $index: index($font-sizes, $font-size);
-    $font-size: nth($font-size, 2);
-
-    .is-display-number-#{$index}-1 {
-      font-size: $font-size - 7;
-    }
-
-    .is-display-number-#{$index}-2 {
-      font-size: $font-size - 10;
-    }
-
-    .is-display-number-#{$index}-3 {
+@each $char-len, $font-size in $font-sizes-h {
+  .is-display-number-#{$char-len}-1 {
+    @if $char-len < 5 {
+      font-size: $font-size - 25;
+    } @else {
       font-size: $font-size;
     }
+  }
 
-    .is-display-number-#{$index}-3.is-rotatedd-90 {
-      transform: rotate(90deg);
-      -webkit-transform: rotate(90deg);
+  .is-display-number-#{$char-len}-2 {
+    @if $char-len < 5 {
+      font-size: $font-size - 15;
+    } @else {
+      font-size: $font-size;
     }
-}
+  }
 
+  .is-display-number-#{$char-len}-3 {
+    font-size: $font-size;
+  }
+}
 
 .is-answer-form-input > .control > input[type="number"] {
   padding-left: 10px !important;
