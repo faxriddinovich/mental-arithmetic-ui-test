@@ -7,13 +7,13 @@ import {
   Ref,
   onUnmounted
 } from "@vue/composition-api";
-import {SequenceItem} from "@/views/games/big-numbers/interfaces";
+import {SequenceItem, Example} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
 import BubbleSoundSrc from '@@/sounds/bubble.mp3';
 import {SettingsStorage} from '@/services/storages/settings';
-import {generateExamples, Example} from '@/services/generator';
+import {generateExamples} from '@/services/generator';
 
 import {speak} from '@/services/tts';
 
@@ -70,13 +70,16 @@ export default defineComponent({
 
     // these refs holds the current state of the game, so that we can use it
     const currentSequenceItemIndex = ref<number>(0);
-    const currentSequenceItem = computed(() => {
-      return props.sequence[v(currentSequenceItemIndex)];
+    const currentSequenceItem = computed<SequenceItem | null>(() => {
+      return props.sequence[v(currentSequenceItemIndex)] || null;
     });
 
     const currentExampleIndex = ref<number>(0);
-    const currentExample = computed(() => {
-      return v(currentSequenceItem).examples[v(currentExampleIndex)];
+    const currentExample = computed<Example | null>(() => {
+      if(!v(currentSequenceItem)) return null;
+
+      const example = v(currentSequenceItem)!.examples[v(currentExampleIndex)];
+      return example || null;
     });
 
     const incorrectAnswersCount = ref<number>(0);
@@ -99,10 +102,10 @@ export default defineComponent({
     const displayClasses = computed(() => {
       const classes: string[] = ['is-display-text'];
       if (displayMode.value === 'number') {
-        const {fontSize, fontRotation, fontColor} = v(currentSequenceItem);
+        const {fontSize, fontRotation, fontColor} = v(currentSequenceItem)!;
 
-        const displayCharsCount= String(v(display)).length;
-        if(props.multiplayerMode)
+        const displayCharsCount = String(v(display)).length;
+        if (props.multiplayerMode)
           classes.push('is-display-number-small');
         else
           classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
@@ -120,7 +123,7 @@ export default defineComponent({
 
     const answerFormsColumnClasses = computed<string[]>(() => {
       const classes: string[] = ['column']
-      if(props.multiplayerMode) {
+      if (props.multiplayerMode) {
         classes.push('is-12');
       } else {
         classes.push('is-12-mobile is-8-desktop');
@@ -221,10 +224,10 @@ export default defineComponent({
       display.value = null;
       if (soundEffects && value && !props.multiplayerMode)
         playBubbleSound();
-      if (v(currentSequenceItem).speechSound && value)
+      if (v(currentSequenceItem)!.speechSound && value)
         speechSpeak(value!);
 
-      if(!v(currentSequenceItem).displayNumbers && !props.multiplayerMode)
+      if (!v(currentSequenceItem)!.displayNumbers && !props.multiplayerMode)
         return;
 
       setTimeout(() => {
@@ -256,8 +259,8 @@ export default defineComponent({
     });
 
     function speechSpeak(text: string | number) {
-      const speechRate = currentSequenceItem.value.rowsTimeout >= 1
-        ? 1 : 1 + currentSequenceItem.value.rowsTimeout + (String(text).length / 2);
+      const speechRate = v(currentSequenceItem)!.rowsTimeout >= 1
+        ? 1 : 1 + v(currentSequenceItem)!.rowsTimeout + (String(text).length / 2);
       speak(text, language.value, speechRate);
     }
 
@@ -281,25 +284,32 @@ export default defineComponent({
     }
 
     function displayExamples() {
-      /* if there are no examples left */
-      if ((v(currentExampleIndex) + 1) > v(currentSequenceItem).examples.length) {
-        /* if there are no sequence items left */
-        if ((v(currentSequenceItemIndex) + 1) >= props.sequence.length) {
-          if(props.onFinish)
+      // there are no examples left
+      if (!v(currentExample)) {
+        // if there are no sequence items left
+        if (v(currentSequenceItemIndex) + 1 >= props.sequence!.length) {
+          if (props.onFinish)
             props.onFinish();
 
           if (props.answerAtEnd) {
-            if(!props.multiplayerMode)
-              /* display the answer forms */
+            // if the multiplayer mode is on then we listen to event
+            if (!props.multiplayerMode) {
               displayAnswerForms();
+            }
           } else {
-            /* otherwise display the scores */
             displayScores();
           }
-        } else {
-          /* go to the next sequence item */
+        } else { // otherwise we go to the next sequence item
+          currentExampleIndex.value = 0;
           currentSequenceItemIndex.value++;
-          displayExamples();
+
+          // display the name of the theme of the current sequence item
+          displayAttentionText(v(currentSequenceItem)!.theme);
+
+          // a little bit delay
+          timerHandles.add(setTimeout(() => {
+            displayExamples();
+          }, 1000));
         }
 
         return;
@@ -308,20 +318,21 @@ export default defineComponent({
       let currentRowIndex = 0;
       const timerHandle = setInterval(function callback() {
         /* if there are not displayed row items */
-        if (v(currentExample).numbers[currentRowIndex]) {
+        if (v(currentExample)!.numbers[currentRowIndex]) {
           /* we just display the row item */
-          displayNumber(v(currentExample).numbers[currentRowIndex]);
+          displayNumber(v(currentExample)!.numbers[currentRowIndex]);
           currentRowIndex++;
         } else { /* there are no row items left */
 
           if (props.answerAtEnd) {
+            // FIXME: use css animations?
             displayNumber(null);
             /* after n seconds we display the next examples */
             timerHandles.add(setTimeout(() => {
               /* go to the next example */
               currentExampleIndex.value++;
               displayExamples();
-            }, v(currentSequenceItem).examplesTimeout * 1000))
+            }, v(currentSequenceItem)!.examplesTimeout * 1000))
           } else {
             /* otherwwise we just display the answer form */
             displayAnswerForm();
@@ -333,7 +344,7 @@ export default defineComponent({
         }
 
         return callback;
-      }(), v(currentSequenceItem).rowsTimeout * 1000);
+      }(), v(currentSequenceItem)!.rowsTimeout * 1000);
 
       timerHandles.add(timerHandle);
     }
@@ -362,7 +373,7 @@ export default defineComponent({
 
     function enterAnswer() {
       /* if the answer is correct */
-      if (compareAnswer(v(answerFormValue), v(currentExample).answer)) {
+      if (compareAnswer(v(answerFormValue), v(currentExample)!.answer)) {
         completeExample(true);
         /* clear the screen ( this is not the best way to achieve that ) */
         displayNumber(null);
@@ -427,7 +438,7 @@ export default defineComponent({
     function refresh() {
       displayNumber(null); // dirty way to clean the scsreen
 
-      resetGameStaet();
+      resetGameState();
       startGame();
     }
 
@@ -435,7 +446,7 @@ export default defineComponent({
       displayAttentionTexts();
     }
 
-    function resetGameStaet() {
+    function resetGameState() {
       progressPercentage.value = 0;
       currentSequenceItemIndex.value = 0;
       currentExampleIndex.value = 0;
@@ -450,7 +461,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      resetGameStaet();
+      resetGameState();
     });
 
     return {

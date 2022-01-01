@@ -266,13 +266,13 @@
 }
 
 $font-sizes-h: (
-    1: 60vmin,
-    2: 60vmin,
-    3: 45vmin,
-    4: 40vmin,
-    5: 32vmin,
-    6: 26vmin,
-    7: 22vmin,
+  1: 60vmin,
+  2: 60vmin,
+  3: 45vmin,
+  4: 40vmin,
+  5: 32vmin,
+  6: 26vmin,
+  7: 22vmin,
 );
 
 @each $char-len, $font-size in $font-sizes-h {

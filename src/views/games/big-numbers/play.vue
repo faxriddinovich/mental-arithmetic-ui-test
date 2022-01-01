@@ -6,7 +6,7 @@
       v-if="multiplayerMode"
     >
       <div
-        class="column is-12-mobile is-4-tablet"
+        :class="columnClasses"
         v-for="(instanceItem, instanceItemIndex) of instances"
         :key="instanceItemIndex"
       >
@@ -65,10 +65,6 @@ export default defineComponent({
       return waitingInstancesCount.value === props.instances?.length;
     });
 
-    setTimeout(() => {
-      context.root.$forceUpdate();
-    }, 1000);
-
     const themeCaches: ThemeCache[] = [];
 
     for (const instance of props.instances) {
@@ -125,8 +121,7 @@ export default defineComponent({
       classes.push("is-12-mobile");
 
       if (allInstancesFinished.value) {
-        classes.push("is-12-mobile");
-        classes.push("is-6-desktop");
+        classes.push("is-12");
       } else {
         classes.push("is-6-tablet");
         classes.push("is-4-desktop");

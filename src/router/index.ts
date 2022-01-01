@@ -30,10 +30,12 @@ import Scores from "@/views/scores.vue";
 
 import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
 import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
+import test from '@/test.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
+{ path: "/test", component: test },
   {
     path: "/",
     name: "Home",
