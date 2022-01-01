@@ -297,6 +297,10 @@ $font-sizes-h: (
   }
 }
 
+.is-display-number-small {
+  font-size: 8vmax;
+}
+
 .is-answer-form-input > .control > input[type="number"] {
   padding-left: 10px !important;
   padding-right: 10px !important;

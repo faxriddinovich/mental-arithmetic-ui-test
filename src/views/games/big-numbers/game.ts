@@ -102,7 +102,11 @@ export default defineComponent({
         const {fontSize, fontRotation, fontColor} = v(currentSequenceItem);
 
         const displayCharsCount= String(v(display)).length;
-        classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
+        if(props.multiplayerMode)
+          classes.push('is-display-number-small');
+        else
+          classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
+
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
 

@@ -65,6 +65,10 @@ export default defineComponent({
       return waitingInstancesCount.value === props.instances?.length;
     });
 
+    setTimeout(() => {
+      context.root.$forceUpdate();
+    }, 1000);
+
     const themeCaches: ThemeCache[] = [];
 
     for (const instance of props.instances) {
@@ -103,8 +107,6 @@ export default defineComponent({
               digit,
             });
           }
-
-          console.log(sequenceItem.examples);
         } else {
           sequenceItem.examples = generateExamples(
             theme,
@@ -150,8 +152,3 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss" scoped>
-.column {
-  border: 1px dashed gray;
-}
-</style>
