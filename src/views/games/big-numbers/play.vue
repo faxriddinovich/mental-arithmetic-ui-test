@@ -1,7 +1,10 @@
 <template>
   <div>
     <div
-      class="columns is-marginless is-mobile is-multiline is-centered is-vcentered"
+      class="
+        columns
+        is-marginless is-mobile is-multiline is-centered is-vcentered
+      "
       style="min-height: 100vh"
       v-if="multiplayerMode"
     >
@@ -23,6 +26,7 @@
       <BigNumbersGame
         :sequence="instances[0].sequence"
         :answerAtEnd="instances[0].answerAtEnd"
+        :onRefresh="regenerateExamples"
       />
     </div>
   </div>
@@ -114,6 +118,20 @@ export default defineComponent({
       }
     }
 
+    function regenerateExamples() {
+      for (const instance of props.instances) {
+        for (const sequenceItem of instance.sequence) {
+          const { theme, examplesCount, rowsCount, digit } = sequenceItem;
+          sequenceItem.examples = generateExamples(
+            theme,
+            examplesCount,
+            rowsCount,
+            digit
+          );
+        }
+      }
+    }
+
     const columnClasses = computed(() => {
       const classes: string[] = [];
 
@@ -142,6 +160,7 @@ export default defineComponent({
 
     return {
       addWaitingInstance,
+      regenerateExamples,
       columnClasses,
     };
   },

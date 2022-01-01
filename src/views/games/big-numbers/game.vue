@@ -39,6 +39,8 @@
       ref="displayParent"
     >
       <div class="hero-body p-1">
+        <!-- pass -->
+        <div v-if="displayMode === 'pass'"></div>
         <!-- attention | number display mode -->
         <div
           v-if="displayMode === 'attention' || displayMode === 'number'"

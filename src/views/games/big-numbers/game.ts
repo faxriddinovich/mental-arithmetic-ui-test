@@ -13,7 +13,6 @@ import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
 import BubbleSoundSrc from '@@/sounds/bubble.mp3';
 import {SettingsStorage} from '@/services/storages/settings';
-import {generateExamples} from '@/services/generator';
 
 import {speak} from '@/services/tts';
 
@@ -53,6 +52,10 @@ export default defineComponent({
       required: true
     },
     onFinish: {
+      type: Function as PropType<() => void>,
+      required: false
+    },
+    onRefresh: {
       type: Function as PropType<() => void>,
       required: false
     },
@@ -96,7 +99,7 @@ export default defineComponent({
     });
 
     const displayParent = ref<HTMLElement>();
-    const displayMode = ref<'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores'>('attention');
+    const displayMode = ref<'pass' | 'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores'>('attention');
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
@@ -198,18 +201,24 @@ export default defineComponent({
       language.value = loc;
     });
 
+    const timerHandles = new Set<NodeJS.Timeout>();
+
+    const clearScreen = () => {
+      displayMode.value = 'pass';
+    }
+
     const displayCorrectAnswerFade = () => {
       v(displayParent)!.classList.add('is-correct-answer');
-      setTimeout(() => {
+      timerHandles.add(setTimeout(() => {
         displayParent.value!.classList.remove('is-correct-answer');
-      }, 1000);
+      }, 1000));
     }
 
     const displayIncorrectAnswerFade = () => {
       displayParent.value!.classList.add('is-incorrect-answer');
-      setTimeout(() => {
+      timerHandles.add(setTimeout(() => {
         displayParent.value!.classList.remove('is-incorrect-answer');
-      }, 1000);
+      }, 1000));
     }
 
     const displayAttentionText = (text: string | number) => {
@@ -264,7 +273,6 @@ export default defineComponent({
       speak(text, language.value, speechRate);
     }
 
-    const timerHandles = new Set<NodeJS.Timeout>();
 
     function displayAttentionTexts() {
       let currentAttentionTextIndex = 0;
@@ -326,7 +334,7 @@ export default defineComponent({
 
           if (props.answerAtEnd) {
             // FIXME: use css animations?
-            displayNumber(null);
+            clearScreen();
             /* after n seconds we display the next examples */
             timerHandles.add(setTimeout(() => {
               /* go to the next example */
@@ -375,8 +383,8 @@ export default defineComponent({
       /* if the answer is correct */
       if (compareAnswer(v(answerFormValue), v(currentExample)!.answer)) {
         completeExample(true);
-        /* clear the screen ( this is not the best way to achieve that ) */
-        displayNumber(null);
+        /* clear the screen */
+        clearScreen();
         /* after 1 second we display the next examples */
         timerHandles.add(setTimeout(() => {
           /* go to the next example */
@@ -429,14 +437,17 @@ export default defineComponent({
     }
 
     function nextExample() {
-      displayNumber(null); // dirty way to clean the scsreen
+      clearScreen();
 
       currentExampleIndex.value++;
       displayExamples();
     }
 
     function refresh() {
-      displayNumber(null); // dirty way to clean the scsreen
+      clearScreen();
+
+      if(props.onRefresh)
+        props.onRefresh();
 
       resetGameState();
       startGame();
