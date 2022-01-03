@@ -35,12 +35,12 @@
                     placeholder="Search a theme"
                     icon="search"
                     :data="filteredThemes"
+                    dropdown-position="bottom"
                     field="name"
                     v-model="theme"
                     keep-first
                     open-on-focus
                     expanded
-                    required
                   >
                     <template #header>
                       <span

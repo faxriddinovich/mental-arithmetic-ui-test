@@ -22,3 +22,10 @@ export interface InstanceItem {
   answerAtEnd: boolean,
   sequence: SequenceItem[]
 }
+
+export interface BigNumbersGameConfig  {
+  answerAtEnd: boolean,
+  multiplayerMode: boolean,
+  sameExamples: boolean,
+  instances: InstanceItem[]
+}

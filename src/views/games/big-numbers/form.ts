@@ -3,9 +3,8 @@ import {
   computed,
   ref,
 } from "@vue/composition-api";
-import {createNamespacedHelpers as createStoreHelper} from "vuex-composition-helpers";
-import {getThemes, generateExamples, Example} from '@/services/generator';
-import {InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
+import {BigNumbersGameConfig, InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
+import {getThemes} from '@/services/generator';
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -13,9 +12,7 @@ const matches = (str0: string, str1: string) => {
 };
 
 export default defineComponent({
-  setup(_, {root}) {
-    const {useMutations} = createStoreHelper("GameModule");
-
+  setup(_, context) {
     const filteredThemes = computed(() => {
       return getThemes()
         .filter((_theme) => {
@@ -73,6 +70,23 @@ export default defineComponent({
       return instances.value.length < MAX_ALLOWED_INSTANCES_COUNT && sequence.value.length;
     });
 
+    const config = context.root.$store.getters['BigNumbers/config'] as BigNumbersGameConfig;
+
+    if(config) {
+      if(config.instances.length === 1) {
+        const instance = config.instances[0];
+        sequence.value.push(...instance.sequence!);
+      } else {
+        for(const instance of config.instances) {
+          instances.value.push(instance);
+        }
+      }
+
+      multiplayerMode.value = config.multiplayerMode;
+      answerAtEnd.value = config.answerAtEnd;
+      sameExamples.value = config.sameExamples;
+    }
+
     function resetForm() {
       fontRotation.value = fontRotations.value[0];
       fontColor.value = fontColors.value[0];
@@ -127,16 +141,6 @@ export default defineComponent({
       instances.value = instances.value.filter((_, idx) => idx !== index);
     }
 
-    /*
-     * This must not be called outside of `setup()`. Because `vuex-composition-helpers`
-     * uses `getCurrentInstance` to get the current instance of the component,
-     * which returns `null` when it is not called during setup.
-     *
-     * From the documentation:
-     *    "`getCurrentInstance` only works during setup or Lifecycle Hooks"
-     */
-    const {setSettings} = useMutations(["setSettings"]);
-
     const play = () => {
       if (!sequence.value.length)
         addSequenceItem();
@@ -144,18 +148,16 @@ export default defineComponent({
       if (!instances.value.length)
         addInstanceItem();
 
-      setSettings({
+
+      const gameConfig: BigNumbersGameConfig  ={
         answerAtEnd: answerAtEnd.value,
         multiplayerMode: multiplayerMode.value,
         sameExamples: sameExamples.value,
         instances: instances.value
-      });
+      };
 
-      const query: { [key: string]: any } = {};
-      if(sameExamples.value)
-        query['sameExamples'] = true;
-
-      root.$router.push({name: "PlayBigNumbersGame", query });
+      context.root.$store.commit('BigNumbers/setConfig', gameConfig);
+      context.root.$router.push({name: "PlayBigNumbersGame"});
     };
 
     return {

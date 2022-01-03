@@ -6,17 +6,17 @@
         is-marginless is-mobile is-multiline is-centered is-vcentered
       "
       style="min-height: 100vh"
-      v-if="multiplayerMode"
+      v-if="config.multiplayerMode"
     >
       <div
         :class="columnClasses"
-        v-for="(instanceItem, instanceItemIndex) of instances"
+        v-for="(instanceItem, instanceItemIndex) of config.instances"
         :key="instanceItemIndex"
       >
         <BigNumbersGame
           :multiplayerMode="true"
-          :answerAtEnd="answerAtEnd"
-          :onFinish="addWaitingInstance"
+          :answerAtEnd="config.answerAtEnd"
+          :onFinish="addCompletedInstance"
           :sequence="instanceItem.sequence"
         />
       </div>
@@ -24,17 +24,17 @@
 
     <div class="min-height: 100vh" v-else>
       <BigNumbersGame
-        :sequence="instances[0].sequence"
-        :answerAtEnd="instances[0].answerAtEnd"
+        :sequence="config.instances[0].sequence"
+        :answerAtEnd="config.instances[0].answerAtEnd"
         :onRefresh="regenerateExamples"
       />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, PropType } from "@vue/composition-api";
+import { defineComponent, ref, computed } from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { InstanceItem } from "@/views/games/big-numbers/interfaces";
+import { BigNumbersGameConfig } from "@/views/games/big-numbers/interfaces";
 import { generateExamples, Example } from "@/services/generator";
 
 interface ThemeCache {
@@ -47,79 +47,60 @@ interface ThemeCache {
 
 export default defineComponent({
   components: { BigNumbersGame },
-  props: {
-    answerAtEnd: {
-      type: Boolean,
-      requied: false,
-    },
-    instances: {
-      type: Array as PropType<InstanceItem[]>,
-      default: [],
-      requied: true,
-    },
-    multiplayerMode: {
-      type: Boolean,
-      default: false,
-      required: false,
-    },
-  },
   setup(props, context) {
-    const waitingInstancesCount = ref<number>(0);
-    const allInstancesFinished = computed(() => {
-      return waitingInstancesCount.value === props.instances?.length;
+    const rawConfig = context.root.$store.getters['BigNumbers/config'];
+    const config = ref<BigNumbersGameConfig>(rawConfig);
+
+    const completedInstancesCount = ref<number>(0);
+    const instancesCompleted = computed(() => {
+      return completedInstancesCount.value === config.value.instances.length;
     });
 
     const themeCaches: ThemeCache[] = [];
 
-    for (const instance of props.instances) {
+    // for each instance we generate examples
+    for (const instance of config.value.instances) {
       for (const sequenceItem of instance.sequence) {
         const { examplesCount, rowsCount, theme, digit } = sequenceItem;
-
-        if (
-          props.instances!.length > 1 &&
-          context.root.$route.query.sameExamples
-        ) {
+        if (config.value.instances.length > 1 && config.value.sameExamples) {
           const cachedTheme = themeCaches.find((cache) => {
             const sameExamplesCount = cache.examplesCount === examplesCount;
             const sameRowsCount = cache.rowsCount === rowsCount;
-            const sameThemeName = cache.theme === theme;
+            const sameTheme = cache.theme === theme;
             const sameDigit = cache.digit === digit;
-            return (
-              sameThemeName && sameExamplesCount && sameRowsCount && sameDigit
-            );
+            return sameTheme && sameExamplesCount && sameRowsCount && sameDigit;
           });
 
+          // if there is a cached theme
           if (cachedTheme) {
             sequenceItem.examples = cachedTheme.examples;
-          } else {
-            const examples = generateExamples(
-              theme,
-              examplesCount,
-              rowsCount,
-              digit
-            );
-            sequenceItem.examples = examples;
-            themeCaches.push({
-              theme,
-              examplesCount,
-              rowsCount,
-              examples,
-              digit,
-            });
+            continue;
           }
-        } else {
-          sequenceItem.examples = generateExamples(
+          // we generate examples
+          const examples = generateExamples(
             theme,
             examplesCount,
             rowsCount,
             digit
           );
+          sequenceItem.examples = examples;
+          // and we add to the cache
+          themeCaches.push({
+            theme,
+            examplesCount,
+            rowsCount,
+            examples,
+            digit,
+          });
+          continue;
         }
+
+        sequenceItem.examples = generateExamples(theme, examplesCount, rowsCount, digit);
       }
     }
 
     function regenerateExamples() {
-      for (const instance of props.instances) {
+      for (const instance of config.value.instances) {
         for (const sequenceItem of instance.sequence) {
           const { theme, examplesCount, rowsCount, digit } = sequenceItem;
           sequenceItem.examples = generateExamples(
@@ -132,13 +113,13 @@ export default defineComponent({
       }
     }
 
-    const columnClasses = computed(() => {
+    const columnClasses = computed<string[]>(() => {
       const classes: string[] = [];
 
       classes.push("column");
       classes.push("is-12-mobile");
 
-      if (allInstancesFinished.value) {
+      if (instancesCompleted.value && config.value.answerAtEnd) {
         classes.push("is-12");
       } else {
         classes.push("is-6-tablet");
@@ -148,10 +129,10 @@ export default defineComponent({
       return classes;
     });
 
-    function addWaitingInstance() {
-      waitingInstancesCount.value++;
+    function addCompletedInstance() {
+      completedInstancesCount.value++;
 
-      if (allInstancesFinished.value) {
+      if (instancesCompleted.value) {
         context.root.$nextTick(() => {
           context.root.$emit("display-answer-forms");
         });
@@ -159,7 +140,8 @@ export default defineComponent({
     }
 
     return {
-      addWaitingInstance,
+      config,
+      addCompletedInstance,
       regenerateExamples,
       columnClasses,
     };

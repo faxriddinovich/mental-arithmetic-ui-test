@@ -124,14 +124,11 @@ const routes: Array<RouteConfig> = [
     component: PlayBigNumbersGame,
     props: true,
     beforeEnter: (to, from, next) => {
-      const settings = Store.getters["GameModule/settings"];
+      const config = Store.getters["BigNumbers/config"];
 
-      if (!settings)
+      if (!config)
         return next({name: 'BigNumbersGameForm'});
 
-      to.params.answerAtEnd = settings.answerAtEnd;
-      to.params.instances= settings.instances;
-      to.params.multiplayerMode = settings.multiplayerMode;
       next();
     }
   },

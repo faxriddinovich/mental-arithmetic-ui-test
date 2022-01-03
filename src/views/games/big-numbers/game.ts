@@ -79,7 +79,7 @@ export default defineComponent({
 
     const currentExampleIndex = ref<number>(0);
     const currentExample = computed<Example | null>(() => {
-      if(!v(currentSequenceItem)) return null;
+      if (!v(currentSequenceItem)) return null;
 
       const example = v(currentSequenceItem)!.examples[v(currentExampleIndex)];
       return example || null;
@@ -155,7 +155,7 @@ export default defineComponent({
     const finalStars = computed(() => {
       const {value} = correctAnswersPercent;
       const stars: Star[] = [];
-      for (let i = 0; i < 3; i++) { // FIXME: static stars count
+      for (let i = 0; i < 3; i++) {
         const star: Star = {src: '', classes: []};
         let filled = false;
 
@@ -176,9 +176,7 @@ export default defineComponent({
           else
             filled = false;
 
-        // FIXME: use path aliases
-        star.src = require(`../../../../public/img/${filled ? 'filled' : 'empty'
-          }-star.svg`);
+        star.src = require(`@@/img/${filled ? 'filled' : 'empty'}-star.svg`);
 
         star.classes.push('is-star');
 
@@ -413,13 +411,14 @@ export default defineComponent({
       answerInput.setAttribute('disabled', '');
       answerButton.setAttribute('disabled', '');
 
+      // if the answer is correct
       if (compareAnswer(targetExample.answer, answerInput.value)) {
         answerInput.classList.add('is-success', 'is-disabled');
         answerButton.innerText = '';
         answerButton.classList.add('is-success', 'is-disabled');
 
         completeExample(true);
-      } else {
+      } else { // otherwise
         answerInput.classList.add('is-danger');
         answerButton.innerText = '';
         answerButton.classList.add('is-danger');
@@ -446,7 +445,7 @@ export default defineComponent({
     function refresh() {
       clearScreen();
 
-      if(props.onRefresh)
+      if (props.onRefresh)
         props.onRefresh();
 
       resetGameState();

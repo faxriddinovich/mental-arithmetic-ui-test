@@ -8,11 +8,11 @@
         >
           <b-button
             tag="router-link"
-            :to="{ name: 'Home' }"
+            :to="{ name: 'BigNumbersGameForm' }"
             type="is-primary is-light"
-            icon-left="home"
+            icon-left="arrow-left"
             size="is-medium"
-            >Home</b-button
+            >Back</b-button
           >
           <div class="is-flex is-align-items-center">
             <b-icon icon="10-plus" size="is-large" type="is-primary" />
