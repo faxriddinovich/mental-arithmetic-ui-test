@@ -33,6 +33,12 @@ $border-color: rgb(149, 165, 166);
   }
 }
 
+.is-bottom-left-screen {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
 
 /* game colors */
 $is-black-color: #34495e;

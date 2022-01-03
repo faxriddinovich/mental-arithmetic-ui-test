@@ -1,5 +1,24 @@
 <template>
   <div>
+    <div class="is-bottom-left-screen mr-2 mb-2">
+      <div class="card p-2 is-bordered">
+        <div class="buttons">
+          <b-button
+            tag="router-link"
+            :to="{ name: 'BigNumbersGameForm' }"
+            type="is-primary is-light"
+            icon-left="arrow-left"
+            >Back</b-button
+          >
+          <b-button
+            @click="emitNextExample"
+            type="is-primary"
+            icon-right="arrow-right"
+            >Next example</b-button
+          >
+        </div>
+      </div>
+    </div>
     <div
       class="
         columns
@@ -48,7 +67,7 @@ interface ThemeCache {
 export default defineComponent({
   components: { BigNumbersGame },
   setup(props, context) {
-    const rawConfig = context.root.$store.getters['BigNumbers/config'];
+    const rawConfig = context.root.$store.getters["BigNumbers/config"];
     const config = ref<BigNumbersGameConfig>(rawConfig);
 
     const completedInstancesCount = ref<number>(0);
@@ -95,7 +114,12 @@ export default defineComponent({
           continue;
         }
 
-        sequenceItem.examples = generateExamples(theme, examplesCount, rowsCount, digit);
+        sequenceItem.examples = generateExamples(
+          theme,
+          examplesCount,
+          rowsCount,
+          digit
+        );
       }
     }
 
@@ -139,8 +163,13 @@ export default defineComponent({
       }
     }
 
+    function emitNextExample() {
+      context.root.$emit('next-example');
+    }
+
     return {
       config,
+      emitNextExample,
       addCompletedInstance,
       regenerateExamples,
       columnClasses,

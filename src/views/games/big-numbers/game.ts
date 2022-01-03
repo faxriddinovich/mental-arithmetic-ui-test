@@ -260,9 +260,12 @@ export default defineComponent({
       displayMode.value = 'scores';
     }
 
-    // FIXME: do not use the global instance
-    context.root.$once('display-answer-forms', () => {
+    context.root.$on('display-answer-forms', () => {
       displayAnswerForms();
+    });
+
+    context.root.$on('next-example', () => {
+      nextExample();
     });
 
     function speechSpeak(text: string | number) {
@@ -436,10 +439,12 @@ export default defineComponent({
     }
 
     function nextExample() {
-      clearScreen();
+      if(v(displayMode) === 'answer') {
+        clearScreen();
 
-      currentExampleIndex.value++;
-      displayExamples();
+        currentExampleIndex.value++;
+        displayExamples();
+      }
     }
 
     function refresh() {
