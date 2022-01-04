@@ -69,10 +69,6 @@ new Vue({
   i18n,
   render: (h) => h(App),
   mounted() {
-    SettingsStorage.getSetting("locale").then((locale) => {
-      this.$root.$i18n.locale = locale;
-    });
-
     if(isMobile())
       SplashScreen.hide();
   },

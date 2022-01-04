@@ -19,33 +19,33 @@
                 </template>
                 <b-radio-button
                   v-model="locale"
-                  native-value="en"
+                  native-value="en_US"
                   type="is-primary"
                 >
                   <img
-                    :src="require('../../public/img/flags/united-states.svg')"
+                    :src="require('@@/img/flags/united-states.svg')"
                     width="30"
                   />
                   <span class="ml-2 is-hidden-mobile">English</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
-                  native-value="uz"
+                  native-value="uz_UZ"
                   type="is-primary"
                 >
                   <img
-                    :src="require('../../public/img/flags/uzbekistan.svg')"
+                    :src="require('@@/img/flags/uzbekistan.svg')"
                     width="30"
                   />
                   <span class="ml-2 is-hidden-mobile">O'zbekcha</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
-                  native-value="ru"
+                  native-value="ru_RU"
                   type="is-primary"
                 >
                   <img
-                    :src="require('../../public/img/flags/russia.svg')"
+                    :src="require('@@/img/flags/russia.svg')"
                     width="30"
                   />
                   <span class="ml-2 is-hidden-mobile">Русский</span>
@@ -79,49 +79,46 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { Setting, SettingsStorage } from "@/services/storages/settings";
+import { Settings } from '@/store/modules/settings.module';
 
-@Component
-export default class Settings extends Vue {
-  public showLatestEvent = false;
-  public locale = "en";
+export default defineComponent({
+  setup(_, context) {
+    const locale = ref<string>("en");
+    const showLatestEvent = ref<boolean>(false);
 
-  mounted() {
-    this.loadSettings();
-  }
+    async function loadSettings() {
+      const settings = context.root.$store.getters['Settings/all'] as Settings;
+      locale.value = settings.locale;
+      showLatestEvent.value = settings.showLatestEvent;
+    }
 
-  public async loadSettings() {
-    const settings = await SettingsStorage.getSettings();
-    for (const setting of settings) {
-      switch (setting.key) {
-        case "show_latest_event":
-          this.showLatestEvent = setting.value;
-          break;
-        case "locale":
-          this.locale = setting.value;
-          break;
+    async function saveChanges() {
+      if (context.root.$i18n.locale != locale.value) {
+        context.root.$i18n.locale = locale.value;
+        context.root.$store.dispatch(
+          "TextToSpeech/updateLanguage",
+          locale.value
+        );
       }
+
+      await context.root.$store.dispatch('Settings/update', {
+        showLatestEvent: showLatestEvent.value,
+        locale: locale.value
+      });
+      context.root.$router.push({ name: "Home" });
+      showToastMessage(
+        context.root.$i18n.t("changes-applied") as string,
+        ToastType.Success
+      );
     }
-  }
 
-  public async saveChanges() {
-    const settings: Setting[] = [];
+    onMounted(() => {
+      loadSettings();
+    });
 
-    settings.push({ key: "show_latest_event", value: this.showLatestEvent });
-    settings.push({ key: "locale", value: this.locale });
-
-    if (this.$i18n.locale != this.locale) {
-      this.$i18n.locale = this.locale;
-    }
-
-    await SettingsStorage.setSettings(settings);
-    this.$router.push({ name: "Home" });
-    showToastMessage(
-      this.$i18n.t("changes-applied") as string,
-      ToastType.Success
-    );
-  }
-}
+    return { locale, showLatestEvent, loadSettings, saveChanges };
+  },
+});
 </script>
