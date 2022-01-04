@@ -17,7 +17,7 @@ import {SettingsStorage} from '@/services/storages/settings';
 import {speak} from '@/services/tts';
 
 // FIXME: this should be done using i18n
-const START_ATTENTION_TEXTS = ["Ready", "Set", "Go!"];
+const START_ATTENTION_TEXTS = ["Ready?", "Go!"];
 
 function playCorrectAnswerSound() {
   return new Audio(CorrectAnswerSoundSrc).play();
@@ -274,7 +274,6 @@ export default defineComponent({
       speak(text, language.value, speechRate);
     }
 
-
     function displayAttentionTexts() {
       let currentAttentionTextIndex = 0;
       const timerHandle = setInterval(() => {
@@ -314,11 +313,9 @@ export default defineComponent({
 
           // display the name of the theme of the current sequence item
           displayAttentionText(v(currentSequenceItem)!.theme);
-
-          // a little bit delay
-          timerHandles.add(setTimeout(() => {
-            displayExamples();
-          }, 1000));
+          setTimeout(() => {
+            displayAttentionTexts();
+          }, 1000);
         }
 
         return;

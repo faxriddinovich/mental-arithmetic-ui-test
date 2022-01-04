@@ -185,7 +185,7 @@
             />
           </div>
           <div :class="resultScoreTextClasses">
-            {{ correctAnswersPercent }}%
+            {{ correctAnswersPercent.toFixed() }}%
           </div>
           <div class="is-size-4">
             (Correct:

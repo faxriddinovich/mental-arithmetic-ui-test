@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="is-bottom-left-screen mr-2 mb-2">
+    <div class="is-bottom-left-screen mr-2 mb-2" v-if="config.multiplayerMode">
       <div class="card p-2 is-bordered">
         <div class="buttons">
           <b-button
