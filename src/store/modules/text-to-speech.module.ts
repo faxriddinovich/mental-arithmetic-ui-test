@@ -1,46 +1,26 @@
 import { ActionContext } from 'vuex';
-import {TextToSpeech} from '@capacitor-community/text-to-speech';
+import {TextToSpeech, SpeechSynthesisVoice} from '@capacitor-community/text-to-speech';
 
 interface StateProps {
   language: string,
   voiceIndex: number;
 }
 
-const toBCP47Identifier = (locale: string) => {
-  switch (locale) {
-    case 'en':
-      return 'en-US'
-    case 'ru':
-      return 'ru-RU'
-    case 'uz':
-      return 'en-US'
-    default:
-      return 'en-US'
-  }
-}
-
-async function getLanguage(lang: string): Promise<string> {
-  const {languages} = await TextToSpeech.getSupportedLanguages();
-  const language = languages.find((language) => language === toBCP47Identifier(lang));
-  return language || languages[0];
-}
-
-async function getVoiceIndex(lang: string): Promise<number> {
-  const {voices} = await TextToSpeech.getSupportedVoices();
-
-  for (let i = 0; i < voices.length; i++) {
-    if (voices[i].lang === toBCP47Identifier(lang)) {
-      return i;
-    }
-  }
-
-  return 0;
+function lookForVoiceIndex(
+  voices: SpeechSynthesisVoice[],
+  language: string
+): number {
+  let index = 0;
+  voices.map((voice, voiceIndex) => {
+    if(voice.lang === language) index = voiceIndex;
+  });
+  return index;
 }
 
 export default {
   namespaced: true,
   state: {
-    language: 'en_US',
+    language: 'en-US',
     voiceIndex: 0,
   },
   getters: {
@@ -49,11 +29,18 @@ export default {
     }
   },
   actions: {
-    async updateLanguage(context: ActionContext<StateProps, any>, language: string) {
-      const lang = await getLanguage(language);
-      const voiceIndex = await getVoiceIndex(language);
-      context.state.language = lang;
-      context.state.voiceIndex = voiceIndex;
+    async update(context: ActionContext<StateProps, any>, language: string) {
+      return new Promise<void>((resolve) => {
+        const timerHandle = setInterval(async () => {
+          const { voices } = await TextToSpeech.getSupportedVoices();
+          if(voices.length !== 0) {
+            context.state.language = language;
+            context.state.voiceIndex = lookForVoiceIndex(voices, language);
+            clearInterval(timerHandle);
+            resolve();
+          }
+        }, 10);
+      });
     }
   }
 };

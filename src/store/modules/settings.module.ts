@@ -20,10 +20,13 @@ export default {
   actions: {
     update(context: ActionContext<StateProps, any>, settings: Partial<Settings>) {
       localStorage.setItem('settings', JSON.stringify(settings));
-      context.dispatch('sync');
+      return context.dispatch('sync');
     },
     sync(context: ActionContext<StateProps, any>) {
-      context.state.settings = JSON.parse(localStorage.getItem('settings') as string);
+      const localStorageSettings = JSON.parse(
+        localStorage.getItem('settings') as string
+      );
+      context.state.settings = localStorageSettings;
     }
   },
   getters: {

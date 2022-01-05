@@ -18,9 +18,7 @@ export default defineComponent({
   setup(_, context) {
     const loadingText = ref<string>("");
     const isLoading = ref<boolean>(true);
-    context.root.$store.dispatch("TextToSpeech/updateLanguage", "ru");
 
-    // some magic
     const sleep = async (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -32,13 +30,11 @@ export default defineComponent({
       const locale = context.root.$store.getters["Settings/get"]("locale");
 
       loadingText.value = "Initializing locale..";
-      await sleep(500);
       context.root.$i18n.locale = locale;
+      await sleep(500);
 
       loadingText.value = "Initializing TTS service..";
-      await sleep(500);
-      await context.root.$store.dispatch("TextToSpeech/updateLanguage", locale);
-
+      await context.root.$store.dispatch("TextToSpeech/update", locale);
 
       isLoading.value = false;
     });

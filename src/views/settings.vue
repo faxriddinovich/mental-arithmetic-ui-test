@@ -97,8 +97,8 @@ export default defineComponent({
     async function saveChanges() {
       if (context.root.$i18n.locale != locale.value) {
         context.root.$i18n.locale = locale.value;
-        context.root.$store.dispatch(
-          "TextToSpeech/updateLanguage",
+        await context.root.$store.dispatch(
+          "TextToSpeech/update",
           locale.value
         );
       }
