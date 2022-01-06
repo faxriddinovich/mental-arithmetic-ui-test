@@ -44,12 +44,24 @@
                   native-value="ru-RU"
                   type="is-primary"
                 >
-                  <img
-                    :src="require('@@/img/flags/russia.svg')"
-                    width="30"
-                  />
+                  <img :src="require('@@/img/flags/russia.svg')" width="30" />
                   <span class="ml-2 is-hidden-mobile">Русский</span>
                 </b-radio-button>
+              </b-field>
+              <b-field>
+                <template #label>
+                  <b-icon icon="volume" /> {{ $t("language") }}
+                </template>
+                <b-select placeholder="Select a name" v-model="voiceIdentity">
+                  <option
+                    v-for="(voice, index) in avaiableVoices"
+                    :value="voice.identity"
+                    :key="index"
+                  >
+                    {{ voice.identity }}
+                  </option>
+                </b-select>
+                <b-button icon-left="volume" @click="testVoice">test</b-button>
               </b-field>
 
               <b-button
@@ -79,33 +91,59 @@
   </section>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "@vue/composition-api";
+import {
+  defineComponent,
+  computed,
+  ref,
+  onMounted,
+} from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { Settings } from '@/store/modules/settings.module';
+import { Settings } from "@/store/modules/settings.module";
+import {
+  lookForVoiceIndex,
+  IdentifiedVoice,
+} from "@/store/modules/text-to-speech.module";
+import { speak } from "@/services/tts";
 
 export default defineComponent({
   setup(_, context) {
-    const locale = ref<string>("en");
+    const locale = ref<string>("en-US");
     const showLatestEvent = ref<boolean>(false);
+    const voiceIdentity = ref<string>("");
+
+    const supportedVoices = ref<IdentifiedVoice[]>([]);
+    const avaiableVoices = computed(() => {
+      return supportedVoices.value.filter(
+        (voice) => voice.lang === locale.value
+      );
+    });
+
+    // TODO: can we fix this weird thing ?
+    locale.value = context.root.$store.getters["Settings/get"]("locale");
 
     async function loadSettings() {
-      const settings = context.root.$store.getters['Settings/all'] as Settings;
+      const settings = context.root.$store.getters["Settings/all"] as Settings;
       locale.value = settings.locale;
       showLatestEvent.value = settings.showLatestEvent;
+    }
+
+    async function getSupportedVoices() {
+      const voices = await context.root.$store.dispatch(
+        "TextToSpeech/getSupportedVoices"
+      );
+      console.log(voices[0].lang);
+      supportedVoices.value.push(...voices);
     }
 
     async function saveChanges() {
       if (context.root.$i18n.locale != locale.value) {
         context.root.$i18n.locale = locale.value;
-        await context.root.$store.dispatch(
-          "TextToSpeech/update",
-          locale.value
-        );
+        await context.root.$store.dispatch("TextToSpeech/update", locale.value);
       }
 
-      await context.root.$store.dispatch('Settings/update', {
+      await context.root.$store.dispatch("Settings/update", {
         showLatestEvent: showLatestEvent.value,
-        locale: locale.value
+        locale: locale.value,
       });
       context.root.$router.push({ name: "Home" });
       showToastMessage(
@@ -114,11 +152,30 @@ export default defineComponent({
       );
     }
 
+    async function testVoice() {
+      speak(
+        "123",
+        locale.value,
+        lookForVoiceIndex(supportedVoices.value, voiceIdentity.value),
+        1
+      );
+    }
+
     onMounted(() => {
       loadSettings();
+      getSupportedVoices();
     });
 
-    return { locale, showLatestEvent, loadSettings, saveChanges };
+    return {
+      locale,
+      showLatestEvent,
+      loadSettings,
+      saveChanges,
+      avaiableVoices,
+      supportedVoices,
+      voiceIdentity,
+      testVoice,
+    };
   },
 });
 </script>

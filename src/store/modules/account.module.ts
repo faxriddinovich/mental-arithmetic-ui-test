@@ -31,7 +31,7 @@ export default {
         return;
       }
 
-      const sessions = JSON.parse(localStorage.getItem('sessions') as string)
+      const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
       context.state.sessions.push(...sessions);
     },
 

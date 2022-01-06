@@ -3,11 +3,13 @@ import {ActionContext} from 'vuex';
 export interface Settings {
   showLatestEvent: boolean,
   locale: 'en-US' | 'ru-RU' | 'uz-UZ'
+  ttsVoiceIndex: number | null
 }
 
 const defaultSettings: Settings = {
   showLatestEvent: true,
-  locale: 'en-US'
+  locale: 'en-US',
+  ttsVoiceIndex: null
 }
 
 interface StateProps  { settings: Settings };
@@ -15,11 +17,19 @@ interface StateProps  { settings: Settings };
 export default {
   namespaced: true,
   state: {
-    settings: null
+    settings: {}
   },
   actions: {
     update(context: ActionContext<StateProps, any>, settings: Partial<Settings>) {
-      localStorage.setItem('settings', JSON.stringify(settings));
+      const storageSettings =
+        JSON.parse(localStorage.getItem('settings') || '{}');
+
+      // NOTE: this is not safe? anybody can rewrite the local storage
+      for(const setting of Object.keys(settings)) {
+        storageSettings[setting] = settings[setting];
+      }
+
+      localStorage.setItem('settings', JSON.stringify(storageSettings));
       return context.dispatch('sync');
     },
     sync(context: ActionContext<StateProps, any>) {

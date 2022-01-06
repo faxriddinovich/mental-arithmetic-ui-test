@@ -1,15 +1,15 @@
 import {TextToSpeech} from '@capacitor-community/text-to-speech';
 import Store from '@/store';
 
-export function speak(text: string | number, lang: string, rate: number) {
-  const { language, voiceIndex } = Store.getters['TextToSpeech/get'];
+export function speak(text: string | number, rate: number) {
+  const { ttsVoiceIndex, locale } = Store.getters['Settings/all'];
 
   TextToSpeech.speak({
     text: String(text),
-    lang: language,
+    lang: locale,
+    voice: ttsVoiceIndex,
     pitch: 0.5,
-    rate,
-    voice: voiceIndex
+    rate
   }).catch((error) => {
     console.error('[tts]: ', error);
   });
