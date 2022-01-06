@@ -4,9 +4,9 @@ import VueI18n from "vue-i18n";
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-  locale: "en_US",
+  locale: "en-US",
   messages: {
-    "en_US": {
+    "en-US": {
       "mental-arithmetic": "Mental arithmetic",
       "other-resources": "Other resources",
       filter: "Filter",
@@ -42,7 +42,7 @@ const i18n = new VueI18n({
       "success-authentication": "Welcome {username}!",
       "invalid-credentials": "Invalid credentials",
     },
-    "ru_RU": {
+    "ru-RU": {
       "mental-arithmetic": "Ментальная арифметика",
       "other-resources": "Другие ресурсы",
       filter: "Фильтр",
@@ -79,7 +79,7 @@ const i18n = new VueI18n({
       "success-authentication": "Добро пожаловать {username}!",
       "invalid-credentials": "Неверные учетные данные",
     },
-    "uz_UZ": {
+    "uz-UZ": {
       "mental-arithmetic": "Mental arifmetika",
       "other-resources": "Boshqa resurslar",
       filter: "Filter",

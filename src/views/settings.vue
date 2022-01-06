@@ -19,7 +19,7 @@
                 </template>
                 <b-radio-button
                   v-model="locale"
-                  native-value="en_US"
+                  native-value="en-US"
                   type="is-primary"
                 >
                   <img
@@ -30,7 +30,7 @@
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
-                  native-value="uz_UZ"
+                  native-value="uz-UZ"
                   type="is-primary"
                 >
                   <img
@@ -41,7 +41,7 @@
                 </b-radio-button>
                 <b-radio-button
                   v-model="locale"
-                  native-value="ru_RU"
+                  native-value="ru-RU"
                   type="is-primary"
                 >
                   <img

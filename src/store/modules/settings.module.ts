@@ -2,12 +2,12 @@ import {ActionContext} from 'vuex';
 
 export interface Settings {
   showLatestEvent: boolean,
-  locale: 'en_US' | 'ru_RU' | 'uz_UZ'
+  locale: 'en-US' | 'ru-RU' | 'uz-UZ'
 }
 
 const defaultSettings: Settings = {
   showLatestEvent: true,
-  locale: 'en_US'
+  locale: 'en-US'
 }
 
 interface StateProps  { settings: Settings };
