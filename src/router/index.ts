@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, {RouteConfig} from "vue-router";
 
 import Store from "@/store";
-import {SessionStorage} from "@/services/storages/session";
+import { Session } from '@/store/modules/account.module';
 
 import Home from "@/views/home.vue";
 
@@ -30,12 +30,10 @@ import Scores from "@/views/scores.vue";
 
 import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
 import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
-import test from '@/test.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-{ path: "/test", component: test },
   {
     path: "/",
     name: "Home",
@@ -172,9 +170,25 @@ const router = new VueRouter({
   routes,
 });
 
+
+function waitForSync() {
+  return new Promise<void>((resolve) => {
+    if(Store.state.synced)
+      return resolve();
+
+    const unwatch = Store.watch((state) => state.synced, () => {
+      resolve();
+      unwatch();
+    });
+  });
+}
+
 router.beforeEach(async (to, from, next) => {
+  if(!Store.state.synced)
+    await waitForSync();
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const activeSession = await SessionStorage.getActiveSession();
+    const activeSession = Store.getters['Account/activeSession'] as Session;
 
     if (!activeSession) return next({name: "Authenticate"});
     if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))

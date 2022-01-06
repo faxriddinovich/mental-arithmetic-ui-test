@@ -51,34 +51,26 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { Session, SessionStorage } from "@/services/storages/session";
+import { defineComponent, ref, computed } from "@vue/composition-api";
+import { Session } from "@/store/modules/account.module";
 
-@Component
-export default class Sessions extends Vue {
-  public sessions: Session[] | null = null;
-
-  mounted() {
-    this.getSessions();
-  }
-
-  public getSessions() {
-    SessionStorage.getSessions().then((sessions) => {
-      this.sessions = sessions;
+export default defineComponent({
+  setup(_, context) {
+    const sessions = computed<Session[]>(() => {
+      return context.root.$store.getters["Account/sessions"];
     });
-  }
 
-  public async deleteSession(sessionId: number) {
-    SessionStorage.deleteSession(sessionId).then(() => {
-      SessionStorage.getActiveSession().then((activeSession) => {
-        if (!activeSession) return this.$router.push({ name: "Home" });
-        this.$router.go(0);
-      });
-    });
-  }
+    async function deleteSession(sessionId: number) {
+      await context.root.$store.dispatch("Account/deleteSession", sessionId);
+      context.root.$router.push({ name: "Home" });
+    }
 
-  public setActiveSession(sessionId: number) {
-    SessionStorage.setActiveSession(sessionId).then(() => this.$router.go(0));
-  }
-}
+    async function setActiveSession(sessionId: number) {
+      await context.root.$store.dispatch('Account/setActiveSession', sessionId);
+      context.root.$router.push({ name: "Home" });
+    }
+
+    return { sessions, deleteSession, setActiveSession };
+  },
+});
 </script>

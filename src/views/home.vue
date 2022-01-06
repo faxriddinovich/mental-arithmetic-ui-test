@@ -58,7 +58,7 @@
         <div class="columns is-variable is-2 is-mobile is-multiline">
           <div
             class="column is-4-mobile is-4-tablet is-2-desktop"
-            v-for="item of mainItems"
+            v-for="item of items"
             :key="item.icon"
           >
             <router-link
@@ -104,76 +104,81 @@
     </b-tabs>
   </div>
 </template>
-
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  ref,
+} from "@vue/composition-api";
 import { Browser } from "@capacitor/browser";
 import Courses from "@/views/course/courses.vue";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
 import { EventContract } from "@/services/rpc/contracts/event";
-import { SettingsStorage } from "@/services/storages/settings";
-import { Session, SessionStorage } from "@/services/storages/session";
 
-@Component({
+export default defineComponent({
   components: { Courses },
-})
-export default class Home extends Vue {
-  public activeSession: Session | null = null;
-  public event: EventContract | null = null;
+  setup(_, context) {
+    const activeSession = computed(
+      () => context.root.$store.getters["Account/activeSession"]
+    );
+    const event = ref<EventContract | null>(null);
 
-  public mainItems = [
-    { title: "Abacus", icon: "abacus", link: "/" },
-    {
-      title: "Big numbers",
-      icon: "10-plus",
-      link: { name: "BigNumbersGameForm" },
-    },
-    { title: "Flash card", icon: "square-shape", link: "/" },
-    { title: "Table", icon: "browser", link: "/" },
-    { title: "Scores", icon: "chart-line", link: "/scores" },
-    { title: "Settings", icon: "setting", link: "/settings" },
-  ];
+    const items = ref([
+      { title: "Abacus", icon: "abacus", link: "/" },
+      {
+        title: "Big numbers",
+        icon: "10-plus",
+        link: { name: "BigNumbersGameForm" },
+      },
+      { title: "Flash card", icon: "square-shape", link: "/" },
+      { title: "Table", icon: "browser", link: "/" },
+      { title: "Scores", icon: "chart-line", link: "/scores" },
+      { title: "Settings", icon: "setting", link: "/settings" },
+    ]);
 
-  async mounted() {
-    this.getActiveSession();
-    this.loadLatestEvent();
-  }
-
-  public openPlayMarket() {
-    Browser.open({ url: "market://details?=idorg.zwanoo.android.speedtest" });
-  }
-
-  public openAppStore() {
-    // pass
-  }
-
-  public loadLatestEvent() {
-    SettingsStorage.getSetting("show_latest_event").then((canShow) => {
-      if (canShow) {
-        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((event: EventContract) => {
-          this.event = event;
+    function getEvent() {
+      const enabled =
+        context.root.$store.getters["Settings/get"]("showLatestEvent");
+      if (enabled) {
+        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((result) => {
+          event.value = result;
         });
       }
-    });
-  }
-
-  public getActiveSession() {
-    SessionStorage.getActiveSession().then((session) => {
-      this.activeSession = session;
-    });
-  }
-
-  public changeTab(tab: string) {
-    if (tab === "account") {
-      if (this.activeSession) {
-        this.$router.push({ name: "UpdateAccount" });
-      } else {
-        this.$router.push({ name: "Authenticate" });
+    }
+    function changeTab(tab: string) {
+      if (tab === "account") {
+        if (activeSession.value) {
+          context.root.$router.push({ name: "UpdateAccount" });
+        } else {
+          context.root.$router.push({ name: "Authenticate" });
+        }
       }
     }
-  }
-}
+
+    function openPlayMarket() {
+      Browser.open({ url: "market://details?=idorg.zwanoo.android.speedtest" });
+    }
+
+    function openAppStore() {
+      //
+    }
+
+    onMounted(() => {
+      getEvent();
+    });
+
+    return {
+      activeSession,
+      openAppStore,
+      openPlayMarket,
+      changeTab,
+      items,
+      event,
+    };
+  },
+});
 </script>
 <style lang="scss">
 @import "bulma/sass/utilities/initial-variables";

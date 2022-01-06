@@ -2,8 +2,12 @@
   <div class="is-unselectable">
     <section class="hero is-fullheight" v-if="isLoading">
       <div class="hero-body is-flex-direction-column is-justify-content-center">
-        <img :src="require('@@/img/dual-rings-loading.svg')" width="100px" />
-        <div class="is-size-4">{{ loadingText }}</div>
+        <b-progress
+          type="is-success"
+          :value="syncPercentage"
+          style="width: 200px"
+        ></b-progress>
+        <div class="is-size-6">{{ loadingText }}</div>
       </div>
     </section>
     <div v-else>
@@ -14,32 +18,45 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
 
+const TASKS_COUNT = 3;
+
 export default defineComponent({
   setup(_, context) {
     const loadingText = ref<string>("");
+    const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
 
     const sleep = async (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
+    function completeSyncTask() {
+      syncPercentage.value += 100 / TASKS_COUNT;
+    }
+
     onMounted(async () => {
       loadingText.value = "Syncing settings..";
       await context.root.$store.dispatch("Settings/sync");
       await sleep(500);
+      completeSyncTask();
+
+      loadingText.value = "Syncing sessions..";
+      await context.root.$store.dispatch("Account/sync");
+      await sleep(500);
+      completeSyncTask();
 
       const locale = context.root.$store.getters["Settings/get"]("locale");
-
-      loadingText.value = "Initializing locale..";
       context.root.$i18n.locale = locale;
-      await sleep(500);
 
       loadingText.value = "Initializing TTS service..";
       await context.root.$store.dispatch("TextToSpeech/update", locale);
+      await sleep(500);
+      completeSyncTask();
 
       isLoading.value = false;
+      context.root.$store.state.synced = true;
     });
 
-    return { isLoading, loadingText };
+    return { isLoading, loadingText, syncPercentage };
   },
 });
 </script>

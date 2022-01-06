@@ -6,7 +6,7 @@ import {
 } from "@/services/rpc/error-codes";
 import Router from "@/router/index";
 import Store from "@/store";
-import { SessionStorage } from "@/services/storages/session";
+import { Session } from '@/store/modules/account.module';
 import { showToastMessage, ToastType } from "@/services/toast";
 
 const axiosInstance = axios.create({
@@ -18,20 +18,20 @@ axiosInstance.interceptors.response.use(async (response) => {
   if (response.status === 200) {
     if (response.data.error) {
       const jsonrpcError = response.data.error;
-      const activeSession = await SessionStorage.getActiveSession();
+      const activeSession = Store.getters['Account/activeSession'] as Session;
 
       if (activeSession) {
         if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
           showToastMessage("Invalid session", ToastType.Danger);
-          await Store.dispatch("deleteSession", activeSession.id);
+          await Store.dispatch('Account/deleteSession', activeSession.id);
           Router.push({ name: "Authenticate" });
-          return;
+          return response;
         } else if (
           jsonrpcError.code === RPC_ACCOUNT_IS_BLOCKED_ERR_CODE &&
           Router.history.current.name !== "AccountBlocked"
         ) {
           Router.push({ name: "AccountBlocked" });
-          return;
+          return response;
         }
       }
     }
@@ -40,13 +40,13 @@ axiosInstance.interceptors.response.use(async (response) => {
   return response;
 });
 
+const excludedRoutes = ["Authenticate", "CreateAccount"];
+
 axiosInstance.interceptors.request.use(async (config) => {
-  const activeSession = await SessionStorage.getActiveSession();
-  // Hard code. Can we fix this ?
-  if (
-    !["Authenticate", "CreateAccount"].includes(Router.history.current.name) &&
-    activeSession
-  ) {
+  const activeSession = Store.getters['Account/activeSession'] as Session;
+  const notExcluded = !excludedRoutes.includes(Router.history.current.name);
+
+  if (notExcluded && activeSession) {
     config.headers["session"] = activeSession.session;
   }
 

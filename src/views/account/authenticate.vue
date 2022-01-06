@@ -145,7 +145,7 @@ export default class AuthenticateAccount extends Vue {
     rpc
       .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
       .then((session: SessionContract) => {
-        SessionStorage.addSession(session);
+        this.$store.dispatch('Account/addSession', session);
         showToastMessage(
           this.$i18n.t("success-authentication", {
             username: session.username,

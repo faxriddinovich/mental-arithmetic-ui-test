@@ -131,26 +131,20 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "@vue/composition-api";
+import { defineComponent, ref, computed, onMounted } from "@vue/composition-api";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import {
   AccountContract,
-  SessionContract,
 } from "@/services/rpc/contracts/account";
-import { SessionStorage } from "@/services/storages/session";
 import { avatarFactory, formatCurrency } from "@/common/utils";
+import { Session } from '@/store/modules/account.module';
 
 export default defineComponent({
-  setup() {
-    const activeSession = ref<SessionContract | null>(null);
+  setup(_, context) {
+    const activeSession = computed<Session | null>(() =>
+        context.root.$store.getters['Account/activeSession']);
     const account = ref<AccountContract | null>(null);
-
-    function getActiveSession() {
-      SessionStorage.getActiveSession().then((result) => {
-        activeSession.value = result;
-      });
-    }
 
     function getAccount() {
       rpc.call(RPC_GET_ACCOUNT_METHOD).then((result) => {
@@ -159,7 +153,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      getActiveSession();
       getAccount();
     });
 
