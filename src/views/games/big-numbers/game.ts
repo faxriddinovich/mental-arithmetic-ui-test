@@ -271,7 +271,8 @@ export default defineComponent({
     function speechSpeak(text: string | number) {
       const speechRate = v(currentSequenceItem)!.rowsTimeout >= 1
         ? 1 : 1 + v(currentSequenceItem)!.rowsTimeout + (String(text).length / 2);
-      speak(text, language.value, speechRate);
+      const voiceIdentity = context.root.$store.getters['Settings/get']('ttsVoiceIdentity');
+      speak(text, speechRate, voiceIdentity);
     }
 
     function displayAttentionTexts() {

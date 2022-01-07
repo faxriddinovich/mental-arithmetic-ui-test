@@ -50,18 +50,20 @@
               </b-field>
               <b-field>
                 <template #label>
-                  <b-icon icon="volume" /> {{ $t("language") }}
+                  <b-icon icon="volume" /> {{ $t("voice") }}
                 </template>
                 <b-select placeholder="Select a name" v-model="voiceIdentity">
                   <option
-                    v-for="(voice, index) in avaiableVoices"
+                    v-for="(voice, index) in supportedVoices"
                     :value="voice.identity"
                     :key="index"
                   >
-                    {{ voice.identity }}
+                    {{ voice.name }}
                   </option>
                 </b-select>
-                <b-button icon-left="volume" @click="testVoice">test</b-button>
+                <p class="control">
+                <b-button icon-left="volume" @click="testVoice" :disabled="!voiceIdentity">test</b-button>
+                </p>
               </b-field>
 
               <b-button
@@ -93,33 +95,22 @@
 <script lang="ts">
 import {
   defineComponent,
-  computed,
   ref,
   onMounted,
+  watch
 } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { Settings } from "@/store/modules/settings.module";
-import {
-  lookForVoiceIndex,
-  IdentifiedVoice,
-} from "@/store/modules/text-to-speech.module";
+import { IdentifiedVoice } from "@/store/modules/text-to-speech.module";
 import { speak } from "@/services/tts";
 
 export default defineComponent({
   setup(_, context) {
     const locale = ref<string>("en-US");
     const showLatestEvent = ref<boolean>(false);
-    const voiceIdentity = ref<string>("");
+    const voiceIdentity = ref<string | null>(null);
 
     const supportedVoices = ref<IdentifiedVoice[]>([]);
-    const avaiableVoices = computed(() => {
-      return supportedVoices.value.filter(
-        (voice) => voice.lang === locale.value
-      );
-    });
-
-    // TODO: can we fix this weird thing ?
-    locale.value = context.root.$store.getters["Settings/get"]("locale");
 
     async function loadSettings() {
       const settings = context.root.$store.getters["Settings/all"] as Settings;
@@ -129,22 +120,33 @@ export default defineComponent({
 
     async function getSupportedVoices() {
       const voices = await context.root.$store.dispatch(
-        "TextToSpeech/getSupportedVoices"
+        "TextToSpeech/getSupportedVoicesByLocale",
+        locale.value
       );
-      console.log(voices[0].lang);
-      supportedVoices.value.push(...voices);
+      console.log(voices);
+      supportedVoices.value = voices;
     }
+
+    watch(locale, () => {
+      voiceIdentity.value = null;
+      getSupportedVoices();
+    });
 
     async function saveChanges() {
       if (context.root.$i18n.locale != locale.value) {
         context.root.$i18n.locale = locale.value;
-        await context.root.$store.dispatch("TextToSpeech/update", locale.value);
       }
+
+      await context.root.$store.dispatch(
+        "TextToSpeech/update",
+        voiceIdentity.value
+      );
 
       await context.root.$store.dispatch("Settings/update", {
         showLatestEvent: showLatestEvent.value,
         locale: locale.value,
       });
+
       context.root.$router.push({ name: "Home" });
       showToastMessage(
         context.root.$i18n.t("changes-applied") as string,
@@ -153,12 +155,7 @@ export default defineComponent({
     }
 
     async function testVoice() {
-      speak(
-        "123",
-        locale.value,
-        lookForVoiceIndex(supportedVoices.value, voiceIdentity.value),
-        1
-      );
+      speak("-123", 1, voiceIdentity.value);
     }
 
     onMounted(() => {
@@ -171,7 +168,6 @@ export default defineComponent({
       showLatestEvent,
       loadSettings,
       saveChanges,
-      avaiableVoices,
       supportedVoices,
       voiceIdentity,
       testVoice,

@@ -48,7 +48,7 @@ export default defineComponent({
       context.root.$i18n.locale = locale;
 
       loadingText.value = "Initializing TTS service..";
-      await context.root.$store.dispatch("TextToSpeech/update", locale);
+      await context.root.$store.dispatch("TextToSpeech/sync");
       await sleep(500);
       completeSyncTask();
 

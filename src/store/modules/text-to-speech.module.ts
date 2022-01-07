@@ -2,7 +2,7 @@ import {ActionContext} from 'vuex';
 import {TextToSpeech, SpeechSynthesisVoice} from '@capacitor-community/text-to-speech';
 
 export interface IdentifiedVoice extends SpeechSynthesisVoice {
-  identify: string,
+  identity: string,
 }
 
 interface StateProps {
@@ -10,55 +10,54 @@ interface StateProps {
   voiceIndex: number;
 }
 
-export const buildVoiceIdentity = (uri: string, locale: string) => uri + ':' + locale;
-
 const identify = (voices: SpeechSynthesisVoice[]): IdentifiedVoice[] => {
-  return voices.map((voice) => {
-    console.log({ ...Object.assign({}, voice) });
-    return {
-      ...voice,
-      identify: voice.voiceURI + ':' + voice.lang
+  return voices.map((voice, index) => {
+    // TODO: do not copy the object like this
+    const copy = {
+      default: voice.default,
+      lang: voice.lang,
+      localService: voice.localService,
+      name: voice.name,
+      voiceURI: voice.voiceURI
     }
+
+    const identity = {identity: voice.voiceURI + ':' + voice.lang + ':' + index};
+    return Object.assign(copy, identity);
   });
-}
-
-export function lookForVoiceIndex(
-  voices: IdentifiedVoice[],
-  identity: string
-): number | null {
-  let i = 0;
-  for (const voice of voices) {
-    if (voice.identify === identity) {
-      return i;
-    } else i++;
-  }
-
-  return null;
 }
 
 export default {
   namespaced: true,
-  getters: {
-    get(state: StateProps) {
-      return state;
-    }
-  },
   actions: {
-    async update(context: ActionContext<StateProps, any>, identify: string) {
-      const [uri, locale] = identify.split(':');
-      const voices = await context.dispatch('getSupportedVoices');
-      const ttsVoiceIndex = lookForVoiceIndex(voices, identify);
-      return context.dispatch('Settings/update', {ttsVoiceIndex}, {root: true});
+    async sync(context: ActionContext<StateProps, any>) {
+      const { ttsVoiceIdentity, locale } = context.rootGetters['Settings/all'];
+      if (! ttsVoiceIdentity) {
+        const supportedVoices = await context.dispatch('getSupportedVoicesByLocale', locale);
+        if (supportedVoices.length) {
+          return context.dispatch('Settings/update', {
+            ttsVoiceIdentity: supportedVoices[0].identity
+          }, {root: true});
+        }
+      }
     },
 
-    async getSupportedVoices() {
+    update(context: ActionContext<StateProps, any>, identity: string) {
+      return context.dispatch('Settings/update', {
+        ttsVoiceIdentity: identity
+      }, {root: true});
+    },
+
+    async getSupportedVoicesByLocale(context: ActionContext<StateProps, any>, locale: string) {
       return new Promise((resolve) => {
         // getting voices is asynchronous thing
         const timerHandle = setInterval(async () => {
           const {voices} = await TextToSpeech.getSupportedVoices();
           if (voices.length) {
             clearInterval(timerHandle);
-            resolve(identify(voices));
+            const filtered = identify(voices).filter((voice) => {
+              return voice.lang.replace('_', '-') === locale;
+            });
+            resolve(filtered);
           }
         }, 10);
       });

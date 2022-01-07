@@ -1,18 +1,19 @@
 import {ActionContext} from 'vuex';
+import Vue from 'vue';
 
 export interface Settings {
   showLatestEvent: boolean,
   locale: 'en-US' | 'ru-RU' | 'uz-UZ'
-  ttsVoiceIndex: number | null
+  ttsVoiceIdentity: number | null
 }
 
 const defaultSettings: Settings = {
   showLatestEvent: true,
   locale: 'en-US',
-  ttsVoiceIndex: null
+  ttsVoiceIdentity: null
 }
 
-interface StateProps  { settings: Settings };
+interface StateProps { settings: Settings };
 
 export default {
   namespaced: true,
@@ -21,22 +22,21 @@ export default {
   },
   actions: {
     update(context: ActionContext<StateProps, any>, settings: Partial<Settings>) {
-      const storageSettings =
-        JSON.parse(localStorage.getItem('settings') || '{}');
-
-      // NOTE: this is not safe? anybody can rewrite the local storage
       for(const setting of Object.keys(settings)) {
-        storageSettings[setting] = settings[setting];
+        context.state.settings[setting] = settings[setting];
       }
 
-      localStorage.setItem('settings', JSON.stringify(storageSettings));
-      return context.dispatch('sync');
+      return context.dispatch('sync', true);
     },
-    sync(context: ActionContext<StateProps, any>) {
-      const localStorageSettings = JSON.parse(
-        localStorage.getItem('settings') as string
-      );
-      context.state.settings = localStorageSettings;
+    sync(context: ActionContext<StateProps, any>, ours = false) {
+      if(ours) {
+        localStorage.setItem('settings', JSON.stringify(context.state.settings));
+        return;
+      }
+
+      const localStorageSettings = localStorage.getItem('settings');
+      context.state.settings =
+        localStorageSettings ? JSON.parse(localStorageSettings) : defaultSettings
     }
   },
   getters: {
