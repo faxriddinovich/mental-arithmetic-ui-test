@@ -1,111 +1,47 @@
-import {G, Line, Rect, Text, Svg, Container} from '@svgdotjs/svg.js';
+import { G, Image, Line } from '@svgdotjs/svg.js';
 
-const ABACUS_FRAME_WIDTH = 800;
-const ABACUS_FRAME_HEIGHT = 400;
+class AbacusColumn extends G {
+  private stones: Image[] = [];
+  private bitset = 0b00000;
+  private verticalLine = new Line();
 
-const ABACUS_FRAME_COLOR = "rgb(104, 93, 75)";
-const ABACUS_FRAME_FILL = 'rgba(0, 0, 0, 0)';
-const ABACUS_FRAME_STROKE_WIDTH = 20;
-const ABACUS_FRAME_HORIZONTAL_LINE_COLOR = "#4D4D4D";
-
-const ABACUS_FRAME_TOP_BAR_WIDTH = 200;
-const ABACUS_FRAME_TOP_BAR_HEIGHT = 60;
-const ABACUS_FRAME_TOP_BAR_RIGHT_SPACE = 20;
-
-interface Drawable {
-  draw(): void;
-}
-
-class AbacusFrameTopBar extends G implements Drawable {
-  public _bar!: Rect;
-  public _text!: Text;
-
-  constructor(public drawing: Svg) {
+  constructor() {
     super();
-    this.createTopBar();
-    this.createTopBarText();
   }
 
-  private createTopBar() {
-    const topBar = new Rect({
-      width: ABACUS_FRAME_TOP_BAR_WIDTH,
-      height: ABACUS_FRAME_TOP_BAR_HEIGHT
-    }).addTo(this.drawing);
-
-    topBar
+  private drawVerticalLine() {
+    const xPos = ABACUS_STONE_WIDTH / 2;
+    this.verticalLine
       .attr({
-        fill: ABACUS_FRAME_COLOR,
-        rx: "10",
-        ry: "10",
-      });
-
-    topBar.move(
-      ABACUS_FRAME_WIDTH -
-      (ABACUS_FRAME_TOP_BAR_WIDTH + ABACUS_FRAME_TOP_BAR_RIGHT_SPACE),
-      -ABACUS_FRAME_TOP_BAR_HEIGHT
-    );
-
-    this.topBar = topBar;
+        x1: xPos,
+        x2: xPos,
+        y1: 0,
+        y2: ABACUS_FRAME_HEIGHT,
+      })
+      .stroke({ width: 20, color: ABACUS_FRAME_HORIZONTAL_LINE_COLOR });
+    this.add(this.verticalLine);
   }
 
-  private createTopBarText() {
-    const topBarText = new Text()
-      .addTo(this.drawing).text('9999');
+  private createStones(drawing: Svg) {
+    for (let i = 0; i < 8; i++) {
+      if (i == 2 || i == 1 || i == 3) continue;
+      const stoneImage = new Image()
+        .load(stone)
+        .addTo(drawing)
+        .size(ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT);
 
-    topBarText.attr({
-      fill: "rgb(255, 255, 255)",
-    }).font({size: "3em"});
+      const startX = ABACUS_FRAME_STROKE_WIDTH / 2 + 5;
+      stoneImage.y(startX + (ABACUS_STONE_HEIGHT + 5) * i);
 
-    topBarText.center(
-      (this.topBar.width() as number) / 2,
-      (this.topBar.height() as number) / 2
-    );
-
-    this.topBarText = topBarText;
+      this.stones.push(stoneImage);
+      this.add(stoneImage);
+    }
   }
 
-  public draw() {
-    this.add(this.topBar);
-    this.add(this.topBarText);
-  }
-}
+  public draw(drawing: Svg) {
+    this.drawVerticalLine();
+    this.createStones(drawing);
 
-export class AbacusFrame extends G implements Drawable {
-  private frame!: Rect;
-  private topBar!: AbacusFrameTopBar;
-  private horizontalLine = new Line();
-
-  constructor(private drawing: Svg) {
-    super();
-    this.createFrame();
-    this.createTopBar()
-  };
-
-  private createFrame() {
-    const frame = new Rect({
-      width: ABACUS_FRAME_WIDTH,
-      height: ABACUS_FRAME_HEIGHT
-    }).addTo(this.drawing);
-
-    frame.attr({
-      stroke: ABACUS_FRAME_COLOR,
-      fill: ABACUS_FRAME_FILL,
-      "stroke-width": ABACUS_FRAME_STROKE_WIDTH,
-      rx: "5",
-      ry: "5"
-    });
-
-    this.frame = frame;
-  }
-
-  private createTopBar() {
-    const topBar = new AbacusFrameTopBar(this.drawing);
-    this.topBar = topBar;
-  }
-
-  public draw() {
-    this.topBar.draw();
-    this.add(this.frame);
-    this.add(this.topBar);
+    //this.move(ABACUS_FRAME_STROKE_WIDTH / 2 + 15, 0);
   }
 }

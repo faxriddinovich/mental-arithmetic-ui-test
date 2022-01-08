@@ -43,48 +43,63 @@ class AbacusColumn extends G {
   }
 
   private drawVerticalLine() {
-    const lineX = 15 + ABACUS_STONE_WIDTH / 2;
+    const xPos = ABACUS_STONE_WIDTH / 2;
     this.verticalLine
-      .attr({ x1: lineX, y1: 0, x2: lineX, y2: ABACUS_FRAME_HEIGHT })
+      .attr({
+        x1: xPos,
+        x2: xPos,
+        y1: 0,
+        y2: ABACUS_FRAME_HEIGHT,
+      })
       .stroke({ width: 20, color: ABACUS_FRAME_HORIZONTAL_LINE_COLOR });
     this.add(this.verticalLine);
   }
 
   private createStones(drawing: Svg) {
-    for(let i = 0; i < 8; i++) {
-      if(i == 2 || i == 1 || i == 3) continue;
-    const stoneImage = new Image()
-      .load(stone)
-      .addTo(drawing)
-      .size(ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT).id('test');
+    for (let i = 0; i < 8; i++) {
+      if (i == 2 || i == 1 || i == 3) continue;
+      const stoneImage = new Image()
+        .load(stone)
+        .addTo(drawing)
+        .size(ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT);
 
-    stoneImage.cx(this.verticalLine.x());
+      const startX = ABACUS_FRAME_STROKE_WIDTH / 2 + 5;
+      stoneImage.y(startX + (ABACUS_STONE_HEIGHT + 5) * i);
 
-    const startX = (ABACUS_FRAME_STROKE_WIDTH / 2 + 5);
-    stoneImage.y(startX + (ABACUS_STONE_HEIGHT + 5) * i);
-
-    this.stones.push(stoneImage);
-    this.add(stoneImage);
+      this.stones.push(stoneImage);
+      this.add(stoneImage);
     }
   }
 
   public draw(drawing: Svg) {
     this.drawVerticalLine();
     this.createStones(drawing);
+
+    //this.move(ABACUS_FRAME_STROKE_WIDTH / 2 + 15, 0);
   }
 }
 
 export default defineComponent({
   setup() {
     const abacusContainerRef = ref<HTMLElement>();
-    const abacusValue = ref<number>(0);
+    const abacusValue = ref<number>(948217);
 
     const abacusFrameGroup = new G();
     const abacusValueBarGroup = new G();
+    const abacusStonesGroup = new G();
 
-    function drawAbacus(draw: Svg) {
+    function drawAbacusColumns() {
+      //
+    }
+
+    function drawAbacus(draw: Svg, columns = 6) {
+      const abacusFrameOffset = ABACUS_FRAME_STROKE_WIDTH + 20;
+
       const abacusFrame = draw
-        .rect(ABACUS_FRAME_WIDTH, ABACUS_FRAME_HEIGHT)
+        .rect(
+          ABACUS_STONE_WIDTH * columns + abacusFrameOffset,
+          ABACUS_FRAME_HEIGHT
+        )
         .attr({
           stroke: ABACUS_FRAME_COLOR,
           fill: "rgba(0, 0, 0, 0)",
@@ -96,9 +111,9 @@ export default defineComponent({
       const abacusFrameHorizontalLine = draw
         .line(
           0,
-          ABACUS_FRAME_HEIGHT - 315,
-          ABACUS_FRAME_WIDTH,
-          ABACUS_FRAME_HEIGHT - 315
+          (abacusFrame.height() as number) - 315,
+          abacusFrame.width() as number,
+          (abacusFrame.height() as number) - 315
         )
         .stroke({
           color: ABACUS_FRAME_HORIZONTAL_LINE_COLOR,
@@ -106,10 +121,18 @@ export default defineComponent({
           linecap: "round",
         });
 
-      const column = new AbacusColumn();
-      column.draw(draw);
+      for (let i = 0; i < columns; i++) {
+        const column = new AbacusColumn();
+        column.draw(draw);
 
-      abacusFrameGroup.add(column);
+        column.move(ABACUS_STONE_WIDTH * i, 0);
+
+        abacusStonesGroup.add(column);
+      }
+
+      abacusStonesGroup.center(abacusFrame.cx(), abacusFrame.cy());
+
+      abacusFrameGroup.add(abacusStonesGroup);
 
       const abacusValueBar = draw
         .rect(ABACUS_FRAME_TOP_BAR_WIDTH, ABACUS_FRAME_TOP_BAR_HEIGHT)
@@ -131,10 +154,9 @@ export default defineComponent({
       abacusValueBarGroup.add(abacusValueBar);
       abacusValueBarGroup.add(abacusValueText);
 
-      abacusValueBarGroup.move(
-        ABACUS_FRAME_WIDTH -
-          (ABACUS_FRAME_TOP_BAR_WIDTH + ABACUS_FRAME_TOP_BAR_RIGHT_SPACE),
-        -ABACUS_FRAME_TOP_BAR_HEIGHT
+      abacusValueBarGroup.center(
+        abacusFrame.cx(),
+        -(ABACUS_FRAME_TOP_BAR_HEIGHT / 2)
       );
 
       abacusFrameGroup.add(abacusFrameHorizontalLine);
@@ -164,7 +186,8 @@ export default defineComponent({
   border: 20px solid rgb(104, 93, 75);
   border-radius: 10px;
 }
-#test {
-  paint-order: stroke;
+#wtf {
+  outline-width: 10px;
+  outline-offset: -10px;
 }
 </style>
