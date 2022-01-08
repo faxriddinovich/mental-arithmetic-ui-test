@@ -31,6 +31,8 @@ import Scores from "@/views/scores.vue";
 import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
 import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 
+import AbacusGame from '@/views/games/abacus/game.vue';
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -130,6 +132,7 @@ const routes: Array<RouteConfig> = [
       next();
     }
   },
+  { path: "/games/abacus", name: "AbacusGame", component: AbacusGame },
   {
     path: "/courses/:id",
     name: "Course",
