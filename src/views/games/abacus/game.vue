@@ -32,9 +32,22 @@ export default defineComponent({
       const draw = SVG().addTo(abacusContainerRef.value!).size("100%", "100%");
       //const abacusBoard = new AbacusBoard(draw, 6);
       const abacusValueBox = new AbacusValueBox();
-      const abacusOuterBox = new AbacusOuterBox(draw, 6);
-      const abacusInnerBox = new AbacusInnerBox(6);
-      const abacusColumns = new AbacusColumns(6);
+      const abacusOuterBox = new AbacusOuterBox(2);
+      const abacusInnerBox = new AbacusInnerBox(2);
+      const abacusColumns = new AbacusColumns(2);
+
+      const numbers = [0];
+
+      abacusColumns.on('update', (event) => {
+        numbers[event.detail.index] = event.detail.value;
+        if(numbers.every((n) => n === 0))
+          abacusValueBox.setText(0);
+        else
+          abacusValueBox.setText(+numbers.join(''));
+
+          console.log(event.detail);
+        console.log(+numbers.join(''));
+      });
 
       abacusValueBox.draw();
       abacusOuterBox.draw();
@@ -51,7 +64,7 @@ export default defineComponent({
       abacusInnerBox.cx(abacusOuterBox.cx());
       abacusColumns.cx(abacusInnerBox.cx());
 
-      abacusOuterBox.move(200, 300);
+      abacusOuterBox.move(500, 300);
       abacusValueBox.cx(abacusOuterBox.cx());
       abacusValueBox.dy(-abacusValueBox.height() + 5);
     });

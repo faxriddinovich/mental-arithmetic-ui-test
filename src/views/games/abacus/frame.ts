@@ -1,7 +1,8 @@
-import {G, Svg, Rect, Line, Image} from '@svgdotjs/svg.js';
+import {G, Svg, Rect, Line, Image, SVG, Text} from '@svgdotjs/svg.js';
 import stoneSkin from "@@/img/abacus/stone_yellow.svg";
 
 const ABACUS_STONE_SLOTS_COUNT = 8;
+const ABACUS_ACTUAL_STONES_COUNT = 5;
 
 const ABACUS_STONE_WIDTH = 100;
 const ABACUS_STONE_HEIGHT = 50;
@@ -28,8 +29,9 @@ interface Drawable {
 }
 
 export class AbacusStone extends Image implements Drawable {
-  public isHighStone = false;
   public isActive = false;
+  public value = 0;
+  public isHighStone = false;
 
   public draw() {
     this.load(stoneSkin)
@@ -50,32 +52,41 @@ export class AbacusStone extends Image implements Drawable {
 
 export class AbacusColumn extends G implements Drawable {
   private stones: Map<number, AbacusStone> = new Map();
-
+  private value = 0;
   private verticalLine = new Line();
 
   public updateStone(stoneIndex: number) {
     const stone = this.stones.get(stoneIndex)!;
     if (stone.isHighStone) {
-      if (stone.isActive)
+      if (stone.isActive) {
         stone.inactivate();
-      else
+        this.value -= stone.value;
+      } else {
         stone.activate()
-      return;
-    }
-
-    const lowStones = Array.from(this.stones)
-      .filter(([index, stone]) => !stone.isHighStone && (stone.isActive ? stoneIndex < index : stoneIndex > index));
-
-    if (stone.isActive) {
-      stone.inactivate();
-      for (const [, lowStone] of lowStones)
-        lowStone.inactivate();
+        this.value += stone.value;
+      }
     } else {
-      stone.activate();
-      for (const [, lowStone] of lowStones)
-        lowStone.activate();
-    }
 
+      const lowStones = Array.from(this.stones)
+        .filter(([index, stone]) => !stone.isHighStone && (stone.isActive ? stoneIndex < index : stoneIndex > index));
+
+      if (stone.isActive) {
+        stone.inactivate();
+        this.value -= 1;
+        for (const [, lowStone] of lowStones) {
+          lowStone.inactivate();
+          this.value -= 1;
+        }
+      } else {
+        stone.activate();
+        this.value += 1;
+        for (const [, lowStone] of lowStones) {
+          lowStone.activate();
+          this.value += 1;
+        }
+      }
+    }
+    this.dispatch('update', {value: this.value});
   }
 
   public draw() {
@@ -91,22 +102,22 @@ export class AbacusColumn extends G implements Drawable {
       })
 
     this.add(this.verticalLine);
+    for (let i = 0, j = 0; i < ABACUS_STONE_SLOTS_COUNT; i++) {
+      if ([1, 2, 3].includes(i)) continue;
 
-    for (let i = 0; i < ABACUS_STONE_SLOTS_COUNT; i++) {
-      if (i == 1 || i == 2 || i == 3) continue;
       const abacusStone = new AbacusStone();
+      abacusStone.isHighStone = i == 0;
+      abacusStone.value = i == 0 ? 5 : j;
       abacusStone.draw();
 
       abacusStone.on('click', () => this.updateStone(i));
 
       const currentPosition = ((ABACUS_STONE_HEIGHT + ABACUS_MARGIN_BETWEEN_STONES) * i) + ABACUS_MARGIN_BETWEEN_STONES
 
-      if (i === 0) // is this "high stone"
-        abacusStone.isHighStone = true;
-
       abacusStone.y(currentPosition);
       this.add(abacusStone);
       this.stones.set(i, abacusStone);
+      j++;
     }
   }
 }
@@ -118,6 +129,9 @@ export class AbacusColumns extends G implements Drawable {
     for (let i = 0; i < this.columns; i++) {
       const column = new AbacusColumn();
       column.draw();
+      column.on('update', (value) => {
+        this.dispatch('update', {index: i, value: value.detail.value});
+      });
       column.x(ABACUS_STONE_WIDTH * i);
       this.add(column);
     }
@@ -125,6 +139,7 @@ export class AbacusColumns extends G implements Drawable {
 }
 
 export class AbacusValueBox extends G implements Drawable {
+  private value = new Text();
   private box = new Rect();
 
   public draw() {
@@ -132,7 +147,18 @@ export class AbacusValueBox extends G implements Drawable {
     this.box.fill(ABACUS_VALUE_BOX_BG_COLOR);
     this.box.attr({rx: 5, ry: 5});
 
+    this.value.text('0').fill('white').font({ size: '3em' });
+    this.value.cx(this.box.cx());
+    this.value.cy(this.box.cy());
+
     this.add(this.box);
+    this.add(this.value);
+  }
+
+  public setText(value: any) {
+    this.value.text(value);
+    this.value.cx(this.box.cx());
+    this.value.cy(this.box.cy());
   }
 }
 
@@ -140,7 +166,6 @@ export class AbacusOuterBox extends G implements Drawable {
   private outerBox = new Rect();
 
   constructor(
-    private readonly drawRef: Svg,
     private readonly columns: number
   ) {super()}
 
@@ -190,14 +215,13 @@ export class AbacusInnerBox extends G implements Drawable {
 export class AbacusBoard extends G implements Drawable {
 
   constructor(
-    private readonly drawRef: Svg,
     private readonly columns: number
   ) {
     super();
   }
 
   public draw() {
-    const outerBox = new AbacusOuterBox(this.drawRef, this.columns);
+    const outerBox = new AbacusOuterBox(this.columns);
     const innerBox = new AbacusInnerBox(this.columns);
     outerBox.draw();
     innerBox.draw();
