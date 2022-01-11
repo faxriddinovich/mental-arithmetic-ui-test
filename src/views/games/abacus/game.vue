@@ -1,16 +1,5 @@
 <template>
-  <div ref="abacusContainerRef" style="height: 100vh">
-    <!--
-    <div class="is-abacus-frame">
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-      <img :src="require('@@/img/abacus/stone_yellow.svg')" />
-    </div>
-    -->
-  </div>
+  <div ref="abacusContainerRef" style="height: 100vh"></div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "@vue/composition-api";
@@ -22,20 +11,24 @@ import {
 export default defineComponent({
   setup() {
     const abacusContainerRef = ref<HTMLElement>();
-    const abacusValue = ref<number>(948217);
+    const abacusValue = ref<number>(0);
 
     onMounted(() => {
       const draw = SVG().addTo(abacusContainerRef.value!).size("100%", "100%");
-      const abacusBoard = new AbacusBoard(6);
+      const abacusBoard = new AbacusBoard(3);
       abacusBoard.draw();
       draw.add(abacusBoard);
       abacusBoard.construct();
+
+      abacusBoard.on('update', (value) => {
+        abacusValue.value = (value as CustomEvent<number>).detail;
+      });
 
       abacusBoard.cx(window.innerWidth / 2);
       abacusBoard.cy(window.innerHeight / 2);
     });
 
-    return { abacusContainerRef };
+    return { abacusContainerRef, abacusValue };
   },
 });
 </script>

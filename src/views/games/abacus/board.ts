@@ -1,16 +1,19 @@
 import {G} from '@svgdotjs/svg.js';
 import { AbacusValueBox } from './value-box';
-import { Drawable } from './interfaces';
+import { Drawable, UpdateEventDetail } from './interfaces';
 import { AbacusInnerBox, AbacusOuterBox } from './frame';
 import { AbacusColumns } from './column';
 
 export class AbacusBoard extends G implements Drawable {
+  private digits: number[] = new Array(this.columns).fill(0);
   private abacusValueBox = new AbacusValueBox();
   private abacusOuterBox = new AbacusOuterBox(this.columns);
   private abacusInnerBox = new AbacusInnerBox(this.columns);
   private abacusColumns = new AbacusColumns(this.columns);
 
-  constructor(private columns: number) {super();}
+  constructor(private columns: number) {
+    super();
+  }
 
   public construct() {
     this.abacusInnerBox.cy(this.abacusOuterBox.cy());
@@ -24,11 +27,20 @@ export class AbacusBoard extends G implements Drawable {
 
     this.abacusValueBox.cx(this.abacusOuterBox.cx());
     this.abacusValueBox.dy(-this.abacusValueBox.height() + 6);
-
   }
 
   private listenColumnsValues() {
-    //
+    this.abacusColumns.on('update', (event) => {
+      const [digit, value] = (event as CustomEvent<UpdateEventDetail>).detail;
+      this.digits[digit] = value;
+      const conced = +this.digits.join('');
+      if(this.digits.every((value) => value === 0))
+        this.fire('update', 0);
+      else
+        this.fire('update', conced);
+
+      this.abacusValueBox.setText(conced);
+    });
   }
 
   public reset() {
@@ -36,6 +48,7 @@ export class AbacusBoard extends G implements Drawable {
   }
 
   public draw() {
+    this.listenColumnsValues();
     this.abacusValueBox.draw();
     this.abacusOuterBox.draw();
     this.abacusInnerBox.draw();

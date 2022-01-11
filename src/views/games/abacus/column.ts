@@ -1,7 +1,7 @@
 import {G, Line} from '@svgdotjs/svg.js';
-import { Drawable } from './interfaces';
-import { AbacusStone } from './stone';
-import { ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT, ABACUS_HORIZONTAL_LINE_WIDTH, ABACUS_STONE_SLOTS_COUNT, ABACUS_COLUMN_VERTICAL_LINE_WIDTH, ABACUS_COLUMN_VERTICAL_LINE_COLOR } from './constants';
+import {Drawable, UpdateEventDetail} from './interfaces';
+import {AbacusStone} from './stone';
+import {ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT, ABACUS_HORIZONTAL_LINE_WIDTH, ABACUS_STONE_SLOTS_COUNT, ABACUS_COLUMN_VERTICAL_LINE_WIDTH, ABACUS_COLUMN_VERTICAL_LINE_COLOR} from './constants';
 
 export class AbacusColumn extends G implements Drawable {
   private stones: Map<number, AbacusStone> = new Map();
@@ -13,10 +13,10 @@ export class AbacusColumn extends G implements Drawable {
     if (stone.isHighStone) {
       if (stone.isActive) {
         stone.inactivate();
-        this.value -= stone.value;
+        this.value -= 5;
       } else {
         stone.activate()
-        this.value += stone.value;
+        this.value += 5;
       }
     } else {
       const lowStones = Array.from(this.stones)
@@ -42,7 +42,7 @@ export class AbacusColumn extends G implements Drawable {
   }
 
   public reset() {
-    for(const [, stone] of this.stones)
+    for (const [, stone] of this.stones)
       stone.inactivate();
   }
 
@@ -59,21 +59,16 @@ export class AbacusColumn extends G implements Drawable {
       })
 
     this.add(this.verticalLine);
-    for (let i = 0, j = 0; i < ABACUS_STONE_SLOTS_COUNT; i++) {
+    for (let i = 0; i < ABACUS_STONE_SLOTS_COUNT; i++) {
       if (i == 1 || i == 2) continue;
       const abacusStone = new AbacusStone();
       abacusStone.isHighStone = i == 0;
-      abacusStone.value = i == 0 ? 5 : j;
       abacusStone.draw();
-
       abacusStone.on('click', () => this.updateStone(i));
 
-      const currentPosition = ABACUS_STONE_HEIGHT * i + (i > 1 ? ABACUS_HORIZONTAL_LINE_WIDTH : 0);;
-
-      abacusStone.y(currentPosition);
+      abacusStone.y(ABACUS_STONE_HEIGHT * i + (i > 1 ? ABACUS_HORIZONTAL_LINE_WIDTH : 0));
       this.add(abacusStone);
       this.stones.set(i, abacusStone);
-      j++;
     }
   }
 }
@@ -86,7 +81,8 @@ export class AbacusColumns extends G implements Drawable {
       const column = new AbacusColumn();
       column.draw();
       column.on('update', (value) => {
-        this.dispatch('update', {index: i, value: value.detail.value});
+        const detail = (value as CustomEvent<UpdateEventDetail>).detail;
+        this.fire('update', [i, detail.value]);
       });
       column.x(ABACUS_STONE_WIDTH * i);
       this.add(column);
@@ -94,7 +90,7 @@ export class AbacusColumns extends G implements Drawable {
   }
 
   public reset() {
-    for(const column of this.children())
+    for (const column of this.children())
       (column as AbacusColumn).reset();
   }
 }
