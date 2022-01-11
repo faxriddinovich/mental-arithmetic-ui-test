@@ -13,15 +13,11 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
-import { G, Image, Line, Rect, Svg, SVG, Circle } from "@svgdotjs/svg.js";
+import { defineComponent, ref, onMounted } from "@vue/composition-api";
+import { SVG } from "@svgdotjs/svg.js";
 import {
   AbacusBoard,
-  AbacusOuterBox,
-  AbacusInnerBox,
-  AbacusValueBox,
-  AbacusColumns,
-} from "./frame";
+} from "./board";
 
 export default defineComponent({
   setup() {
@@ -30,43 +26,13 @@ export default defineComponent({
 
     onMounted(() => {
       const draw = SVG().addTo(abacusContainerRef.value!).size("100%", "100%");
-      //const abacusBoard = new AbacusBoard(draw, 6);
-      const abacusValueBox = new AbacusValueBox();
-      const abacusOuterBox = new AbacusOuterBox(2);
-      const abacusInnerBox = new AbacusInnerBox(2);
-      const abacusColumns = new AbacusColumns(2);
+      const abacusBoard = new AbacusBoard(6);
+      abacusBoard.draw();
+      draw.add(abacusBoard);
+      abacusBoard.construct();
 
-      const numbers = [0];
-
-      abacusColumns.on('update', (event) => {
-        numbers[event.detail.index] = event.detail.value;
-        if(numbers.every((n) => n === 0))
-          abacusValueBox.setText(0);
-        else
-          abacusValueBox.setText(+numbers.join(''));
-
-          console.log(event.detail);
-        console.log(+numbers.join(''));
-      });
-
-      abacusValueBox.draw();
-      abacusOuterBox.draw();
-      abacusInnerBox.draw();
-      abacusColumns.draw();
-
-      abacusOuterBox.add(abacusInnerBox);
-      abacusOuterBox.add(abacusValueBox);
-      abacusInnerBox.add(abacusColumns);
-
-      draw.add(abacusOuterBox);
-
-      abacusInnerBox.cy(abacusOuterBox.cy());
-      abacusInnerBox.cx(abacusOuterBox.cx());
-      abacusColumns.cx(abacusInnerBox.cx());
-
-      abacusOuterBox.move(500, 300);
-      abacusValueBox.cx(abacusOuterBox.cx());
-      abacusValueBox.dy(-abacusValueBox.height() + 5);
+      abacusBoard.cx(window.innerWidth / 2);
+      abacusBoard.cy(window.innerHeight / 2);
     });
 
     return { abacusContainerRef };
