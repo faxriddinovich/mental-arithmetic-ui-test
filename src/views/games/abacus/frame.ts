@@ -1,7 +1,7 @@
 import {G, Svg, Rect, Line, Image, SVG, Text} from '@svgdotjs/svg.js';
 import stoneSkin from "@@/img/abacus/stone_yellow.svg";
 
-const ABACUS_STONE_SLOTS_COUNT = 8;
+const ABACUS_STONE_SLOTS_COUNT = 7;
 const ABACUS_ACTUAL_STONES_COUNT = 5;
 
 const ABACUS_STONE_WIDTH = 100;
@@ -14,7 +14,7 @@ const ABACUS_VALUE_BOX_BG_COLOR = "rgb(104, 93, 75)";
 const ABACUS_COLUMN_VERTICAL_LINE_WIDTH = 20;
 const ABACUS_COLUMN_VERTICAL_LINE_COLOR = "#4D4D4D";
 
-const ABACUS_COLUMN_HORIZONTAL_LINE_WIDTH = 15;
+const ABACUS_HORIZONTAL_LINE_WIDTH = 15;
 
 const ABACUS_VALUE_BOX_WIDTH = 200;
 const ABACUS_VALUE_BOX_HEIGHT = 60;
@@ -22,7 +22,6 @@ const ABACUS_VALUE_BOX_HEIGHT = 60;
 const ABACUS_FRAME_WIDTH = 40;
 
 const ABACUS_FRAME_X_PADDING = 40;
-const ABACUS_MARGIN_BETWEEN_STONES = 5;
 
 interface Drawable {
   draw(): void;
@@ -40,12 +39,12 @@ export class AbacusStone extends Image implements Drawable {
   }
 
   public activate() {
-    this.animate(100).dy(this.isHighStone ? 55 : -55); // FIXME: static size
+    this.animate(100).dy(this.isHighStone ? ABACUS_STONE_HEIGHT : -ABACUS_STONE_HEIGHT); // FIXME: static size
     this.isActive = true;
   }
 
   public inactivate() {
-    this.animate(100).dy(this.isHighStone ? -55 : 55);
+    this.animate(100).dy(this.isHighStone ? -ABACUS_STONE_HEIGHT : ABACUS_STONE_HEIGHT);
     this.isActive = false;
   }
 }
@@ -95,7 +94,7 @@ export class AbacusColumn extends G implements Drawable {
         x1: ABACUS_STONE_WIDTH / 2,
         y1: 0,
         x2: ABACUS_STONE_WIDTH / 2,
-        y2: ((ABACUS_STONE_HEIGHT + ABACUS_MARGIN_BETWEEN_STONES)) * ABACUS_STONE_SLOTS_COUNT
+        y2: ABACUS_STONE_HEIGHT * ABACUS_STONE_SLOTS_COUNT + ABACUS_HORIZONTAL_LINE_WIDTH
       }).stroke({
         width: ABACUS_COLUMN_VERTICAL_LINE_WIDTH,
         color: ABACUS_COLUMN_VERTICAL_LINE_COLOR
@@ -103,8 +102,7 @@ export class AbacusColumn extends G implements Drawable {
 
     this.add(this.verticalLine);
     for (let i = 0, j = 0; i < ABACUS_STONE_SLOTS_COUNT; i++) {
-      if ([1, 2, 3].includes(i)) continue;
-
+      if(i == 1 || i == 2) continue;
       const abacusStone = new AbacusStone();
       abacusStone.isHighStone = i == 0;
       abacusStone.value = i == 0 ? 5 : j;
@@ -112,7 +110,7 @@ export class AbacusColumn extends G implements Drawable {
 
       abacusStone.on('click', () => this.updateStone(i));
 
-      const currentPosition = ((ABACUS_STONE_HEIGHT + ABACUS_MARGIN_BETWEEN_STONES) * i) + ABACUS_MARGIN_BETWEEN_STONES
+      const currentPosition = ABACUS_STONE_HEIGHT * i + (i > 1 ? ABACUS_HORIZONTAL_LINE_WIDTH : 0);;
 
       abacusStone.y(currentPosition);
       this.add(abacusStone);
@@ -147,18 +145,21 @@ export class AbacusValueBox extends G implements Drawable {
     this.box.fill(ABACUS_VALUE_BOX_BG_COLOR);
     this.box.attr({rx: 5, ry: 5});
 
-    this.value.text('0').fill('white').font({ size: '3em' });
-    this.value.cx(this.box.cx());
-    this.value.cy(this.box.cy());
+    this.value.text('0').fill('white').font({size: '3em'});
+    this.centerText();
 
     this.add(this.box);
     this.add(this.value);
   }
 
-  public setText(value: any) {
-    this.value.text(value);
+  public centerText() {
     this.value.cx(this.box.cx());
     this.value.cy(this.box.cy());
+  }
+
+  public setText(value: any) {
+    this.value.text(value);
+    this.centerText();
   }
 }
 
@@ -171,8 +172,8 @@ export class AbacusOuterBox extends G implements Drawable {
 
   public draw() {
     const outerBoxWidth =
-      (ABACUS_STONE_WIDTH * this.columns) + ABACUS_FRAME_WIDTH + ABACUS_FRAME_X_PADDING;
-    const outerBoxHeight = ((ABACUS_STONE_HEIGHT + ABACUS_MARGIN_BETWEEN_STONES) * ABACUS_STONE_SLOTS_COUNT) + ABACUS_FRAME_WIDTH;
+      (ABACUS_STONE_WIDTH * this.columns) + (ABACUS_FRAME_WIDTH + ABACUS_FRAME_X_PADDING);
+    const outerBoxHeight = (ABACUS_STONE_HEIGHT * ABACUS_STONE_SLOTS_COUNT) + ABACUS_FRAME_WIDTH + ABACUS_HORIZONTAL_LINE_WIDTH;
 
     this.outerBox.width(outerBoxWidth).height(outerBoxHeight);
     this.outerBox.fill(ABACUS_FRAME_COLOR);
@@ -190,7 +191,7 @@ export class AbacusInnerBox extends G implements Drawable {
 
   public draw() {
     const innerBoxWidth = (ABACUS_STONE_WIDTH * this.columns) + ABACUS_FRAME_X_PADDING;
-    const innerBoxHeight = (ABACUS_STONE_HEIGHT + ABACUS_MARGIN_BETWEEN_STONES) * ABACUS_STONE_SLOTS_COUNT;;
+    const innerBoxHeight = (ABACUS_STONE_HEIGHT * ABACUS_STONE_SLOTS_COUNT) + ABACUS_HORIZONTAL_LINE_WIDTH;
 
     this.innerBox.width(innerBoxWidth).height(innerBoxHeight);
     this.innerBox.fill(ABACUS_BG_COLOR);
@@ -199,11 +200,11 @@ export class AbacusInnerBox extends G implements Drawable {
     this.horizontalLine
       .attr({
         x1: 0,
-        y1: 140,
+        y1: (ABACUS_STONE_HEIGHT * 2) + ABACUS_HORIZONTAL_LINE_WIDTH / 2,
         x2: this.innerBox.width(),
-        y2: 140
+        y2: (ABACUS_STONE_HEIGHT * 2) + ABACUS_HORIZONTAL_LINE_WIDTH / 2
       }).stroke({
-        width: ABACUS_COLUMN_HORIZONTAL_LINE_WIDTH,
+        width: ABACUS_HORIZONTAL_LINE_WIDTH,
         color: ABACUS_COLUMN_VERTICAL_LINE_COLOR
       })
 
