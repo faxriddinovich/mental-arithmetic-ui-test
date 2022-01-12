@@ -1,11 +1,18 @@
 <template>
-  <div ref="abacusContainerRef">
+  <div>
+    <div ref="numbersContainerRef"></div>
+    <div
+      ref="abacusContainerRef"
+      class="is-flex is-justify-content-center"
+    ></div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "@vue/composition-api";
-import { SVG, Text } from "@svgdotjs/svg.js";
+import { SVG } from "@svgdotjs/svg.js";
+import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
+import { NumbersViewBox } from "./numbers-viewbox";
 
 export default defineComponent({
   setup() {
@@ -14,51 +21,45 @@ export default defineComponent({
     const abacusValue = ref<number>(0);
 
     onMounted(() => {
-      const draw = SVG().addTo(abacusContainerRef.value!).size("100%", "100%").css('position', 'absolute');
-      const foreignObject = draw.foreignObject(1000, 200);
-      const numberDraw = SVG().addTo(foreignObject).viewbox(0, 0, 1000, 140);
+      const numbersDraw = SVG()
+        .addTo(numbersContainerRef.value!)
+        .width(window.innerWidth);
+      const abacusDraw = SVG()
+        .addTo(abacusContainerRef.value!)
+        .viewbox(0, -55, 670, 469)
+        .addClass("is-abacus-board")
+        .addClass("mx-2")
+        .addClass("my-2");
 
-      foreignObject.cx(window.innerWidth / 2);
-      foreignObject.cy(200);
+      const numberViewBox = new NumbersViewBox(window.innerWidth, 140, [
+        "+342",
+        "-143",
+        "+111",
+        "+342",
+        "-143",
+        "+111",
+        "+342",
+        "-143",
+        "+111",
+      ]);
+      numberViewBox.draw();
+      numberViewBox.cx(window.innerWidth / 2);
+      numbersDraw.add(numberViewBox);
 
-      const abacusBoard = new AbacusBoard(6);
+      let i = 0;
+      setInterval(() => {
+        numberViewBox.display(i);
+        i++;
+      }, 1000);
+
+      const abacusBoard = new AbacusBoard(6).id("abacus-board");
       abacusBoard.draw();
-      draw.add(abacusBoard);
+      abacusDraw.add(abacusBoard);
       abacusBoard.construct();
 
       abacusBoard.on("update", (value) => {
         abacusValue.value = (value as CustomEvent<number>).detail;
       });
-
-      abacusBoard.cx(window.innerWidth / 2);
-      abacusBoard.cy(700);
-
-      const numbers = ['+44', '+91', '-44', '+15', '+44', '+91', '-44', '+15', '+44', '+91', '-44', '+15', '+44', '+91', '-44', '+15'];
-
-      const tt = numberDraw.text((text) => {
-        for(const n of numbers)
-          text.tspan(n);
-      }).font({ size: '10em', weight: "bold" }).fill("rgba(0, 0, 0, .2)");
-      tt.attr({ 'dominant-baseline': "hanging" });
-
-      tt.x(1000);
-
-      let currIndex = 0;
-      const timerHandle = setInterval(() => {
-        const childs = tt.children();
-        if (childs[currIndex]) {
-          if (childs[currIndex - 1])
-            childs[currIndex - 1].fill("rgba(0, 0, 0, .2)");
-
-          childs[currIndex].fill("rgba(0, 0, 0, .7)");
-          //numberDraw.animate(100).viewbox(childs[currIndex].cx() - 500, 0, 1000, 200);
-          tt.animate(200).dx(-childs[currIndex].cx() + (500 - childs[currIndex].width()));
-          currIndex++;
-          return;
-        }
-
-        clearInterval(timerHandle);
-      }, 1000);
     });
 
     return { numbersContainerRef, abacusContainerRef, abacusValue };
@@ -66,12 +67,11 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
-.is-abacus-frame {
-  border: 20px solid rgb(104, 93, 75);
-  border-radius: 10px;
-}
-#wtf {
-  outline-width: 10px;
-  outline-offset: -10px;
+@import "bulma/sass/utilities/mixins";
+
+.is-abacus-board {
+  position: absolute;
+  max-width: 850px;
+  bottom: 0;
 }
 </style>
