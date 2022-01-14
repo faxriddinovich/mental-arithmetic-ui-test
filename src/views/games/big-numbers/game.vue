@@ -218,13 +218,6 @@
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
-.completed-progress > .progress {
-  border-radius: 0px !important;
-  @include mobile {
-    height: 0.8rem;
-  }
-}
-
 .is-controls-bar {
   position: absolute !important;
   width: 100% !important;

@@ -3,6 +3,17 @@
 
 $border-color: rgb(149, 165, 166);
 
+.completed-progress > .progress {
+  border-radius: 0px !important;
+  @include mobile {
+    height: 0.8rem;
+  }
+}
+
+.is-full-rounded {
+  border-radius: 40px;
+}
+
 .is-bordered {
   border: 1px solid $border-color;
 }
@@ -33,7 +44,15 @@ $border-color: rgb(149, 165, 166);
   }
 }
 
+// FIXME?
 .is-bottom-left-screen {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.is-bottom-right-screen {
   position: absolute;
   bottom: 0;
   right: 0;
