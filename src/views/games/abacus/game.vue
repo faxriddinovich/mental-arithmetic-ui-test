@@ -1,6 +1,6 @@
 <template>
   <div>
-  <!-- bottom right timer -->
+    <!-- bottom right timer -->
     <span
       class="
         card
@@ -8,6 +8,7 @@
         px-4
         py-1
         is-full-rounded is-bottom-right-screen
+        is-abacus-game-timer
         mx-3
         my-3
       "
@@ -47,12 +48,17 @@
     </section>
     <!-- end controls bar -->
 
+    <div ref="abacusContainerRef" style="display: relative"></div>
+
     <!-- display screen -->
     <section class="hero is-fullheight">
-      <div class="hero-body p-1">
+      <div class="hero-body is-justify-content-center is-align-items-center is-align-content-center" ref="numbersContainerRef">
+        <!--
         <div class="has-text-centered" style="width: 100%">
           <span class="is-display-number-1-1">2</span>
         </div>
+        <div ref="numbersContainerRef" class="is-flex is-justify-content-center is-align-items-center"></div>
+        -->
       </div>
     </section>
 
@@ -81,8 +87,10 @@ export default defineComponent({
     onMounted(() => {
       const numbersDraw = SVG()
         .addTo(numbersContainerRef.value!)
-        .width(window.innerWidth);
+        .addClass("is-display-number");
+
       const abacusDraw = SVG()
+        //.size(500, 400)
         .addTo(abacusContainerRef.value!)
         .viewbox(0, -55, 670, 469)
         .addClass("is-abacus-board")
@@ -101,7 +109,7 @@ export default defineComponent({
         "+111",
       ]);
       numberViewBox.draw();
-      numberViewBox.cx(window.innerWidth / 2);
+      //numberViewBox.cx(window.innerWidth / 2);
       numbersDraw.add(numberViewBox);
 
       let i = 0;
@@ -127,9 +135,20 @@ export default defineComponent({
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
+.is-display-number {
+width: 100%;
+}
+
 .is-abacus-board {
   position: absolute;
-  max-width: 850px;
+  max-width: 650px;
   bottom: 0;
+}
+
+.is-abacus-game-timer {
+  position: absolute;
+}
+
+@include tablet {
 }
 </style>

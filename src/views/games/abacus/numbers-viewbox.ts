@@ -41,7 +41,7 @@ export class NumbersViewBox extends ForeignObject implements Drawable {
         text.tspan(number);
     })
 
-    numbers.font({size: "10em", weight: "bold"});
+    numbers.font({size: "8em", weight: "bold"});
     numbers.fill("rgba(0, 0, 0, .2)");
     numbers.attr({'dominant-baseline': "hanging"});
     this.viewBox.add(numbers);
