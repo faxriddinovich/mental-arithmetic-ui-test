@@ -7,8 +7,7 @@
         is-bordered-bottom-accent
         px-4
         py-1
-        is-full-rounded is-bottom-right-screen
-        is-abacus-game-timer
+        is-full-rounded is-bottom-right-screen is-abacus-game-timer
         mx-3
         my-3
       "
@@ -39,7 +38,6 @@
             type="is-primary is-light"
             icon-left="refresh"
             size="is-medium"
-            @click="refresh"
             >Refresh</b-button
           >
         </div>
@@ -52,13 +50,16 @@
 
     <!-- display screen -->
     <section class="hero is-fullheight">
-      <div class="hero-body is-justify-content-center is-align-items-center is-align-content-center" ref="numbersContainerRef">
-        <!--
-        <div class="has-text-centered" style="width: 100%">
-          <span class="is-display-number-1-1">2</span>
-        </div>
-        <div ref="numbersContainerRef" class="is-flex is-justify-content-center is-align-items-center"></div>
-        -->
+      <div
+        class="
+          hero-body
+          p-0
+          is-justify-content-center
+          is-align-items-center
+          is-align-content-center
+        "
+        ref="numbersContainerRef"
+      >
       </div>
     </section>
 
@@ -77,40 +78,32 @@ import { SVG } from "@svgdotjs/svg.js";
 import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
 import { NumbersViewBox } from "./numbers-viewbox";
+import { Swiper, SwiperSlide } from "vue-awesome-swiper";
+import "swiper/css/swiper.css";
 
 export default defineComponent({
+  components: { Swiper, SwiperSlide },
   setup() {
     const abacusContainerRef = ref<HTMLElement>();
-    const numbersContainerRef = ref<HTMLElement>();
+    const numbersContainerRef= ref<HTMLElement>();
     const abacusValue = ref<number>(0);
 
     onMounted(() => {
       const numbersDraw = SVG()
+        //.viewbox(0, 0, 1000, 230)
         .addTo(numbersContainerRef.value!)
-        .addClass("is-display-number");
+        .addClass("is-abacus-display-box");
 
       const abacusDraw = SVG()
-        //.size(500, 400)
         .addTo(abacusContainerRef.value!)
         .viewbox(0, -55, 670, 469)
         .addClass("is-abacus-board")
         .addClass("mx-2")
         .addClass("my-2");
 
-      const numberViewBox = new NumbersViewBox(window.innerWidth, 140, [
-        "+342",
-        "-143",
-        "+111",
-        "+342",
-        "-143",
-        "+111",
-        "+342",
-        "-143",
-        "+111",
-      ]);
-      numberViewBox.draw();
-      //numberViewBox.cx(window.innerWidth / 2);
+      const numberViewBox = new NumbersViewBox(["+4", "-14", "-4", "-4"]);
       numbersDraw.add(numberViewBox);
+      numberViewBox.draw();
 
       let i = 0;
       setInterval(() => {
@@ -128,15 +121,61 @@ export default defineComponent({
       });
     });
 
-    return { numbersContainerRef, abacusContainerRef, abacusValue };
+    return {
+      numbersContainerRef,
+      abacusContainerRef,
+      abacusValue,
+    };
   },
 });
 </script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
-.is-display-number {
-width: 100%;
+$font-sizes-h: (
+  1: 40vmin,
+  2: 60vmin,
+  3: 45vmin,
+  4: 40vmin,
+  5: 32vmin,
+  6: 26vmin,
+  7: 22vmin,
+);
+
+@each $char-len, $font-size in $font-sizes-h {
+  .is-abacus-display-number-#{$char-len}-1 {
+    @if $char-len < 5 {
+      font-size: $font-size - 25;
+    } @else {
+      font-size: $font-size;
+    }
+  }
+
+  .is-display-number-#{$char-len}-2 {
+    @if $char-len < 5 {
+      font-size: $font-size - 15;
+    } @else {
+      font-size: $font-size;
+    }
+  }
+
+  .is-display-number-#{$char-len}-3 {
+    font-size: $font-size;
+  }
+}
+
+@include desktop {
+  .is-abacus-display-box {
+    width: 80%;
+    margin-bottom: 18rem;
+  }
+}
+
+@include touch {
+  .is-abacus-display-box {
+    width: 95%;
+    margin-bottom: 10rem;
+  }
 }
 
 .is-abacus-board {
