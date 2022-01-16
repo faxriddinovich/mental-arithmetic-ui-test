@@ -20,10 +20,6 @@ export class NumbersViewBox extends Text implements Drawable {
     }
   }
 
-  public resize() {
-    //
-  }
-
   private drawNumbers() {
     const numbers = this.text((text) => {
       for (const number of this.displayNumbers)
