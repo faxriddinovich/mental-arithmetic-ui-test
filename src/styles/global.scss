@@ -10,6 +10,21 @@ $border-color: rgb(149, 165, 166);
   }
 }
 
+.is-shaking-text {
+  display: block;
+  animation-duration: 0.2s;
+  animation-name: shaking;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes shaking {
+  0% { transform: rotate(2deg); }
+  25% { transform: rotate(2deg); }
+  50% { transform: rotate(-2deg); }
+	75% { transform: rotate(-2deg); }
+}
+
 .is-full-rounded {
   border-radius: 40px;
 }

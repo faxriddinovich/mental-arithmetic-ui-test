@@ -20,7 +20,10 @@
     <!-- end timer -->
 
     <!-- controls bar -->
-    <section class="card is-bordered is-controls-bar" v-if="displayMode === 'swiper-cards'">
+    <section
+      class="card is-bordered is-controls-bar"
+      v-if="displayMode === 'swiper-cards'"
+    >
       <div class="p-2">
         <div
           class="is-flex is-align-items-center is-justify-content-space-between"
@@ -34,7 +37,18 @@
             >Back</b-button
           >
           <div class="is-flex is-align-items-center">
-            <b-icon icon="abacus" size="is-large" type="is-primary" />
+            <span v-if="displayingAttentionTexts">
+              <b-icon icon="abacus" size="is-large" type="is-primary" />
+            </span>
+            <span v-else>
+              <span
+                class="ml-1 is-size-3 has-text-weight-semibold has-text-danger is-shaking-text"
+              >
+                <b-icon icon="stopwatch" size="is-medium" />
+
+                0:33</span
+              >
+            </span>
           </div>
           <b-button
             type="is-primary is-light"
@@ -56,7 +70,11 @@
       <div class="hero-body p-0">
         <!-- scores display -->
 
-        <div class="columns is-gapless is-centered" style="min-width: 100%" v-if="displayMode === 'scores'">
+        <div
+          class="columns is-gapless is-centered"
+          style="min-width: 100%"
+          v-if="displayMode === 'scores'"
+        >
           <div class="column is-5-fullhd is-three-quarters-desktop">
             <div class="box mx-2">
               <img
@@ -106,13 +124,8 @@
                 </nav>
                 <hr class="mb-5" />
                 <div class="is-flex">
-                  <b-button icon-left="arrow-left" expanded
-                    >Back</b-button
-                  >
-                  <b-button
-                    class="ml-2"
-                    icon-left="refresh"
-                    expanded
+                  <b-button icon-left="arrow-left" expanded>Back</b-button>
+                  <b-button class="ml-2" icon-left="refresh" expanded
                     >Repeat</b-button
                   >
                 </div>
@@ -170,8 +183,9 @@ import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+//import TimerSoundEffect from '@@/sounds/timer.wav';
 
-type DisplayMode = 'swiper-cards' | 'scores';
+type DisplayMode = "swiper-cards" | "scores";
 
 export default defineComponent({
   components: { Swiper, SwiperSlide },
@@ -183,7 +197,8 @@ export default defineComponent({
 
     const attentionTexts = ["Ready?", "Go!"];
 
-    const displayMode = ref<DisplayMode>('swiper-cards');
+    const displayMode = ref<DisplayMode>("swiper-cards");
+    const displayingAttentionTexts = ref<boolean>(true); // NOTE: can we avoid using this?
 
     /* STATIC VALUES */
     const numbers = ref(["+99999", "-3", "-4", "+1"]);
@@ -231,8 +246,14 @@ export default defineComponent({
           (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
           currentSwiperIndex.value++;
         } else {
-          displayRows();
           clearInterval(timerHandle);
+
+          timerHandles.add(
+            setTimeout(() => {
+              displayingAttentionTexts.value = false;
+              displayRows();
+            }, 500)
+          );
         }
       }, 800);
 
@@ -240,15 +261,19 @@ export default defineComponent({
     }
 
     function displayRows() {
-      const timerHandle = setInterval(() => {
-        const totalLength = numbers.value.length + attentionTexts.length;
-        if (currentSwiperIndex.value !== totalLength) {
-          (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
-          currentSwiperIndex.value++;
-        } else {
-          clearInterval(timerHandle);
-        }
-      }, 1000);
+      const timerHandle = setInterval(
+        (function callback() {
+          const totalLength = numbers.value.length + attentionTexts.length;
+          if (currentSwiperIndex.value !== totalLength) {
+            (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
+            currentSwiperIndex.value++;
+          } else {
+            clearInterval(timerHandle!);
+          }
+          return callback;
+        })(),
+        1000
+      );
       timerHandles.add(timerHandle);
     }
 
@@ -292,7 +317,8 @@ export default defineComponent({
       numbers,
       viewBoxWidthMap,
       attentionTexts,
-      displayMode
+      displayMode,
+      displayingAttentionTexts,
     };
   },
 });
