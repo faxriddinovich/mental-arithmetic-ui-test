@@ -20,7 +20,6 @@
     <!-- end timer -->
 
     <!-- controls bar -->
-    <!--
     <section class="card is-bordered is-controls-bar">
       <div class="p-2">
         <div
@@ -47,16 +46,16 @@
       </div>
       <b-progress type="is-success" class="completed-progress" :value="80" />
     </section>
-    -->
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <!--<div ref="abacusContainerRef"></div>-->
+    <div ref="abacusContainerRef"></div>
 
     <!-- display screen -->
     <section class="hero is-fullheight">
       <div class="hero-body p-0">
         <!-- result display -->
+        <!--
         <div class="columns is-gapless is-centered" style="min-width: 100%">
           <div class="column is-5-fullhd is-three-quarters-desktop">
             <div class="box mx-2">
@@ -85,7 +84,6 @@
                     <b-progress-bar :value="20" type="is-dark"></b-progress-bar>
                   </template>
                 </b-progress>
-
                 <nav class="level is-mobile">
                   <div class="level-item has-text-centered">
                     <div>
@@ -120,9 +118,10 @@
                 </div>
               </div>
             </div>
-            <!-- end result display -->
-
-            <!--
+          </div>
+        </div>
+        -->
+        <!-- end result display -->
         <swiper
           class="swiper"
           ref="swiperRef"
@@ -131,6 +130,13 @@
           :delete-instance-on-destroy="true"
           :cleanup-styles-on-destroy="true"
         >
+          <swiper-slide
+            class="is-attention-text"
+            v-for="(text, index) of attentionTexts"
+            :key="'a' + index"
+            >{{ text }}</swiper-slide
+          >
+
           <swiper-slide v-for="(number, index) of numbers" :key="index">
             <svg
               width="100%"
@@ -150,9 +156,6 @@
             </svg>
           </swiper-slide>
         </swiper>
-        -->
-          </div>
-        </div>
       </div>
     </section>
     <!-- end display screen -->
@@ -160,6 +163,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
+import VueComponent from "vue";
 import { SVG } from "@svgdotjs/svg.js";
 import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
@@ -172,7 +176,16 @@ export default defineComponent({
     const abacusContainerRef = ref<HTMLElement>();
     const numbersContainerRef = ref<HTMLElement>();
     const abacusValue = ref<number>(0);
-    const swiperRef = ref<HTMLElement>();
+    const swiperRef = ref<VueComponent>();
+
+    const attentionTexts = ["Ready?", "Go!"];
+
+    /* STATIC VALUES */
+    const numbers = ref(["+99999", "-3", "-4", "+1"]);
+    const answerMap = [9, 6, 2, 3];
+    const currentSwiperIndex = ref<number>(0);
+    const waitForAnswer = false;
+    const rowsTimeout = 300;
 
     const viewBoxWidthMap = ref({
       2: 25,
@@ -182,9 +195,6 @@ export default defineComponent({
       6: 40,
       7: 46,
     });
-    /* STATIC VALUES */
-    const numbers = ref(["+99999", "-3", "-4", "+1"]);
-    const answerMap = [9, 6, 2, 3];
 
     const swiperOptions = ref({
       //slidesPerView: 4,
@@ -201,18 +211,44 @@ export default defineComponent({
           slidesPerView: 2,
           spaceBetween: 20,
         },
-        /*
-        640: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-        */
         320: {
           slidesPerView: 1,
           spaceBetween: 10,
         },
       },
     });
+
+    const timerHandles = new Set();
+    function displayAttentionTexts() {
+      const timerHandle = setInterval(() => {
+        if (currentSwiperIndex.value !== attentionTexts.length) {
+          swiperRef.value.$swiper.slideTo(currentSwiperIndex.value);
+          currentSwiperIndex.value++;
+        } else {
+          displayRows();
+          clearInterval(timerHandle);
+        }
+      }, 800);
+
+      timerHandles.add(timerHandle);
+    }
+
+    function displayRows() {
+      const timerHandle = setInterval(() => {
+        const totalLength = numbers.value.length + attentionTexts.length;
+        if (currentSwiperIndex.value !== totalLength) {
+          swiperRef.value.$swiper.slideTo(currentSwiperIndex.value);
+          currentSwiperIndex.value++;
+        } else {
+          clearInterval(timerHandle);
+        }
+      }, 1000);
+      timerHandles.add(timerHandle);
+    }
+
+    function startGame() {
+      displayAttentionTexts();
+    }
 
     onMounted(() => {
       const abacusDraw = SVG()
@@ -237,6 +273,8 @@ export default defineComponent({
           currentIndex++;
         }
       });
+
+      startGame();
     });
 
     return {
@@ -247,6 +285,7 @@ export default defineComponent({
       swiperRef,
       numbers,
       viewBoxWidthMap,
+      attentionTexts,
     };
   },
 });
@@ -265,7 +304,6 @@ export default defineComponent({
     align-items: center;
     text-align: center;
     font-weight: bold;
-    font-size: 9em;
     background-color: rgba(26, 188, 156, 0.1);
     border-radius: 20px;
     color: white;
@@ -276,6 +314,15 @@ export default defineComponent({
     box-shadow: 0px 0px 100px -13px rgba(0, 0, 0, 0.14) inset;
     -webkit-box-shadow: 0px -1px 100px -13px rgba(0, 0, 0, 0.14) inset;
     -moz-box-shadow: 0px -1px 100px -13px rgba(0, 0, 0, 0.14) inset;
+  }
+
+  .is-attention-text {
+    background-color: rgba(230, 126, 34, 0.1);
+    font-size: 5em;
+  }
+
+  .swiper-slide-active.is-attention-text {
+    background-color: rgb(230, 126, 34);
   }
 }
 
