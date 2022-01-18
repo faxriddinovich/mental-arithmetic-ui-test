@@ -20,7 +20,7 @@
     <!-- end timer -->
 
     <!-- controls bar -->
-    <section class="card is-bordered is-controls-bar">
+    <section class="card is-bordered is-controls-bar" v-if="displayMode === 'swiper-cards'">
       <div class="p-2">
         <div
           class="is-flex is-align-items-center is-justify-content-space-between"
@@ -49,14 +49,14 @@
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <div ref="abacusContainerRef"></div>
+    <div ref="abacusContainerRef" v-if="displayMode === 'swiper-cards'"></div>
 
     <!-- display screen -->
     <section class="hero is-fullheight">
       <div class="hero-body p-0">
-        <!-- result display -->
-        <!--
-        <div class="columns is-gapless is-centered" style="min-width: 100%">
+        <!-- scores display -->
+
+        <div class="columns is-gapless is-centered" style="min-width: 100%" v-if="displayMode === 'scores'">
           <div class="column is-5-fullhd is-three-quarters-desktop">
             <div class="box mx-2">
               <img
@@ -120,8 +120,8 @@
             </div>
           </div>
         </div>
-        -->
-        <!-- end result display -->
+        <!-- end scores display -->
+
         <swiper
           class="swiper"
           ref="swiperRef"
@@ -129,6 +129,7 @@
           :auto-destroy="true"
           :delete-instance-on-destroy="true"
           :cleanup-styles-on-destroy="true"
+          v-else
         >
           <swiper-slide
             class="is-attention-text"
@@ -170,6 +171,8 @@ import { AbacusBoard } from "./board";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 
+type DisplayMode = 'swiper-cards' | 'scores';
+
 export default defineComponent({
   components: { Swiper, SwiperSlide },
   setup() {
@@ -180,9 +183,12 @@ export default defineComponent({
 
     const attentionTexts = ["Ready?", "Go!"];
 
+    const displayMode = ref<DisplayMode>('swiper-cards');
+
     /* STATIC VALUES */
     const numbers = ref(["+99999", "-3", "-4", "+1"]);
     const answerMap = [9, 6, 2, 3];
+    const currentAnswerMapIndex = ref<number>(0);
     const currentSwiperIndex = ref<number>(0);
     const waitForAnswer = false;
     const rowsTimeout = 300;
@@ -222,7 +228,7 @@ export default defineComponent({
     function displayAttentionTexts() {
       const timerHandle = setInterval(() => {
         if (currentSwiperIndex.value !== attentionTexts.length) {
-          swiperRef.value.$swiper.slideTo(currentSwiperIndex.value);
+          (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
           currentSwiperIndex.value++;
         } else {
           displayRows();
@@ -237,7 +243,7 @@ export default defineComponent({
       const timerHandle = setInterval(() => {
         const totalLength = numbers.value.length + attentionTexts.length;
         if (currentSwiperIndex.value !== totalLength) {
-          swiperRef.value.$swiper.slideTo(currentSwiperIndex.value);
+          (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
           currentSwiperIndex.value++;
         } else {
           clearInterval(timerHandle);
@@ -286,6 +292,7 @@ export default defineComponent({
       numbers,
       viewBoxWidthMap,
       attentionTexts,
+      displayMode
     };
   },
 });
