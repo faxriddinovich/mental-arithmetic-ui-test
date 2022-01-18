@@ -106,13 +106,12 @@
                     </div>
                   </div>
                 </nav>
-                <hr class="my-1" />
+                <hr class="mb-5" />
                 <div class="is-flex">
-                  <b-button type="is-success" icon-left="home" expanded
-                    >Home</b-button
+                  <b-button icon-left="arrow-left" expanded
+                    >Back</b-button
                   >
                   <b-button
-                    type="is-success"
                     class="ml-2"
                     icon-left="refresh"
                     expanded
