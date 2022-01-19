@@ -41,12 +41,10 @@
               <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
             <span v-else>
-              <span
-                class="ml-1 is-size-3 has-text-weight-semibold has-text-danger is-shaking-text"
-              >
+              <span :class="timerClasses">
                 <b-icon icon="stopwatch" size="is-medium" />
 
-                0:33</span
+                {{ timerMins }}:{{ timerSecs }}</span
               >
             </span>
           </div>
@@ -176,14 +174,20 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  watch,
+  computed,
+} from "@vue/composition-api";
 import VueComponent from "vue";
 import { SVG } from "@svgdotjs/svg.js";
 import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
-//import TimerSoundEffect from '@@/sounds/timer.wav';
+import TimerSoundEffect from "@@/sounds/timer.wav";
 
 type DisplayMode = "swiper-cards" | "scores";
 
@@ -195,10 +199,21 @@ export default defineComponent({
     const abacusValue = ref<number>(0);
     const swiperRef = ref<VueComponent>();
 
+    const timerAbsolute = ref<number>(0);
+    const timerMins = ref<string>("2");
+    const timerSecs = ref<string>("1");
+
+    const aud = new Audio(TimerSoundEffect);
+    aud.loop = true;
+    //aud.play();
+
     const attentionTexts = ["Ready?", "Go!"];
 
     const displayMode = ref<DisplayMode>("swiper-cards");
     const displayingAttentionTexts = ref<boolean>(true); // NOTE: can we avoid using this?
+
+    const sounds = new Map<string, HTMLAudioElement>();
+    const timerHandles = new Set();
 
     /* STATIC VALUES */
     const numbers = ref(["+99999", "-3", "-4", "+1"]);
@@ -207,6 +222,31 @@ export default defineComponent({
     const currentSwiperIndex = ref<number>(0);
     const waitForAnswer = false;
     const rowsTimeout = 300;
+
+    const canShakeTimer = () => parseInt(timerMins.value) === 0 && parseInt(timerSecs.value) < 30;
+
+    const timerClasses = computed<string[]>(() => {
+      const classes: string[] = [
+        "ml-1",
+        "is-size-3",
+        "has-text-weight-semibold",
+      ];
+
+      if(canShakeTimer()) {
+        classes.push(...["has-text-danger", "is-shaking-text"]);
+      }
+
+      return classes;
+    });
+
+    watch(timerSecs, () => {
+      if(canShakeTimer() && !sounds.has('timer-sound')) {
+        const timerSound = new Audio(TimerSoundEffect);
+        timerSound.loop = true;
+        timerSound.play();
+        sounds.set('timer-sound', timerSound);
+      }
+    });
 
     const viewBoxWidthMap = ref({
       2: 25,
@@ -239,7 +279,26 @@ export default defineComponent({
       },
     });
 
-    const timerHandles = new Set();
+
+    function timerCountDown(duration: number) {
+      timerAbsolute.value = duration;
+      timerHandles.add(
+        setInterval(() => {
+          let mins = parseInt(timerAbsolute.value / 60, 10);
+          let secs = parseInt(timerAbsolute.value % 60);
+
+          timerMins.value = mins < 10 ? "0" + mins : mins.toString();
+          timerSecs.value = secs < 10 ? "0" + secs : secs.toString();
+
+          if (--timerAbsolute.value < 0) {
+            timerAbsolute.value = duration;
+          }
+        }, 1000)
+      );
+    }
+
+    timerCountDown(40);
+
     function displayAttentionTexts() {
       const timerHandle = setInterval(() => {
         if (currentSwiperIndex.value !== attentionTexts.length) {
@@ -319,6 +378,10 @@ export default defineComponent({
       attentionTexts,
       displayMode,
       displayingAttentionTexts,
+
+      timerClasses,
+      timerMins,
+      timerSecs,
     };
   },
 });

@@ -19,10 +19,14 @@ $border-color: rgb(149, 165, 166);
 }
 
 @keyframes shaking {
-  0% { transform: rotate(2deg); }
-  25% { transform: rotate(2deg); }
-  50% { transform: rotate(-2deg); }
-	75% { transform: rotate(-2deg); }
+  12% { transform: rotate(-2deg) }
+  24% { transform: rotate(-4deg) }
+  36% { transform: rotate(2deg) }
+  48% { transform: rotate(2deg) }
+  60% { transform: rotate(2deg) }
+  72% { transform: rotate(2deg) }
+  84% { transform: rotate(-2deg) }
+  96% { transform: rotate(-2deg) }
 }
 
 .is-full-rounded {
