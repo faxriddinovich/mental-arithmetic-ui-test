@@ -1,28 +1,9 @@
 <template>
   <div>
-    <!-- bottom right timer -->
-    <!--
-    <span
-      class="
-        card
-        is-bordered-bottom-accent
-        px-4
-        py-1
-        is-full-rounded is-bottom-right-screen is-abacus-game-timer
-        mx-3
-        my-3
-      "
-    >
-      <b-icon icon="stopwatch" size="is-medium" />
-      <span class="is-size-3 ml-1">1:00</span>
-    </span>
-    -->
-    <!-- end timer -->
-
     <!-- controls bar -->
     <section
       class="card is-bordered is-controls-bar"
-      v-if="displayMode === 'swiper-cards'"
+      v-if="displayMode !== 'scores'"
     >
       <div class="p-2">
         <div
@@ -61,17 +42,29 @@
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <div ref="abacusContainerRef" v-if="displayMode === 'swiper-cards'"></div>
+    <div ref="abacusContainerRef" v-if="displayMode !== 'scores'"></div>
 
     <!-- display screen -->
     <section class="hero is-fullheight">
-      <div class="hero-body p-0">
+      <div class="hero-body is-justify-content-center p-0">
+        <div
+          v-if="displayMode === 'control-buttons'"
+          style="margin-bottom: 18em"
+        >
+          <div class="has-text-centered is-size-3 mb-5 has-text-weight-semibold">
+          <b-icon icon="abacus" size="is-medium" />
+          Please enter answer</div>
+          <div class="buttons">
+            <b-button icon-left="redo" size="is-medium">Show again</b-button>
+            <b-button icon-left="align-left-justify" size="is-medium">Answer</b-button>
+            <b-button icon-right="arrow-right" size="is-medium">Next</b-button>
+          </div>
+        </div>
         <!-- scores display -->
-
         <div
           class="columns is-gapless is-centered"
           style="min-width: 100%"
-          v-if="displayMode === 'scores'"
+          v-else-if="displayMode === 'scores'"
         >
           <div class="column is-5-fullhd is-three-quarters-desktop">
             <div class="box mx-2">
@@ -140,7 +133,7 @@
           :auto-destroy="true"
           :delete-instance-on-destroy="true"
           :cleanup-styles-on-destroy="true"
-          v-else
+          v-else-if="displayMode === 'swiper-cards'"
         >
           <swiper-slide
             class="is-attention-text"
@@ -188,8 +181,11 @@ import { AbacusBoard } from "./board";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 import TimerSoundEffect from "@@/sounds/timer.wav";
+import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 
-type DisplayMode = "swiper-cards" | "scores";
+type DisplayMode = "swiper-cards" | "control-buttons" | "scores";
+
+const SHAKE_TIMER_SECS = 30;
 
 export default defineComponent({
   components: { Swiper, SwiperSlide },
@@ -203,13 +199,9 @@ export default defineComponent({
     const timerMins = ref<string>("2");
     const timerSecs = ref<string>("1");
 
-    const aud = new Audio(TimerSoundEffect);
-    aud.loop = true;
-    //aud.play();
-
     const attentionTexts = ["Ready?", "Go!"];
 
-    const displayMode = ref<DisplayMode>("swiper-cards");
+    const displayMode = ref<DisplayMode>("control-buttons");
     const displayingAttentionTexts = ref<boolean>(true); // NOTE: can we avoid using this?
 
     const sounds = new Map<string, HTMLAudioElement>();
@@ -223,7 +215,9 @@ export default defineComponent({
     const waitForAnswer = false;
     const rowsTimeout = 300;
 
-    const canShakeTimer = () => parseInt(timerMins.value) === 0 && parseInt(timerSecs.value) < 30;
+    const canShakeTimer = () =>
+      parseInt(timerMins.value) === 0 &&
+      parseInt(timerSecs.value) < SHAKE_TIMER_SECS;
 
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
@@ -232,7 +226,7 @@ export default defineComponent({
         "has-text-weight-semibold",
       ];
 
-      if(canShakeTimer()) {
+      if (canShakeTimer()) {
         classes.push(...["has-text-danger", "is-shaking-text"]);
       }
 
@@ -240,11 +234,11 @@ export default defineComponent({
     });
 
     watch(timerSecs, () => {
-      if(canShakeTimer() && !sounds.has('timer-sound')) {
+      if (canShakeTimer() && !sounds.has("timer-sound")) {
         const timerSound = new Audio(TimerSoundEffect);
         timerSound.loop = true;
-        timerSound.play();
-        sounds.set('timer-sound', timerSound);
+        //timerSound.play();
+        sounds.set("timer-sound", timerSound);
       }
     });
 
@@ -278,7 +272,6 @@ export default defineComponent({
         },
       },
     });
-
 
     function timerCountDown(duration: number) {
       timerAbsolute.value = duration;
