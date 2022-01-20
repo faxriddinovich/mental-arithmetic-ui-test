@@ -1,6 +1,9 @@
 <template>
   <div class="is-unselectable">
-    <section class="hero is-fullheight" v-if="isLoading">
+    <div v-if="syncPercentage == 100">
+      <router-view :key="$route.fullPath" />
+    </div>
+    <section class="hero is-fullheight" v-else>
       <div class="hero-body is-flex-direction-column is-justify-content-center">
         <b-progress
           type="is-success"
@@ -10,15 +13,16 @@
         <div class="is-size-6">{{ loadingText }}</div>
       </div>
     </section>
-    <div v-else>
-      <router-view :key="$route.fullPath" />
-    </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
+import { showToastMessage, ToastType } from "@/services/toast";
 
-const TASKS_COUNT = 3;
+interface Task {
+  text: string;
+  run: () => Promise<void>;
+}
 
 export default defineComponent({
   setup(_, context) {
@@ -29,30 +33,50 @@ export default defineComponent({
     const sleep = async (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
 
-    function completeSyncTask() {
-      syncPercentage.value += 100 / TASKS_COUNT;
+    const tasks: Task[] = [
+      {
+        text: "Syncing settings..",
+        run: () => context.root.$store.dispatch("Settings/sync"),
+      },
+      {
+        text: "Syncing sessions..",
+        run: () => context.root.$store.dispatch("Account/sync"),
+      },
+      {
+        text: "Initializing languages..",
+        run: () => {
+          const locale = context.root.$store.getters["Settings/get"]("locale");
+          context.root.$i18n.locale = locale;
+          return Promise.resolve();
+        },
+      },
+      {
+        text: "Initializing TTS service..",
+        run: async () => {
+          try {
+            await context.root.$store.dispatch("TextToSpeech/sync");
+          } catch {
+            showToastMessage(
+              "Unable to initialize tts service",
+              ToastType.Warning
+            );
+          }
+        },
+      },
+    ];
+
+    function completeTask() {
+      syncPercentage.value += 100 / tasks.length;
     }
 
     onMounted(async () => {
-      loadingText.value = "Syncing settings..";
-      await context.root.$store.dispatch("Settings/sync");
-      await sleep(500);
-      completeSyncTask();
+      for (const task of tasks) {
+        loadingText.value = task.text;
+        await task.run();
+        await sleep(200); // a little bit delay
+        completeTask();
+      }
 
-      loadingText.value = "Syncing sessions..";
-      await context.root.$store.dispatch("Account/sync");
-      await sleep(500);
-      completeSyncTask();
-
-      const locale = context.root.$store.getters["Settings/get"]("locale");
-      context.root.$i18n.locale = locale;
-
-      loadingText.value = "Initializing TTS service..";
-      await context.root.$store.dispatch("TextToSpeech/sync");
-      await sleep(500);
-      completeSyncTask();
-
-      isLoading.value = false;
       context.root.$store.state.synced = true;
     });
 

@@ -10,6 +10,8 @@ interface StateProps {
   voiceIndex: number;
 }
 
+const GET_VOICES_MAX_TRIES_COUNT = 100;
+
 const identify = (voices: SpeechSynthesisVoice[]): IdentifiedVoice[] => {
   return voices.map((voice, index) => {
     // TODO: do not copy the object like this
@@ -30,8 +32,8 @@ export default {
   namespaced: true,
   actions: {
     async sync(context: ActionContext<StateProps, any>) {
-      const { ttsVoiceIdentity, locale } = context.rootGetters['Settings/all'];
-      if (! ttsVoiceIdentity) {
+      const {ttsVoiceIdentity, locale} = context.rootGetters['Settings/all'];
+      if (!ttsVoiceIdentity) {
         const supportedVoices = await context.dispatch('getSupportedVoicesByLocale', locale);
         if (supportedVoices.length) {
           return context.dispatch('Settings/update', {
@@ -48,17 +50,25 @@ export default {
     },
 
     async getSupportedVoicesByLocale(context: ActionContext<StateProps, any>, locale: string) {
-      return new Promise((resolve) => {
+      let triesCount = 0;
+      return new Promise((resolve, reject) => {
         // getting voices is asynchronous thing
         const timerHandle = setInterval(async () => {
+
+          if(triesCount > GET_VOICES_MAX_TRIES_COUNT) {
+            clearInterval(timerHandle);
+            return reject();
+          }
+
           const {voices} = await TextToSpeech.getSupportedVoices();
           if (voices.length) {
             clearInterval(timerHandle);
             const filtered = identify(voices).filter((voice) => {
               return voice.lang.replace('_', '-') === locale;
             });
-            resolve(filtered);
+            return resolve(filtered);
           }
+          triesCount++;
         }, 10);
       });
     }
