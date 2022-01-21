@@ -119,7 +119,11 @@
                   </div>
                 </div>
                 <b-field>
-                  <b-switch v-model="answerAtEnd" @disabled="instances.length > 1">Answer at the end</b-switch>
+                  <b-switch
+                    v-model="answerAtEnd"
+                    @disabled="instances.length > 1"
+                    >Answer at the end</b-switch
+                  >
                 </b-field>
 
                 <b-field>
@@ -135,9 +139,7 @@
                 </b-field>
 
                 <b-field v-if="sequence.length">
-                <template #label>
-                <b-icon icon="file" /> Themes
-                </template>
+                  <template #label> <b-icon icon="file" /> Themes </template>
                   <b-taglist>
                     <b-tag
                       v-for="(sequenceItem, sequenceItemIndex) of sequence"
@@ -157,8 +159,19 @@
                     class="m-0"
                   >
                     <template #label>
-                      <span :class="{['is-' + instanceItem.sequence[0].fontColor + '-color']: true }">{{ instanceItemIndex + 1 }}. Player</span>
-                      <b-icon icon="trash" class="is-clickable" @click.native="removeInstanceItem(instanceItemIndex)"/>
+                      <span
+                        :class="{
+                          ['is-' +
+                          instanceItem.sequence[0].fontColor +
+                          '-color']: true,
+                        }"
+                        >{{ instanceItemIndex + 1 }}. Player</span
+                      >
+                      <b-icon
+                        icon="trash"
+                        class="is-clickable"
+                        @click.native="removeInstanceItem(instanceItemIndex)"
+                      />
                     </template>
 
                     <b-taglist class="mb-1">
@@ -213,16 +226,7 @@
             <template v-else>
               <b-field>
                 <template #label> <b-icon icon="palette" /> Color: </template>
-                <span
-                  :class="{
-                    'is-circled-color': true,
-                    'is-selected': color == fontColor,
-                    ['is-' + color + '-bg-color']: true,
-                  }"
-                  v-for="(color, index) of fontColors"
-                  :key="index"
-                  @click="fontColor = color"
-                />
+                <color-palette v-model="fontColor" />
               </b-field>
 
               <b-field>
@@ -318,18 +322,6 @@
 </template>
 <script lang="ts" src="./form.ts" />
 <style lang="scss">
-.is-circled-color {
-  display: inline-block;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  margin-right: 7px;
-}
-
-.is-circled-color.is-selected {
-  border: 2px solid black;
-}
 a.dropdown-item {
   padding-right: 16px !important;
 }

@@ -5,6 +5,7 @@ import {
 } from "@vue/composition-api";
 import {BigNumbersGameConfig, InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
 import {getThemes} from '@/services/generator';
+import ColorPalette from '@/components/games/color-palette.vue';
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -12,6 +13,7 @@ const matches = (str0: string, str1: string) => {
 };
 
 export default defineComponent({
+  components: { ColorPalette },
   setup(_, context) {
     const filteredThemes = computed(() => {
       return getThemes()
@@ -28,17 +30,6 @@ export default defineComponent({
     const currentTab = ref<number>(0); // TODO: rename me
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
-    const fontColors = ref<string[]>([
-      "black",
-      "green",
-      "blue",
-      "purple",
-      "yellow",
-      "orange",
-      "red",
-      "teal",
-      "brown"
-    ]);
 
     const theme = ref<string>('');
     const digit = ref<number>(1);
@@ -51,7 +42,7 @@ export default defineComponent({
     const speechSound = ref<boolean>(false);
     const fontRotation = ref<number>(fontRotations.value[0]);
     const fontSize = ref<number>(fontSizes.value[0]);
-    const fontColor = ref<string>(fontColors.value[0]);
+    const fontColor = ref<string>("black");
 
     const multiplayerMode = ref<boolean>(false);
     const sameExamples = ref<boolean>(false);
@@ -89,7 +80,7 @@ export default defineComponent({
 
     function resetForm() {
       fontRotation.value = fontRotations.value[0];
-      fontColor.value = fontColors.value[0];
+      fontColor.value = "black";
       fontSize.value = fontSizes.value[0];
       displayNumbers.value = true;
       speechSound.value = false;
@@ -179,7 +170,6 @@ export default defineComponent({
       currentTab,
       fontRotations,
       fontSizes,
-      fontColors,
       canAddSequenceItem,
       canAddInstanceItem,
 
