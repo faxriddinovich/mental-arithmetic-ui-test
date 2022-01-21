@@ -49,15 +49,19 @@
       <div class="hero-body is-justify-content-center p-0">
         <div
           v-if="displayMode === 'control-buttons'"
-          style="margin-bottom: 18em"
+          style="margin-bottom: 19em"
         >
-          <div class="has-text-centered is-size-3 mb-5 has-text-weight-semibold">
-          <b-icon icon="abacus" size="is-medium" />
-          Please enter answer</div>
-          <div class="buttons">
-            <b-button icon-left="redo" size="is-medium">Show again</b-button>
-            <b-button icon-left="align-left-justify" size="is-medium">Answer</b-button>
-            <b-button icon-right="arrow-right" size="is-medium">Next</b-button>
+          <div
+            class="has-text-centered is-size-4-touch is-size-2-desktop mb-5 mx-4 has-text-weight-semibold"
+          >
+            <span>Please solve the expressions sequentially</span>
+          </div>
+          <div class="buttons is-justify-content-center">
+            <b-button icon-left="redo">Show again</b-button>
+            <b-button icon-left="align-left-justify"
+              >Answer</b-button
+            >
+            <b-button type="is-link" icon-right="arrow-right">Next</b-button>
           </div>
         </div>
         <!-- scores display -->
