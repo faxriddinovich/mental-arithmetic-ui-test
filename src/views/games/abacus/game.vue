@@ -52,15 +52,19 @@
           style="margin-bottom: 19em"
         >
           <div
-            class="has-text-centered is-size-4-touch is-size-2-desktop mb-5 mx-4 has-text-weight-semibold"
+            class="
+              has-text-centered
+              is-size-4-touch is-size-2-desktop
+              mb-5
+              mx-4
+              has-text-weight-semibold
+            "
           >
             <span>Please solve the expressions sequentially</span>
           </div>
           <div class="buttons is-justify-content-center">
             <b-button icon-left="redo">Show again</b-button>
-            <b-button icon-left="align-left-justify"
-              >Answer</b-button
-            >
+            <b-button icon-left="align-left-justify">Answer</b-button>
             <b-button type="is-link" icon-right="arrow-right">Next</b-button>
           </div>
         </div>
@@ -187,9 +191,10 @@ import "swiper/css/swiper.css";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 
-type DisplayMode = "swiper-cards" | "control-buttons" | "scores";
+type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
+type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
-const SHAKE_TIMER_SECS = 30;
+const TIMER_LESS_TIME_SECS = 30;
 
 export default defineComponent({
   components: { Swiper, SwiperSlide },
@@ -205,10 +210,10 @@ export default defineComponent({
 
     const attentionTexts = ["Ready?", "Go!"];
 
-    const displayMode = ref<DisplayMode>("control-buttons");
+    const displayMode = ref<DisplayMode>("swiper-cards");
     const displayingAttentionTexts = ref<boolean>(true); // NOTE: can we avoid using this?
 
-    const sounds = new Map<string, HTMLAudioElement>();
+    const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
     const timerHandles = new Set();
 
     /* STATIC VALUES */
@@ -219,10 +224,6 @@ export default defineComponent({
     const waitForAnswer = false;
     const rowsTimeout = 300;
 
-    const canShakeTimer = () =>
-      parseInt(timerMins.value) === 0 &&
-      parseInt(timerSecs.value) < SHAKE_TIMER_SECS;
-
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
         "ml-1",
@@ -230,19 +231,53 @@ export default defineComponent({
         "has-text-weight-semibold",
       ];
 
-      if (canShakeTimer()) {
+      if (lessTimeLeft.value) {
         classes.push(...["has-text-danger", "is-shaking-text"]);
       }
 
       return classes;
     });
 
-    watch(timerSecs, () => {
-      if (canShakeTimer() && !sounds.has("timer-sound")) {
-        const timerSound = new Audio(TimerSoundEffect);
-        timerSound.loop = true;
-        //timerSound.play();
-        sounds.set("timer-sound", timerSound);
+    const timerExpired = computed(() => {
+      return parseInt(timerMins.value) === 0 && parseInt(timerSecs.value) === 0;
+    });
+
+    const lessTimeLeft = computed(() => {
+      return (
+        parseInt(timerMins.value) === 0 &&
+        parseInt(timerSecs.value) < TIMER_LESS_TIME_SECS
+      );
+    });
+
+    const displayControlButtons = () => (displayMode.value = "control-buttons");
+    const displaySwiperCards = () => (displayMode.value = "swiper-cards");
+    const displayScores = () => (displayMode.value = "scores");
+    const displayAnswer = () => (displayMode.value = "answer");
+
+    const playTimerSoundEffect = (loop = true) => {
+      const audio = new Audio(TimerSoundEffect);
+      audio.loop = loop;
+      sounds.set("timer-sound-effect", audio);
+      return audio.play();
+    };
+    
+    const attentionTextDisplay = computed(() => {
+      return true;
+    });
+
+    const playWhistleSoundEffect = (loop = true) => {
+      const audio = new Audio(WhistleSoundEffect);
+      audio.loop = true;
+      sounds.set("whistle-sound-effect", audio);
+      return audio.play();
+    };
+
+    const stopTimerSecsWatch = watch(timerSecs, () => {
+      const mins = parseInt(timerMins.value);
+      const secs = parseInt(timerSecs.value);
+
+      if (lessTimeLeft.value && !sounds.has("timer-sound-effect")) {
+        playTimerSoundEffect();
       }
     });
 
@@ -281,8 +316,8 @@ export default defineComponent({
       timerAbsolute.value = duration;
       timerHandles.add(
         setInterval(() => {
-          let mins = parseInt(timerAbsolute.value / 60, 10);
-          let secs = parseInt(timerAbsolute.value % 60);
+          const mins = parseInt((timerAbsolute.value / 60).toString(), 10);
+          const secs = parseInt((timerAbsolute.value % 60).toString(), 10);
 
           timerMins.value = mins < 10 ? "0" + mins : mins.toString();
           timerSecs.value = secs < 10 ? "0" + secs : secs.toString();
