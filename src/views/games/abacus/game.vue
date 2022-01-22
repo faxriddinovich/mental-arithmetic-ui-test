@@ -11,7 +11,7 @@
         >
           <b-button
             tag="router-link"
-            :to="{ name: 'BigNumbersGameForm' }"
+            :to="{ name: 'AbacusGameForm' }"
             type="is-primary is-light"
             icon-left="arrow-left"
             size="is-medium"

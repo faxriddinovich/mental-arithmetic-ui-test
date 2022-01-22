@@ -55,16 +55,8 @@ export default defineComponent({
 
     const config = context.root.$store.getters['Abacus/config'] as AbacusGameConfig;
 
-    if(config) {
+    if (config) {
       sequence.value.push(...config.sequence);
-    }
-
-    function resetForm() {
-      fontRotation.value = fontRotations.value[0];
-      fontColor.value = "black";
-      fontSize.value = fontSizes.value[0];
-      displayNumbers.value = true;
-      speechSound.value = false;
     }
 
     function addSequenceItem() {
@@ -94,13 +86,19 @@ export default defineComponent({
     };
 
     const play = () => {
+      if(!sequence.value.length) {
+        addSequenceItem();
+      }
+
       const gameConfig: AbacusGameConfig = {
         sequence: sequence.value,
         timerSecs: 60 * timerMins.value + timerSecs.value,
         waitForAnswer: waitForAnswer.value
       };
 
-      context.root.$store.commit('Abacus/setConfig', gameConfig);
+      const {commit} = context.root.$store;
+      commit('Abacus/setConfig', gameConfig);
+      commit('Abacus/generateExamples');
       context.root.$router.push({name: "PlayAbacusGame"});
     };
 
