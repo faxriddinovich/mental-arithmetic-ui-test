@@ -1,0 +1,136 @@
+import {
+  defineComponent,
+  computed,
+  ref,
+} from "@vue/composition-api";
+import {AbacusGameConfig, SequenceItem} from "@/views/games/abacus/interfaces";
+import {getThemes} from '@/services/generator';
+import ColorPalette from '@/components/games/color-palette.vue';
+
+const lowerCase = (str: string) => str.toLowerCase();
+const matches = (str0: string, str1: string) => {
+  return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
+};
+
+const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
+
+export default defineComponent({
+  components: {ColorPalette},
+  setup(_, context) {
+    const filteredThemes = computed(() => {
+      return getThemes()
+        .filter((_theme) => {
+          // FIXME: this should be done using i18n
+          return matches(_theme.loc, theme.value);
+        })
+        .map((_theme) => ({
+          name: _theme.loc,
+          op: _theme.metadata.operation,
+        }));
+    });
+
+    const fontRotations = ref<number[]>([0, 90, 180, 270]);
+    const fontSizes = ref<number[]>([1, 2, 3]);
+
+    const theme = ref<string>('');
+    const digit = ref<number>(1);
+    const examplesCount = ref<number>(10);
+    const examplesTimeout = ref<number>(1);
+    const rowsCount = ref<number>(10);
+    const rowsTimeout = ref<number>(1);
+    const displayNumbers = ref<boolean>(true);
+    const speechSound = ref<boolean>(false);
+    const fontRotation = ref<number>(fontRotations.value[0]);
+    const fontSize = ref<number>(fontSizes.value[0]);
+    const fontColor = ref<string>("black");
+    const waitForAnswer = ref<boolean>(true);
+    const timerMins = ref<number>(1);
+    const timerSecs = ref<number>(0);
+
+    const sequence = ref<SequenceItem[]>([]);
+
+    const canAddSequenceItem = computed(() => {
+      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
+    });
+
+    const config = context.root.$store.getters['Abacus/config'] as AbacusGameConfig;
+
+    if(config) {
+      sequence.value.push(...config.sequence);
+    }
+
+    function resetForm() {
+      fontRotation.value = fontRotations.value[0];
+      fontColor.value = "black";
+      fontSize.value = fontSizes.value[0];
+      displayNumbers.value = true;
+      speechSound.value = false;
+    }
+
+    function addSequenceItem() {
+      if (filteredThemes.value.length === 0)
+        theme.value = getThemes()[0].loc;
+      else
+        theme.value = filteredThemes.value[0].name;
+
+      sequence.value.push({
+        examples: [],
+        theme: theme.value,
+        digit: Number(digit.value),
+        examplesCount: examplesCount.value,
+        examplesTimeout: examplesTimeout.value,
+        rowsCount: rowsCount.value,
+        rowsTimeout: rowsTimeout.value,
+        displayNumbers: displayNumbers.value,
+        fontRotation: fontRotation.value,
+        fontColor: fontColor.value,
+        fontSize: fontSize.value,
+        speechSound: speechSound.value,
+      });
+    }
+
+    const removeSequenceItem = (index: number) => {
+      sequence.value = sequence.value.filter((_, idx) => idx !== index);
+    };
+
+    const play = () => {
+      const gameConfig: AbacusGameConfig = {
+        sequence: sequence.value,
+        timerSecs: 60 * timerMins.value + timerSecs.value,
+        waitForAnswer: waitForAnswer.value
+      };
+
+      context.root.$store.commit('Abacus/setConfig', gameConfig);
+      context.root.$router.push({name: "PlayAbacusGame"});
+    };
+
+    return {
+      theme,
+      digit,
+      examplesCount,
+      examplesTimeout,
+      rowsCount,
+      rowsTimeout,
+      displayNumbers,
+      speechSound,
+      fontRotation,
+      fontSize,
+      fontColor,
+
+      fontRotations,
+      fontSizes,
+      canAddSequenceItem,
+
+      timerMins,
+      timerSecs,
+      waitForAnswer,
+
+      sequence,
+
+      addSequenceItem,
+      removeSequenceItem,
+      filteredThemes,
+      play,
+    };
+  },
+});

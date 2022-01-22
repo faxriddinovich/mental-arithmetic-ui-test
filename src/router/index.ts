@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter, {RouteConfig} from "vue-router";
 
 import Store from "@/store";
-import { Session } from '@/store/modules/account.module';
+import {Session} from '@/store/modules/account.module';
 
 import Home from "@/views/home.vue";
 
@@ -31,7 +31,8 @@ import Scores from "@/views/scores.vue";
 import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
 import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 
-import AbacusGame from '@/views/games/abacus/game.vue';
+import AbacusGameForm from '@/views/games/abacus/form.vue';
+import PlayAbacusGame from '@/views/games/abacus/game.vue';
 
 Vue.use(VueRouter);
 
@@ -132,7 +133,20 @@ const routes: Array<RouteConfig> = [
       next();
     }
   },
-  { path: "/games/abacus", name: "AbacusGame", component: AbacusGame },
+  {path: "/games/abacus", name: "AbacusGameForm", component: AbacusGameForm},
+  {
+    path: "/games/abacus/play",
+    name: "PlayAbacusGame",
+    component: PlayAbacusGame,
+    beforeEnter: (to, from, next) => {
+      const config = Store.getters["Abacus/config"];
+
+      if (!config)
+        return next({name: 'AbacusGameForm'});
+
+      next();
+    }
+  },
   {
     path: "/courses/:id",
     name: "Course",
@@ -176,7 +190,7 @@ const router = new VueRouter({
 
 function waitForSync() {
   return new Promise<void>((resolve) => {
-    if(Store.state.synced)
+    if (Store.state.synced)
       return resolve();
 
     const unwatch = Store.watch((state) => state.synced, () => {
@@ -187,7 +201,7 @@ function waitForSync() {
 }
 
 router.beforeEach(async (to, from, next) => {
-  if(!Store.state.synced)
+  if (!Store.state.synced)
     await waitForSync();
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {

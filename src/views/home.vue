@@ -126,7 +126,7 @@ export default defineComponent({
     const event = ref<EventContract | null>(null);
 
     const items = ref([
-      { title: "Abacus", icon: "abacus", link: { name: "AbacusGame" } },
+      { title: "Abacus", icon: "abacus", link: { name: "AbacusGameForm" } },
       {
         title: "Big numbers",
         icon: "10-plus",
