@@ -3,6 +3,22 @@
 
 $border-color: rgb(149, 165, 166);
 
+.is-nav-tabs > .tabs {
+  background: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
+    0 0px 0 1px rgba(10, 10, 10, 0.02);
+}
+
+.is-nav-tabs > .tab-content {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.is-nav-tabs.b-tabs {
+  margin-bottom: 0px !important;
+}
+
 .completed-progress > .progress {
   border-radius: 0px !important;
   @include mobile {

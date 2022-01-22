@@ -147,6 +147,7 @@ export default defineComponent({
         });
       }
     }
+
     function changeTab(tab: string) {
       if (tab === "account") {
         if (activeSession.value) {
@@ -183,23 +184,6 @@ export default defineComponent({
 <style lang="scss">
 @import "bulma/sass/utilities/initial-variables";
 @import "bulma/sass/utilities/mixins";
-
-.is-nav-tabs > .tabs {
-  background: white;
-  border-radius: 0.25rem;
-  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
-    0 0px 0 1px rgba(10, 10, 10, 0.02);
-}
-
-.is-nav-tabs > .tab-content {
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-}
-
-.is-nav-tabs.b-tabs {
-  margin-bottom: 0px !important;
-}
-
 // FIXME: rename me
 .is-games-menu-text {
   font-weight: $weight-semibold;

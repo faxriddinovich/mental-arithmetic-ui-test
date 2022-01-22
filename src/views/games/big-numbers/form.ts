@@ -27,7 +27,6 @@ export default defineComponent({
         }));
     });
 
-    const currentTab = ref<number>(0); // TODO: rename me
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
 
@@ -140,7 +139,7 @@ export default defineComponent({
         addInstanceItem();
 
 
-      const gameConfig: BigNumbersGameConfig  ={
+      const gameConfig: BigNumbersGameConfig = {
         answerAtEnd: answerAtEnd.value,
         multiplayerMode: multiplayerMode.value,
         sameExamples: sameExamples.value,
@@ -167,7 +166,6 @@ export default defineComponent({
       sameExamples,
       multiplayerMode,
 
-      currentTab,
       fontRotations,
       fontSizes,
       canAddSequenceItem,
