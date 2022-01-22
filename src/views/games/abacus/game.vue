@@ -141,6 +141,7 @@
           :auto-destroy="true"
           :delete-instance-on-destroy="true"
           :cleanup-styles-on-destroy="true"
+          @transition-end="onSlideChange"
           v-else-if="displayMode === 'swiper-cards'"
         >
           <swiper-slide
@@ -150,24 +151,35 @@
             >{{ text }}</swiper-slide
           >
 
-          <swiper-slide v-for="(number, index) of numbers" :key="index">
-            <svg
-              width="100%"
-              height="100%"
-              :viewBox="`0 0 ${viewBoxWidthMap[number.length]} 10`"
+          <template v-for="(sequenceItem, sequenceIndex) in sequence">
+            <swiper-slide
+              class="is-attention-text"
+              :key="sequenceIndex + '-sequence-item'"
+              >{{ sequenceItem.theme }}</swiper-slide
             >
-              <text
-                x="50%"
-                y="50%"
-                font-size="10"
-                fill="#fff"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                {{ number }}
-              </text>
-            </svg>
-          </swiper-slide>
+            <template v-for="(example, exampleIndex) in sequenceItem.examples">
+              <template v-for="(row, rowIndex) in example.numbers">
+                <swiper-slide :key="exampleIndex + '-' + rowIndex">
+                  <svg
+                    width="100%"
+                    height="100%"
+                    :viewBox="`0 0 ${viewBoxWidthMap[4]} 10`"
+                  >
+                    <text
+                      x="50%"
+                      y="50%"
+                      font-size="10"
+                      fill="#fff"
+                      text-anchor="middle"
+                      dominant-baseline="middle"
+                    >
+                      {{ row }}
+                    </text>
+                  </svg>
+                </swiper-slide>
+              </template>
+            </template>
+          </template>
         </swiper>
       </div>
     </section>
@@ -188,8 +200,10 @@ import "@svgdotjs/svg.draggable.js";
 import { AbacusBoard } from "./board";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
+import { AbacusGameConfig } from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
+import { SequenceItem } from "@/views/games/abacus/interfaces";
 
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
@@ -198,11 +212,18 @@ const TIMER_LESS_TIME_SECS = 30;
 
 export default defineComponent({
   components: { Swiper, SwiperSlide },
-  setup() {
+  setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const numbersContainerRef = ref<HTMLElement>();
     const abacusValue = ref<number>(0);
     const swiperRef = ref<VueComponent>();
+
+    const sequence = ref<SequenceItem[]>([]);
+
+    const config = context.root.$store.getters[
+      "Abacus/config"
+    ] as AbacusGameConfig;
+    sequence.value.push(...config.sequence);
 
     const timerAbsolute = ref<number>(0);
     const timerMins = ref<string>("2");
@@ -260,7 +281,7 @@ export default defineComponent({
       sounds.set("timer-sound-effect", audio);
       return audio.play();
     };
-    
+
     const attentionTextDisplay = computed(() => {
       return true;
     });
@@ -329,12 +350,18 @@ export default defineComponent({
       );
     }
 
-    timerCountDown(40);
+    //timerCountDown(40);
+
+    let i = 0;
+    setInterval(() => {
+      swiperRef.value.$swiper.slideTo(i);
+      i++;
+    }, 1000);
 
     function displayAttentionTexts() {
       const timerHandle = setInterval(() => {
         if (currentSwiperIndex.value !== attentionTexts.length) {
-          (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
+          //(swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
           currentSwiperIndex.value++;
         } else {
           clearInterval(timerHandle);
@@ -356,7 +383,7 @@ export default defineComponent({
         (function callback() {
           const totalLength = numbers.value.length + attentionTexts.length;
           if (currentSwiperIndex.value !== totalLength) {
-            (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
+            //(swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
             currentSwiperIndex.value++;
           } else {
             clearInterval(timerHandle!);
@@ -399,7 +426,12 @@ export default defineComponent({
       startGame();
     });
 
+    function onSlideChange(ss) {
+      console.log(ss);
+    }
+
     return {
+      onSlideChange,
       numbersContainerRef,
       abacusContainerRef,
       abacusValue,
@@ -410,6 +442,8 @@ export default defineComponent({
       attentionTexts,
       displayMode,
       displayingAttentionTexts,
+
+      sequence,
 
       timerClasses,
       timerMins,
