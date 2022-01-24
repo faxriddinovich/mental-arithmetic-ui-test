@@ -47,13 +47,10 @@ export default defineComponent({
     const attentionTexts = ["Ready?", "Go!"];
 
     const displayMode = ref<DisplayMode>("swiper-cards");
-    const displayingAttentionTexts = ref<boolean>(true); // NOTE: can we avoid using this?
 
     const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
     const timerHandles = new Map<TimerHandleKey, NodeJS.Timer>();
 
-    /* STATIC VALUES */
-    const numbers = ref(["+99999", "-3", "-4", "+1"]);
     const currentSwiperIndex = ref<number>(0);
 
     const currentSequenceItem = computed(() => {
@@ -233,7 +230,7 @@ export default defineComponent({
     }
 
     function slideNext() {
-      (swiperRef.value as any).$swiper.slideNext(300);
+      (swiperRef.value as any).$swiper.slideNext(v(currentSequenceItem).rowsTimeout * 1000);
     }
 
     function displaySequenceItem() {
@@ -250,7 +247,6 @@ export default defineComponent({
 
       const timerHandle = setInterval(() => {
         if (!v(currentRow)) {
-          console.log('row end');
           clearTimeout(timerHandle);
           return;
         }
@@ -285,9 +281,11 @@ export default defineComponent({
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
+      console.log(sequence.value[0].examples[0]);
 
       abacusBoard.on("update", (value) => {
         const abacusValue = (value as CustomEvent<number>).detail;
+
         if(config.waitForAnswer && BigInt((abacusValue) == v(currentAnswerMap))) {
           slideNext();
         }
@@ -303,11 +301,9 @@ export default defineComponent({
       abacusValue,
       swiperOptions,
       swiperRef,
-      numbers,
       viewBoxWidthMap,
       attentionTexts,
       displayMode,
-      displayingAttentionTexts,
 
       onNextExample,
 
