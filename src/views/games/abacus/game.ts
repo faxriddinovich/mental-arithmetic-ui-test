@@ -23,6 +23,8 @@ type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
 const TIMER_LESS_TIME_SECS = 30;
 
+const parse = (str: string) => JSON.parse(str);
+
 export default defineComponent({
   components: {Swiper, SwiperSlide},
   setup(_, context) {
@@ -52,11 +54,7 @@ export default defineComponent({
 
     /* STATIC VALUES */
     const numbers = ref(["+99999", "-3", "-4", "+1"]);
-    const answerMap = [9, 6, 2, 3];
-    const currentAnswerMapIndex = ref<number>(0);
     const currentSwiperIndex = ref<number>(0);
-    const waitForAnswer = false;
-    const rowsTimeout = 300;
 
     const currentSequenceItem = computed(() => {
       return v(sequence)[v(currentSequenceItemIndex)] || null;
@@ -67,13 +65,14 @@ export default defineComponent({
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
     });
 
+    const currentAnswerMap = computed(() => {
+      if(!v(currentExample)) return null;
+      return v(currentExample).answerMap[v(currentRowIndex)] || null;
+    });
+
     const currentRow = computed(() => {
       if (!v(currentExample)) return null;
       return v(currentExample).numbers[v(currentRowIndex)];
-    });
-
-    const hasNextSequenceItem = computed(() => {
-      return sequence.value[currentSequenceItemIndex.value + 1];
     });
 
     const currentSlideIndex = ref<number>(0);
@@ -89,21 +88,21 @@ export default defineComponent({
       )[activeIndex];
       const dataset = currentSlide.dataset;
 
-      console.log(dataset.row, v(currentExample).numbers.length);
+      if(dataset.rw) {
+        if(config.waitForAnswer) {
+          clearTimeout(timerHandles.get('rows-timer-handle')!);
+        } else if((parse(dataset.ri!) + 1) === v(currentExample).numbers.length) {
+          clearTimeout(timerHandles.get('rows-timer-handle')!);
+          setTimeout(() => {
+            displayControlButtons();
+          }, 500);
+        }
 
-      if (!config.waitForAnswer && (parseInt(dataset.row!) + 1) === v(currentExample).numbers.length) {
-        clearInterval(timerHandles.get('rows-timer-handle')!);
-        setTimeout(() => {
-          displayControlButtons();
-        }, 1000);
+        currentSequenceItemIndex.value = parse(dataset.si!);
+        currentRowIndex.value = parse(dataset.rw!);
+        currentExampleIndex.value = parse(dataset.ei!);
+        currentRowIndex.value = parse(dataset.ri!);
       }
-
-      if(dataset.seq)
-        currentSequenceItemIndex.value = parseInt(dataset.seq);
-      if(dataset.ex)
-        currentExampleIndex.value = parseInt(dataset.ex);
-      if(dataset.row)
-        currentRowIndex.value = parseInt(dataset.row);
 
       currentSlideIndex.value = activeIndex;
     };
@@ -234,7 +233,6 @@ export default defineComponent({
     }
 
     function slideNext() {
-      console.log(swiperRef.value);
       (swiperRef.value as any).$swiper.slideNext(300);
     }
 
@@ -265,7 +263,7 @@ export default defineComponent({
     function onNextExample() {
       displaySwiperCards();
 
-      if(config.waitForAnswer)
+      if (config.waitForAnswer)
         return slideNext();
 
       displayExample();
@@ -288,14 +286,10 @@ export default defineComponent({
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
 
-      let currentIndex = 0;
       abacusBoard.on("update", (value) => {
-        abacusValue.value = (value as CustomEvent<number>).detail;
-      });
-
-      watch(abacusValue, (curr) => {
-        if (curr === answerMap[currentIndex]) {
-          currentIndex++;
+        const abacusValue = (value as CustomEvent<number>).detail;
+        if(config.waitForAnswer && BigInt((abacusValue) == v(currentAnswerMap))) {
+          slideNext();
         }
       });
 

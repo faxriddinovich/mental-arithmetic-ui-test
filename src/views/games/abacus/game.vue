@@ -150,7 +150,7 @@
           v-show="displayMode === 'swiper-cards'"
         >
           <swiper-slide
-            data-att="true"
+            data-at="true"
             class="is-attention-text"
             v-for="(text, index) of attentionTexts"
             :key="'a' + index"
@@ -159,8 +159,8 @@
 
           <template v-for="(sequenceItem, sequenceIndex) in sequence">
             <swiper-slide
-              :data-seq="sequenceIndex"
-              :data-att="true"
+              :data-sh="true"
+              :data-si="sequenceIndex"
               class="is-attention-text"
               :key="sequenceIndex + '-sequence-item'"
               >{{ sequenceItem.theme }}</swiper-slide
@@ -169,10 +169,10 @@
               <template v-for="(row, rowIndex) in example.numbers">
                 <swiper-slide
                   :key="exampleIndex + '-' + rowIndex"
-                  :data-seq="sequenceIndex"
-                  :data-ex="exampleIndex"
-                  :data-row="rowIndex"
-                  data-att="false"
+                  :data-rw="true"
+                  :data-si="sequenceIndex"
+                  :data-ei="exampleIndex"
+                  :data-ri="rowIndex"
                 >
                   <svg
                     width="100%"
