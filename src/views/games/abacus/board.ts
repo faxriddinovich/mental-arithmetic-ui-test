@@ -1,8 +1,8 @@
 import {G} from '@svgdotjs/svg.js';
-import { AbacusValueBox } from './value-box';
-import { Drawable, UpdateEventDetail } from './interfaces';
-import { AbacusInnerBox, AbacusOuterBox } from './frame';
-import { AbacusColumns } from './column';
+import {AbacusValueBox} from './value-box';
+import {Drawable, UpdateEventDetail} from './interfaces';
+import {AbacusInnerBox, AbacusOuterBox} from './frame';
+import {AbacusColumns} from './column';
 
 export class AbacusBoard extends G implements Drawable {
   private digits: number[] = new Array(this.columns).fill(0);
@@ -20,7 +20,7 @@ export class AbacusBoard extends G implements Drawable {
     this.abacusInnerBox.cx(this.abacusOuterBox.cx());
     this.abacusColumns.cx(this.abacusInnerBox.cx());
 
-    if(this.columns === 1) {
+    if (this.columns === 1) {
       this.abacusValueBox.get(0).width(this.abacusOuterBox.width());
       this.abacusValueBox.centerText();
     }
@@ -34,7 +34,7 @@ export class AbacusBoard extends G implements Drawable {
       const [digit, value] = (event as CustomEvent<UpdateEventDetail>).detail;
       this.digits[digit] = value;
       const conced = +this.digits.join('');
-      if(this.digits.every((value) => value === 0))
+      if (this.digits.every((value) => value === 0))
         this.fire('update', 0);
       else
         this.fire('update', conced);
@@ -43,7 +43,12 @@ export class AbacusBoard extends G implements Drawable {
     });
   }
 
+  private resetDigits() {
+    this.digits = new Array(this.columns).fill(0);
+  }
+
   public reset() {
+    this.abacusValueBox.reset();
     this.abacusColumns.reset();
   }
 

@@ -42,6 +42,7 @@ export class AbacusColumn extends G implements Drawable {
   }
 
   public reset() {
+    this.value = 0;
     for (const [, stone] of this.stones)
       stone.inactivate();
   }

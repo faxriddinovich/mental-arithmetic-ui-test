@@ -23,6 +23,10 @@ export class AbacusValueBox extends G implements Drawable {
     this.value.cy(this.box.cy());
   }
 
+  public reset() {
+    this.setText(0);
+  }
+
   public setText(value: any) {
     this.value.text(value);
     this.centerText();
