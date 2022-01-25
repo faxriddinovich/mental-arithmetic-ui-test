@@ -159,17 +159,19 @@
 
           <template v-for="(sequenceItem, sequenceIndex) in sequence">
             <swiper-slide
-              :data-sh="true"
+              :data-at="true"
               :data-si="sequenceIndex"
               class="is-attention-text"
               :key="sequenceIndex + '-sequence-item'"
               >{{ sequenceItem.theme }}</swiper-slide
             >
             <template v-for="(example, exampleIndex) in sequenceItem.examples">
+              <swiper-slide data-at="true" :key="exampleIndex + '-header'" class="is-attention-text">
+                Example {{ exampleIndex + 1 }}
+              </swiper-slide>
               <template v-for="(row, rowIndex) in example.numbers">
                 <swiper-slide
                   :key="exampleIndex + '-' + rowIndex"
-                  :data-rw="true"
                   :data-si="sequenceIndex"
                   :data-ei="exampleIndex"
                   :data-ri="rowIndex"

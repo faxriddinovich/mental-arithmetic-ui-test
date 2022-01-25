@@ -17,7 +17,7 @@ import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
 
-type TimerHandleKey = 'rows-timer-handle';
+type TimerHandleKey = 'attention-text-timer-handle' | 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
@@ -41,8 +41,8 @@ export default defineComponent({
     sequence.value.push(...config.sequence);
 
     const timerAbsolute = ref<number>(0);
-    const timerMins = ref<string>("2");
-    const timerSecs = ref<string>("1");
+    const timerMins = ref<string>("00");
+    const timerSecs = ref<string>("00");
 
     const attentionTexts = ["Ready?", "Go!"];
 
@@ -50,8 +50,6 @@ export default defineComponent({
 
     const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
     const timerHandles = new Map<TimerHandleKey, NodeJS.Timer>();
-
-    const currentSwiperIndex = ref<number>(0);
 
     const currentSequenceItem = computed(() => {
       return v(sequence)[v(currentSequenceItemIndex)] || null;
@@ -63,7 +61,7 @@ export default defineComponent({
     });
 
     const currentAnswerMap = computed(() => {
-      if(!v(currentExample)) return null;
+      if (!v(currentExample)) return null;
       return v(currentExample).answerMap[v(currentRowIndex)] || null;
     });
 
@@ -85,18 +83,28 @@ export default defineComponent({
       )[activeIndex];
       const dataset = currentSlide.dataset;
 
-      if(dataset.rw) {
-        if(config.waitForAnswer) {
-          clearTimeout(timerHandles.get('rows-timer-handle')!);
-        } else if((parse(dataset.ri!) + 1) === v(currentExample).numbers.length) {
-          clearTimeout(timerHandles.get('rows-timer-handle')!);
-          setTimeout(() => {
-            displayControlButtons();
-          }, 500);
+      if (dataset.at) {
+        setTimeout(() => {
+          slideNext();
+        }, 1000);
+      } else if (dataset.ri) {
+
+        if (parse(dataset.ri) === 0)
+          abacusBoard.reset();
+
+        if (!config.waitForAnswer) {
+          if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
+            setTimeout(() => {
+              displayControlButtons();
+            }, 500);
+          } else {
+            setTimeout(() => {
+              slideNext();
+            }, v(currentSequenceItem).rowsTimeout * 1000);
+          }
         }
 
         currentSequenceItemIndex.value = parse(dataset.si!);
-        currentRowIndex.value = parse(dataset.rw!);
         currentExampleIndex.value = parse(dataset.ei!);
         currentRowIndex.value = parse(dataset.ri!);
       }
@@ -123,10 +131,7 @@ export default defineComponent({
     });
 
     const lessTimeLeft = computed(() => {
-      return (
-        parseInt(timerMins.value) === 0 &&
-        parseInt(timerSecs.value) < TIMER_LESS_TIME_SECS
-      );
+      return v(timerAbsolute) < 30;
     });
 
     const displayControlButtons = () => (displayMode.value = "control-buttons");
@@ -210,50 +215,8 @@ export default defineComponent({
 
     //timerCountDown(40);
 
-    function displayAttentionTexts() {
-      const timerHandle = setInterval(() => {
-        if (currentSwiperIndex.value !== attentionTexts.length) {
-          (swiperRef.value as any).$swiper.slideTo(currentSwiperIndex.value); // FIXME: fix ts errors
-          currentSwiperIndex.value++;
-        } else {
-          clearInterval(timerHandle);
-          timerHandles.set(
-            'rows-timer-handle',
-            setTimeout(() => {
-              displaySequenceItem();
-            }, 500)
-          );
-        }
-      }, 800);
-
-      //timerHandles.add(timerHandle);
-    }
-
-    function slideNext() {
-      (swiperRef.value as any).$swiper.slideNext(v(currentSequenceItem).rowsTimeout * 1000);
-    }
-
-    function displaySequenceItem() {
-      if (!v(currentSequenceItem)) {
-        console.log('no sequence items left. Showing the score?');
-        return;
-      }
-      slideNext(); // TODO: we should wait for it 
-      displayExample();
-    }
-
-    function displayExample() {
-      if (!v(currentExample)) return;
-
-      const timerHandle = setInterval(() => {
-        if (!v(currentRow)) {
-          clearTimeout(timerHandle);
-          return;
-        }
-        slideNext();
-      }, 1000);
-
-      timerHandles.set('rows-timer-handle', timerHandle);
+    function slideNext(ms: number = 200) {
+      (swiperRef.value as any).$swiper.slideNext(ms);
     }
 
     function onNextExample() {
@@ -261,13 +224,15 @@ export default defineComponent({
 
       if (config.waitForAnswer)
         return slideNext();
-
-      displayExample();
     }
 
     function startGame() {
-      displayAttentionTexts();
+      setTimeout(() => {
+        slideNext();
+      }, 1000);
     }
+
+    const abacusBoard = new AbacusBoard(6);
 
     onMounted(() => {
       const abacusDraw = SVG()
@@ -277,16 +242,20 @@ export default defineComponent({
         .addClass("mx-2")
         .addClass("my-2");
 
-      const abacusBoard = new AbacusBoard(6);
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
-      console.log(sequence.value[0].examples[0]);
 
       abacusBoard.on("update", (value) => {
-        const abacusValue = (value as CustomEvent<number>).detail;
+        const abacusValue = BigInt((value as CustomEvent<number>).detail);
+        if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
+          if ((v(currentRowIndex) + 1) === v(currentExample).numbers.length) {
+            setTimeout(() => {
+              slideNext();
+            }, v(currentSequenceItem).examplesTimeout);
+            return;
+          }
 
-        if(config.waitForAnswer && BigInt((abacusValue) == v(currentAnswerMap))) {
           slideNext();
         }
       });
