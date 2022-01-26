@@ -43,11 +43,20 @@ export class AbacusBoard extends G implements Drawable {
     });
   }
 
+  public lock() {
+    this.abacusColumns.lock();
+  }
+
+  public unlock() {
+    this.abacusColumns.unlock();
+  }
+
   private resetDigits() {
     this.digits = new Array(this.columns).fill(0);
   }
 
   public reset() {
+    this.resetDigits();
     this.abacusValueBox.reset();
     this.abacusColumns.reset();
   }

@@ -4,11 +4,22 @@ import {AbacusStone} from './stone';
 import {ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT, ABACUS_HORIZONTAL_LINE_WIDTH, ABACUS_STONE_SLOTS_COUNT, ABACUS_COLUMN_VERTICAL_LINE_WIDTH, ABACUS_COLUMN_VERTICAL_LINE_COLOR} from './constants';
 
 export class AbacusColumn extends G implements Drawable {
+  private locked = false;
   private stones: Map<number, AbacusStone> = new Map();
   private value = 0;
   private verticalLine = new Line();
 
+  public lock() {
+    this.locked = true;
+  }
+
+  public unlock() {
+    this.locked = false;
+  }
+
   public updateStone(stoneIndex: number) {
+    if(this.locked) return;
+
     const stone = this.stones.get(stoneIndex)!;
     if (stone.isHighStone) {
       if (stone.isActive) {
@@ -88,6 +99,16 @@ export class AbacusColumns extends G implements Drawable {
       column.x(ABACUS_STONE_WIDTH * i);
       this.add(column);
     }
+  }
+
+  public lock() {
+    for(const stone of this.children())
+      stone.lock();
+  }
+
+  public unlock() {
+    for(const stone of this.children())
+      stone.unlock();
   }
 
   public reset() {
