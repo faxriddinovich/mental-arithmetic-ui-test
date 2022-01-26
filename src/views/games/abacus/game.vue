@@ -37,14 +37,11 @@
           >
         </div>
       </div>
-      <!--
       <b-progress
         type="is-success"
         class="completed-progress"
-        :value="completedExamplesPercent"
+        :value="completedRowsPercent"
       />
-      -->
-{{ completedExamplesCount }}
     </section>
     <!-- end controls bar -->
 
@@ -70,7 +67,7 @@
             <span>Please solve the expressions sequentially</span>
           </div>
           <div class="buttons is-justify-content-center">
-            <b-button icon-left="redo">Show again</b-button>
+            <b-button icon-left="redo" @click="onShowAgain">Show again</b-button>
             <b-button icon-left="align-left-justify">Answer</b-button>
             <b-button
               type="is-link"
@@ -151,6 +148,7 @@
           ref="swiperRef"
           :options="swiperOptions"
           :auto-destroy="true"
+          :auto-update="false"
           :delete-instance-on-destroy="true"
           :cleanup-styles-on-destroy="true"
           @slideChangeTransitionEnd="onSwiperTransitionEnd"

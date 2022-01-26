@@ -22,7 +22,6 @@ type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
 const TIMER_LESS_TIME_SECS = 30;
-const ABACUS_BOARD_COLUMNS_COUNT = 6;
 
 const parse = (str: string) => JSON.parse(str);
 
@@ -46,8 +45,8 @@ export default defineComponent({
     const timerMins = ref<string>("00");
     const timerSecs = ref<string>("00");
 
-    const completedExamplesCount = ref<number>(0);
-    const completedExamplesPercent = ref<number>(0);
+    const completedRowsCount = ref<number>(0);
+    const completedRowsPercent = ref<number>(0);
 
     const attentionTexts = ["Ready?", "Go!"];
 
@@ -70,20 +69,20 @@ export default defineComponent({
       return v(currentExample).answerMap[v(currentRowIndex)] || null;
     });
 
-    const totalExamplesCount = computed<number>(() => {
+    const totalRowsCount = computed<number>(() => {
       let i = 0;
       for (const sequenceItem of v(sequence)) {
-        i += sequenceItem.examplesCount;
+        i += sequenceItem.examplesCount * sequenceItem.rowsCount;
       }
       return i;
     });
 
     const completeExample = () => {
-      completedExamplesCount.value++;
-      completedExamplesPercent.value += 1 / v(totalExamplesCount) * 100;
+      completedRowsCount.value++;
+      completedRowsPercent.value = v(completedRowsCount) / v(totalRowsCount) * 100;
     }
 
-
+    const currentExampleHead = ref<number>(0);
     const currentSlideIndex = ref<number>(0);
     const currentSequenceItemIndex = ref<number>(0);
     const currentExampleIndex = ref<number>(0);
@@ -104,6 +103,9 @@ export default defineComponent({
       } else if (dataset.ri) {
         if (parse(dataset.ri) === 0)
           abacusBoard.reset();
+
+        if(parse(dataset.ri) === 0)
+          currentExampleHead.value = activeIndex;
 
         if (parse(dataset.ri) === 0 && !v(timerEnabled))
           enableTimer();
@@ -127,10 +129,6 @@ export default defineComponent({
 
       currentSlideIndex.value = activeIndex;
     };
-
-    setInterval(() => {
-      completedExamplesCount.value++;
-    }, 50);
 
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
@@ -202,7 +200,7 @@ export default defineComponent({
 
     const swiperOptions = ref({
       //slidesPerView: 4,
-      //allowTouchMove: false,
+      allowTouchMove: false,
       slidesPerView: "auto",
       spaceBetween: 30,
       centeredSlides: true,
@@ -240,7 +238,6 @@ export default defineComponent({
       );
     }
 
-
     function freezeTimer() {
       clearInterval(timerHandles.get('rows-timer-handle')!);
     }
@@ -249,11 +246,25 @@ export default defineComponent({
       (swiperRef.value as any).$swiper.slideNext(ms);
     }
 
+    function slideTo(index: number, ms = 200) {
+      (swiperRef.value as any).$swiper.slideTo(index, ms);
+    }
+
+    function executeAfter(n: number, cb: () => void) {
+      setTimeout(cb, n);
+    }
+
     function onNextExample() {
       displaySwiperCards();
+      executeAfter(500, slideNext);
+    }
 
-      if (config.waitForAnswer)
-        return slideNext();
+    function onShowAgain() {
+      displaySwiperCards();
+
+      executeAfter(500, () => {
+        slideTo(v(currentExampleHead));
+      });
     }
 
     function startGame() {
@@ -307,11 +318,12 @@ export default defineComponent({
       displayMode,
 
       onNextExample,
+      onShowAgain,
 
       sequence,
 
-      completedExamplesPercent,
-      completedExamplesCount,
+      completedRowsPercent,
+      completedRowsCount,
 
       timerEnabled,
       timerClasses,
