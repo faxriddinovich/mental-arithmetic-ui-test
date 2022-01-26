@@ -18,7 +18,7 @@ export class AbacusColumn extends G implements Drawable {
   }
 
   public updateStone(stoneIndex: number) {
-    if(this.locked) return;
+    if (this.locked) return;
 
     const stone = this.stones.get(stoneIndex)!;
     if (stone.isHighStone) {
@@ -102,12 +102,12 @@ export class AbacusColumns extends G implements Drawable {
   }
 
   public lock() {
-    for(const stone of this.children())
+    for (const stone of this.children())
       stone.lock();
   }
 
   public unlock() {
-    for(const stone of this.children())
+    for (const stone of this.children())
       stone.unlock();
   }
 

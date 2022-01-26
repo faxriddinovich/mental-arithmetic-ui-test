@@ -18,15 +18,15 @@
             >Back</b-button
           >
           <div class="is-flex is-align-items-center">
-            <span v-if="displayingAttentionTexts">
-              <b-icon icon="abacus" size="is-large" type="is-primary" />
-            </span>
-            <span v-else>
+            <span v-if="timerEnabled">
               <span :class="timerClasses">
                 <b-icon icon="stopwatch" size="is-medium" />
 
                 {{ timerMins }}:{{ timerSecs }}</span
               >
+            </span>
+            <span v-else>
+              <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
           </div>
           <b-button
@@ -37,7 +37,14 @@
           >
         </div>
       </div>
-      <b-progress type="is-success" class="completed-progress" :value="80" />
+      <!--
+      <b-progress
+        type="is-success"
+        class="completed-progress"
+        :value="completedExamplesPercent"
+      />
+      -->
+{{ completedExamplesCount }}
     </section>
     <!-- end controls bar -->
 
@@ -166,7 +173,11 @@
               >{{ sequenceItem.theme }}</swiper-slide
             >
             <template v-for="(example, exampleIndex) in sequenceItem.examples">
-              <swiper-slide data-at="true" :key="exampleIndex + '-header'" class="is-attention-text">
+              <swiper-slide
+                data-at="true"
+                :key="exampleIndex + '-header'"
+                class="is-attention-text"
+              >
                 Example {{ exampleIndex + 1 }}
               </swiper-slide>
               <template v-for="(row, rowIndex) in example.numbers">

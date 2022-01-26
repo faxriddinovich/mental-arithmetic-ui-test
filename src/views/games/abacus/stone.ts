@@ -17,14 +17,14 @@ export class AbacusStone extends Image implements Drawable {
 
   public activate() {
     if(!this.isActive) {
-      this.animate(100).dy(this.isHighStone ? ABACUS_STONE_HEIGHT : -ABACUS_STONE_HEIGHT);
+      this/*.animate(100)*/.dy(this.isHighStone ? ABACUS_STONE_HEIGHT : -ABACUS_STONE_HEIGHT);
       this.isActive = true;
     }
   }
 
   public inactivate() {
     if(this.isActive) {
-      this.animate(100).dy(this.isHighStone ? -ABACUS_STONE_HEIGHT : ABACUS_STONE_HEIGHT);
+      this/*.animate(100)*/.dy(this.isHighStone ? -ABACUS_STONE_HEIGHT : ABACUS_STONE_HEIGHT);
       this.isActive = false;
     }
   }

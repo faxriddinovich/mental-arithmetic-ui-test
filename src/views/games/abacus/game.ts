@@ -22,6 +22,7 @@ type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
 const TIMER_LESS_TIME_SECS = 30;
+const ABACUS_BOARD_COLUMNS_COUNT = 6;
 
 const parse = (str: string) => JSON.parse(str);
 
@@ -29,20 +30,24 @@ export default defineComponent({
   components: {Swiper, SwiperSlide},
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
-    const numbersContainerRef = ref<HTMLElement>();
-    const abacusValue = ref<number>(0);
     const swiperRef = ref<VueComponent>();
 
-    const sequence = ref<SequenceItem[]>([]);
+    const abacusValue = ref<number>(0);
+    const abacusBoard = new AbacusBoard(6);
 
     const config = context.root.$store.getters[
       "Abacus/config"
     ] as AbacusGameConfig;
-    sequence.value.push(...config.sequence);
 
-    const timerAbsolute = ref<number>(0);
+    const sequence = ref<SequenceItem[]>(config.sequence);
+
+    const timerEnabled = ref<boolean>(false);
+    const timerAbsolute = ref<number>(config.timerSecs);
     const timerMins = ref<string>("00");
     const timerSecs = ref<string>("00");
+
+    const completedExamplesCount = ref<number>(0);
+    const completedExamplesPercent = ref<number>(0);
 
     const attentionTexts = ["Ready?", "Go!"];
 
@@ -65,10 +70,19 @@ export default defineComponent({
       return v(currentExample).answerMap[v(currentRowIndex)] || null;
     });
 
-    const currentRow = computed(() => {
-      if (!v(currentExample)) return null;
-      return v(currentExample).numbers[v(currentRowIndex)];
+    const totalExamplesCount = computed<number>(() => {
+      let i = 0;
+      for (const sequenceItem of v(sequence)) {
+        i += sequenceItem.examplesCount;
+      }
+      return i;
     });
+
+    const completeExample = () => {
+      completedExamplesCount.value++;
+      completedExamplesPercent.value += 1 / v(totalExamplesCount) * 100;
+    }
+
 
     const currentSlideIndex = ref<number>(0);
     const currentSequenceItemIndex = ref<number>(0);
@@ -88,9 +102,11 @@ export default defineComponent({
           slideNext();
         }, 1000);
       } else if (dataset.ri) {
-
         if (parse(dataset.ri) === 0)
           abacusBoard.reset();
+
+        if (parse(dataset.ri) === 0 && !v(timerEnabled))
+          enableTimer();
 
         if (!config.waitForAnswer) {
           if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
@@ -112,6 +128,10 @@ export default defineComponent({
       currentSlideIndex.value = activeIndex;
     };
 
+    setInterval(() => {
+      completedExamplesCount.value++;
+    }, 50);
+
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
         "ml-1",
@@ -127,11 +147,11 @@ export default defineComponent({
     });
 
     const timerExpired = computed(() => {
-      return parseInt(timerMins.value) === 0 && parseInt(timerSecs.value) === 0;
+      return v(timerAbsolute) === 0;
     });
 
     const lessTimeLeft = computed(() => {
-      return v(timerAbsolute) < 30;
+      return v(timerAbsolute) < TIMER_LESS_TIME_SECS;
     });
 
     const displayControlButtons = () => (displayMode.value = "control-buttons");
@@ -148,18 +168,25 @@ export default defineComponent({
 
     const v = (ref: Ref) => ref.value;
 
-    const playWhistleSoundEffect = (loop = true) => {
+    const playWhistleSoundEffect = () => {
       const audio = new Audio(WhistleSoundEffect);
-      audio.loop = true;
+      audio.loop = false;
       sounds.set("whistle-sound-effect", audio);
       return audio.play();
     };
 
-    const stopTimerSecsWatch = watch(timerSecs, () => {
-      const mins = parseInt(timerMins.value);
-      const secs = parseInt(timerSecs.value);
+    const stopTimerSecsWatch = watch(timerAbsolute, () => {
+      if (v(timerAbsolute) === 0 && v(displayMode) !== 'scores') {
 
-      if (lessTimeLeft.value && !sounds.has("timer-sound-effect")) {
+        if (sounds.has('timer-sound-effect'))
+          sounds.get('timer-sound-effect')!.pause();
+
+        playWhistleSoundEffect();
+        displayScores();
+        stopTimerSecsWatch();
+      }
+
+      if (v(lessTimeLeft) && !sounds.has("timer-sound-effect")) {
         playTimerSoundEffect();
       }
     });
@@ -175,7 +202,7 @@ export default defineComponent({
 
     const swiperOptions = ref({
       //slidesPerView: 4,
-      allowTouchMove: false,
+      //allowTouchMove: false,
       slidesPerView: "auto",
       spaceBetween: 30,
       centeredSlides: true,
@@ -195,8 +222,8 @@ export default defineComponent({
       },
     });
 
-    function timerCountDown(duration: number) {
-      timerAbsolute.value = duration;
+    function enableTimer() {
+      timerEnabled.value = true;
       timerHandles.set(
         'rows-timer-handle',
         setInterval(() => {
@@ -207,15 +234,18 @@ export default defineComponent({
           timerSecs.value = secs < 10 ? "0" + secs : secs.toString();
 
           if (--timerAbsolute.value < 0) {
-            timerAbsolute.value = duration;
+            timerAbsolute.value = v(timerAbsolute);
           }
         }, 1000)
       );
     }
 
-    //timerCountDown(40);
 
-    function slideNext(ms: number = 200) {
+    function freezeTimer() {
+      clearInterval(timerHandles.get('rows-timer-handle')!);
+    }
+
+    function slideNext(ms = 200) {
       (swiperRef.value as any).$swiper.slideNext(ms);
     }
 
@@ -232,9 +262,7 @@ export default defineComponent({
       }, 1000);
     }
 
-    const abacusBoard = new AbacusBoard(6);
-
-    onMounted(() => {
+    function drawAbacus() {
       const abacusDraw = SVG()
         .addTo(abacusContainerRef.value!)
         .viewbox(0, -55, 670, 469)
@@ -245,27 +273,31 @@ export default defineComponent({
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
+    }
 
-      abacusBoard.on("update", (value) => {
-        const abacusValue = BigInt((value as CustomEvent<number>).detail);
-        if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
-          if ((v(currentRowIndex) + 1) === v(currentExample).numbers.length) {
-            setTimeout(() => {
-              slideNext();
-            }, v(currentSequenceItem).examplesTimeout);
-            return;
-          }
+    abacusBoard.on("update", (value) => {
+      const abacusValue = BigInt((value as CustomEvent<number>).detail);
+      if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
+        completeExample();
 
-          slideNext();
+        if ((v(currentRowIndex) + 1) === v(currentExample).numbers.length) {
+          setTimeout(() => {
+            slideNext();
+          }, v(currentSequenceItem).examplesTimeout);
+          return;
         }
-      });
 
+        slideNext();
+      }
+    });
+
+    onMounted(() => {
+      drawAbacus();
       startGame();
     });
 
     return {
       onSwiperTransitionEnd,
-      numbersContainerRef,
       abacusContainerRef,
       abacusValue,
       swiperOptions,
@@ -278,6 +310,10 @@ export default defineComponent({
 
       sequence,
 
+      completedExamplesPercent,
+      completedExamplesCount,
+
+      timerEnabled,
       timerClasses,
       timerMins,
       timerSecs,
