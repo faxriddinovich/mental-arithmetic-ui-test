@@ -46,7 +46,7 @@
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <div ref="abacusContainerRef" v-if="displayMode !== 'scores'"></div>
+    <div ref="abacusContainerRef" v-show="canDisplayAbacus"></div>
 
     <!-- display screen -->
     <section class="hero is-fullheight">
@@ -67,8 +67,10 @@
             <span>Please solve the expressions sequentially</span>
           </div>
           <div class="buttons is-justify-content-center">
-            <b-button icon-left="redo" @click="onShowAgain">Show again</b-button>
-            <b-button icon-left="align-left-justify">Answer</b-button>
+            <b-button icon-left="redo" @click="onShowAgain"
+              >Show again</b-button
+            >
+            <b-button icon-left="align-left-justify" @click="onShowAnswer">Answer</b-button>
             <b-button
               type="is-link"
               icon-right="arrow-right"
@@ -77,11 +79,60 @@
             >
           </div>
         </div>
+
+        <!-- answer display -->
+        <div
+          class="columns is-gapless is-centered"
+          style="min-width: 100%"
+          v-if="displayMode === 'answer'"
+        >
+          <div class="column is-5-fullhd is-three-quarters-desktop">
+            <div class="box mx-2">
+
+            <div class="is-size-3 has-text-weight-semibold has-text-centered">
+            <span v-for="(row, rowIndex) of currentExample.numbers" :key="rowIndex">
+              {{ normalizeSign(row) }}&nbsp;
+            </span>
+            <div class="has-text-centered">
+              <span class="has-text-success has-text-weight-bold is-size-2">= {{ currentExample.answer }}</span>
+            </div>
+            </div>
+
+            <hr class="my-4" />
+              <div class="field is-grouped is-grouped-multiline">
+                <div class="control" v-for="(row, rowIndex) in currentExample.numbers.length - 1" :key="rowIndex">
+                  <div class="tags has-addons" >
+                    <span class="tag is-medium"
+                      ><span class="has-text-weight-bold">{{ currentExample.answerMap[rowIndex] }}&nbsp;</span> {{ normalizeSign(currentExample.numbers[rowIndex + 1]) }} =
+                    </span>
+                    <span class="tag is-primary is-medium">{{ currentExample.answerMap[rowIndex + 1] }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="mt-0 mb-2" />
+              <div class="is-flex">
+                <b-button icon-left="redo" @click="onShowAgain" expanded
+                  >Show again</b-button
+                >
+                <b-button
+                  icon-right="arrow-right"
+                  class="ml-3"
+                  @click="onNextExample"
+                  expanded
+                  >Next example</b-button
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end answer display -->
+
         <!-- scores display -->
         <div
           class="columns is-gapless is-centered"
           style="min-width: 100%"
-          v-show="displayMode === 'scores'"
+          v-else-if="displayMode === 'scores'"
         >
           <div class="column is-5-fullhd is-three-quarters-desktop">
             <div class="box mx-2">

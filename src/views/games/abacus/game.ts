@@ -107,8 +107,10 @@ export default defineComponent({
         if(parse(dataset.ri) === 0)
           currentExampleHead.value = activeIndex;
 
+        /*
         if (parse(dataset.ri) === 0 && !v(timerEnabled))
-          enableTimer();
+          //enableTimer();
+        */
 
         if (!config.waitForAnswer) {
           if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
@@ -156,6 +158,10 @@ export default defineComponent({
     const displaySwiperCards = () => (displayMode.value = "swiper-cards");
     const displayScores = () => (displayMode.value = "scores");
     const displayAnswer = () => (displayMode.value = "answer");
+
+    const canDisplayAbacus = computed(() => {
+      return ['swiper-cards', 'control-buttons'].includes(v(displayMode));
+    });
 
     const playTimerSoundEffect = (loop = true) => {
       const audio = new Audio(TimerSoundEffect);
@@ -267,6 +273,13 @@ export default defineComponent({
       });
     }
 
+    function onShowAnswer() {
+      displayAnswer();
+    }
+
+    // TODO: we should not use this function
+    const normalizeSign = (n: BigInt)  => n > 0 ? '+ ' + n : n;
+
     function startGame() {
       setTimeout(() => {
         slideNext();
@@ -319,11 +332,18 @@ export default defineComponent({
 
       onNextExample,
       onShowAgain,
+      onShowAnswer,
 
       sequence,
 
       completedRowsPercent,
       completedRowsCount,
+
+      normalizeSign,
+
+      canDisplayAbacus,
+
+      currentExample,
 
       timerEnabled,
       timerClasses,
