@@ -16,6 +16,7 @@ import {AbacusGameConfig} from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
+import AbacusTipsContent from '@/views/contents/abacus-tips.vue';
 
 type TimerHandleKey = 'attention-text-timer-handle' | 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
@@ -26,7 +27,7 @@ const TIMER_LESS_TIME_SECS = 30;
 const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
-  components: {Swiper, SwiperSlide},
+  components: {Swiper, SwiperSlide, AbacusTipsContent},
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const swiperRef = ref<VueComponent>();
@@ -39,6 +40,8 @@ export default defineComponent({
     ] as AbacusGameConfig;
 
     const sequence = ref<SequenceItem[]>(config.sequence);
+
+    const isTipsModalActive = ref<boolean>(false);
 
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
@@ -63,6 +66,7 @@ export default defineComponent({
       if (!(v(currentSequenceItem))) return null;
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
     });
+
 
     const currentAnswerMap = computed(() => {
       if (!v(currentExample)) return null;
@@ -299,6 +303,11 @@ export default defineComponent({
       abacusBoard.construct();
     }
 
+    abacusBoard.on('tips-button-click', () => {
+      // TODO: freeze timer here
+      isTipsModalActive.value = true;
+    });
+
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
       if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
@@ -314,6 +323,7 @@ export default defineComponent({
         slideNext();
       }
     });
+
 
     onMounted(() => {
       drawAbacus();
@@ -335,6 +345,8 @@ export default defineComponent({
       onShowAnswer,
 
       sequence,
+
+      isTipsModalActive,
 
       completedRowsPercent,
       completedRowsCount,
