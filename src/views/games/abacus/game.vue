@@ -24,10 +24,11 @@
           <b-button
             tag="router-link"
             :to="{ name: 'AbacusGameForm' }"
-            type="is-primary is-light"
-            icon-left="arrow-left"
             size="is-medium"
-            >Back</b-button
+            ><b-icon icon="arrow-left" class="m-0" /><span
+              class="is-hidden-mobile"
+              >Back</span
+            ></b-button
           >
           <div class="is-flex is-align-items-center">
             <span v-if="timerEnabled">
@@ -41,11 +42,10 @@
               <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
           </div>
-          <b-button
-            type="is-primary is-light"
-            icon-left="refresh"
-            size="is-medium"
-            >Refresh</b-button
+          <b-button size="is-medium"
+            ><b-icon icon="refresh" class="m-0" /><span class="is-hidden-mobile"
+              >Refresh</span
+            ></b-button
           >
         </div>
       </div>
@@ -128,9 +128,7 @@
                       ><span class="has-text-weight-bold"
                         >{{ currentExample.answerMap[rowIndex] }}&nbsp;</span
                       >
-                      {{
-                        normalizeSign(currentExample.numbers[rowIndex + 1])
-                      }}
+                      {{ normalizeSign(currentExample.numbers[rowIndex + 1]) }}
                       =
                     </span>
                     <span class="tag is-primary is-medium">{{
@@ -181,29 +179,31 @@
                   Victory!
                 </div>
 
-                <b-progress size="is-large" type="is-success" show-value>
-                  <template #bar>
-                    <b-progress-bar :value="60"></b-progress-bar>
-                    <b-progress-bar
-                      :value="20"
-                      type="is-danger"
-                    ></b-progress-bar>
-                    <b-progress-bar :value="20" type="is-dark"></b-progress-bar>
-                  </template>
+                <b-progress
+                  size="is-medium"
+                  type="is-success"
+                  :value="60"
+                  format="percent"
+                  show-value
+                >
                 </b-progress>
                 <nav class="level is-mobile">
                   <div class="level-item has-text-centered">
                     <div>
-                      <p class="heading">Correct</p>
-                      <p class="title has-text-success">60</p>
+                      <p class="heading">Completed rows</p>
+                      <p class="title has-text-success">
+                        {{ completedRowsCount }}
+                      </p>
                     </div>
                   </div>
+                  <!--
                   <div class="level-item has-text-centered">
                     <div>
                       <p class="heading">Incorrect</p>
                       <p class="title has-text-danger">20</p>
                     </div>
                   </div>
+-->
                   <div class="level-item has-text-centered">
                     <div>
                       <p class="heading">Spent time</p>
