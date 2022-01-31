@@ -6,6 +6,7 @@ import {
 import {AbacusGameConfig, SequenceItem} from "@/views/games/abacus/interfaces";
 import {getThemes} from '@/services/generator';
 import ColorPalette from '@/components/games/color-palette.vue';
+import AbacusTipsContent from '@/views/contents/abacus-tips.vue';
 
 const lowerCase = (str: string) => str.toLowerCase();
 const matches = (str0: string, str1: string) => {
@@ -15,7 +16,7 @@ const matches = (str0: string, str1: string) => {
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
 
 export default defineComponent({
-  components: {ColorPalette},
+  components: {ColorPalette, AbacusTipsContent },
   setup(_, context) {
     const filteredThemes = computed(() => {
       return getThemes()

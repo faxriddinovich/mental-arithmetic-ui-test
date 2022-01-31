@@ -1,17 +1,5 @@
 <template>
   <div>
-    <!-- tips modal -->
-    <b-modal v-model="isTipsModalActive">
-      <div class="columns is-centered is-vcentered is-mobile m-0">
-        <div class="column is-10-desktop is-12-mobile is-9-tablet">
-          <div class="box">
-            <abacus-tips-content />
-          </div>
-        </div>
-      </div>
-    </b-modal>
-    <!-- end tips modal -->
-
     <!-- controls bar -->
     <section
       class="card is-bordered is-controls-bar"

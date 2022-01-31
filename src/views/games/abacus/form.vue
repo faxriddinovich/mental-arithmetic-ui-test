@@ -144,7 +144,9 @@
                     </b-field>
                   </b-field>
                   <b-field>
-                    <b-checkbox v-model="waitForAnswer">Wait for answer</b-checkbox>
+                    <b-checkbox v-model="waitForAnswer"
+                      >Wait for answer</b-checkbox
+                    >
                   </b-field>
                   <b-field v-if="sequence.length">
                     <template #label> <b-icon icon="file" /> Themes </template>
@@ -159,7 +161,6 @@
                       >
                     </b-taglist>
                   </b-field>
-
                   <div class="is-flex mt-2">
                     <div class="field has-addons">
                       <p class="control">
@@ -252,6 +253,12 @@
                   >
                   <b-checkbox v-model="speechSound">Speech sound</b-checkbox>
                 </b-field>
+              </div>
+            </b-tab-item>
+            <b-tab-item>
+              <template #header> <b-icon icon="lightbulb-alt" /> Tips </template>
+              <div class="box">
+                <abacus-tips-content />
               </div>
             </b-tab-item>
           </b-tabs>

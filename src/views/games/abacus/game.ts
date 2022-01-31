@@ -8,7 +8,6 @@ import {
 } from "@vue/composition-api";
 import VueComponent from "vue";
 import {SVG} from "@svgdotjs/svg.js";
-import "@svgdotjs/svg.draggable.js";
 import {AbacusBoard} from "./board";
 import {Swiper, SwiperSlide} from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
@@ -16,9 +15,8 @@ import {AbacusGameConfig} from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
-import AbacusTipsContent from '@/views/contents/abacus-tips.vue';
 
-type TimerHandleKey = 'attention-text-timer-handle' | 'rows-timer-handle';
+type TimerHandleKey = 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
@@ -27,7 +25,7 @@ const TIMER_LESS_TIME_SECS = 30;
 const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
-  components: {Swiper, SwiperSlide, AbacusTipsContent},
+  components: {Swiper, SwiperSlide},
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const swiperRef = ref<VueComponent>();
@@ -40,8 +38,6 @@ export default defineComponent({
     ] as AbacusGameConfig;
 
     const sequence = ref<SequenceItem[]>(config.sequence);
-
-    const isTipsModalActive = ref<boolean>(false);
 
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
@@ -111,10 +107,8 @@ export default defineComponent({
         if(parse(dataset.ri) === 0)
           currentExampleHead.value = activeIndex;
 
-        /*
         if (parse(dataset.ri) === 0 && !v(timerEnabled))
-          //enableTimer();
-        */
+          enableTimer();
 
         if (!config.waitForAnswer) {
           if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
@@ -143,7 +137,7 @@ export default defineComponent({
         "has-text-weight-semibold",
       ];
 
-      if (lessTimeLeft.value) {
+      if (v(lessTimeLeft)) {
         classes.push(...["has-text-danger", "is-shaking-text"]);
       }
 
@@ -184,6 +178,10 @@ export default defineComponent({
     };
 
     const stopTimerSecsWatch = watch(timerAbsolute, () => {
+      if(v(timerExpired)) {
+        console.log(v(timerAbsolute));
+      }
+
       if (v(timerAbsolute) === 0 && v(displayMode) !== 'scores') {
 
         if (sounds.has('timer-sound-effect'))
@@ -234,7 +232,7 @@ export default defineComponent({
       timerEnabled.value = true;
       timerHandles.set(
         'rows-timer-handle',
-        setInterval(() => {
+        setInterval(function callback () {
           const mins = parseInt((timerAbsolute.value / 60).toString(), 10);
           const secs = parseInt((timerAbsolute.value % 60).toString(), 10);
 
@@ -244,13 +242,11 @@ export default defineComponent({
           if (--timerAbsolute.value < 0) {
             timerAbsolute.value = v(timerAbsolute);
           }
-        }, 1000)
+return callback;
+        }(), 1000)
       );
     }
 
-    function freezeTimer() {
-      clearInterval(timerHandles.get('rows-timer-handle')!);
-    }
 
     function slideNext(ms = 200) {
       (swiperRef.value as any).$swiper.slideNext(ms);
@@ -303,11 +299,6 @@ export default defineComponent({
       abacusBoard.construct();
     }
 
-    abacusBoard.on('tips-button-click', () => {
-      // TODO: freeze timer here
-      isTipsModalActive.value = true;
-    });
-
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
       if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
@@ -345,8 +336,6 @@ export default defineComponent({
       onShowAnswer,
 
       sequence,
-
-      isTipsModalActive,
 
       completedRowsPercent,
       completedRowsCount,
