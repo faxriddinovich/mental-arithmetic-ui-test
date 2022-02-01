@@ -100,6 +100,7 @@ export default defineComponent({
           slideNext();
         }, 200);
       } else if (dataset.ri) {
+        completeExample();
         if (parse(dataset.ri) === 0)
           abacusBoard.reset();
 
@@ -126,7 +127,7 @@ export default defineComponent({
         currentSequenceItemIndex.value = parse(dataset.si!);
         currentExampleIndex.value = parse(dataset.ei!);
 
-        if(config.waitForAnswer)
+        if (config.waitForAnswer)
           currentRowIndex.value = parse(dataset.ri!);
       }
 
@@ -308,10 +309,8 @@ export default defineComponent({
       const lastExampleItem = v(currentSequenceItem).examples[v(currentExampleIndex) + 1] === undefined;
       const lastRowItem = v(currentExample).numbers[v(currentRowIndex) + 1] === undefined;
 
-      console.log(abacusValue, v(currentAnswerMap));
-
-      if(abacusValue == v(currentAnswerMap)) {
-        if(lastSequenceItem && lastExampleItem && lastRowItem) {
+      if (abacusValue == v(currentAnswerMap)) {
+        if (lastSequenceItem && lastExampleItem && lastRowItem) {
           abacusBoard.lock();
           setInterval(() => {
             displayScores();
@@ -322,11 +321,15 @@ export default defineComponent({
 
         if(!config.waitForAnswer) {
           currentRowIndex.value++;
-          completeExample();
 
           if(lastRowItem) {
-            return displaySwiperCards();
+            currentRowIndex.value = 0;
+            displaySwiperCards();
+            setTimeout(() => {
+              slideNext();
+            }, 500);
           }
+          return;
         }
 
         setTimeout(() => {
