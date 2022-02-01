@@ -49,6 +49,9 @@
     <!-- abacus board -->
     <div ref="abacusContainerRef" v-show="canDisplayAbacus"></div>
 
+    <!-- confetti screen -->
+    <canvas class="is-confetti" ref="confettiRef" />
+
     <!-- display screen -->
     <section class="hero is-fullheight">
       <div class="hero-body is-justify-content-center p-0">
@@ -393,6 +396,14 @@ img.is-trophy {
 
 .is-trophy.is-lost {
   filter: grayscale(1);
+}
+
+.is-confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  pointer-events: none;
 }
 
 @include mobile {

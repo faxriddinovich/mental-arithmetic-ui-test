@@ -32,6 +32,7 @@
     "@vue/babel-helper-vue-jsx-merge-props": "^1.2.1",
     "@vue/composition-api": "^1.4.0",
     "buefy": "^0.9.10",
+    "canvas-confetti": "^1.4.0",
     "chart.js": "^2.9.4",
     "deep-diff": "^1.0.2",
     "jdenticon": "^3.1.1",
@@ -51,6 +52,7 @@
     "vuex-composition-helpers": "^1.0.26"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.4.2",
     "@types/chai": "^4.2.11",
     "@types/deep-diff": "^1.0.1",
     "@types/electron-devtools-installer": "^2.2.0",

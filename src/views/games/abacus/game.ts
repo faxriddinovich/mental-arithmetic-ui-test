@@ -15,6 +15,7 @@ import {AbacusGameConfig} from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
+import confettiLib from 'canvas-confetti';
 
 type TimerHandleKey = 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
@@ -28,6 +29,7 @@ export default defineComponent({
   components: {Swiper, SwiperSlide},
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
+    const confettiRef = ref<HTMLCanvasElement>();
     const swiperRef = ref<VueComponent>();
 
     const abacusValue = ref<number>(0);
@@ -156,9 +158,34 @@ export default defineComponent({
       return v(timerAbsolute) < TIMER_LESS_TIME_SECS;
     });
 
+    const playConfettiAnimation = () => {
+      const confetti = confettiLib.create(confettiRef.value!, {
+        resize: true,
+        useWorker: true
+      });
+
+      confetti({
+        particleCount: 200,
+        angle: 60,
+        spread: 55,
+        origin: {x: 0},
+      });
+      confetti({
+        particleCount: 200,
+        angle: 120,
+        spread: 55,
+        origin: {x: 1},
+      });
+    }
+
+
     const displayControlButtons = () => (displayMode.value = "control-buttons");
     const displaySwiperCards = () => (displayMode.value = "swiper-cards");
-    const displayScores = () => (displayMode.value = "scores");
+    const displayScores = () => {
+      console.log('called');
+      displayMode.value = "scores"
+      playConfettiAnimation();
+    };
     const displayAnswer = () => (displayMode.value = "answer");
 
     const canDisplayAbacus = computed(() => {
@@ -311,18 +338,17 @@ export default defineComponent({
 
       if (abacusValue == v(currentAnswerMap)) {
         if (lastSequenceItem && lastExampleItem && lastRowItem) {
-          abacusBoard.lock();
-          setInterval(() => {
+          setTimeout(() => {
             displayScores();
           }, 1000);
 
           return;
         }
 
-        if(!config.waitForAnswer) {
+        if (!config.waitForAnswer) {
           currentRowIndex.value++;
 
-          if(lastRowItem) {
+          if (lastRowItem) {
             currentRowIndex.value = 0;
             displaySwiperCards();
             setTimeout(() => {
@@ -338,16 +364,17 @@ export default defineComponent({
       }
     });
 
-
     onMounted(() => {
       drawAbacus();
       startGame();
     });
 
+
     return {
       onSwiperTransitionEnd,
 
       abacusContainerRef,
+      confettiRef,
       abacusValue,
       swiperOptions,
       swiperRef,
