@@ -2,7 +2,7 @@
   <section class="hero is-fullheight">
     <div class="hero-body">
       <div class="columns is-gapless is-centered" style="min-width: 100%">
-        <div class="column is-half-fullhd is-three-quarters-desktop">
+        <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
           <b-tabs
             type="is-toggle"
             class="is-nav-tabs"
