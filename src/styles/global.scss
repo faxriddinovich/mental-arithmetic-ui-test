@@ -3,6 +3,30 @@
 
 $border-color: rgb(149, 165, 166);
 
+.is-dotted {
+   display: flex;
+   align-items: flex-end;
+ }
+ .is-dotted .is-left,
+ .is-dotted .is-right {
+   flex: 1 0 auto;
+ }
+ .is-dotted .is-dots {
+   flex: 0 1 auto;
+   overflow: hidden;
+ }
+ .is-dots::before {
+   display: block;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: clip;
+   content: 
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+ }
+
 .is-nav-tabs > .tabs {
   background: white;
   border-radius: 0.25rem;

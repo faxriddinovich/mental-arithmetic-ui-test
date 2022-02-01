@@ -13,6 +13,7 @@
             tag="router-link"
             :to="{ name: 'AbacusGameForm' }"
             size="is-medium"
+            active
             ><b-icon icon="arrow-left" class="m-0" /><span
               class="is-hidden-mobile"
               >Back</span
@@ -30,7 +31,7 @@
               <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
           </div>
-          <b-button size="is-medium"
+          <b-button size="is-medium" active
             ><b-icon icon="refresh" class="m-0" /><span class="is-hidden-mobile"
               >Refresh</span
             ></b-button
@@ -150,61 +151,115 @@
           style="min-width: 100%"
           v-else-if="displayMode === 'scores'"
         >
-          <div class="column is-5-fullhd is-three-quarters-desktop">
-            <div class="box mx-2">
-              <img
-                class="is-block is-victory-trophy"
-                :src="require('@@/img/trophy.svg')"
-              />
-              <div class="p-4">
-                <div
-                  class="
-                    has-text-centered
-                    is-size-2
-                    has-text-weight-semibold has-text-success
-                  "
-                >
-                  Victory!
-                </div>
+          <div class="column is-10-tablet is-7-desktop is-6-fullhd">
+            <div class="mx-2">
+              <div
+                class="box m-0 is-bordered"
+                style="
+                  width: 94%;
+                  margin: 0 auto -30px !important;
+                  background: rgb(241, 241, 241);
+                "
+              ></div>
 
-                <b-progress
-                  size="is-medium"
-                  type="is-success"
-                  :value="60"
-                  format="percent"
-                  show-value
-                >
-                </b-progress>
-                <nav class="level is-mobile">
-                  <div class="level-item has-text-centered">
-                    <div>
-                      <p class="heading">Completed rows</p>
-                      <p class="title has-text-success">
-                        {{ completedRowsCount }}
-                      </p>
-                    </div>
-                  </div>
-                  <!--
-                  <div class="level-item has-text-centered">
-                    <div>
-                      <p class="heading">Incorrect</p>
-                      <p class="title has-text-danger">20</p>
-                    </div>
-                  </div>
--->
-                  <div class="level-item has-text-centered">
-                    <div>
-                      <p class="heading">Spent time</p>
-                      <p class="title">00:32</p>
-                    </div>
-                  </div>
-                </nav>
-                <hr class="mb-5" />
-                <div class="is-flex">
-                  <b-button icon-left="arrow-left" expanded>Back</b-button>
-                  <b-button class="ml-2" icon-left="refresh" expanded
-                    >Repeat</b-button
+              <div
+                class="box m-0 is-bordered"
+                style="
+                  width: 97%;
+                  margin: 0 auto -30px !important;
+                  background: rgb(247, 247, 247);
+                "
+              ></div>
+
+              <div class="card p-1 is-bordered">
+                <img
+                  class="is-block is-trophy"
+                  :src="require('@@/img/trophy.png')"
+                />
+                <div class="p-4">
+                  <div
+                    class="
+                      has-text-centered
+                      is-size-1
+                      has-text-weight-bold has-text-success
+                    "
                   >
+                    You won!
+                  </div>
+
+                  <b-progress
+                    size="is-medium"
+                    type="is-success"
+                    :value="60"
+                    format="percent"
+                    show-value
+                  >
+                  </b-progress>
+                  <nav class="level is-mobile">
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Completed rows</p>
+                        <p class="title has-text-success">
+                          {{ completedRowsCount }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Rows</p>
+                        <p class="title">4421</p>
+                      </div>
+                    </div>
+
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Spent time</p>
+                        <p class="title">00:32</p>
+                      </div>
+                    </div>
+                  </nav>
+                  <span class="is-dotted">
+                    <span class="is-left is-size-5-tablet"
+                      ><b-icon icon="clock" /> Average time (examples)</span
+                    >
+                    <span class="is-dots"></span>
+                    <span
+                      class="
+                        is-right is-size-5-mobile is-size-4-tablet
+                        has-text-weight-bold
+                      "
+                      >00:01</span
+                    >
+                  </span>
+
+                  <span class="is-dotted">
+                    <span class="is-left is-size-5-tablet"
+                      ><b-icon icon="clock" /> Average time (rows)</span
+                    >
+                    <span class="is-dots"></span>
+                    <span
+                      class="
+                        is-right is-size-5-mobile is-size-4-tablet
+                        has-text-weight-bold
+                      "
+                      >00:01</span
+                    >
+                  </span>
+
+                  <hr class="mb-5" />
+                  <div class="is-flex">
+                    <b-button
+                      tag="router-link"
+                      :to="{ name: 'AbacusGameForm' }"
+                      icon-left="arrow-left"
+                      expanded
+                      active
+                      >Back</b-button
+                    >
+                    <b-button class="ml-2" icon-left="refresh" expanded active
+                      >Repeat</b-button
+                    >
+                  </div>
                 </div>
               </div>
             </div>
@@ -329,17 +384,21 @@
   position: absolute;
 }
 
-img.is-victory-trophy {
+img.is-trophy {
   width: 200px;
   margin-top: -100px;
   margin-left: auto;
   margin-right: auto;
 }
 
+.is-trophy.is-lost {
+  filter: grayscale(1);
+}
+
 @include mobile {
-  img.is-victory-trophy {
-    width: 150px;
-    margin-top: -75px;
+  img.is-trophy {
+    width: 160px;
+    margin-top: -80px;
   }
 }
 </style>

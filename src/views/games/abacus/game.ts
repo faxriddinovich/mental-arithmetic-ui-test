@@ -63,7 +63,6 @@ export default defineComponent({
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
     });
 
-
     const currentAnswerMap = computed(() => {
       if (!v(currentExample)) return null;
       return v(currentExample).answerMap[v(currentRowIndex)] || null;
@@ -99,16 +98,18 @@ export default defineComponent({
       if (dataset.at) {
         setTimeout(() => {
           slideNext();
-        }, 1000);
+        }, 200);
       } else if (dataset.ri) {
         if (parse(dataset.ri) === 0)
           abacusBoard.reset();
 
-        if(parse(dataset.ri) === 0)
+        if (parse(dataset.ri) === 0)
           currentExampleHead.value = activeIndex;
 
+        /*
         if (parse(dataset.ri) === 0 && !v(timerEnabled))
           enableTimer();
+        */
 
         if (!config.waitForAnswer) {
           if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
@@ -124,7 +125,9 @@ export default defineComponent({
 
         currentSequenceItemIndex.value = parse(dataset.si!);
         currentExampleIndex.value = parse(dataset.ei!);
-        currentRowIndex.value = parse(dataset.ri!);
+
+        if(config.waitForAnswer)
+          currentRowIndex.value = parse(dataset.ri!);
       }
 
       currentSlideIndex.value = activeIndex;
@@ -178,7 +181,7 @@ export default defineComponent({
     };
 
     const stopTimerSecsWatch = watch(timerAbsolute, () => {
-      if(v(timerExpired)) {
+      if (v(timerExpired)) {
         console.log(v(timerAbsolute));
       }
 
@@ -232,7 +235,7 @@ export default defineComponent({
       timerEnabled.value = true;
       timerHandles.set(
         'rows-timer-handle',
-        setInterval(function callback () {
+        setInterval(function callback() {
           const mins = parseInt((timerAbsolute.value / 60).toString(), 10);
           const secs = parseInt((timerAbsolute.value % 60).toString(), 10);
 
@@ -242,7 +245,7 @@ export default defineComponent({
           if (--timerAbsolute.value < 0) {
             timerAbsolute.value = v(timerAbsolute);
           }
-return callback;
+          return callback;
         }(), 1000)
       );
     }
@@ -278,7 +281,7 @@ return callback;
     }
 
     // TODO: we should not use this function
-    const normalizeSign = (n: BigInt)  => n > 0 ? '+ ' + n : n;
+    const normalizeSign = (n: BigInt) => n > 0 ? '+ ' + n : n;
 
     function startGame() {
       setTimeout(() => {
@@ -301,17 +304,34 @@ return callback;
 
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
-      if (config.waitForAnswer && abacusValue == v(currentAnswerMap)) {
-        completeExample();
+      const lastSequenceItem = v(sequence)[v(currentSequenceItemIndex) + 1] === undefined;
+      const lastExampleItem = v(currentSequenceItem).examples[v(currentExampleIndex) + 1] === undefined;
+      const lastRowItem = v(currentExample).numbers[v(currentRowIndex) + 1] === undefined;
 
-        if ((v(currentRowIndex) + 1) === v(currentExample).numbers.length) {
-          setTimeout(() => {
-            slideNext();
-          }, v(currentSequenceItem).examplesTimeout);
+      console.log(abacusValue, v(currentAnswerMap));
+
+      if(abacusValue == v(currentAnswerMap)) {
+        if(lastSequenceItem && lastExampleItem && lastRowItem) {
+          abacusBoard.lock();
+          setInterval(() => {
+            displayScores();
+          }, 1000);
+
           return;
         }
 
-        slideNext();
+        if(!config.waitForAnswer) {
+          currentRowIndex.value++;
+          completeExample();
+
+          if(lastRowItem) {
+            return displaySwiperCards();
+          }
+        }
+
+        setTimeout(() => {
+          slideNext();
+        }, 200);
       }
     });
 
@@ -323,6 +343,7 @@ return callback;
 
     return {
       onSwiperTransitionEnd,
+
       abacusContainerRef,
       abacusValue,
       swiperOptions,
