@@ -10,7 +10,12 @@
             expanded
           >
             <b-tab-item value="form">
-              <template #header> <b-icon icon="notes" /> Form </template>
+              <template #header>
+                <b-icon class="m-0" icon="notes" /><span
+                  class="is-hidden-mobile"
+                  >&nbsp;Form</span
+                ></template
+              >
               <div class="box">
                 <form @submit.prevent="play">
                   <b-field>
@@ -186,7 +191,12 @@
               </div>
             </b-tab-item>
             <b-tab-item value="settings">
-              <template #header> <b-icon icon="setting" /> Settings </template>
+              <template #header>
+                <b-icon class="m-0" icon="setting" /><span
+                  class="is-hidden-mobile"
+                  >&nbsp;Settings</span
+                ></template
+              >
               <div class="box">
                 <b-field>
                   <template #label> <b-icon icon="palette" /> Color: </template>
@@ -256,7 +266,12 @@
               </div>
             </b-tab-item>
             <b-tab-item>
-              <template #header> <b-icon icon="lightbulb-alt" /> Tips </template>
+              <template #header>
+                <b-icon class="m-0" icon="lightbulb-alt" /><span
+                  class="is-hidden-mobile"
+                  >&nbsp;Tips</span
+                ></template
+              >
               <div class="box">
                 <abacus-tips-content />
               </div>
