@@ -21,12 +21,23 @@ type TimerHandleKey = 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
 
+const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
 
 const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
   components: {Swiper, SwiperSlide},
+  filters: {
+    timerFormat: (timerAbsolute: number) => {
+      const mins = parseInt((timerAbsolute / 60).toString(), 10);
+      const secs = parseInt((timerAbsolute % 60).toString(), 10);
+      const minsStr = mins < 10 ? "0" + mins : mins.toString()
+      const secsStr = secs < 10 ? "0" + secs : secs.toString();
+
+      return `${minsStr}:${secsStr}`;
+    }
+  },
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
@@ -41,13 +52,19 @@ export default defineComponent({
 
     const sequence = ref<SequenceItem[]>(config.sequence);
 
+    const wonTheGame = computed<boolean>(() => {
+      return (v(completedRowsCount) / v(totalRowsCount) * 100) >= MIN_ROWS_PERCENT_TO_WIN;
+    });
+
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
     const timerMins = ref<string>("00");
     const timerSecs = ref<string>("00");
 
     const completedRowsCount = ref<number>(0);
-    const completedRowsPercent = ref<number>(0);
+    const completedRowsPercent = computed<number>(() => {
+      return v(completedRowsCount) / v(totalRowsCount) * 100;
+    });
 
     const attentionTexts = ["Ready?", "Go!"];
 
@@ -70,17 +87,25 @@ export default defineComponent({
       return v(currentExample).answerMap[v(currentRowIndex)] || null;
     });
 
-    const totalRowsCount = computed<number>(() => {
+    const totalExamplesCount = computed<number>(() => {
       let i = 0;
-      for (const sequenceItem of v(sequence)) {
-        i += sequenceItem.examplesCount * sequenceItem.rowsCount;
-      }
+      for (const sequenceItem of v(sequence))
+        i += sequenceItem.examplesCount;
+
       return i;
     });
 
-    const completeExample = () => {
+    const totalRowsCount = computed<number>(() => {
+      let i = 0;
+
+      for (const sequenceItem of v(sequence))
+        i += sequenceItem.examplesCount * sequenceItem.rowsCount;
+
+      return i;
+    });
+
+    const completeRow = () => {
       completedRowsCount.value++;
-      completedRowsPercent.value = v(completedRowsCount) / v(totalRowsCount) * 100;
     }
 
     const currentExampleHead = ref<number>(0);
@@ -102,17 +127,14 @@ export default defineComponent({
           slideNext();
         }, 200);
       } else if (dataset.ri) {
-        completeExample();
         if (parse(dataset.ri) === 0)
           abacusBoard.reset();
 
         if (parse(dataset.ri) === 0)
           currentExampleHead.value = activeIndex;
 
-        /*
         if (parse(dataset.ri) === 0 && !v(timerEnabled))
           enableTimer();
-        */
 
         if (!config.waitForAnswer) {
           if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
@@ -135,6 +157,26 @@ export default defineComponent({
 
       currentSlideIndex.value = activeIndex;
     };
+
+    const trophyClasses = computed<string[]>(() => {
+      const classes = ['is-block', 'is-trophy'];
+
+      if (!v(wonTheGame))
+        classes.push('is-lost');
+
+      return classes;
+    });
+
+    const gameScoresTextClasses = computed<string[]>(() => {
+      const classes = [' has-text-centered', 'is-size-1', 'has-text-weight-bold'];
+
+      if (v(wonTheGame))
+        classes.push('has-text-success');
+      else
+        classes.push('has-text-danger');
+
+      return classes;
+    });
 
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
@@ -182,7 +224,7 @@ export default defineComponent({
     const displayControlButtons = () => (displayMode.value = "control-buttons");
     const displaySwiperCards = () => (displayMode.value = "swiper-cards");
     const displayScores = () => {
-      console.log('called');
+      clearTimeout(timerHandles.get('rows-timer-handle')!);
       displayMode.value = "scores"
       playConfettiAnimation();
     };
@@ -209,10 +251,6 @@ export default defineComponent({
     };
 
     const stopTimerSecsWatch = watch(timerAbsolute, () => {
-      if (v(timerExpired)) {
-        console.log(v(timerAbsolute));
-      }
-
       if (v(timerAbsolute) === 0 && v(displayMode) !== 'scores') {
 
         if (sounds.has('timer-sound-effect'))
@@ -336,6 +374,7 @@ export default defineComponent({
       const lastRowItem = v(currentExample).numbers[v(currentRowIndex) + 1] === undefined;
 
       if (abacusValue == v(currentAnswerMap)) {
+        completeRow();
         if (lastSequenceItem && lastExampleItem && lastRowItem) {
           setTimeout(() => {
             displayScores();
@@ -386,9 +425,16 @@ export default defineComponent({
       onShowAnswer,
 
       sequence,
+      config,
+      timerAbsolute,
+
+      wonTheGame,
 
       completedRowsPercent,
       completedRowsCount,
+
+      totalExamplesCount,
+      totalRowsCount,
 
       normalizeSign,
 
@@ -400,6 +446,9 @@ export default defineComponent({
       timerClasses,
       timerMins,
       timerSecs,
+
+      trophyClasses,
+      gameScoresTextClasses,
     };
   },
 });

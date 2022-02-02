@@ -182,24 +182,18 @@
 
               <div class="card p-1 is-bordered">
                 <img
-                  class="is-block is-trophy"
+                  :class="trophyClasses"
                   :src="require('@@/img/trophy.png')"
                 />
                 <div class="p-4">
-                  <div
-                    class="
-                      has-text-centered
-                      is-size-1
-                      has-text-weight-bold has-text-success
-                    "
-                  >
-                    You won!
+                  <div :class="gameScoresTextClasses">
+                    You {{ wonTheGame ? "won" : "lost" }}!
                   </div>
 
                   <b-progress
                     size="is-medium"
-                    type="is-success"
-                    :value="60"
+                    :type="wonTheGame ? 'is-success' : 'is-danger'"
+                    :value="completedRowsPercent"
                     format="percent"
                     show-value
                   >
@@ -208,54 +202,59 @@
                     <div class="level-item has-text-centered">
                       <div>
                         <p class="heading">Completed rows</p>
-                        <p class="title has-text-success">
+                        <p class="title">
                           {{ completedRowsCount }}
                         </p>
                       </div>
                     </div>
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Rows</p>
-                        <p class="title">4421</p>
+                        <p class="heading">Spent time</p>
+                        <p class="title">
+                          {{ (config.timerSecs - timerAbsolute) | timerFormat }}
+                        </p>
                       </div>
                     </div>
-
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Spent time</p>
-                        <p class="title">00:32</p>
+                        <p class="heading">Total time</p>
+                        <p class="title">
+                          {{ config.timerSecs | timerFormat }}
+                        </p>
                       </div>
                     </div>
                   </nav>
                   <span class="is-dotted">
-                    <span class="is-left is-size-5-tablet"
-                      ><b-icon icon="clock" /> Average time (examples)</span
+                    <span class="is-left is-size-5-tablet mr-3"
+                      >Total examples:</span
                     >
                     <span class="is-dots"></span>
                     <span
                       class="
                         is-right is-size-5-mobile is-size-4-tablet
                         has-text-weight-bold
+                        ml-2
                       "
-                      >00:01</span
+                      >{{ totalExamplesCount }}</span
                     >
                   </span>
 
                   <span class="is-dotted">
-                    <span class="is-left is-size-5-tablet"
-                      ><b-icon icon="clock" /> Average time (rows)</span
+                    <span class="is-left is-size-5-tablet mr-3"
+                      >Total rows:</span
                     >
                     <span class="is-dots"></span>
                     <span
                       class="
                         is-right is-size-5-mobile is-size-4-tablet
                         has-text-weight-bold
+                        ml-2
                       "
-                      >00:01</span
+                      >{{ totalRowsCount }}</span
                     >
                   </span>
 
-                  <hr class="mb-5" />
+                  <hr />
                   <div class="is-flex">
                     <b-button
                       tag="router-link"
@@ -394,6 +393,7 @@
 }
 
 img.is-trophy {
+  display: block;
   width: 200px;
   margin-top: -100px;
   margin-left: auto;
