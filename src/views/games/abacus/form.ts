@@ -32,6 +32,7 @@ export default defineComponent({
 
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
+    const themesInputFocus = ref<boolean>(false);
 
     const theme = ref<string>('');
     const digit = ref<number>(1);
@@ -119,6 +120,7 @@ export default defineComponent({
       fontRotations,
       fontSizes,
       canAddSequenceItem,
+      themesInputFocus,
 
       timerMins,
       timerSecs,

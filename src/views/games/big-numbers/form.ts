@@ -13,7 +13,7 @@ const matches = (str0: string, str1: string) => {
 };
 
 export default defineComponent({
-  components: { ColorPalette },
+  components: {ColorPalette},
   setup(_, context) {
     const filteredThemes = computed(() => {
       return getThemes()
@@ -29,6 +29,7 @@ export default defineComponent({
 
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
+    const themesInputFocus = ref<boolean>(false);
 
     const theme = ref<string>('');
     const digit = ref<number>(1);
@@ -62,12 +63,12 @@ export default defineComponent({
 
     const config = context.root.$store.getters['BigNumbers/config'] as BigNumbersGameConfig;
 
-    if(config) {
-      if(config.instances.length === 1) {
+    if (config) {
+      if (config.instances.length === 1) {
         const instance = config.instances[0];
         sequence.value.push(...instance.sequence!);
       } else {
-        for(const instance of config.instances) {
+        for (const instance of config.instances) {
           instances.value.push(instance);
         }
       }
@@ -170,6 +171,7 @@ export default defineComponent({
       fontSizes,
       canAddSequenceItem,
       canAddInstanceItem,
+      themesInputFocus,
 
       sequence,
       instances,

@@ -20,7 +20,7 @@
                 <form @submit.prevent="play">
                   <b-field>
                     <template #label> <b-icon icon="file" /> Theme </template>
-                    <p class="control">
+                    <p class="control" v-if="themesInputFocus === false">
                       <b-dropdown v-model="digit">
                         <template #trigger>
                           <b-button>
@@ -48,10 +48,12 @@
                       icon="search"
                       :data="filteredThemes"
                       dropdown-position="bottom"
+                      @focus="themesInputFocus = true"
+                      @focusout.native="themesInputFocus = false"
                       field="name"
                       v-model="theme"
-                      keep-first
                       open-on-focus
+                      keep-first
                       expanded
                     >
                       <template #header>
