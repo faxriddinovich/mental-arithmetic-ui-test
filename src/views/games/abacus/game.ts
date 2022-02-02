@@ -322,8 +322,7 @@ export default defineComponent({
         .addTo(abacusContainerRef.value!)
         .viewbox(0, -55, 670, 469)
         .addClass("is-abacus-board")
-        .addClass("mx-2")
-        .addClass("my-2");
+        .addClass("my-1")
 
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);

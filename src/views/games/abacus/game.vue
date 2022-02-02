@@ -47,7 +47,13 @@
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <div ref="abacusContainerRef" v-show="canDisplayAbacus"></div>
+    <div v-show="canDisplayAbacus">
+      <div
+        class="is-flex is-justify-content-center"
+        ref="abacusContainerRef"
+        v-show="canDisplayAbacus"
+      />
+    </div>
 
     <!-- confetti screen -->
     <canvas class="is-confetti" ref="confettiRef" />
@@ -347,7 +353,7 @@
 .swiper {
   width: 90%;
   height: 15em;
-  margin-bottom: 18em;
+  margin-bottom: 20em;
 
   .swiper-slide {
     display: flex;
