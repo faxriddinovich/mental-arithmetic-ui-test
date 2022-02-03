@@ -24,8 +24,8 @@
               <span :class="timerClasses">
                 <b-icon icon="stopwatch" size="is-medium" />
 
-                {{ timerMins }}:{{ timerSecs }}</span
-              >
+                {{ timerAbsolute | timerFormat }}
+              </span>
             </span>
             <span v-else>
               <b-icon icon="abacus" size="is-large" type="is-primary" />

@@ -223,12 +223,17 @@ export default defineComponent({
 
     const displayControlButtons = () => (displayMode.value = "control-buttons");
     const displaySwiperCards = () => (displayMode.value = "swiper-cards");
-    const displayScores = () => {
-      clearTimeout(timerHandles.get('rows-timer-handle')!);
-      displayMode.value = "scores"
-      playConfettiAnimation();
-    };
+    const displayScores = () => (displayMode.value = "scores");
     const displayAnswer = () => (displayMode.value = "answer");
+
+    const finishGame = () => {
+      clearInterval(timerHandles.get('rows-timer-handle')!);
+      setTimeout(() => {
+        displayScores();
+        if(v(wonTheGame))
+          playConfettiAnimation();
+      }, 1000);
+    }
 
     const canDisplayAbacus = computed(() => {
       return ['swiper-cards', 'control-buttons'].includes(v(displayMode));
@@ -250,19 +255,16 @@ export default defineComponent({
       return audio.play();
     };
 
-    const stopTimerSecsWatch = watch(timerAbsolute, () => {
-      if (v(timerAbsolute) === 0 && v(displayMode) !== 'scores') {
-
+    const stopTimerWatch = watch(timerAbsolute, () => {
+      if (v(lessTimeLeft) && !sounds.has('timer-sound-effect')) {
+        playTimerSoundEffect();
+      } else if (v(timerExpired)) {
         if (sounds.has('timer-sound-effect'))
           sounds.get('timer-sound-effect')!.pause();
 
         playWhistleSoundEffect();
-        displayScores();
-        stopTimerSecsWatch();
-      }
-
-      if (v(lessTimeLeft) && !sounds.has("timer-sound-effect")) {
-        playTimerSoundEffect();
+        finishGame();
+        stopTimerWatch();
       }
     });
 
@@ -301,18 +303,12 @@ export default defineComponent({
       timerEnabled.value = true;
       timerHandles.set(
         'rows-timer-handle',
-        setInterval(function callback() {
-          const mins = parseInt((timerAbsolute.value / 60).toString(), 10);
-          const secs = parseInt((timerAbsolute.value % 60).toString(), 10);
-
-          timerMins.value = mins < 10 ? "0" + mins : mins.toString();
-          timerSecs.value = secs < 10 ? "0" + secs : secs.toString();
-
-          if (--timerAbsolute.value < 0) {
+        setInterval(() => {
+          timerAbsolute.value--;
+          if (v(timerAbsolute) < 0) {
             timerAbsolute.value = v(timerAbsolute);
           }
-          return callback;
-        }(), 1000)
+        }, 1000)
       );
     }
 
@@ -376,10 +372,7 @@ export default defineComponent({
       if (abacusValue == v(currentAnswerMap)) {
         completeRow();
         if (lastSequenceItem && lastExampleItem && lastRowItem) {
-          setTimeout(() => {
-            displayScores();
-          }, 1000);
-
+          finishGame();
           return;
         }
 
