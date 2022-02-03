@@ -200,6 +200,19 @@ export default defineComponent({
       return v(timerAbsolute) < TIMER_LESS_TIME_SECS;
     });
 
+    // TODO: some weird things happen here
+    const lastSequenceItem = computed(() => {
+      return !v(sequence)[v(currentSequenceItemIndex) + 1];
+    });
+
+    const lastExampleItem = computed(() => {
+      return !v(currentSequenceItem).examples[v(currentExampleIndex) + 1];
+    });
+
+    const lastRowItem = computed(() => {
+      return !v(currentExample).numbers[v(currentRowIndex) + 1];
+    });
+
     const playConfettiAnimation = () => {
       const confetti = confettiLib.create(confettiRef.value!, {
         resize: true,
@@ -230,7 +243,7 @@ export default defineComponent({
       clearInterval(timerHandles.get('rows-timer-handle')!);
       setTimeout(() => {
         displayScores();
-        if(v(wonTheGame))
+        if (v(wonTheGame))
           playConfettiAnimation();
       }, 1000);
     }
@@ -321,21 +334,25 @@ export default defineComponent({
       (swiperRef.value as any).$swiper.slideTo(index, ms);
     }
 
-    function executeAfter(n: number, cb: () => void) {
-      setTimeout(cb, n);
-    }
-
     function onNextExample() {
+      // TODO better solution
+      if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
+        finishGame();
+        return;
+      }
+
       displaySwiperCards();
-      executeAfter(500, slideNext);
+      setTimeout(() => {
+        slideNext();
+      }, 500);
     }
 
     function onShowAgain() {
       displaySwiperCards();
 
-      executeAfter(500, () => {
+      setTimeout(() => {
         slideTo(v(currentExampleHead));
-      });
+      }, 500);
     }
 
     function onShowAnswer() {
@@ -351,6 +368,7 @@ export default defineComponent({
       }, 1000);
     }
 
+
     function drawAbacus() {
       const abacusDraw = SVG()
         .addTo(abacusContainerRef.value!)
@@ -365,13 +383,12 @@ export default defineComponent({
 
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
-      const lastSequenceItem = v(sequence)[v(currentSequenceItemIndex) + 1] === undefined;
-      const lastExampleItem = v(currentSequenceItem).examples[v(currentExampleIndex) + 1] === undefined;
-      const lastRowItem = v(currentExample).numbers[v(currentRowIndex) + 1] === undefined;
 
       if (abacusValue == v(currentAnswerMap)) {
         completeRow();
-        if (lastSequenceItem && lastExampleItem && lastRowItem) {
+
+        // TODO better solution
+        if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
           finishGame();
           return;
         }
