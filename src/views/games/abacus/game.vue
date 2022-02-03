@@ -31,9 +31,10 @@
               <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
           </div>
-          <b-button size="is-medium" active
-            ><b-icon icon="refresh" class="m-0" /><span class="is-hidden-mobile"
-              >Refresh</span
+          <b-button size="is-medium" active @click="onRepeat"
+            ><b-icon icon="refresh" class="m-0"/><span
+              class="is-hidden-mobile"
+              >Repeat</span
             ></b-button
           >
         </div>
@@ -264,7 +265,12 @@
                       active
                       >Back</b-button
                     >
-                    <b-button class="ml-2" icon-left="refresh" expanded active
+                    <b-button
+                      class="ml-2"
+                      icon-left="refresh"
+                      @click="onRepeat"
+                      expanded
+                      active
                       >Repeat</b-button
                     >
                   </div>

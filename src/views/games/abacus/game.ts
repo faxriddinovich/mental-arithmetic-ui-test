@@ -58,8 +58,6 @@ export default defineComponent({
 
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
-    const timerMins = ref<string>("00");
-    const timerSecs = ref<string>("00");
 
     const completedRowsCount = ref<number>(0);
     const completedRowsPercent = computed<number>(() => {
@@ -109,7 +107,6 @@ export default defineComponent({
     }
 
     const currentExampleHead = ref<number>(0);
-    const currentSlideIndex = ref<number>(0);
     const currentSequenceItemIndex = ref<number>(0);
     const currentExampleIndex = ref<number>(0);
     const currentRowIndex = ref<number>(0);
@@ -154,8 +151,6 @@ export default defineComponent({
         if (config.waitForAnswer)
           currentRowIndex.value = parse(dataset.ri!);
       }
-
-      currentSlideIndex.value = activeIndex;
     };
 
     const trophyClasses = computed<string[]>(() => {
@@ -268,19 +263,6 @@ export default defineComponent({
       return audio.play();
     };
 
-    const stopTimerWatch = watch(timerAbsolute, () => {
-      if (v(lessTimeLeft) && !sounds.has('timer-sound-effect')) {
-        playTimerSoundEffect();
-      } else if (v(timerExpired)) {
-        if (sounds.has('timer-sound-effect'))
-          sounds.get('timer-sound-effect')!.pause();
-
-        playWhistleSoundEffect();
-        finishGame();
-        stopTimerWatch();
-      }
-    });
-
     const viewBoxWidthMap = ref({
       2: 25,
       3: 25,
@@ -317,14 +299,24 @@ export default defineComponent({
       timerHandles.set(
         'rows-timer-handle',
         setInterval(() => {
-          timerAbsolute.value--;
-          if (v(timerAbsolute) < 0) {
-            timerAbsolute.value = v(timerAbsolute);
+          if (v(timerAbsolute) > 0) {
+            timerAbsolute.value -= 1;
           }
+
+          if (v(lessTimeLeft) && !sounds.has('timer-sound-effect')) {
+            playTimerSoundEffect();
+          } else if (v(timerExpired)) {
+            if (sounds.has('timer-sound-effect'))
+              sounds.get('timer-sound-effect')!.pause();
+
+            playWhistleSoundEffect();
+            finishGame();
+            clearInterval(timerHandles.get('rows-timer-handle')!);
+          }
+
         }, 1000)
       );
     }
-
 
     function slideNext(ms = 200) {
       (swiperRef.value as any).$swiper.slideNext(ms);
@@ -359,6 +351,45 @@ export default defineComponent({
       displayAnswer();
     }
 
+    const clearSoundEffects = () => {
+      for (const [soundEffectKey, soundEffect] of sounds.entries()) {
+        soundEffect.pause();
+        sounds.delete(soundEffectKey);
+      }
+    }
+
+    const clearTimerHandles = () => {
+      for (const [timerHandleKey, timerHandle] of timerHandles.entries()) {
+        clearInterval(timerHandle);
+        timerHandles.delete(timerHandleKey);
+      }
+    }
+
+    const clearGameState = () => {
+      currentRowIndex.value = 0;
+      currentExampleIndex.value = 0;
+      currentSequenceItemIndex.value = 0;
+      completedRowsCount.value = 0;
+      currentExampleHead.value = 0;
+    }
+
+    const clearTimer = () => {
+      timerEnabled.value = false;
+      timerAbsolute.value = config.timerSecs;
+    }
+
+    const onRepeat = () => {
+      clearGameState();
+      displaySwiperCards();
+      clearSoundEffects();
+      clearTimerHandles();
+      clearTimer();
+
+      setTimeout(() => {
+        slideTo(0);
+      }, 500);
+    }
+
     // TODO: we should not use this function
     const normalizeSign = (n: BigInt) => n > 0 ? '+ ' + n : n;
 
@@ -367,7 +398,6 @@ export default defineComponent({
         slideNext();
       }, 1000);
     }
-
 
     function drawAbacus() {
       const abacusDraw = SVG()
@@ -419,8 +449,6 @@ export default defineComponent({
 
 
     return {
-      onSwiperTransitionEnd,
-
       abacusContainerRef,
       confettiRef,
       abacusValue,
@@ -430,9 +458,11 @@ export default defineComponent({
       attentionTexts,
       displayMode,
 
+      onSwiperTransitionEnd,
       onNextExample,
       onShowAgain,
       onShowAnswer,
+      onRepeat,
 
       sequence,
       config,
@@ -454,8 +484,6 @@ export default defineComponent({
 
       timerEnabled,
       timerClasses,
-      timerMins,
-      timerSecs,
 
       trophyClasses,
       gameScoresTextClasses,
