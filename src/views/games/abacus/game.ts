@@ -2,7 +2,6 @@ import {
   defineComponent,
   ref,
   onMounted,
-  watch,
   computed,
   Ref,
 } from "@vue/composition-api";
@@ -17,6 +16,11 @@ import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
 import confettiLib from 'canvas-confetti';
 
+import ControlButtonsDisplay from './displays/control-buttons-display.vue';
+import AnswerDisplay from './displays/answer-display.vue';
+import ScoresDisplay from './displays/scores-display.vue';
+import FlickingDisplay from './displays/flicking-display.vue';
+
 type TimerHandleKey = 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
@@ -27,16 +31,11 @@ const TIMER_LESS_TIME_SECS = 30;
 const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
-  components: {Swiper, SwiperSlide},
-  filters: {
-    timerFormat: (timerAbsolute: number) => {
-      const mins = parseInt((timerAbsolute / 60).toString(), 10);
-      const secs = parseInt((timerAbsolute % 60).toString(), 10);
-      const minsStr = mins < 10 ? "0" + mins : mins.toString()
-      const secsStr = secs < 10 ? "0" + secs : secs.toString();
-
-      return `${minsStr}:${secsStr}`;
-    }
+  components: {
+    Swiper, SwiperSlide,
+    ControlButtonsDisplay,
+    AnswerDisplay, ScoresDisplay,
+    FlickingDisplay
   },
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
@@ -390,8 +389,6 @@ export default defineComponent({
       }, 500);
     }
 
-    // TODO: we should not use this function
-    const normalizeSign = (n: BigInt) => n > 0 ? '+ ' + n : n;
 
     function startGame() {
       setTimeout(() => {
@@ -444,7 +441,7 @@ export default defineComponent({
 
     onMounted(() => {
       drawAbacus();
-      startGame();
+      //startGame();
     });
 
 
@@ -475,8 +472,6 @@ export default defineComponent({
 
       totalExamplesCount,
       totalRowsCount,
-
-      normalizeSign,
 
       canDisplayAbacus,
 

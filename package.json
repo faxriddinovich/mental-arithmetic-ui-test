@@ -25,6 +25,8 @@
     "@capacitor/ios": "^3.3.2",
     "@capacitor/splash-screen": "^1.2.0",
     "@capacitor/storage": "^1.2.3",
+    "@egjs/flicking-plugins": "^4.2.3",
+    "@egjs/vue-flicking": "^4.5.1",
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
     "@mental-arithmetic/themes": "file:../themes",
     "@svgdotjs/svg.js": "^3.1.1",

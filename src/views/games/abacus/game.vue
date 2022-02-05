@@ -32,8 +32,7 @@
             </span>
           </div>
           <b-button size="is-medium" active @click="onRepeat"
-            ><b-icon icon="refresh" class="m-0"/><span
-              class="is-hidden-mobile"
+            ><b-icon icon="refresh" class="m-0" /><span class="is-hidden-mobile"
               >Repeat</span
             ></b-button
           >
@@ -60,227 +59,39 @@
     <canvas class="is-confetti" ref="confettiRef" />
 
     <!-- display screen -->
-    <section class="hero is-fullheight">
-      <div class="hero-body is-justify-content-center p-0">
-        <div
-          v-show="displayMode === 'control-buttons'"
-          style="margin-bottom: 19em"
-        >
-          <div
-            class="
-              has-text-centered
-              is-size-4-touch is-size-2-desktop
-              mb-5
-              mx-4
-              has-text-weight-semibold
-            "
-          >
-            <span>Please solve the expressions sequentially</span>
-          </div>
-          <div class="buttons is-justify-content-center">
-            <b-button icon-left="redo" @click="onShowAgain"
-              >Show again</b-button
-            >
-            <b-button icon-left="align-left-justify" @click="onShowAnswer"
-              >Answer</b-button
-            >
-            <b-button
-              type="is-link"
-              icon-right="arrow-right"
-              @click="onNextExample"
-              >Next</b-button
-            >
-          </div>
-        </div>
+    <div v-if="displayMode === 'swiper-cards'" style="padding-top: 150px">
+    <flicking-display :sequence="sequence" />
+    </div>
 
-        <!-- answer display -->
-        <div
-          class="columns is-gapless is-centered"
-          style="min-width: 100%"
-          v-if="displayMode === 'answer'"
-        >
-          <div class="column is-5-fullhd is-three-quarters-desktop">
-            <div class="box mx-2">
-              <div class="is-size-3 has-text-weight-semibold has-text-centered">
-                <span
-                  v-for="(row, rowIndex) of currentExample.numbers"
-                  :key="rowIndex"
-                >
-                  {{ normalizeSign(row) }}&nbsp;
-                </span>
-                <div class="has-text-centered">
-                  <span class="has-text-success has-text-weight-bold is-size-2"
-                    >= {{ currentExample.answer }}</span
-                  >
-                </div>
-              </div>
+    <control-buttons-display
+      :onShowAgain="onShowAgain"
+      :onShowAnswer="onShowAnswer"
+      :onNextExample="onNextExample"
+      v-else-if="displayMode === 'control-buttons'"
+    />
 
-              <hr class="my-4" />
-              <div class="field is-grouped is-grouped-multiline">
-                <div
-                  class="control"
-                  v-for="(row, rowIndex) in currentExample.numbers.length - 1"
-                  :key="rowIndex"
-                >
-                  <div class="tags has-addons">
-                    <span class="tag is-medium"
-                      ><span class="has-text-weight-bold"
-                        >{{ currentExample.answerMap[rowIndex] }}&nbsp;</span
-                      >
-                      {{ normalizeSign(currentExample.numbers[rowIndex + 1]) }}
-                      =
-                    </span>
-                    <span class="tag is-primary is-medium">{{
-                      currentExample.answerMap[rowIndex + 1]
-                    }}</span>
-                  </div>
-                </div>
-              </div>
+    <answer-display
+      :example="currentExample"
+      :onShowAgain="onShowAgain"
+      :onNextExample="onNextExample"
+      v-else-if="displayMode === 'answer'"
+    />
 
-              <hr class="mt-0 mb-2" />
-              <div class="is-flex">
-                <b-button icon-left="redo" @click="onShowAgain" expanded
-                  >Show again</b-button
-                >
-                <b-button
-                  icon-right="arrow-right"
-                  class="ml-3"
-                  @click="onNextExample"
-                  expanded
-                  >Next example</b-button
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- end answer display -->
+    <scores-display
+      :wonTheGame="wonTheGame"
+      :completedRowsPercent="completedRowsPercent"
+      :completedRowsCount="completedRowsCount"
+      :totalExamplesCount="totalExamplesCount"
+      :totalRowsCount="totalRowsCount"
+      :trophyClasses="trophyClasses"
+      :gameScoresTextClasses="gameScoresTextClasses"
+      :timerSecs="config.timerSecs"
+      :timerAbsolute="timerAbsolute"
+      :onRepeat="onRepeat"
+      v-else-if="displayMode === 'scores'"
+    />
 
-        <!-- scores display -->
-        <div
-          class="columns is-gapless is-centered"
-          style="min-width: 100%"
-          v-else-if="displayMode === 'scores'"
-        >
-          <div class="column is-10-tablet is-7-desktop is-6-fullhd">
-            <div class="mx-2">
-              <div
-                class="box m-0 is-bordered"
-                style="
-                  width: 94%;
-                  margin: 0 auto -30px !important;
-                  background: rgb(241, 241, 241);
-                "
-              ></div>
-
-              <div
-                class="box m-0 is-bordered"
-                style="
-                  width: 97%;
-                  margin: 0 auto -30px !important;
-                  background: rgb(247, 247, 247);
-                "
-              ></div>
-
-              <div class="card p-1 is-bordered">
-                <img
-                  :class="trophyClasses"
-                  :src="require('@@/img/trophy.png')"
-                />
-                <div class="p-4">
-                  <div :class="gameScoresTextClasses">
-                    You {{ wonTheGame ? "won" : "lost" }}!
-                  </div>
-
-                  <b-progress
-                    size="is-medium"
-                    :type="wonTheGame ? 'is-success' : 'is-danger'"
-                    :value="completedRowsPercent"
-                    format="percent"
-                    show-value
-                  >
-                  </b-progress>
-                  <nav class="level is-mobile">
-                    <div class="level-item has-text-centered">
-                      <div>
-                        <p class="heading">Completed rows</p>
-                        <p class="title">
-                          {{ completedRowsCount }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="level-item has-text-centered">
-                      <div>
-                        <p class="heading">Spent time</p>
-                        <p class="title">
-                          {{ (config.timerSecs - timerAbsolute) | timerFormat }}
-                        </p>
-                      </div>
-                    </div>
-                    <div class="level-item has-text-centered">
-                      <div>
-                        <p class="heading">Total time</p>
-                        <p class="title">
-                          {{ config.timerSecs | timerFormat }}
-                        </p>
-                      </div>
-                    </div>
-                  </nav>
-                  <span class="is-dotted">
-                    <span class="is-left is-size-5-tablet mr-3"
-                      >Total examples:</span
-                    >
-                    <span class="is-dots"></span>
-                    <span
-                      class="
-                        is-right is-size-5-mobile is-size-4-tablet
-                        has-text-weight-bold
-                        ml-2
-                      "
-                      >{{ totalExamplesCount }}</span
-                    >
-                  </span>
-
-                  <span class="is-dotted">
-                    <span class="is-left is-size-5-tablet mr-3"
-                      >Total rows:</span
-                    >
-                    <span class="is-dots"></span>
-                    <span
-                      class="
-                        is-right is-size-5-mobile is-size-4-tablet
-                        has-text-weight-bold
-                        ml-2
-                      "
-                      >{{ totalRowsCount }}</span
-                    >
-                  </span>
-
-                  <hr />
-                  <div class="is-flex">
-                    <b-button
-                      tag="router-link"
-                      :to="{ name: 'AbacusGameForm' }"
-                      icon-left="arrow-left"
-                      expanded
-                      active
-                      >Back</b-button
-                    >
-                    <b-button
-                      class="ml-2"
-                      icon-left="refresh"
-                      @click="onRepeat"
-                      expanded
-                      active
-                      >Repeat</b-button
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- end scores display -->
-
+    <!--
         <swiper
           class="swiper"
           ref="swiperRef"
@@ -324,8 +135,6 @@
                   :data-ri="rowIndex"
                 >
                   <svg
-                    width="100%"
-                    height="100%"
                     :viewBox="`0 0 ${viewBoxWidthMap[4]} 10`"
                     v-if="sequenceItem.displayNumbers"
                   >
@@ -346,8 +155,7 @@
             </template>
           </template>
         </swiper>
-      </div>
-    </section>
+        -->
     <!-- end display screen -->
   </div>
 </template>
@@ -355,10 +163,50 @@
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
+.flicking-viewport {
+  //
+}
+
+.flicking-panel {
+}
+
+.swiper-container {
+  margin-bottom: 22em;
+  padding-bottom: 10px;
+}
+
+.swiper {
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 15px;
+    font-weight: bold;
+  }
+
+  .swiper-slide-active {
+    width: 100%;
+    padding: 10px;
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
+      inset -5px -5px 5px rgba(255, 255, 255, 0.5),
+      5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
+
+    svg {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      background: #6c5ce7;
+      //background: #e84393;
+    }
+  }
+}
+
+/*
 .swiper {
   width: 90%;
-  height: 15em;
+  height: 16em;
   margin-bottom: 20em;
+  padding: 5px;
 
   .swiper-slide {
     display: flex;
@@ -366,16 +214,19 @@
     align-items: center;
     text-align: center;
     font-weight: bold;
-    background-color: rgba(26, 188, 156, 0.1);
-    border-radius: 20px;
+    border-radius: 15px;
     color: white;
   }
 
   .swiper-slide-active {
-    background-color: #1abc9c;
-    box-shadow: 0px 0px 100px -13px rgba(0, 0, 0, 0.14) inset;
-    -webkit-box-shadow: 0px -1px 100px -13px rgba(0, 0, 0, 0.14) inset;
-    -moz-box-shadow: 0px -1px 100px -13px rgba(0, 0, 0, 0.14) inset;
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
+      inset -5px -5px 5px rgba(255, 255, 255, 0.5),
+      5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
+  }
+
+  .swiper-slide-active > svg {
+    margin: 10px;
+    background-color: rgba(26, 188, 156, 0.1);
   }
 
   .is-attention-text {
@@ -387,15 +238,12 @@
     background-color: rgb(230, 126, 34);
   }
 }
+*/
 
 .is-abacus-board {
   position: absolute;
   max-width: 650px;
   bottom: 0;
-}
-
-.is-abacus-game-timer {
-  position: absolute;
 }
 
 img.is-trophy {
