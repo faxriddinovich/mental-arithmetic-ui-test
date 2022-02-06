@@ -1,4 +1,5 @@
 <template>
+  <!-- FIXME: VIEWPORT CALCULATIONS MUST BE FIXED IN THE FUTURE -->
   <svg :viewBox="`0 0 ${text.length * 33} 60`">
     <text
       dominant-baseline="middle"
@@ -22,9 +23,6 @@ export default defineComponent({
       type: String,
       required: true,
     },
-  },
-  setup() {
-  //
   },
 });
 </script>

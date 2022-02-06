@@ -5,25 +5,25 @@ import {
   computed,
   Ref,
 } from "@vue/composition-api";
-import VueComponent from "vue";
 import {SVG} from "@svgdotjs/svg.js";
 import {AbacusBoard} from "./board";
-import {Swiper, SwiperSlide} from "vue-awesome-swiper";
-import "swiper/css/swiper.css";
 import {AbacusGameConfig} from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import {SequenceItem} from "@/views/games/abacus/interfaces";
 import confettiLib from 'canvas-confetti';
 
+import ScalableText from '@/components/scalable-text.vue';
+import "@egjs/vue-flicking/dist/flicking.css";
+import { Flicking, FlickingOptions } from '@egjs/vue-flicking';
+
 import ControlButtonsDisplay from './displays/control-buttons-display.vue';
 import AnswerDisplay from './displays/answer-display.vue';
 import ScoresDisplay from './displays/scores-display.vue';
-import FlickingDisplay from './displays/flicking-display.vue';
 
 type TimerHandleKey = 'rows-timer-handle';
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
-type DisplayMode = "answer" | "swiper-cards" | "control-buttons" | "scores";
+type DisplayMode = "answer" | "cards" | "control-buttons" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
@@ -32,15 +32,20 @@ const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
   components: {
-    Swiper, SwiperSlide,
+    Flicking,
+    ScalableText,
+
     ControlButtonsDisplay,
-    AnswerDisplay, ScoresDisplay,
-    FlickingDisplay
+    AnswerDisplay, ScoresDisplay
   },
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
-    const swiperRef = ref<VueComponent>();
+    const flickingRef = ref<Flicking>();
+    const flickingOptions = ref<Partial<FlickingOptions>>({
+      align: 'center',
+      renderOnlyVisible: true
+    });
 
     const abacusValue = ref<number>(0);
     const abacusBoard = new AbacusBoard(6);
@@ -63,9 +68,9 @@ export default defineComponent({
       return v(completedRowsCount) / v(totalRowsCount) * 100;
     });
 
-    const attentionTexts = ["Ready?", "Go!"];
+    const attentionTexts = ref(["Good luck!"]);
 
-    const displayMode = ref<DisplayMode>("swiper-cards");
+    const displayMode = ref<DisplayMode>("cards");
 
     const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
     const timerHandles = new Map<TimerHandleKey, NodeJS.Timer>();
@@ -110,6 +115,7 @@ export default defineComponent({
     const currentExampleIndex = ref<number>(0);
     const currentRowIndex = ref<number>(0);
 
+    /*
     const onSwiperTransitionEnd = () => {
       const activeIndex = (swiperRef.value as any).$swiper
         .activeIndex as number;
@@ -151,6 +157,7 @@ export default defineComponent({
           currentRowIndex.value = parse(dataset.ri!);
       }
     };
+    */
 
     const trophyClasses = computed<string[]>(() => {
       const classes = ['is-block', 'is-trophy'];
@@ -229,7 +236,7 @@ export default defineComponent({
 
 
     const displayControlButtons = () => (displayMode.value = "control-buttons");
-    const displaySwiperCards = () => (displayMode.value = "swiper-cards");
+    const displaySwiperCards = () => (displayMode.value = "cards");
     const displayScores = () => (displayMode.value = "scores");
     const displayAnswer = () => (displayMode.value = "answer");
 
@@ -243,7 +250,7 @@ export default defineComponent({
     }
 
     const canDisplayAbacus = computed(() => {
-      return ['swiper-cards', 'control-buttons'].includes(v(displayMode));
+      return ['cards', 'control-buttons'].includes(v(displayMode));
     });
 
     const playTimerSoundEffect = (loop = true) => {
@@ -271,28 +278,6 @@ export default defineComponent({
       7: 46,
     });
 
-    const swiperOptions = ref({
-      //slidesPerView: 4,
-      allowTouchMove: false,
-      slidesPerView: "auto",
-      spaceBetween: 30,
-      centeredSlides: true,
-      breakpoints: {
-        1024: {
-          slidesPerView: 3,
-          spaceBetween: 20,
-        },
-        768: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-        320: {
-          slidesPerView: 1,
-          spaceBetween: 10,
-        },
-      },
-    });
-
     function enableTimer() {
       timerEnabled.value = true;
       timerHandles.set(
@@ -318,11 +303,11 @@ export default defineComponent({
     }
 
     function slideNext(ms = 200) {
-      (swiperRef.value as any).$swiper.slideNext(ms);
+      flickingRef.value!.next(ms);
     }
 
     function slideTo(index: number, ms = 200) {
-      (swiperRef.value as any).$swiper.slideTo(index, ms);
+      flickingRef.value!.moveTo(index, ms);
     }
 
     function onNextExample() {
@@ -332,14 +317,14 @@ export default defineComponent({
         return;
       }
 
-      displaySwiperCards();
+      displayCards();
       setTimeout(() => {
         slideNext();
       }, 500);
     }
 
     function onShowAgain() {
-      displaySwiperCards();
+      displayCards();
 
       setTimeout(() => {
         slideTo(v(currentExampleHead));
@@ -379,7 +364,7 @@ export default defineComponent({
 
     const onRepeat = () => {
       clearGameState();
-      displaySwiperCards();
+      displayCards();
       clearSoundEffects();
       clearTimerHandles();
       clearTimer();
@@ -425,7 +410,7 @@ export default defineComponent({
 
           if (lastRowItem) {
             currentRowIndex.value = 0;
-            displaySwiperCards();
+            displayCards();
             setTimeout(() => {
               slideNext();
             }, 500);
@@ -448,14 +433,13 @@ export default defineComponent({
     return {
       abacusContainerRef,
       confettiRef,
+      flickingRef,
+      flickingOptions,
       abacusValue,
-      swiperOptions,
-      swiperRef,
       viewBoxWidthMap,
       attentionTexts,
       displayMode,
 
-      onSwiperTransitionEnd,
       onNextExample,
       onShowAgain,
       onShowAnswer,

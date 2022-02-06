@@ -58,10 +58,55 @@
     <!-- confetti screen -->
     <canvas class="is-confetti" ref="confettiRef" />
 
-    <!-- display screen -->
-    <div v-if="displayMode === 'swiper-cards'" style="padding-top: 150px">
-    <flicking-display :sequence="sequence" />
-    </div>
+    <!-- cards screen -->
+    <Flicking
+      :options="flickingOptions"
+      ref="flickingRef"
+      class="flicking"
+      v-if="displayMode === 'cards'"
+      style="padding-top: 120px"
+    >
+      <div
+        class="flicking-panel"
+        v-for="(text, index) of attentionTexts"
+        :key="index"
+      >
+        <div class="is-attention-text">
+          <scalable-text :text="text" class="is-full-size" />
+        </div>
+      </div>
+
+      <template v-for="(sequenceItem, sequenceIndex) in sequence">
+        <div class="flicking-panel" :key="'s' + sequenceIndex">
+          <div class="is-attention-text">
+            <scalable-text
+              :text="'Theme ' + sequenceItem.theme"
+              class="is-full-size"
+            />
+          </div>
+        </div>
+
+        <template v-for="(example, exampleIndex) in sequenceItem.examples">
+          <div class="flicking-panel" :key="'e' + exampleIndex">
+            <div class="is-attention-text">
+              <scalable-text
+                :text="'Example ' + (exampleIndex + 1)"
+                class="is-full-size"
+              />
+            </div>
+          </div>
+
+          <template v-for="(row, rowIndex) in example.numbers">
+            <div class="flicking-panel" :key="exampleIndex + '-' + rowIndex">
+              <div>
+                <scalable-text :text="String(row)" class="is-full-size" />
+              </div>
+            </div>
+          </template>
+        </template>
+      </template>
+    </Flicking>
+    <!-- end cards screen -->
 
     <control-buttons-display
       :onShowAgain="onShowAgain"
@@ -90,82 +135,84 @@
       :onRepeat="onRepeat"
       v-else-if="displayMode === 'scores'"
     />
-
   </div>
 </template>
 <script lang="ts" src="./game.ts"></script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
 
-.swiper-container {
-  margin-bottom: 22em;
-  padding-bottom: 10px;
+.flicking-camera {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  z-index: 1;
 }
 
-.swiper {
-  .swiper-slide {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    border-radius: 15px;
-    font-weight: bold;
+.flicking-viewport {
+  width: 100%;
+}
+
+@include mobile {
+  .flicking-viewport {
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
-  .swiper-slide-active {
-    width: 100%;
-    padding: 10px;
-    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
-      inset -5px -5px 5px rgba(255, 255, 255, 0.5),
-      5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
-
-    svg {
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      border-radius: 15px;
-      background: #6c5ce7;
-      //background: #e84393;
-    }
+  .flicking-panel {
+    width: 100% !important;
   }
 }
 
-/*
-.swiper {
-  width: 90%;
-  height: 16em;
-  margin-bottom: 20em;
-  padding: 5px;
-
-  .swiper-slide {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 15px;
-    color: white;
+@include tablet {
+  .flicking-panel {
+    width: 50% !important;
   }
+}
 
-  .swiper-slide-active {
-    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
-      inset -5px -5px 5px rgba(255, 255, 255, 0.5),
-      5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
+@include desktop {
+  .flicking-panel {
+    width: 30% !important;
   }
+}
 
-  .swiper-slide-active > svg {
-    margin: 10px;
-    background-color: rgba(26, 188, 156, 0.1);
-  }
+.flicking-camera {
+  margin-bottom: 10px;
+}
+
+.flicking-panel.active {
+  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
+    inset -5px -5px 5px rgba(255, 255, 255, 0.5),
+    5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
+}
+
+.flicking-panel {
+  color: white;
+  width: 30%;
+  height: 250px;
+  border-radius: 5px;
+  margin-right: 15px;
+  position: relative;
+  padding: 10px;
+  margin-top: 10px;
 
   .is-attention-text {
-    background-color: rgba(230, 126, 34, 0.1);
-    font-size: 5em;
+    background: #fdcb6e;
   }
 
-  .swiper-slide-active.is-attention-text {
-    background-color: rgb(230, 126, 34);
+  div {
+    background: #6c5ce7;
+    height: 100%;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
   }
 }
-*/
 
 .is-abacus-board {
   position: absolute;
