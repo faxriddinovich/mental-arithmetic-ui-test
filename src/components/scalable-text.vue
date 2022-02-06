@@ -1,18 +1,15 @@
 <template>
-  <svg
-    width="100%"
-    height="100%"
-    :viewBox="`0 0 ${viewBoxWidthMap[number.length]} 10`"
-  >
+  <svg :viewBox="`0 0 ${text.length * 33} 60`">
     <text
+      dominant-baseline="middle"
+      text-anchor="middle"
       x="50%"
       y="50%"
-      font-size="10"
+      dy="5px"
+      font-size="50"
       fill="#fff"
-      text-anchor="middle"
-      dominant-baseline="middle"
     >
-      {{ number }}
+      {{ text }}
     </text>
   </svg>
 </template>
@@ -25,12 +22,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    width: {
-      type: Number,
-      required: true,
-    },
   },
-  setup() {},
+  setup() {
+  //
+  },
 });
 </script>
 

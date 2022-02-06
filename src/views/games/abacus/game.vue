@@ -91,84 +91,11 @@
       v-else-if="displayMode === 'scores'"
     />
 
-    <!--
-        <swiper
-          class="swiper"
-          ref="swiperRef"
-          :options="swiperOptions"
-          :auto-destroy="true"
-          :auto-update="false"
-          :delete-instance-on-destroy="true"
-          :cleanup-styles-on-destroy="true"
-          @slideChangeTransitionEnd="onSwiperTransitionEnd"
-          v-show="displayMode === 'swiper-cards'"
-        >
-          <swiper-slide
-            data-at="true"
-            class="is-attention-text"
-            v-for="(text, index) of attentionTexts"
-            :key="'a' + index"
-            >{{ text }}</swiper-slide
-          >
-
-          <template v-for="(sequenceItem, sequenceIndex) in sequence">
-            <swiper-slide
-              :data-at="true"
-              :data-si="sequenceIndex"
-              class="is-attention-text"
-              :key="sequenceIndex + '-sequence-item'"
-              >{{ sequenceItem.theme }}</swiper-slide
-            >
-            <template v-for="(example, exampleIndex) in sequenceItem.examples">
-              <swiper-slide
-                data-at="true"
-                :key="exampleIndex + '-header'"
-                class="is-attention-text"
-              >
-                Example {{ exampleIndex + 1 }}
-              </swiper-slide>
-              <template v-for="(row, rowIndex) in example.numbers">
-                <swiper-slide
-                  :key="exampleIndex + '-' + rowIndex"
-                  :data-si="sequenceIndex"
-                  :data-ei="exampleIndex"
-                  :data-ri="rowIndex"
-                >
-                  <svg
-                    :viewBox="`0 0 ${viewBoxWidthMap[4]} 10`"
-                    v-if="sequenceItem.displayNumbers"
-                  >
-                    <text
-                      x="50%"
-                      y="50%"
-                      font-size="10"
-                      fill="#fff"
-                      text-anchor="middle"
-                      dominant-baseline="middle"
-                    >
-                      {{ row }}
-                    </text>
-                  </svg>
-                  <b-icon icon="volume" size="is-large" v-else />
-                </swiper-slide>
-              </template>
-            </template>
-          </template>
-        </swiper>
-        -->
-    <!-- end display screen -->
   </div>
 </template>
 <script lang="ts" src="./game.ts"></script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
-
-.flicking-viewport {
-  //
-}
-
-.flicking-panel {
-}
 
 .swiper-container {
   margin-bottom: 22em;

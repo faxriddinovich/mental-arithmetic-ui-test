@@ -11,23 +11,35 @@
       v-for="(text, index) of attentionTexts"
       :key="index"
     >
-      <div class="is-attention-text is-size-1">{{ text }}</div>
+      <div class="is-attention-text">
+        <scalable-text :text="text" class="is-full-size" />
+      </div>
     </div>
 
     <template v-for="(sequenceItem, sequenceIndex) in sequence">
       <div class="flicking-panel" :key="'s' + sequenceIndex">
-        <div>{{ sequenceIndex }}</div>
+        <div class="is-attention-text">
+          <scalable-text
+            :text="'Theme ' + sequenceItem.theme"
+            class="is-full-size"
+          />
+        </div>
       </div>
 
       <template v-for="(example, exampleIndex) in sequenceItem.examples">
         <div class="flicking-panel" :key="'e' + exampleIndex">
-          <div>{{ exampleIndex }}</div>
+          <div class="is-attention-text">
+            <scalable-text
+              :text="'Example ' + (exampleIndex + 1)"
+              class="is-full-size"
+            />
+          </div>
         </div>
 
         <template v-for="(row, rowIndex) in example.numbers">
           <div class="flicking-panel" :key="exampleIndex + '-' + rowIndex">
             <div>
-              {{ row }}
+              <scalable-text :text="String(row)" class="is-full-size" />
             </div>
           </div>
         </template>
@@ -39,15 +51,16 @@
 import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import "@egjs/vue-flicking/dist/flicking.css";
 import { Flicking } from "@egjs/vue-flicking";
+import ScalableText from "@/components/scalable-text.vue";
 
 export default defineComponent({
   props: {
     sequence: { type: Array, required: true },
   },
-  components: { Flicking },
+  components: { ScalableText, Flicking },
   setup() {
     const flickingRef = ref<Flicking>();
-    const attentionTexts = ref(["Ready?", "Go!"]);
+    const attentionTexts = ref(["Good luck!"]);
 
     onMounted(() => {
       flickingRef.value!.on("moveStart", () => {
