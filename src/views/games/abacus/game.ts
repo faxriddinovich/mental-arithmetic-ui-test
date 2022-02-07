@@ -16,6 +16,9 @@ import confettiLib from "canvas-confetti";
 import ScalableText from "@/components/scalable-text.vue";
 import "@egjs/vue-flicking/dist/flicking.css";
 import { Flicking, FlickingOptions, ChangedEvent } from "@egjs/vue-flicking";
+import { speak } from "@/services/tts";
+
+import StackedCards from "@/components/stacked-cards.vue";
 
 type TimerHandleKey = "rows-timer-handle";
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
@@ -30,6 +33,7 @@ export default defineComponent({
   components: {
     Flicking,
     ScalableText,
+    StackedCards,
   },
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
@@ -104,6 +108,16 @@ export default defineComponent({
       return i;
     });
 
+    function speechSpeak(text: string | number) {
+      const speechRate =
+        v(currentSequenceItem)!.rowsTimeout >= 1
+          ? 1
+          : 1 + v(currentSequenceItem)!.rowsTimeout + String(text).length / 2;
+      const voiceIdentity =
+        context.root.$store.getters["Settings/get"]("ttsVoiceIdentity");
+      speak(text, speechRate, voiceIdentity);
+    }
+
     const completeRow = () => {
       completedRowsCount.value++;
     };
@@ -130,6 +144,9 @@ export default defineComponent({
         if (parse(dataset.ri) === 0) currentExampleHead.value = activeIndex;
 
         if (parse(dataset.ri) === 0 && !v(timerEnabled)) enableTimer();
+
+        if(v(currentSequenceItem).speechSound)
+          speechSpeak(String(dataset.rv));
 
         if (!config.waitForAnswer) {
           if (parse(dataset.ri) + 1 === v(currentExample).numbers.length) {
@@ -264,7 +281,6 @@ export default defineComponent({
       timerHandles.set(
         "rows-timer-handle",
         setInterval(() => {
-          console.log('idle');
           if (v(timerAbsolute) > 0) {
             timerAbsolute.value -= 1;
           }

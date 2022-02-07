@@ -64,7 +64,6 @@
       ref="flickingRef"
       @changed="onCardChanged"
       v-show="displayMode === 'cards'"
-      style="padding-top: 120px"
     >
       <div
         class="flicking-panel"
@@ -80,7 +79,7 @@
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
         <div
           class="flicking-panel"
-          :key="'s' + sequenceIndex"
+          :key="'s-' + sequenceIndex"
           :data-at="true"
           :data-si="sequenceIndex"
         >
@@ -90,7 +89,11 @@
         </div>
 
         <template v-for="(example, exampleIndex) in sequenceItem.examples">
-          <div class="flicking-panel" :key="'e' + exampleIndex" :data-at="true">
+          <div
+            class="flicking-panel"
+            :key="'e-' + sequenceIndex + '-' + exampleIndex"
+            :data-at="true"
+          >
             <div class="is-attention-text">
               <scalable-text
                 :text="'Example ' + (exampleIndex + 1)"
@@ -102,13 +105,23 @@
           <template v-for="(row, rowIndex) in example.numbers">
             <div
               class="flicking-panel"
-              :key="exampleIndex + '-' + rowIndex"
+              :key="'r-' + sequenceIndex + '-' + exampleIndex + '-' + rowIndex"
               :data-si="sequenceIndex"
               :data-ei="exampleIndex"
               :data-ri="rowIndex"
+              :data-rv="row"
             >
-              <div>
-                <scalable-text :text="String(row)" class="is-full-size" />
+              <div :class="`is-${sequenceItem.fontColor}-bg-color`">
+                <b-icon
+                  icon="volume"
+                  size="is-large"
+                  v-if="sequenceItem.speechSound"
+                />
+                <scalable-text
+                  :text="String(row)"
+                  class="is-full-size"
+                  v-else
+                />
               </div>
             </div>
           </template>
@@ -210,25 +223,7 @@
         <div class="columns is-gapless is-centered" style="min-width: 100%">
           <div class="column is-10-tablet is-7-desktop is-6-fullhd">
             <div class="mx-2">
-              <div
-                class="box m-0 is-bordered"
-                style="
-                  width: 94%;
-                  margin: 0 auto -30px !important;
-                  background: rgb(241, 241, 241);
-                "
-              ></div>
-
-              <div
-                class="box m-0 is-bordered"
-                style="
-                  width: 97%;
-                  margin: 0 auto -30px !important;
-                  background: rgb(247, 247, 247);
-                "
-              ></div>
-
-              <div class="card p-1 is-bordered">
+              <stacked-cards :count="2">
                 <img
                   :class="trophyClasses"
                   :src="require('@@/img/trophy.png')"
@@ -322,7 +317,7 @@
                     >
                   </div>
                 </div>
-              </div>
+              </stacked-cards>
             </div>
           </div>
         </div>
@@ -343,11 +338,12 @@
   height: 100%;
   position: relative;
   width: 100%;
-  z-index: 1;
 }
 
 .flicking-viewport {
+  padding-top: 120px;
   width: 100%;
+         pointer-events: none;
 }
 
 @include mobile {
@@ -398,7 +394,7 @@
   }
 
   div {
-    background: #6c5ce7;
+    //background: #6c5ce7;
     height: 100%;
     border-radius: 5px;
 
