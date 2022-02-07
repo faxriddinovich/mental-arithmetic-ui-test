@@ -38,6 +38,9 @@ export default defineComponent({
     const flickingOptions = ref<Partial<FlickingOptions>>({
       align: "center",
       renderOnlyVisible: true,
+      disableOnInit: true,
+      // bug
+      autoResize: false,
     });
 
     const abacusValue = ref<number>(0);
@@ -261,6 +264,7 @@ export default defineComponent({
       timerHandles.set(
         "rows-timer-handle",
         setInterval(() => {
+          console.log('idle');
           if (v(timerAbsolute) > 0) {
             timerAbsolute.value -= 1;
           }
@@ -273,7 +277,6 @@ export default defineComponent({
 
             playWhistleSoundEffect();
             finishGame();
-            clearInterval(timerHandles.get("rows-timer-handle")!);
           }
         }, 1000)
       );
@@ -290,6 +293,7 @@ export default defineComponent({
     function onNextExample() {
       // TODO better solution
       if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
+        console.log(1);
         finishGame();
         return;
       }
@@ -382,15 +386,16 @@ export default defineComponent({
         }
 
         if (!config.waitForAnswer) {
-          currentRowIndex.value++;
-
-          if (lastRowItem) {
+          if (v(lastRowItem)) {
             currentRowIndex.value = 0;
             displayCards();
             setTimeout(() => {
               slideNext();
             }, 500);
+            return;
           }
+
+          currentRowIndex.value++;
           return;
         }
 

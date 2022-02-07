@@ -3,7 +3,7 @@
     <!-- controls bar -->
     <section
       class="card is-bordered is-controls-bar"
-      v-show="displayMode !== 'scores'"
+      v-if="displayMode !== 'scores'"
     >
       <div class="p-2">
         <div
@@ -63,8 +63,7 @@
       :options="flickingOptions"
       ref="flickingRef"
       @changed="onCardChanged"
-      class="flicking"
-      v-if="displayMode === 'cards'"
+      v-show="displayMode === 'cards'"
       style="padding-top: 120px"
     >
       <div
@@ -119,7 +118,7 @@
     <!-- end cards display -->
 
     <!-- wait display -->
-    <section style="padding-top: 160px" v-else-if="displayMode === 'wait'">
+    <section style="padding-top: 160px" v-if="displayMode === 'wait'">
       <div
         class="
           has-text-centered
@@ -336,6 +335,7 @@
 <script lang="ts" src="./game.ts"></script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
+@import "./node_modules/@egjs/vue-flicking/dist/flicking";
 
 .flicking-camera {
   display: flex;
