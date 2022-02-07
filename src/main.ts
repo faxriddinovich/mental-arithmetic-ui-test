@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Buefy from "buefy";
-import {isMobile} from '@/services/platform';
-import {SplashScreen} from '@capacitor/splash-screen';
+import { isMobile } from "@/services/platform";
+import { SplashScreen } from "@capacitor/splash-screen";
 //
 import VueCompositionAPI from "@vue/composition-api";
 
@@ -16,8 +16,6 @@ import i18n from "./i18n";
 import store from "./store";
 
 import "./styles/styles.scss";
-
-import {SettingsStorage} from "@/services/storages/settings";
 
 const buefyOptions = {
   defaultIconPack: "uil",
@@ -64,13 +62,17 @@ Vue.use(Buefy, buefyOptions);
 Vue.config.productionTip = false;
 
 // FIXME: move me
-Vue.filter('timerFormat', (timerAbsolute: number) => {
+Vue.filter("timerFormat", (timerAbsolute: number) => {
   const mins = parseInt((timerAbsolute / 60).toString(), 10);
   const secs = parseInt((timerAbsolute % 60).toString(), 10);
-  const minsStr = mins < 10 ? "0" + mins : mins.toString()
+  const minsStr = mins < 10 ? "0" + mins : mins.toString();
   const secsStr = secs < 10 ? "0" + secs : secs.toString();
 
   return `${minsStr}:${secsStr}`;
+});
+
+Vue.filter("normalizeSign", (n: BigInt | number) => {
+  return n > 0 ? "+ " + n : n;
 });
 
 new Vue({
@@ -79,7 +81,6 @@ new Vue({
   i18n,
   render: (h) => h(App),
   mounted() {
-    if (isMobile())
-      SplashScreen.hide();
+    if (isMobile()) SplashScreen.hide();
   },
 }).$mount("#app");

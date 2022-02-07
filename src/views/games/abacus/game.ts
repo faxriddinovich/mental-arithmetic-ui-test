@@ -5,25 +5,21 @@ import {
   computed,
   Ref,
 } from "@vue/composition-api";
-import {SVG} from "@svgdotjs/svg.js";
-import {AbacusBoard} from "./board";
-import {AbacusGameConfig} from "@/views/games/abacus/interfaces";
+import { SVG } from "@svgdotjs/svg.js";
+import { AbacusBoard } from "./board";
+import { AbacusGameConfig } from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
-import {SequenceItem} from "@/views/games/abacus/interfaces";
-import confettiLib from 'canvas-confetti';
+import { SequenceItem } from "@/views/games/abacus/interfaces";
+import confettiLib from "canvas-confetti";
 
-import ScalableText from '@/components/scalable-text.vue';
+import ScalableText from "@/components/scalable-text.vue";
 import "@egjs/vue-flicking/dist/flicking.css";
-import { Flicking, FlickingOptions } from '@egjs/vue-flicking';
+import { Flicking, FlickingOptions, ChangedEvent } from "@egjs/vue-flicking";
 
-import ControlButtonsDisplay from './displays/control-buttons-display.vue';
-import AnswerDisplay from './displays/answer-display.vue';
-import ScoresDisplay from './displays/scores-display.vue';
-
-type TimerHandleKey = 'rows-timer-handle';
+type TimerHandleKey = "rows-timer-handle";
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
-type DisplayMode = "answer" | "cards" | "control-buttons" | "scores";
+type DisplayMode = "answer" | "cards" | "wait" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
@@ -34,17 +30,14 @@ export default defineComponent({
   components: {
     Flicking,
     ScalableText,
-
-    ControlButtonsDisplay,
-    AnswerDisplay, ScoresDisplay
   },
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
     const flickingRef = ref<Flicking>();
     const flickingOptions = ref<Partial<FlickingOptions>>({
-      align: 'center',
-      renderOnlyVisible: true
+      align: "center",
+      renderOnlyVisible: true,
     });
 
     const abacusValue = ref<number>(0);
@@ -57,7 +50,10 @@ export default defineComponent({
     const sequence = ref<SequenceItem[]>(config.sequence);
 
     const wonTheGame = computed<boolean>(() => {
-      return (v(completedRowsCount) / v(totalRowsCount) * 100) >= MIN_ROWS_PERCENT_TO_WIN;
+      return (
+        (v(completedRowsCount) / v(totalRowsCount)) * 100 >=
+        MIN_ROWS_PERCENT_TO_WIN
+      );
     });
 
     const timerEnabled = ref<boolean>(false);
@@ -65,7 +61,7 @@ export default defineComponent({
 
     const completedRowsCount = ref<number>(0);
     const completedRowsPercent = computed<number>(() => {
-      return v(completedRowsCount) / v(totalRowsCount) * 100;
+      return (v(completedRowsCount) / v(totalRowsCount)) * 100;
     });
 
     const attentionTexts = ref(["Good luck!"]);
@@ -80,7 +76,7 @@ export default defineComponent({
     });
 
     const currentExample = computed(() => {
-      if (!(v(currentSequenceItem))) return null;
+      if (!v(currentSequenceItem)) return null;
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
     });
 
@@ -91,8 +87,7 @@ export default defineComponent({
 
     const totalExamplesCount = computed<number>(() => {
       let i = 0;
-      for (const sequenceItem of v(sequence))
-        i += sequenceItem.examplesCount;
+      for (const sequenceItem of v(sequence)) i += sequenceItem.examplesCount;
 
       return i;
     });
@@ -108,20 +103,18 @@ export default defineComponent({
 
     const completeRow = () => {
       completedRowsCount.value++;
-    }
+    };
 
     const currentExampleHead = ref<number>(0);
     const currentSequenceItemIndex = ref<number>(0);
     const currentExampleIndex = ref<number>(0);
     const currentRowIndex = ref<number>(0);
 
-    /*
-    const onSwiperTransitionEnd = () => {
-      const activeIndex = (swiperRef.value as any).$swiper
-        .activeIndex as number;
-      const currentSlide = (
-        (swiperRef.value as any).$swiper.slides as HTMLElement[]
-      )[activeIndex];
+    const onCardChanged = (event: ChangedEvent) => {
+      const { currentPanel } = event.currentTarget;
+      const activeIndex = currentPanel.index;
+
+      const currentSlide = currentPanel.element;
       const dataset = currentSlide.dataset;
 
       if (dataset.at) {
@@ -129,19 +122,16 @@ export default defineComponent({
           slideNext();
         }, 200);
       } else if (dataset.ri) {
-        if (parse(dataset.ri) === 0)
-          abacusBoard.reset();
+        if (parse(dataset.ri) === 0) abacusBoard.reset();
 
-        if (parse(dataset.ri) === 0)
-          currentExampleHead.value = activeIndex;
+        if (parse(dataset.ri) === 0) currentExampleHead.value = activeIndex;
 
-        if (parse(dataset.ri) === 0 && !v(timerEnabled))
-          enableTimer();
+        if (parse(dataset.ri) === 0 && !v(timerEnabled)) enableTimer();
 
         if (!config.waitForAnswer) {
-          if ((parse(dataset.ri) + 1) === v(currentExample).numbers.length) {
+          if (parse(dataset.ri) + 1 === v(currentExample).numbers.length) {
             setTimeout(() => {
-              displayControlButtons();
+              displayWait();
             }, 500);
           } else {
             setTimeout(() => {
@@ -153,28 +143,27 @@ export default defineComponent({
         currentSequenceItemIndex.value = parse(dataset.si!);
         currentExampleIndex.value = parse(dataset.ei!);
 
-        if (config.waitForAnswer)
-          currentRowIndex.value = parse(dataset.ri!);
+        if (config.waitForAnswer) currentRowIndex.value = parse(dataset.ri!);
       }
     };
-    */
 
     const trophyClasses = computed<string[]>(() => {
-      const classes = ['is-block', 'is-trophy'];
+      const classes = ["is-block", "is-trophy"];
 
-      if (!v(wonTheGame))
-        classes.push('is-lost');
+      if (!v(wonTheGame)) classes.push("is-lost");
 
       return classes;
     });
 
     const gameScoresTextClasses = computed<string[]>(() => {
-      const classes = [' has-text-centered', 'is-size-1', 'has-text-weight-bold'];
+      const classes = [
+        " has-text-centered",
+        "is-size-1",
+        "has-text-weight-bold",
+      ];
 
-      if (v(wonTheGame))
-        classes.push('has-text-success');
-      else
-        classes.push('has-text-danger');
+      if (v(wonTheGame)) classes.push("has-text-success");
+      else classes.push("has-text-danger");
 
       return classes;
     });
@@ -217,40 +206,38 @@ export default defineComponent({
     const playConfettiAnimation = () => {
       const confetti = confettiLib.create(confettiRef.value!, {
         resize: true,
-        useWorker: true
+        useWorker: true,
       });
 
       confetti({
         particleCount: 200,
         angle: 60,
         spread: 55,
-        origin: {x: 0},
+        origin: { x: 0 },
       });
       confetti({
         particleCount: 200,
         angle: 120,
         spread: 55,
-        origin: {x: 1},
+        origin: { x: 1 },
       });
-    }
+    };
 
-
-    const displayControlButtons = () => (displayMode.value = "control-buttons");
-    const displaySwiperCards = () => (displayMode.value = "cards");
+    const displayWait = () => (displayMode.value = "wait");
+    const displayCards = () => (displayMode.value = "cards");
     const displayScores = () => (displayMode.value = "scores");
     const displayAnswer = () => (displayMode.value = "answer");
 
     const finishGame = () => {
-      clearInterval(timerHandles.get('rows-timer-handle')!);
+      clearInterval(timerHandles.get("rows-timer-handle")!);
       setTimeout(() => {
         displayScores();
-        if (v(wonTheGame))
-          playConfettiAnimation();
+        if (v(wonTheGame)) playConfettiAnimation();
       }, 1000);
-    }
+    };
 
     const canDisplayAbacus = computed(() => {
-      return ['cards', 'control-buttons'].includes(v(displayMode));
+      return ["cards", "wait"].includes(v(displayMode));
     });
 
     const playTimerSoundEffect = (loop = true) => {
@@ -269,35 +256,25 @@ export default defineComponent({
       return audio.play();
     };
 
-    const viewBoxWidthMap = ref({
-      2: 25,
-      3: 25,
-      4: 28,
-      5: 33,
-      6: 40,
-      7: 46,
-    });
-
     function enableTimer() {
       timerEnabled.value = true;
       timerHandles.set(
-        'rows-timer-handle',
+        "rows-timer-handle",
         setInterval(() => {
           if (v(timerAbsolute) > 0) {
             timerAbsolute.value -= 1;
           }
 
-          if (v(lessTimeLeft) && !sounds.has('timer-sound-effect')) {
+          if (v(lessTimeLeft) && !sounds.has("timer-sound-effect")) {
             playTimerSoundEffect();
           } else if (v(timerExpired)) {
-            if (sounds.has('timer-sound-effect'))
-              sounds.get('timer-sound-effect')!.pause();
+            if (sounds.has("timer-sound-effect"))
+              sounds.get("timer-sound-effect")!.pause();
 
             playWhistleSoundEffect();
             finishGame();
-            clearInterval(timerHandles.get('rows-timer-handle')!);
+            clearInterval(timerHandles.get("rows-timer-handle")!);
           }
-
         }, 1000)
       );
     }
@@ -340,14 +317,14 @@ export default defineComponent({
         soundEffect.pause();
         sounds.delete(soundEffectKey);
       }
-    }
+    };
 
     const clearTimerHandles = () => {
       for (const [timerHandleKey, timerHandle] of timerHandles.entries()) {
         clearInterval(timerHandle);
         timerHandles.delete(timerHandleKey);
       }
-    }
+    };
 
     const clearGameState = () => {
       currentRowIndex.value = 0;
@@ -355,12 +332,12 @@ export default defineComponent({
       currentSequenceItemIndex.value = 0;
       completedRowsCount.value = 0;
       currentExampleHead.value = 0;
-    }
+    };
 
     const clearTimer = () => {
       timerEnabled.value = false;
       timerAbsolute.value = config.timerSecs;
-    }
+    };
 
     const onRepeat = () => {
       clearGameState();
@@ -372,8 +349,7 @@ export default defineComponent({
       setTimeout(() => {
         slideTo(0);
       }, 500);
-    }
-
+    };
 
     function startGame() {
       setTimeout(() => {
@@ -386,7 +362,7 @@ export default defineComponent({
         .addTo(abacusContainerRef.value!)
         .viewbox(0, -55, 670, 469)
         .addClass("is-abacus-board")
-        .addClass("my-1")
+        .addClass("my-1");
 
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);
@@ -426,9 +402,8 @@ export default defineComponent({
 
     onMounted(() => {
       drawAbacus();
-      //startGame();
+      startGame();
     });
-
 
     return {
       abacusContainerRef,
@@ -436,7 +411,6 @@ export default defineComponent({
       flickingRef,
       flickingOptions,
       abacusValue,
-      viewBoxWidthMap,
       attentionTexts,
       displayMode,
 
@@ -450,6 +424,8 @@ export default defineComponent({
       timerAbsolute,
 
       wonTheGame,
+
+      onCardChanged,
 
       completedRowsPercent,
       completedRowsCount,

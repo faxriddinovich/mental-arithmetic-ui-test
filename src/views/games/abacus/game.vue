@@ -58,10 +58,11 @@
     <!-- confetti screen -->
     <canvas class="is-confetti" ref="confettiRef" />
 
-    <!-- cards screen -->
+    <!-- cards display -->
     <Flicking
       :options="flickingOptions"
       ref="flickingRef"
+      @changed="onCardChanged"
       class="flicking"
       v-if="displayMode === 'cards'"
       style="padding-top: 120px"
@@ -70,6 +71,7 @@
         class="flicking-panel"
         v-for="(text, index) of attentionTexts"
         :key="index"
+        :data-at="true"
       >
         <div class="is-attention-text">
           <scalable-text :text="text" class="is-full-size" />
@@ -77,17 +79,19 @@
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
-        <div class="flicking-panel" :key="'s' + sequenceIndex">
+        <div
+          class="flicking-panel"
+          :key="'s' + sequenceIndex"
+          :data-at="true"
+          :data-si="sequenceIndex"
+        >
           <div class="is-attention-text">
-            <scalable-text
-              :text="'Theme ' + sequenceItem.theme"
-              class="is-full-size"
-            />
+            <scalable-text :text="sequenceItem.theme" class="is-full-size" />
           </div>
         </div>
 
         <template v-for="(example, exampleIndex) in sequenceItem.examples">
-          <div class="flicking-panel" :key="'e' + exampleIndex">
+          <div class="flicking-panel" :key="'e' + exampleIndex" :data-at="true">
             <div class="is-attention-text">
               <scalable-text
                 :text="'Example ' + (exampleIndex + 1)"
@@ -97,7 +101,13 @@
           </div>
 
           <template v-for="(row, rowIndex) in example.numbers">
-            <div class="flicking-panel" :key="exampleIndex + '-' + rowIndex">
+            <div
+              class="flicking-panel"
+              :key="exampleIndex + '-' + rowIndex"
+              :data-si="sequenceIndex"
+              :data-ei="exampleIndex"
+              :data-ri="rowIndex"
+            >
               <div>
                 <scalable-text :text="String(row)" class="is-full-size" />
               </div>
@@ -106,35 +116,221 @@
         </template>
       </template>
     </Flicking>
-    <!-- end cards screen -->
+    <!-- end cards display -->
 
-    <control-buttons-display
-      :onShowAgain="onShowAgain"
-      :onShowAnswer="onShowAnswer"
-      :onNextExample="onNextExample"
-      v-else-if="displayMode === 'control-buttons'"
-    />
+    <!-- wait display -->
+    <section style="padding-top: 160px" v-else-if="displayMode === 'wait'">
+      <div
+        class="
+          has-text-centered
+          is-size-4-touch is-size-2-desktop
+          mb-5
+          mx-4
+          has-text-weight-semibold
+        "
+      >
+        <span>Please solve the expressions sequentially</span>
+      </div>
+      <div class="buttons is-justify-content-center">
+        <b-button icon-left="redo" @click="onShowAgain">Show again</b-button>
+        <b-button icon-left="align-left-justify" @click="onShowAnswer"
+          >Answer</b-button
+        >
+        <b-button type="is-link" icon-right="arrow-right" @click="onNextExample"
+          >Next</b-button
+        >
+      </div>
+    </section>
+    <!-- end wait display -->
 
-    <answer-display
-      :example="currentExample"
-      :onShowAgain="onShowAgain"
-      :onNextExample="onNextExample"
-      v-else-if="displayMode === 'answer'"
-    />
+    <!-- answer display -->
+    <section class="hero is-fullheight" v-else-if="displayMode === 'answer'">
+      <div class="hero-body is-justify-content-center p-0">
+        <div class="columns is-gapless is-centered" style="min-width: 100%">
+          <div class="column is-5-fullhd is-three-quarters-desktop">
+            <div class="box mx-2">
+              <div class="is-size-3 has-text-weight-semibold has-text-centered">
+                <span
+                  v-for="(row, rowIndex) of currentExample.numbers"
+                  :key="rowIndex"
+                >
+                  {{ row | normalizeSign }}&nbsp;
+                </span>
+                <div class="has-text-centered">
+                  <span class="has-text-success has-text-weight-bold is-size-2"
+                    >= {{ currentExample.answer }}</span
+                  >
+                </div>
+              </div>
 
-    <scores-display
-      :wonTheGame="wonTheGame"
-      :completedRowsPercent="completedRowsPercent"
-      :completedRowsCount="completedRowsCount"
-      :totalExamplesCount="totalExamplesCount"
-      :totalRowsCount="totalRowsCount"
-      :trophyClasses="trophyClasses"
-      :gameScoresTextClasses="gameScoresTextClasses"
-      :timerSecs="config.timerSecs"
-      :timerAbsolute="timerAbsolute"
-      :onRepeat="onRepeat"
-      v-else-if="displayMode === 'scores'"
-    />
+              <hr class="my-4" />
+              <div class="field is-grouped is-grouped-multiline">
+                <div
+                  class="control"
+                  v-for="(row, rowIndex) in currentExample.numbers.length - 1"
+                  :key="rowIndex"
+                >
+                  <div class="tags has-addons">
+                    <span class="tag is-medium"
+                      ><span class="has-text-weight-bold"
+                        >{{ currentExample.answerMap[rowIndex] }}&nbsp;</span
+                      >
+                      {{ currentExample.numbers[rowIndex + 1] | normalizeSign }}
+                      =
+                    </span>
+                    <span class="tag is-primary is-medium">{{
+                      currentExample.answerMap[rowIndex + 1]
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="mt-0 mb-2" />
+              <div class="is-flex">
+                <b-button icon-left="redo" @click="onShowAgain" expanded
+                  >Show again</b-button
+                >
+                <b-button
+                  icon-right="arrow-right"
+                  class="ml-3"
+                  @click="onNextExample"
+                  expanded
+                  >Next example</b-button
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- end answer display -->
+
+    <!-- scores display -->
+    <section class="hero is-fullheight" v-else-if="displayMode === 'scores'">
+      <div class="hero-body is-justify-content-center p-0">
+        <div class="columns is-gapless is-centered" style="min-width: 100%">
+          <div class="column is-10-tablet is-7-desktop is-6-fullhd">
+            <div class="mx-2">
+              <div
+                class="box m-0 is-bordered"
+                style="
+                  width: 94%;
+                  margin: 0 auto -30px !important;
+                  background: rgb(241, 241, 241);
+                "
+              ></div>
+
+              <div
+                class="box m-0 is-bordered"
+                style="
+                  width: 97%;
+                  margin: 0 auto -30px !important;
+                  background: rgb(247, 247, 247);
+                "
+              ></div>
+
+              <div class="card p-1 is-bordered">
+                <img
+                  :class="trophyClasses"
+                  :src="require('@@/img/trophy.png')"
+                />
+                <div class="p-4">
+                  <div :class="gameScoresTextClasses">
+                    You {{ wonTheGame ? "won" : "lost" }}!
+                  </div>
+
+                  <b-progress
+                    size="is-medium"
+                    :type="wonTheGame ? 'is-success' : 'is-danger'"
+                    :value="completedRowsPercent"
+                    format="percent"
+                    show-value
+                  >
+                  </b-progress>
+                  <nav class="level is-mobile">
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Completed rows</p>
+                        <p class="title">
+                          {{ completedRowsCount }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Spent time</p>
+                        <p class="title">
+                          {{ (config.timerSecs - timerAbsolute) | timerFormat }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                      <div>
+                        <p class="heading">Total time</p>
+                        <p class="title">
+                          {{ config.timerSecs | timerFormat }}
+                        </p>
+                      </div>
+                    </div>
+                  </nav>
+                  <span class="is-dotted">
+                    <span class="is-left is-size-5-tablet mr-3"
+                      >Total examples:</span
+                    >
+                    <span class="is-dots"></span>
+                    <span
+                      class="
+                        is-right is-size-5-mobile is-size-4-tablet
+                        has-text-weight-bold
+                        ml-2
+                      "
+                      >{{ totalExamplesCount }}</span
+                    >
+                  </span>
+
+                  <span class="is-dotted">
+                    <span class="is-left is-size-5-tablet mr-3"
+                      >Total rows:</span
+                    >
+                    <span class="is-dots"></span>
+                    <span
+                      class="
+                        is-right is-size-5-mobile is-size-4-tablet
+                        has-text-weight-bold
+                        ml-2
+                      "
+                      >{{ totalRowsCount }}</span
+                    >
+                  </span>
+
+                  <hr />
+                  <div class="is-flex">
+                    <b-button
+                      tag="router-link"
+                      :to="{ name: 'AbacusGameForm' }"
+                      icon-left="arrow-left"
+                      expanded
+                      active
+                      >Back</b-button
+                    >
+                    <b-button
+                      class="ml-2"
+                      icon-left="refresh"
+                      @click="onRepeat"
+                      expanded
+                      active
+                      >Repeat</b-button
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- end scores display -->
   </div>
 </template>
 <script lang="ts" src="./game.ts"></script>
