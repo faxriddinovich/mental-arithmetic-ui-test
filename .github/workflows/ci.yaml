@@ -34,8 +34,8 @@ jobs:
           
       - uses: actions/download-artifact@v2
         with:
-          name: release
-          path: dist/app-release.apk
+          name: build-artifacts
+          path: ./android/app/build/outputs/*
 
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
