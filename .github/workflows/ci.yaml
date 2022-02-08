@@ -21,6 +21,7 @@ jobs:
         run: |
           npm install @capacitor/android
           npx cap add android
+          npx cap sync android
           npm install theta-rpc-http-client-1.2.2.tgz
           npm install mental-arithmetic-themes-1.0.0.tgz
 
