@@ -28,4 +28,7 @@ jobs:
           npx cap sync android
 
       - name: Build Project
-        run: yarn capacitor:build --android
+        run: |
+          yarn capacitor:build --android
+          find . -name "*.apk"
+        
