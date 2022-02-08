@@ -15,7 +15,9 @@ jobs:
         with:
           java-version: 1.8
       - name: Build
-        run: npm install
+        run: |
+          npm install
+          npm run build
         
       - name: Install deps
         run: |
