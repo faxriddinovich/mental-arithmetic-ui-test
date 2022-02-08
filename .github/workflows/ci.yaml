@@ -17,6 +17,8 @@ jobs:
       - name: Build
         run: |
           npm install
+          npm install theta-rpc-http-client-1.2.2.tgz
+          npm install mental-arithmetic-themes-1.0.0.tgz
           npm run build
         
       - name: Install deps
@@ -24,8 +26,6 @@ jobs:
           npm install @capacitor/android
           npx cap add android
           npx cap sync android
-          npm install theta-rpc-http-client-1.2.2.tgz
-          npm install mental-arithmetic-themes-1.0.0.tgz
 
       - name: Build Project
         run: yarn capacitor:build --android
