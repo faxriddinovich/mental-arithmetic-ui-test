@@ -1,0 +1,42 @@
+name: Android Build
+
+on: push
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build
+        run: |
+          npm install
+          npm install theta-rpc-http-client-1.2.2.tgz
+          npm install mental-arithmetic-themes-1.0.0.tgz
+          npm run build
+        
+      - name: Install deps
+        run: |
+          npm install @capacitor/android
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Project
+        run: |
+          yarn capacitor:build --android
+          find . -name "*.apk"
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-artifacts
+          path: dist/app-release.apk
+
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
+        
