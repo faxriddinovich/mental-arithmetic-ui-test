@@ -40,18 +40,15 @@
     "jdenticon": "^3.1.1",
     "moment": "^2.29.1",
     "register-service-worker": "^1.7.1",
-    "swiper": "^5.4.5",
     "ts-loader": "^8.2.0",
     "vue": "^2.6.11",
-    "vue-awesome-swiper": "^4.1.1",
     "vue-chartjs": "^3.5.1",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.26.7",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
     "vue-unicons": "^3.2.1",
-    "vuex": "^3.4.0",
-    "vuex-composition-helpers": "^1.0.26"
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.4.2",

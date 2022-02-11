@@ -2,7 +2,6 @@ import Vue from "vue";
 import Buefy from "buefy";
 import { isMobile } from "@/services/platform";
 import { SplashScreen } from "@capacitor/splash-screen";
-//
 import VueCompositionAPI from "@vue/composition-api";
 
 Vue.use(VueCompositionAPI);
