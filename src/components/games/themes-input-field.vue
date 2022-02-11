@@ -11,12 +11,12 @@
 
         <b-dropdown-item custom>Select Digits</b-dropdown-item>
         <b-dropdown-item separator></b-dropdown-item>
-        <b-dropdown-item value="1">1</b-dropdown-item>
-        <b-dropdown-item value="2">2</b-dropdown-item>
-        <b-dropdown-item value="3">3</b-dropdown-item>
-        <b-dropdown-item value="4">4</b-dropdown-item>
-        <b-dropdown-item value="5">5</b-dropdown-item>
-        <b-dropdown-item value="6">6</b-dropdown-item>
+        <b-dropdown-item :value="1">1</b-dropdown-item>
+        <b-dropdown-item :value="2">2</b-dropdown-item>
+        <b-dropdown-item :value="3">3</b-dropdown-item>
+        <b-dropdown-item :value="4">4</b-dropdown-item>
+        <b-dropdown-item :value="5">5</b-dropdown-item>
+        <b-dropdown-item :value="6">6</b-dropdown-item>
       </b-dropdown>
     </p>
     <b-autocomplete
@@ -59,7 +59,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed, ref } from "@vue/composition-api";
-import { Theme } from '@mental-arithmetic/themes';
+import { Theme } from "@mental-arithmetic/themes";
 import { getThemes } from "@/services/generator";
 
 const lowerCase = (str: string) => str.toLowerCase();
@@ -72,7 +72,16 @@ export default defineComponent({
     const theme = ref<string>("");
     const themes = computed(() => {
       return getThemes().filter((_theme) => {
-        return matches(_theme.loc, theme.value);
+        if (
+          _theme.metadata.excludeDigits &&
+          _theme.metadata.excludeDigits.includes(digit.value)
+        ) {
+          return false;
+        }
+
+        if (!matches(_theme.loc, theme.value)) return false;
+
+        return true;
       });
     });
     const themesInputFocus = ref<boolean>(false);
@@ -80,15 +89,14 @@ export default defineComponent({
 
     let selectedTheme: Theme | null = null;
 
-    const pickTheme = (value: Theme) =>  {
+    const pickTheme = (value: Theme) => {
       context.emit("pick", digit.value, value);
       selectedTheme = value;
-    }
+    };
 
-    const pickDigit = (value: string) => {
-      if(selectedTheme)
-        context.emit("pick", Number(value), selectedTheme);
-    }
+    const pickDigit = (value: number) => {
+      if (selectedTheme) context.emit("pick", value, selectedTheme);
+    };
 
     return { digit, theme, themes, pickTheme, pickDigit, themesInputFocus };
   },
