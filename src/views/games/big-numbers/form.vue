@@ -15,65 +15,7 @@
                 <form @submit.prevent="play">
                   <b-field>
                     <template #label> <b-icon icon="file" /> Theme </template>
-                    <p class="control" v-if="themesInputFocus === false">
-                      <b-dropdown v-model="digit">
-                        <template #trigger>
-                          <b-button>
-                            <b-icon
-                              icon="dialpad-alt"
-                              size="is-small"
-                              class="m-0"
-                            />
-                            <span class="is-hidden-mobile ml-1">Digits</span>
-                          </b-button>
-                        </template>
-
-                        <b-dropdown-item custom>Select Digits</b-dropdown-item>
-                        <b-dropdown-item separator></b-dropdown-item>
-                        <b-dropdown-item value="1">1</b-dropdown-item>
-                        <b-dropdown-item value="2">2</b-dropdown-item>
-                        <b-dropdown-item value="3">3</b-dropdown-item>
-                        <b-dropdown-item value="4">4</b-dropdown-item>
-                        <b-dropdown-item value="5">5</b-dropdown-item>
-                        <b-dropdown-item value="6">6</b-dropdown-item>
-                      </b-dropdown>
-                    </p>
-                    <b-autocomplete
-                      placeholder="Search a theme"
-                      icon="search"
-                      :data="filteredThemes"
-                      dropdown-position="bottom"
-                      @focus="themesInputFocus = true"
-                      @focusout.native="themesInputFocus = false"
-                      field="name"
-                      v-model="theme"
-                      open-on-focus
-                      keep-first
-                      expanded
-                    >
-                      <template #header>
-                        <span
-                          >Found:
-                          <span class="has-text-weight-semibold">{{
-                            filteredThemes.length
-                          }}</span>
-                          theme(s)</span
-                        >
-                      </template>
-
-                      <template slot-scope="props">
-                        <div class="is-flex is-justify-content-space-between">
-                          <div>
-                            <b-icon icon="file" /> {{ props.option.name }}
-                          </div>
-                          <div class="has-text-weight-semibold">
-                            {{ props.option.op }}
-                          </div>
-                        </div>
-                      </template>
-
-                      <template #empty>No results found</template>
-                    </b-autocomplete>
+                    <themes-input-field @pick="pickTheme" />
                   </b-field>
                   <div class="columns is-fullhd is-multiline is-gaples">
                     <div class="column is-6-fullhd pb-0">
@@ -224,6 +166,7 @@
                       native-type="submit"
                       class="ml-2"
                       icon-left="play"
+                      :disabled="!canPressPlayButton"
                       expanded
                       >Play</b-button
                     >

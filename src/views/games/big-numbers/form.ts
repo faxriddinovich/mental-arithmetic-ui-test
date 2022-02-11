@@ -1,37 +1,20 @@
+import { defineComponent, computed, ref } from "@vue/composition-api";
 import {
-  defineComponent,
-  computed,
-  ref,
-} from "@vue/composition-api";
-import {BigNumbersGameConfig, InstanceItem, SequenceItem} from "@/views/games/big-numbers/interfaces";
-import {getThemes} from '@/services/generator';
-import ColorPalette from '@/components/games/color-palette.vue';
-
-const lowerCase = (str: string) => str.toLowerCase();
-const matches = (str0: string, str1: string) => {
-  return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
-};
+  BigNumbersGameConfig,
+  InstanceItem,
+  SequenceItem,
+} from "@/views/games/big-numbers/interfaces";
+import ColorPalette from "@/components/games/color-palette.vue";
+import ThemesInputField from "@/components/games/themes-input-field.vue";
+import { Theme } from '@mental-arithmetic/themes';
 
 export default defineComponent({
-  components: {ColorPalette},
+  components: { ColorPalette, ThemesInputField },
   setup(_, context) {
-    const filteredThemes = computed(() => {
-      return getThemes()
-        .filter((_theme) => {
-          // FIXME: this should be done using i18n
-          return matches(_theme.loc, theme.value);
-        })
-        .map((_theme) => ({
-          name: _theme.loc,
-          op: _theme.metadata.operation,
-        }));
-    });
-
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
-    const themesInputFocus = ref<boolean>(false);
 
-    const theme = ref<string>('');
+    const theme = ref<string>("");
     const digit = ref<number>(1);
     const examplesCount = ref<number>(10);
     const examplesTimeout = ref<number>(1);
@@ -54,14 +37,27 @@ export default defineComponent({
     const MAX_ALLOWED_INSTANCES_COUNT = 9;
 
     const canAddSequenceItem = computed(() => {
-      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT && instances.value.length < MAX_ALLOWED_INSTANCES_COUNT;
+      return (
+        sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
+        instances.value.length < MAX_ALLOWED_INSTANCES_COUNT &&
+        theme.value.length >= 1
+      );
     });
 
     const canAddInstanceItem = computed(() => {
-      return instances.value.length < MAX_ALLOWED_INSTANCES_COUNT && sequence.value.length;
+      return (
+        instances.value.length < MAX_ALLOWED_INSTANCES_COUNT &&
+        sequence.value.length
+      );
     });
 
-    const config = context.root.$store.getters['BigNumbers/config'] as BigNumbersGameConfig;
+    const canPressPlayButton = computed<boolean>(() => {
+      return theme.value.length >= 1;
+    });
+
+    const config = context.root.$store.getters[
+      "BigNumbers/config"
+    ] as BigNumbersGameConfig;
 
     if (config) {
       if (config.instances.length === 1) {
@@ -78,36 +74,22 @@ export default defineComponent({
       sameExamples.value = config.sameExamples;
     }
 
-    function resetForm() {
-      fontRotation.value = fontRotations.value[0];
-      fontColor.value = "black";
-      fontSize.value = fontSizes.value[0];
-      displayNumbers.value = true;
-      speechSound.value = false;
-    }
-
-    /*
-    watch(() => , () => {
-      resetForm();
-    });
-    */
+    const pickTheme = (pickedDigit: number, pickedTheme: Theme) => { 
+      theme.value = pickedTheme.loc;
+      digit.value = pickedDigit;
+    };
 
     function addInstanceItem() {
       if (sequence.value.length) {
         instances.value.push({
           answerAtEnd: answerAtEnd.value,
-          sequence: sequence.value
+          sequence: sequence.value,
         });
         sequence.value = [];
       }
     }
 
     function addSequenceItem() {
-      if (filteredThemes.value.length === 0)
-        theme.value = getThemes()[0].loc;
-      else
-        theme.value = filteredThemes.value[0].name;
-
       sequence.value.push({
         examples: [],
         theme: theme.value,
@@ -130,25 +112,22 @@ export default defineComponent({
 
     const removeInstanceItem = (index: number) => {
       instances.value = instances.value.filter((_, idx) => idx !== index);
-    }
+    };
 
     const play = () => {
-      if (!sequence.value.length)
-        addSequenceItem();
+      if (!sequence.value.length) addSequenceItem();
 
-      if (!instances.value.length)
-        addInstanceItem();
-
+      if (!instances.value.length) addInstanceItem();
 
       const gameConfig: BigNumbersGameConfig = {
         answerAtEnd: answerAtEnd.value,
         multiplayerMode: multiplayerMode.value,
         sameExamples: sameExamples.value,
-        instances: instances.value
+        instances: instances.value,
       };
 
-      context.root.$store.commit('BigNumbers/setConfig', gameConfig);
-      context.root.$router.push({name: "PlayBigNumbersGame"});
+      context.root.$store.commit("BigNumbers/setConfig", gameConfig);
+      context.root.$router.push({ name: "PlayBigNumbersGame" });
     };
 
     return {
@@ -171,7 +150,9 @@ export default defineComponent({
       fontSizes,
       canAddSequenceItem,
       canAddInstanceItem,
-      themesInputFocus,
+      canPressPlayButton,
+
+      pickTheme,
 
       sequence,
       instances,
@@ -180,7 +161,6 @@ export default defineComponent({
       addSequenceItem,
       removeSequenceItem,
       removeInstanceItem,
-      filteredThemes,
       play,
     };
   },

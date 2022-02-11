@@ -1,40 +1,22 @@
+import { defineComponent, computed, ref } from "@vue/composition-api";
 import {
-  defineComponent,
-  computed,
-  ref,
-} from "@vue/composition-api";
-import {AbacusGameConfig, SequenceItem} from "@/views/games/abacus/interfaces";
-import {getThemes} from '@/services/generator';
-import ColorPalette from '@/components/games/color-palette.vue';
-import AbacusTipsContent from '@/views/contents/abacus-tips.vue';
+  AbacusGameConfig,
+  SequenceItem,
+} from "@/views/games/abacus/interfaces";
+import ColorPalette from "@/components/games/color-palette.vue";
+import ThemesInputField from "@/components/games/themes-input-field.vue";
+import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
+import { Theme } from "@mental-arithmetic/themes";
 
-const lowerCase = (str: string) => str.toLowerCase();
-const matches = (str0: string, str1: string) => {
-  return lowerCase(str0).indexOf(lowerCase(str1)) >= 0;
-};
-
-const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
+const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
 
 export default defineComponent({
-  components: {ColorPalette, AbacusTipsContent },
+  components: { ColorPalette, ThemesInputField, AbacusTipsContent },
   setup(_, context) {
-    const filteredThemes = computed(() => {
-      return getThemes()
-        .filter((_theme) => {
-          // FIXME: this should be done using i18n
-          return matches(_theme.loc, theme.value);
-        })
-        .map((_theme) => ({
-          name: _theme.loc,
-          op: _theme.metadata.operation,
-        }));
-    });
-
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
-    const themesInputFocus = ref<boolean>(false);
 
-    const theme = ref<string>('');
+    const theme = ref<string>("");
     const digit = ref<number>(1);
     const examplesCount = ref<number>(10);
     const examplesTimeout = ref<number>(1);
@@ -52,21 +34,30 @@ export default defineComponent({
     const sequence = ref<SequenceItem[]>([]);
 
     const canAddSequenceItem = computed(() => {
-      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
+      return (
+        sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
+        theme.value.length >= 1
+      );
     });
 
-    const config = context.root.$store.getters['Abacus/config'] as AbacusGameConfig;
+    const canPressPlayButton = computed<boolean>(() => {
+      return theme.value.length >= 1;
+    });
+
+    const config = context.root.$store.getters[
+      "Abacus/config"
+    ] as AbacusGameConfig;
 
     if (config) {
       sequence.value.push(...config.sequence);
     }
 
-    function addSequenceItem() {
-      if (filteredThemes.value.length === 0)
-        theme.value = getThemes()[0].loc;
-      else
-        theme.value = filteredThemes.value[0].name;
+    const pickTheme = (pickedDigit: number, pickedTheme: Theme) => {
+      theme.value = pickedTheme.loc;
+      digit.value = pickedDigit;
+    };
 
+    function addSequenceItem() {
       sequence.value.push({
         examples: [],
         theme: theme.value,
@@ -88,20 +79,20 @@ export default defineComponent({
     };
 
     const play = () => {
-      if(!sequence.value.length) {
+      if (!sequence.value.length) {
         addSequenceItem();
       }
 
       const gameConfig: AbacusGameConfig = {
         sequence: sequence.value,
         timerSecs: 60 * timerMins.value + timerSecs.value,
-        waitForAnswer: waitForAnswer.value
+        waitForAnswer: waitForAnswer.value,
       };
 
-      const {commit} = context.root.$store;
-      commit('Abacus/setConfig', gameConfig);
-      commit('Abacus/generateExamples');
-      context.root.$router.push({name: "PlayAbacusGame"});
+      const { commit } = context.root.$store;
+      commit("Abacus/setConfig", gameConfig);
+      commit("Abacus/generateExamples");
+      context.root.$router.push({ name: "PlayAbacusGame" });
     };
 
     return {
@@ -120,7 +111,8 @@ export default defineComponent({
       fontRotations,
       fontSizes,
       canAddSequenceItem,
-      themesInputFocus,
+      canPressPlayButton,
+      pickTheme,
 
       timerMins,
       timerSecs,
@@ -130,7 +122,6 @@ export default defineComponent({
 
       addSequenceItem,
       removeSequenceItem,
-      filteredThemes,
       play,
     };
   },

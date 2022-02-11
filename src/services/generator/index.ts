@@ -1,4 +1,4 @@
-import {themes} from "@mental-arithmetic/themes";
+import { themes } from "@mental-arithmetic/themes";
 
 export interface Example {
   numbers: (string | number)[];
