@@ -44,7 +44,7 @@
 
       <template slot-scope="props">
         <div class="is-flex is-justify-content-space-between">
-          <div><b-icon icon="file" /> {{ props.option.loc }}</div>
+          <div><b-icon icon="file" /> {{ $t(props.option.loc) }}</div>
           <div class="has-text-weight-semibold">
             <b-tag type="is-primary is-light">
               {{ props.option.metadata.operation | toOperation }}
@@ -79,7 +79,8 @@ export default defineComponent({
           return false;
         }
 
-        if (!matches(_theme.loc, theme.value)) return false;
+        if (!matches(context.root.$t(_theme.loc) as string, theme.value))
+          return false;
 
         return true;
       });

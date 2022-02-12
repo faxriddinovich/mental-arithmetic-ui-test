@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
+import { uz } from './uz';
 
 Vue.use(VueI18n);
 
@@ -117,6 +118,8 @@ const i18n = new VueI18n({
       "create-account": "Akkaunt yaratish",
       "success-authentication": "Hush kelibsiz {username}!",
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
+
+      ...uz.themes
     },
   },
 });
