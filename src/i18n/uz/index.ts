@@ -2,6 +2,7 @@ export namespace uz {
   export const themes = {
     "theme1": "To'g'ridan to'gri qo'shish +1 .. +4",
     "theme2": "To'g'ridan to'gri qo'shish va ayirish +/- 5",
+
     "theme3": "To'g'ridan to'gri qo'shish +1 .. +9",
     "theme4": "To'g'ridan to'gri qo'shish va ayirish +/- 8 va 9",
 
@@ -121,5 +122,21 @@ export namespace uz {
 
     "theme81": "Miks formula umumiy oddiy +6 .. -6",
     "theme82": "Miks formula umumiy +6 .. +6",
+
+    /* multiplication */
+    "dd_mult_d_simple": "{digit}d × 1d oddiy",
+    "dd_mult_d": "{digit}d × 1d",
+    "dd_mult_2d_simple": "{digit}d × 2d oddiy",
+    "dd_mult_2d": "{digit}d × 2d",
+    "dd_mult_3d_simple": "{digit}d × 3d oddiy",
+    "dd_mult_3d": "{digit}d × 3d",
+    "dd_mult_4d_simple": "{digit}d × 4d oddiy",
+    "dd_mult_4d": "{digit}d × 4d",
+    "dd_mult_5d_simple": "{digit}d × 5d oddiy",
+    "dd_mult_5d": "{digit}d × 5d",
+    "dd_mult_6d_simple": "{digit}d × 6d oddiy",
+    "dd_mult_6d": "{digit}d × 6d",
+    "dd_mult_from_1d_to_dd_simple": "{digit}d × (1d .. {digit}d) oddiy",
+    "dd_mult_from_1d_to_dd": "{digit}d × (1d .. {digit}d)"
   }
 }
