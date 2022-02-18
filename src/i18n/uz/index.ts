@@ -137,6 +137,22 @@ export namespace uz {
     "dd_mult_6d_simple": "{digit}d × 6d oddiy",
     "dd_mult_6d": "{digit}d × 6d",
     "dd_mult_from_1d_to_dd_simple": "{digit}d × (1d .. {digit}d) oddiy",
-    "dd_mult_from_1d_to_dd": "{digit}d × (1d .. {digit}d)"
+    "dd_mult_from_1d_to_dd": "{digit}d × (1d .. {digit}d)",
+
+    /* division */
+    "dd_div_d_simple": "{digit}d ÷ 1d oddiy",
+    "dd_div_d": "{digit}d ÷ 1d",
+    "dd_div_2d_simple": "{digit}d ÷ 2d oddiy",
+    "dd_div_2d": "{digit}d ÷ 2d",
+    "dd_div_3d_simple": "{digit}d ÷ 3d oddiy",
+    "dd_div_3d": "{digit}d ÷ 3d",
+    "dd_div_4d_simple": "{digit}d ÷ 4d oddiy",
+    "dd_div_4d": "{digit}d ÷ 4d",
+    "dd_div_5d_simple": "{digit}d ÷ 5d oddiy",
+    "dd_div_5d": "{digit}d ÷ 5d",
+    "dd_div_6d_simple": "{digit}d ÷ 6d oddiy",
+    "dd_div_6d": "{digit}d ÷ 6d",
+    "dd_div_from_1d_to_dd_simple": "{digit}d ÷ (1d .. {digit}d) oddiy",
+    "dd_div_from_1d_to_dd": "{digit}d ÷ (1d .. {digit}d)"
   }
 }
