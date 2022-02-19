@@ -43,8 +43,7 @@ export default defineComponent({
       align: "center",
       renderOnlyVisible: true,
       disableOnInit: true,
-      // bug
-      autoResize: false,
+      autoResize: true,
     });
 
     const abacusValue = ref<number>(0);

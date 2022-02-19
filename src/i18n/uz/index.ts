@@ -123,6 +123,134 @@ export namespace uz {
     "theme81": "Miks formula umumiy oddiy +6 .. -6",
     "theme82": "Miks formula umumiy +6 .. +6",
 
+    /* addition/subtraction */
+    "directly_adding_from_1_to_4": "To'g'ridan to'g'ri qo'shish +1 .. 4",
+    "directly_adding_and_subtracting_plus_minus_5": "To'g'ridan to'g'ri qo'shish va ayirish +/- 5",
+    "directly_adding_from_1_to_9": "To'g'ridan to'g'ri qo'shish +1 .. 9",
+    "directly_adding_and_subtracting_plus_minus_8_and_9": "To'g'ridan to'g'ri qo'shish va ayirish +/- 8 va 9",
+    "junior_comrades_simple_4_equals_5_minus_1": "Yosh o'rtoqlar oddiy +4=+5-1",
+    "junior_comrades_4_equals_5_minus_1": "Yosh o'rtoqlar +4=+5-1",
+    "junior_comrades_simple_minus_4_equals_minus_5_plus_1": "Yosh o'rtoqlar oddiy -4=-5+1",
+    "junior_comrades_minus_4_equals_minus_5_plus_1": "Yosh o'rtoqlar -4=-5+1",
+    "junior_comrades_simple_3_equals_5_minus_2": "Yosh o'rtoqlar oddiy +3=+5-2",
+    "junior_comrades_3_equals_5_minus_2": "Yosh o'rtoqlar +3=+5-2",
+    "junior_comrades_simple_minus_3_equals_minus_5_plus_2": "Yosh o'rtoqlar oddiy -3=-5+2",
+    "junior_comrades_minus_3_equals_minus_5_plus_2": "Yosh o'rtoqlar -3=-5+2",
+    "junior_comrades_simple_2_equals_5_minus_2": "Yosh o'rtoqlar oddiy +2=+5-2",
+    "junior_comrades_2_equals_5_minus_2": "Yosh o'rtoqlar +2=+5-2",
+    "junior_comrades_simple_minus_2_equals_minus_5_plus_3": "Yosh o'rtoqlar oddiy -2=-5+3",
+    "junior_comrades_minus_2_equals_minus_5_plus_3": "Yosh o'rtoqlar -2=-5+3",
+    "junior_comrades_simple_1_equals_5_minus_2": "Yosh o'rtoqlar oddiy +2=+5-2",
+    "junior_comrades_2_equals_5_minus_2": "Yosh o'rtoqlar +2=+5-2",
+    "junior_comrades_simple_1_equals_minus_5_plus_4": "Yosh o'rtoqlar oddiy +1=-5+4",
+    "junior_comrades_1_equals_minus_5_plus_4": "Yosh o'rtoqlar +1=-5+4",
+    "junior_comrades_simple_minus_1_equals_minus_5_plus_4": "Yosh o'rtoqlar oddiy -1=-5+4",
+    "junior_comrades_minus_1_equals_minus_5_plus_4": "Yosh o'rtoqlar -1=-5+4",
+
+    "junior_comrades_simple_common": "Yosh o'rtoqlar umumiy oddiy",
+    "junior_comrades_simple": "Yosh o'rtoqlar umumiy",
+
+    "junior_comrades_simple_dd_plus_d": "Yosh o'rtoqlar oddiy {digit}d + 1d",
+    "junior_comrades_dd_plus_d": "Yosh o'rtoqlar {digit}d + 1d",
+    "junior_comrades_simple_dd_plus_2d": "Yosh o'rtoqlar oddiy {digit}d + 2d",
+    "junior_comrades_dd_plus_2d": "Yosh o'rtoqlar {digit}d + 2d",
+    "junior_comrades_simple_dd_plus_3d": "Yosh o'rtoqlar oddiy {digit}d + 3d",
+    "junior_comrades_dd_plus_3d": "Yosh o'rtoqlar {digit}d + 3d",
+    "junior_comrades_simple_dd_plus_4d": "Yosh o'rtoqlar oddiy {digit}d + 4d",
+    "junior_comrades_dd_plus_4d": "Yosh o'rtoqlar {digit}d + 4d",
+    "junior_comrades_simple_dd_plus_5d": "Yosh o'rtoqlar oddiy {digit}d + 5d",
+    "junior_comrades_dd_plus_5d": "Yosh o'rtoqlar {digit}d + 5d",
+
+    "junior_comrades_without_rules_dd_plus_d": "Yosh o'rtoqlar formulasiz {digit}d + 1d",
+    "junior_comrades_without_rules_dd_plus_2d": "Yosh o'rtoqlar formulasiz {digit}d + 2d",
+    "junior_comrades_without_rules_dd_plus_3d": "Yosh o'rtoqlar formulasiz {digit}d + 3d",
+    "junior_comrades_without_rules_dd_plus_4d": "Yosh o'rtoqlar formulasiz {digit}d + 4d",
+    "junior_comrades_without_rules_dd_plus_5d": "Yosh o'rtoqlar formulasiz {digit}d + 5d",
+
+
+
+    "senior_comrades_simple_9_equals_10_minus_1": "Katta o'rtoqlar oddiy +9=+10-1",
+    "senior_comrades_9_equals_10_minus_1": "Katta o'rtoqlar +9=+10-1",
+
+    "senior_comrades_simple_8_equals_10_minus_2": "Katta o'rtoqlar oddiy +8=+10-2",
+    "senior_comrades_8_equals_10_minus_2": "Katta o'rtoqlar +8=+10-2",
+
+    "senior_comrades_simple_7_equals_10_minus_3": "Katta o'rtoqlar oddiy +7=+10-3",
+    "senior_comrades_7_equals_10_minus_3": "Katta o'rtoqlar +7=+10-3",
+
+    "senior_comrades_simple_6_equals_10_minus_4": "Katta o'rtoqlar oddiy +6=+10-4",
+    "senior_comrades_6_equals_10_minus_4": "Katta o'rtoqlar +6=+10-4",
+
+    "senior_comrades_simple_5_equals_10_minus_5": "Katta o'rtoqlar oddiy +5=+10-5",
+    "senior_comrades_5_equals_10_minus_5": "Katta o'rtoqlar +5=+10-5",
+
+    "senior_comrades_simple_4_equals_10_minus_6": "Katta o'rtoqlar oddiy +4=+10-6",
+    "senior_comrades_4_equals_10_minus_6": "Katta o'rtoqlar +4=+10-6",
+
+    "senior_comrades_simple_3_equals_10_minus_7": "Katta o'rtoqlar oddiy +3=+10-7",
+    "senior_comrades_3_equals_10_minus_7": "Katta o'rtoqlar +3=+10-7",
+
+    "senior_comrades_simple_2_equals_10_minus_8": "Katta o'rtoqlar oddiy +2=+10-8",
+    "senior_comrades_2_equals_10_minus_8": "Katta o'rtoqlar +2=+10-8",
+
+    "senior_comrades_simple_1_equals_10_minus_9": "Katta o'rtoqlar oddiy +1=+10-9",
+    "senior_comrades_1_equals_10_minus_9": "Katta o'rtoqlar +1=+10-9",
+
+    "senior_comrades_simple_common": "Katta o'rtoqlar umumiy oddiy +9 .. +1",
+    "senior_comrades_common": "Katta o'rtoqlar umumiy +9 .. +1",
+
+    "senior_comrades_simple_minus_9_equals_minus_10_plus_1": "Katta o'rtoqlar oddiy -9=-10+1",
+    "senior_comrades_minus_9_equals_minus_10_plus_1": "Katta o'rtoqlar +9=+10-1",
+
+    "senior_comrades_simple_minus_8_equals_minus_10_plus_2": "Katta o'rtoqlar oddiy -8=-10+2",
+    "senior_comrades_minus_8_equals_minus_10_plus_2": "Katta o'rtoqlar -8=-10+2",
+
+    "senior_comrades_simple_minus_7_equals_minus_10_plus_3": "Katta o'rtoqlar oddiy -7=-10+3",
+    "senior_comrades_minus_7_equals_minus_10_plus_3": "Katta o'rtoqlar -7=-10+3",
+
+    "senior_comrades_simple_minus_6_equals_minus_10_plus_4": "Katta o'rtoqlar oddiy -6=-10+4",
+    "senior_comrades_minus_6_equals_minus_10_plus_4": "Katta o'rtoqlar -6=-10+4",
+
+    "senior_comrades_simple_minus_5_equals_minus_10_plus_5": "Katta o'rtoqlar oddiy -5=-10+5",
+    "senior_comrades_minus_5_equals_minus_10_plus_5": "Katta o'rtoqlar -5=-10+5",
+
+    "senior_comrades_simple_minus_4_equals_minus_10_plus_6": "Katta o'rtoqlar oddiy -4=-10+6",
+    "senior_comrades_minus_4_equals_minus_10_plus_6": "Katta o'rtoqlar -6=-10+4",
+
+    "senior_comrades_simple_minus_3_equals_minus_10_plus_7": "Katta o'rtoqlar oddiy -3=-10+7",
+    "senior_comrades_minus_3_equals_minus_10_plus_7": "Katta o'rtoqlar -3=-10+7",
+
+    "senior_comrades_simple_minus_2_equals_minus_10_plus_8": "Katta o'rtoqlar oddiy -2=-10+8",
+    "senior_comrades_minus_2_equals_minus_10_plus_8": "Katta o'rtoqlar -2=-10+8",
+
+    "senior_comrades_simple_minus_1_equals_minus_10_plus_9": "Katta o'rtoqlar oddiy -1=-10+9",
+    "senior_comrades_minus_1_equals_minus_10_plus_9": "Katta o'rtoqlar -1=-10+9",
+
+    "senior_comrades_simple_from_1_to_minus_1": "Katta o'rtoqlar umumiy oddiy +1 .. -1",
+    "senior_comrades_from_1_to_minus_1": "Katta o'rtoqlar umumiy +1 .. -1",
+
+    "senior_comrades_mix_simple_9_equals_10_minus_1": "Miks formula oddiy +9=+10-1 -1=-5+4",
+    "senior_comrades_mix_9_equals_10_minus_1": "Miks formula +9=+10-1 -1=-5+4",
+
+    "senior_comrades_mix_simple_8_equals_10_minus_2": "Miks formula oddiy +8=+10-2 -2=-5+3",
+    "senior_comrades_mix_8_equals_10_minus_2": "Miks formula +8=+10-2 -2=-5+3",
+    
+    "senior_comrades_mix_simple_7_equals_10_minus_3": "Miks formula oddiy +7=+10-3 -3=-5+2",
+    "senior_comrades_mix_7_equals_10_minus_3": "Miks formula +7=+10-3 -3=-5+2",
+
+    "senior_comrades_mix_simple_6_equals_10_minus_4": "Miks formula oddiy +6=+10-4 -4=-5+1",
+    "senior_comrades_mix_6_equals_10_minus_4": "Miks formula +6=+10-4 -4=-5+1",
+
+    "senior_comrades_simple_common_from_9_to_6": "Miks formula umumiy oddiy +9 .. +6",
+    "senior_comrades_common_from_9_to_6": "Miks formula umumiy oddiy +9 .. +6",
+
+    "senior_comrades_mix_simple_minus_9_equals_minus_10_plus_1": "Miks formula oddiy -9=-10+1 -1=-5+4",
+    "senior_comrades_mix_minus_9_equals_minus_10_plus_1": "Miks formula -9=-10+1 -1=-5+4",
+
+    "senior_comrades_mix_simple_minus_8_equals_minus_10_plus_2": "Miks formula oddiy -8=-10+2 -2=-5+4",
+    "senior_comrades_mix_minus_9_equals_minus_10_plus_1": "Miks formula -9=-10+1 -1=-5+4",
+
+
     /* multiplication */
     "dd_mult_d_simple": "{digit}d × 1d oddiy",
     "dd_mult_d": "{digit}d × 1d",
