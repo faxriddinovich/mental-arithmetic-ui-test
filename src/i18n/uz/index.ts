@@ -246,9 +246,42 @@ export namespace uz {
 
     "senior_comrades_mix_simple_minus_9_equals_minus_10_plus_1": "Miks formula oddiy -9=-10+1 -1=-5+4",
     "senior_comrades_mix_minus_9_equals_minus_10_plus_1": "Miks formula -9=-10+1 -1=-5+4",
+    "senior_comrades_mix_simple_minus_8_equals_minus_10_plus_2": "Miks formula oddiy -8=-10+2 +2=-5-3",
+    "senior_comrades_mix_minus_8_equals_minus_10_plus_2": "Miks formula -8=-10+2 +2=+5-3",
+    "senior_comrades_mix_simple_minus_7_equals_minus_10_plus_3": "Miks formula oddiy -7=-10+3 +3=+5-2",
+    "senior_comrades_mix_minus_7_equals_minus_10_plus_3": "Miks formula -7=-10+3 +3=+5-2",
+    "senior_comrades_mix_simple_minus_6_equals_minus_10_plus_4": "Miks formula oddiy -6=-10+4 +4=+5-1",
+    "senior_comrades_mix_minus_6_equals_minus_10_plus_4": "Miks formula -6=-10+4 +4=+5-1",
+    "senior_comrades_mix_simple_common_from_6_to_minus_6": "Miks formula umumiy oddiy +6 .. -6",
+    "senior_comrades_mix_common_from_6_to_minus_6": "Miks formula umumiy +6 .. -6",
 
-    "senior_comrades_mix_simple_minus_8_equals_minus_10_plus_2": "Miks formula oddiy -8=-10+2 -2=-5+4",
-    "senior_comrades_mix_minus_9_equals_minus_10_plus_1": "Miks formula -9=-10+1 -1=-5+4",
+    "senior_comrades_simple_common_dd_plus_d": "Katta o'rtoqlar umumiy oddiy {digit}d + 1d",
+    "senior_comrades_common_dd_plus_d": "Katta o'rtoqlar umumiy {digit}d + 1d",
+    "senior_comrades_simple_common_dd_plus_2d": "Katta o'rtoqlar umumiy oddiy {digit}d + 2d",
+    "senior_comrades_common_dd_plus_2d": "Katta o'rtoqlar umumiy {digit}d + 2d",
+    "senior_comrades_simple_common_dd_plus_3d": "Katta o'rtoqlar umumiy oddiy {digit}d + 3d",
+    "senior_comrades_common_dd_plus_3d": "Katta o'rtoqlar umumiy {digit}d + 3d",
+    "senior_comrades_simple_common_dd_plus_4d": "Katta o'rtoqlar umumiy oddiy {digit}d + 4d",
+    "senior_comrades_common_dd_plus_4d": "Katta o'rtoqlar umumiy {digit}d + 4d",
+    "senior_comrades_simple_common_dd_plus_5d": "Katta o'rtoqlar umumiy oddiy {digit}d + 5d",
+    "senior_comrades_common_dd_plus_5d": "Katta o'rtoqlar umumiy {digit}d + 5d",
+    "senior_comrades_mix_simple_common_dd_plus_d": "Miks formula umumiy oddiy {digit}d + 1d",
+    "senior_comradessimple_common_dd_plus_from_d_to_dd": "Katta o'rtoqlar umumiy oddiy {digit}d + (1d .. {digit}d)", // FIXME
+    "senior_comrades_common_dd_plus_from_d_to_dd": "Katta o'rtoqlar umumiy {digit}d + (1d .. {digit}d)", // FIXME
+    "senior_comrades_mix_common_dd_plus_d": "Miks formula umumiy {digit}d + 1d",
+    "senior_comrades_mix_simple_common_dd_plus_2d": "Miks formula umumiy oddiy {digit}d + 2d",
+    "senior_comrades_mix_common_dd_plus_2d": "Miks formula umumiy {digit}d + 2d",
+    "senior_comrades_mix_simple_common_dd_plus_3d": "Miks formula umumiy oddiy {digit}d + 3d",
+    "senior_comrades_mix_common_dd_plus_3d": "Miks formula umumiy {digit}d + 3d",
+    "senior_comrades_mix_simple_common_dd_plus_4d": "Miks formula umumiy oddiy {digit}d + 4d",
+    "senior_comrades_mix_common_dd_plus_4d": "Miks formula umumiy {digit}d + 4d",
+    "senior_comrades_mix_simple_common_dd_plus_5d": "Miks formula umumiy oddiy {digit}d + 5d",
+    "senior_comrades_mix_common_dd_plus_5d": "Miks formula umumiy {digit}d + 5d",
+    "senior_comrades_mix_simple_common_dd_plus_d": "Miks formula umumiy oddiy {digit}d + 1d",
+    "senior_comrades_mix_common_dd_plus_d": "Miks formula umumiy {digit}d + 1d",
+
+    "senior_comrades_mix_simple_common_dd_plus_from_d_to_dd": "Miks formula umumiy oddiy {digit}d + (1d .. {digit}d)", // FIXME
+    "senior_comrades_mix_common_dd_plus_from_d_to_dd": "Miks formula umumiy {digit}d + (1d .. {digit}d)", // FIXME
 
 
     /* multiplication */
