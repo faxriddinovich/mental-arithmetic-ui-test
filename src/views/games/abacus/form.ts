@@ -6,7 +6,6 @@ import {
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
-import { Theme } from "@mental-arithmetic/themes";
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
 
@@ -34,14 +33,11 @@ export default defineComponent({
     const sequence = ref<SequenceItem[]>([]);
 
     const canAddSequenceItem = computed(() => {
-      return (
-        sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
-        sequence.value.length >= 1
-      );
+      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return sequence.value.length >= 1;
+      return theme.value.length >= 1;
     });
 
     const config = context.root.$store.getters[
@@ -52,9 +48,21 @@ export default defineComponent({
       sequence.value.push(...config.sequence);
     }
 
-    const pickTheme = (pickedDigit: number, pickedTheme: Theme) => {
-      theme.value = pickedTheme.loc;
+    const pickTheme = (pickedDigit: number, pickedTheme: string) => {
+      theme.value = pickedTheme;
       digit.value = pickedDigit;
+    };
+
+    // FIXME: currently `vue-i18n` library doesn't support passing variables into
+    // modifiers. So we have to do this dirty thing.
+    const i18nArguments = () => {
+      const plusn = new Intl.NumberFormat("en-US").format(
+        Number("1" + "0".repeat(digit.value))
+      );
+      return {
+        digit: digit.value,
+        plusn,
+      };
     };
 
     function addSequenceItem() {
@@ -119,6 +127,7 @@ export default defineComponent({
       waitForAnswer,
 
       sequence,
+      i18nArguments,
 
       addSequenceItem,
       removeSequenceItem,

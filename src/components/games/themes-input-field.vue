@@ -26,7 +26,7 @@
       dropdown-position="bottom"
       @focus="themesInputFocus = true"
       @focusout.native="themesInputFocus = false"
-      :custom-formatter="(option) => $t(option.loc, messageProps())"
+      :custom-formatter="(option) => $t(option.loc, i18nArguments())"
       @select="pickTheme"
       v-model="theme"
       open-on-focus
@@ -45,7 +45,7 @@
       <template slot-scope="props">
         <div class="is-flex is-justify-content-space-between">
           <div>
-            <b-icon icon="file" /> {{ $t(props.option.loc, messageProps()) }}
+            <b-icon icon="file" /> {{ $t(props.option.loc, i18nArguments()) }}
           </div>
           <div class="has-text-weight-semibold">
             <b-tag type="is-primary is-light">
@@ -75,7 +75,9 @@ export default defineComponent({
     const digit = ref<number>(1);
     const theme = ref<string>("");
 
-    const messageProps = () => {
+    // FIXME: currently `vue-i18n` library doesn't support passing variables into
+    // modifiers. So we have to do this dirty thing.
+    const i18nArguments = () => {
       const plusn = new Intl.NumberFormat("en-US").format(
         Number("1" + "0".repeat(digit.value))
       );
@@ -90,7 +92,7 @@ export default defineComponent({
         const shouldBeExcluded = metadata.excludeDigits?.includes(digit.value);
         if (shouldBeExcluded) return false;
 
-        const message = context.root.$t(loc, messageProps()) as string;
+        const message = context.root.$t(loc, i18nArguments()) as string;
         if (!matches(message, theme.value)) return false;
 
         return true;
@@ -113,7 +115,7 @@ export default defineComponent({
       themes,
       pickTheme,
       pickDigit,
-      messageProps,
+      i18nArguments,
       themesInputFocus,
     };
   },

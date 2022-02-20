@@ -1,7 +1,7 @@
 export namespace uz {
   export const themes = {
     /* addition/subtraction */
-    "directly_adding_from_1_to_4": "To'g'ridan to'g'ri qo'shish +1 .. 4",
+    "directly_adding_from_1_to_4": "To'g'ridan to'g'ri qo'shish +1 .. 4 .formatNumber:{digit}",
     "directly_adding_and_subtracting_plus_minus_5": "To'g'ridan to'g'ri qo'shish va ayirish +/- 5",
     "directly_adding_from_1_to_9": "To'g'ridan to'g'ri qo'shish +1 .. 9",
     "directly_adding_and_subtracting_plus_minus_8_and_9": "To'g'ridan to'g'ri qo'shish va ayirish +/- 8 va 9",

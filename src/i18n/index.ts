@@ -1,11 +1,18 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
-import { uz } from './uz';
+import { uz } from "./uz";
 
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "en-US",
+  modifiers: {
+    formatNumber: (number: string) => {
+      return new Intl.NumberFormat("en-US").format(
+        Number("1" + "0".repeat(Number(number)))
+      );
+    },
+  },
   messages: {
     "en-US": {
       "mental-arithmetic": "Mental arithmetic",
@@ -119,7 +126,7 @@ const i18n = new VueI18n({
       "success-authentication": "Hush kelibsiz {username}!",
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
 
-      ...uz.themes
+      ...uz.themes,
     },
   },
 });
