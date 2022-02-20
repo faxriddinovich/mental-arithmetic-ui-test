@@ -6,13 +6,6 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "en-US",
-  modifiers: {
-    formatNumber: (number: string) => {
-      return new Intl.NumberFormat("en-US").format(
-        Number("1" + "0".repeat(Number(number)))
-      );
-    },
-  },
   messages: {
     "en-US": {
       "mental-arithmetic": "Mental arithmetic",
