@@ -26,7 +26,7 @@
       dropdown-position="bottom"
       @focus="themesInputFocus = true"
       @focusout.native="themesInputFocus = false"
-      :custom-formatter="(option) => $t(option.loc, { digit })"
+      :custom-formatter="(option) => $t(option.loc, messageProps())"
       @select="pickTheme"
       v-model="theme"
       open-on-focus
@@ -45,7 +45,7 @@
       <template slot-scope="props">
         <div class="is-flex is-justify-content-space-between">
           <div>
-            <b-icon icon="file" /> {{ $t(props.option.loc, { digit: digit }) }}
+            <b-icon icon="file" /> {{ $t(props.option.loc, messageProps()) }}
           </div>
           <div class="has-text-weight-semibold">
             <b-tag type="is-primary is-light">
@@ -71,46 +71,51 @@ const matches = (str0: string, str1: string) => {
 
 export default defineComponent({
   setup(_, context) {
+    const themesInputFocus = ref<boolean>(false);
+    const digit = ref<number>(1);
     const theme = ref<string>("");
-    const themes = computed(() => {
-      return getThemes().filter((_theme) => {
-        if (
-          _theme.metadata.excludeDigits &&
-          _theme.metadata.excludeDigits.includes(digit.value)
-        ) {
-          return false;
-        }
 
-        if (
-          !matches(
-            context.root.$t(_theme.loc, { digit: digit.value }) as string,
-            theme.value
-          )
-        )
-          return false;
+    const messageProps = () => {
+      const plusn = new Intl.NumberFormat("en-US").format(
+        Number("1" + "0".repeat(digit.value))
+      );
+      return {
+        digit: digit.value,
+        plusn,
+      };
+    };
+
+    const themes = computed(() => {
+      return getThemes().filter(({ loc, metadata }) => {
+        const shouldBeExcluded = metadata.excludeDigits?.includes(digit.value);
+        if (shouldBeExcluded) return false;
+
+        const message = context.root.$t(loc, messageProps()) as string;
+        if (!matches(message, theme.value)) return false;
 
         return true;
       });
     });
-    const themesInputFocus = ref<boolean>(false);
-    const digit = ref<number>(1);
 
-    let selectedTheme: Theme | null = null;
-
+    let cacheTheme: Theme | null = null;
     const pickTheme = (value: Theme) => {
-      context.emit(
-        "pick",
-        digit.value,
-        value.loc
-      );
-      selectedTheme = value;
+      context.emit("pick", digit.value, value.loc);
+      cacheTheme = value;
     };
 
     const pickDigit = (value: number) => {
-      if (selectedTheme) context.emit("pick", value, selectedTheme);
+      if (cacheTheme) context.emit("pick", value, cacheTheme);
     };
 
-    return { digit, theme, themes, pickTheme, pickDigit, themesInputFocus };
+    return {
+      digit,
+      theme,
+      themes,
+      pickTheme,
+      pickDigit,
+      messageProps,
+      themesInputFocus,
+    };
   },
 });
 </script>

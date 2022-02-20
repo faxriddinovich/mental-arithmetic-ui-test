@@ -36,12 +36,12 @@ export default defineComponent({
     const canAddSequenceItem = computed(() => {
       return (
         sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
-        theme.value.length >= 1
+        sequence.value.length >= 1
       );
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length >= 1;
+      return sequence.value.length >= 1;
     });
 
     const config = context.root.$store.getters[
