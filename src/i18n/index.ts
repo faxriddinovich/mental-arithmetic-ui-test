@@ -1,11 +1,14 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
 import { uz } from "./uz";
+import { ThemeFormatter } from './formatters';
 
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "en-US",
+  lazy: true,
+  formatter: new ThemeFormatter(),
   messages: {
     "en-US": {
       "mental-arithmetic": "Mental arithmetic",
@@ -118,7 +121,6 @@ const i18n = new VueI18n({
       "create-account": "Akkaunt yaratish",
       "success-authentication": "Hush kelibsiz {username}!",
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
-
       ...uz.themes,
     },
   },

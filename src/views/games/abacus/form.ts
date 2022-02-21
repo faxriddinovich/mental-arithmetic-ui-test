@@ -53,18 +53,6 @@ export default defineComponent({
       digit.value = pickedDigit;
     };
 
-    // FIXME: currently `vue-i18n` library doesn't support passing variables into
-    // modifiers. So we have to do this dirty thing.
-    const i18nArguments = () => {
-      const plusn = new Intl.NumberFormat("en-US").format(
-        Number("1" + "0".repeat(digit.value))
-      );
-      return {
-        digit: digit.value,
-        plusn,
-      };
-    };
-
     function addSequenceItem() {
       sequence.value.push({
         examples: [],
@@ -127,7 +115,6 @@ export default defineComponent({
       waitForAnswer,
 
       sequence,
-      i18nArguments,
 
       addSequenceItem,
       removeSequenceItem,

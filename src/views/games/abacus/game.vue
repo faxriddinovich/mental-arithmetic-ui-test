@@ -84,7 +84,7 @@
           :data-si="sequenceIndex"
         >
           <div class="is-attention-text">
-            <scalable-text :text="sequenceItem.theme" class="is-full-size" />
+            <scalable-text :text="$t(sequenceItem.theme, { digit: sequenceItem.digit })" class="is-full-size" />
           </div>
         </div>
 

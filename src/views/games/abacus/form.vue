@@ -106,7 +106,7 @@
                         @close="removeSequenceItem(sequenceItemIndex)"
                         type="is-link"
                         closable
-                        >{{ $t(sequenceItem.theme, i18nArguments()) }}</b-tag
+                        >{{ $t(sequenceItem.theme, { digit }) }}</b-tag
                       >
                     </b-taglist>
                   </b-field>

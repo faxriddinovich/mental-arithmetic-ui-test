@@ -181,11 +181,11 @@ export namespace uz {
     "senior_comrades_mix_simple_common_dd_plus_from_d_to_dd": "Miks formula umumiy oddiy {digit}d + (1d .. {digit}d)", // FIXME
     "senior_comrades_mix_common_dd_plus_from_d_to_dd": "Miks formula umumiy {digit}d + (1d .. {digit}d)", // FIXME
 
-    "senior_comrades_simple_common_plus_dd": "Katta o'rtoqlar umumiy oddiy +{plusn}",
-    "senior_comrades_common_plus_dd": "Katta o'rtoqlar umumiy +{plusn}",
+    "senior_comrades_simple_common_plus_dd": "Katta o'rtoqlar umumiy oddiy +#plusn",
+    "senior_comrades_common_plus_dd": "Katta o'rtoqlar umumiy +#plusn",
 
-    "senior_comrades_mix_simple_common_plus_dd": "Miks formula umumiy oddiy +{plusn}",
-    "senior_comrades_mix_common_plus_dd": "Miks formula umumiy +{plusn}",
+    "senior_comrades_mix_simple_common_plus_dd": "Miks formula umumiy oddiy +#plusn",
+    "senior_comrades_mix_common_plus_dd": "Miks formula umumiy +#plusn",
 
     /* multiplication */
     "dd_mult_d_simple": "{digit}d × 1d oddiy",
