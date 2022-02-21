@@ -73,6 +73,7 @@ Vue.filter("timerFormat", (timerAbsolute: number) => {
 
 Vue.filter('toOperation', (ops: number) => {
   let str = '';
+  console.log(ops);
 
   if(ops & Operation.add)
     str += '+ ';

@@ -373,6 +373,7 @@
   margin-bottom: 10px;
 }
 
+/* unused, but looks cool */
 .flicking-panel.active {
   box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
     inset -5px -5px 5px rgba(255, 255, 255, 0.5),

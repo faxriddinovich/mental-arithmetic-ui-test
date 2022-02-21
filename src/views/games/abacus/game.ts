@@ -93,8 +93,9 @@ export default defineComponent({
 
     const totalExamplesCount = computed<number>(() => {
       let i = 0;
-      for (const sequenceItem of v(sequence)) i += sequenceItem.examplesCount;
-
+      //prettier-ignore
+      for (const sequenceItem of v(sequence))
+        i += sequenceItem.examplesCount;
       return i;
     });
 
@@ -144,8 +145,7 @@ export default defineComponent({
 
         if (parse(dataset.ri) === 0 && !v(timerEnabled)) enableTimer();
 
-        if(v(currentSequenceItem).speechSound)
-          speechSpeak(String(dataset.rv));
+        if (v(currentSequenceItem).speechSound) speechSpeak(String(dataset.rv));
 
         if (!config.waitForAnswer) {
           if (parse(dataset.ri) + 1 === v(currentExample).numbers.length) {
@@ -308,7 +308,6 @@ export default defineComponent({
     function onNextExample() {
       // TODO better solution
       if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
-        console.log(1);
         finishGame();
         return;
       }
