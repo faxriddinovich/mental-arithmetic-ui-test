@@ -20,10 +20,8 @@ export class AbacusBoard extends G implements Drawable {
     this.abacusInnerBox.cx(this.abacusOuterBox.cx());
     this.abacusColumns.cx(this.abacusInnerBox.cx());
 
-    if (this.columns === 1) {
-      this.abacusValueBox.get(0).width(this.abacusOuterBox.width());
-      this.abacusValueBox.centerText();
-    }
+    this.abacusValueBox.get(0).width(610);
+    this.abacusValueBox.centerText();
 
     this.abacusValueBox.cx(this.abacusOuterBox.cx());
     this.abacusValueBox.dy(-this.abacusValueBox.height() + 6);

@@ -48,7 +48,7 @@ export default defineComponent({
     });
 
     const abacusValue = ref<number>(0);
-    const abacusBoard = new AbacusBoard(6);
+    const abacusBoard = new AbacusBoard(20);
 
     const config = context.root.$store.getters[
       "Abacus/config"
@@ -379,9 +379,8 @@ export default defineComponent({
     function drawAbacus() {
       const abacusDraw = SVG()
         .addTo(abacusContainerRef.value!)
-        .viewbox(0, -55, 670, 469)
+        .viewbox(0, -55, 2069, 469)
         .addClass("is-abacus-board")
-        .addClass("my-1");
 
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);

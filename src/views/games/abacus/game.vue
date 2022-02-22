@@ -47,12 +47,8 @@
     <!-- end controls bar -->
 
     <!-- abacus board -->
-    <div v-show="canDisplayAbacus">
-      <div
-        class="is-flex is-justify-content-center"
-        ref="abacusContainerRef"
-        v-show="canDisplayAbacus"
-      />
+    <div v-show="canDisplayAbacus" class="is-abacus-board-container">
+      <div ref="abacusContainerRef" v-show="canDisplayAbacus" />
     </div>
 
     <!-- confetti screen -->
@@ -407,18 +403,43 @@
   }
 }
 
-.is-abacus-board {
+.is-abacus-board-container {
+	width: 100%;
   position: absolute;
-  max-width: 650px;
+	overflow-x: scroll;
+	overflow-y: hidden;
   bottom: 0;
+}
+
+svg.is-abacus-board {
+  width: 100%;
+}
+
+@include mobile {
+	svg.is-abacus-board {
+    width: 1200px;
+	}
+}
+
+@include tablet {
+	svg.is-abacus-board {
+    width: 1200px;
+	}
+}
+
+@include desktop {
+	svg.is-abacus-board {
+    width: 100%;
+	}
 }
 
 img.is-trophy {
   display: block;
-  width: 200px;
+  width: 100px;
   margin-top: -100px;
   margin-left: auto;
   margin-right: auto;
+	overflow-y: scroll;
 }
 
 .is-trophy.is-lost {

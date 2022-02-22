@@ -97,7 +97,7 @@ body {
   min-height: 100vh;
 }
 
-::-webkit-scrollbar {
+html::-webkit-scrollbar {
   width: 0;
 }
 
