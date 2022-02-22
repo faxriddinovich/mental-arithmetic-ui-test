@@ -2,6 +2,7 @@ import {
   defineComponent,
   ref,
   onMounted,
+  onUnmounted,
   computed,
   Ref,
 } from "@vue/composition-api";
@@ -350,6 +351,9 @@ export default defineComponent({
       currentSequenceItemIndex.value = 0;
       completedRowsCount.value = 0;
       currentExampleHead.value = 0;
+      clearSoundEffects();
+      clearTimerHandles();
+      clearTimer();
     };
 
     const clearTimer = () => {
@@ -360,9 +364,6 @@ export default defineComponent({
     const onRepeat = () => {
       clearGameState();
       displayCards();
-      clearSoundEffects();
-      clearTimerHandles();
-      clearTimer();
 
       setTimeout(() => {
         slideTo(0);
@@ -422,6 +423,10 @@ export default defineComponent({
     onMounted(() => {
       drawAbacus();
       startGame();
+    });
+
+    onUnmounted(() => {
+      clearGameState();
     });
 
     return {
