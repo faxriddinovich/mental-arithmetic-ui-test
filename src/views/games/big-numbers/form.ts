@@ -40,7 +40,7 @@ export default defineComponent({
       return (
         sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
         instances.value.length < MAX_ALLOWED_INSTANCES_COUNT &&
-        theme.value.length >= 1
+        theme.value.length
       );
     });
 
@@ -52,7 +52,7 @@ export default defineComponent({
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length >= 1;
+      return theme.value.length;
     });
 
     const config = context.root.$store.getters[
@@ -74,8 +74,8 @@ export default defineComponent({
       sameExamples.value = config.sameExamples;
     }
 
-    const pickTheme = (pickedDigit: number, pickedTheme: Theme) => { 
-      theme.value = pickedTheme.loc;
+    const pickTheme = (pickedDigit: number, pickedTheme: string) => { 
+      theme.value = pickedTheme;
       digit.value = pickedDigit;
     };
 

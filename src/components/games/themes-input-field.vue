@@ -1,5 +1,5 @@
 <template>
-  <b-field>
+  <b-field :message="$t('themes_input_instruction_text')">
     <p class="control" v-if="themesInputFocus === false">
       <b-dropdown v-model="digit" @change="pickDigit">
         <template #trigger>

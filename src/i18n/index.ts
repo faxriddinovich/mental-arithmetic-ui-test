@@ -7,7 +7,6 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: "en-US",
-  lazy: true,
   formatter: new ThemeFormatter(),
   messages: {
     "en-US": {
@@ -121,6 +120,7 @@ const i18n = new VueI18n({
       "create-account": "Akkaunt yaratish",
       "success-authentication": "Hush kelibsiz {username}!",
       "invalid-credentials": "Noto'g'ri akkaunt ma'lumotlari",
+      ...uz.ui,
       ...uz.themes,
     },
   },

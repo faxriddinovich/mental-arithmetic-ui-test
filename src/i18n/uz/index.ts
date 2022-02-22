@@ -1,4 +1,8 @@
 export namespace uz {
+  export const ui = {
+    "themes_input_instruction_text": "*Chap tomondagi tugmani bosib raqamlar xonasini tanlashingiz mumkin.",
+  };
+
   export const themes = {
     /* addition/subtraction */
     "directly_adding_from_1_to_4": "To'g'ridan to'g'ri qo'shish +1 .. 4",

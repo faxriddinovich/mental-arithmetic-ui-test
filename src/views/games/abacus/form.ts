@@ -33,7 +33,7 @@ export default defineComponent({
     const sequence = ref<SequenceItem[]>([]);
 
     const canAddSequenceItem = computed(() => {
-      return sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
+      return theme.value.length && sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
     });
 
     const canPressPlayButton = computed<boolean>(() => {
