@@ -37,7 +37,7 @@ export default defineComponent({
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length >= 1;
+      return sequence.value.length || theme.value.length >= 1;
     });
 
     const config = context.root.$store.getters[
