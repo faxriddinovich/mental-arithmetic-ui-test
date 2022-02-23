@@ -21,6 +21,12 @@ import { speak } from "@/services/tts";
 
 import StackedCards from "@/components/stacked-cards.vue";
 
+import {
+  ABACUS_STONE_WIDTH,
+  ABACUS_FRAME_WIDTH,
+  ABACUS_FRAME_ABSOLUTE_X_PADDING,
+} from "./constants";
+
 type TimerHandleKey = "rows-timer-handle";
 type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
 type DisplayMode = "answer" | "cards" | "wait" | "scores";
@@ -376,10 +382,15 @@ export default defineComponent({
     }
 
     function drawAbacus() {
+      const width =
+        ABACUS_STONE_WIDTH * config.abacusColumnsCount +
+        ABACUS_FRAME_WIDTH +
+        ABACUS_FRAME_ABSOLUTE_X_PADDING;
+
       const abacusDraw = SVG()
         .addTo(abacusContainerRef.value!)
-        .viewbox(0, -55, 2069, 469)
-        .addClass("is-abacus-board")
+        .viewbox(0, -55, width, 469)
+        .addClass("is-abacus-board");
 
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);

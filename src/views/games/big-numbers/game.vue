@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- controls bar -->
-    <section class="card is-bordered is-controls-bar" v-if="!multiplayerMode">
+    <section class="card is-bordered is-absolute is-full-width" v-if="!multiplayerMode">
       <div class="p-2">
         <div
           class="is-flex is-align-items-center is-justify-content-space-between"
@@ -217,11 +217,6 @@
 <script lang="ts" src="./game.ts" />
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
-
-.is-controls-bar {
-  position: absolute !important;
-  width: 100% !important;
-}
 
 .is-color-indicator {
   display: inline-block;

@@ -5,15 +5,15 @@ export const ABACUS_FRAME_COLOR = "rgb(104, 93, 75)"
 export const ABACUS_BG_COLOR = "rgb(237, 243, 244)";
 export const ABACUS_VALUE_BOX_BG_COLOR = "rgb(104, 93, 75)";
 
-export const ABACUS_STONE_SLOTS_COUNT = 7;
+export const ABACUS_STONE_SLOTS_COUNT = 7; // TODO
 
 export const ABACUS_COLUMN_VERTICAL_LINE_WIDTH = 20;
 export const ABACUS_COLUMN_VERTICAL_LINE_COLOR = "rgb(77, 77, 77)";
 
 export const ABACUS_HORIZONTAL_LINE_WIDTH = 15;
 
-export const ABACUS_VALUE_BOX_WIDTH = 200;
-export const ABACUS_VALUE_BOX_HEIGHT = 60;
+export const ABACUS_VALUE_BOX_WIDTH = 200; // TODO
+export const ABACUS_VALUE_BOX_HEIGHT = 60; // TODO
 
 export const ABACUS_FRAME_WIDTH = 50;
 export const ABACUS_FRAME_X_PADDING = 10;

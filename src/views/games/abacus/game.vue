@@ -2,7 +2,7 @@
   <div>
     <!-- controls bar -->
     <section
-      class="card is-bordered is-controls-bar"
+      class="card is-bordered"
       v-if="displayMode !== 'scores'"
     >
       <div class="p-2">
@@ -23,7 +23,6 @@
             <span v-if="timerEnabled">
               <span :class="timerClasses">
                 <b-icon icon="stopwatch" size="is-medium" />
-
                 {{ timerAbsolute | timerFormat }}
               </span>
             </span>
@@ -337,9 +336,9 @@
 }
 
 .flicking-viewport {
-  padding-top: 120px;
   width: 100%;
-         pointer-events: none;
+  margin-top:20px;
+  pointer-events: none;
 }
 
 @include mobile {
@@ -384,7 +383,6 @@
   margin-right: 15px;
   position: relative;
   padding: 10px;
-  margin-top: 10px;
 
   .is-attention-text {
     background: #fdcb6e;
@@ -412,24 +410,32 @@
 }
 
 svg.is-abacus-board {
-  width: 100%;
+  display: block;
+  margin: auto;
+  height: 569px !important;
 }
 
 @include mobile {
 	svg.is-abacus-board {
-    width: 1200px;
+    height: 350px !important;
 	}
 }
 
 @include tablet {
 	svg.is-abacus-board {
-    width: 1200px;
+    height: 390px !important;
 	}
 }
 
 @include desktop {
 	svg.is-abacus-board {
-    width: 100%;
+    height: 390px !important;
+	}
+}
+
+@include widescreen {
+	svg.is-abacus-board {
+    height: 500px !important;
 	}
 }
 
@@ -455,9 +461,9 @@ img.is-trophy {
 
 .is-confetti {
   position: absolute;
+  top: 0px;
+  bottom: 0px;
   width: 100%;
-  height: 100%;
-  z-index: 99999;
   pointer-events: none;
 }
 </style>

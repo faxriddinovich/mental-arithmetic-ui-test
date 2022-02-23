@@ -3,8 +3,16 @@
 
 $border-color: rgb(149, 165, 166);
 
+.is-absolute {
+  position: absolute !important;
+}
+
 a.dropdown-item {
   padding-right: 16px !important;
+}
+
+.is-full-width {
+  width: 100% !important;
 }
 
 .is-full-size {
