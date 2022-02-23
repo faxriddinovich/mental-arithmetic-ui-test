@@ -21,7 +21,8 @@ export interface SequenceItem {
 export interface AbacusGameConfig {
   sequence: SequenceItem[],
   timerSecs: number,
-  waitForAnswer: boolean
+  waitForAnswer: boolean,
+  abacusColumnsCount: number,
 }
 
 export interface Drawable {

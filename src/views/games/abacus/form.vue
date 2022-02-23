@@ -147,6 +147,14 @@
                   <template #label> <b-icon icon="palette" /> Color: </template>
                   <color-palette v-model="fontColor" />
                 </b-field>
+                <b-field label="Abacus Columns:" style="width: 300px">
+                  <b-numberinput
+                    v-model="abacusColumnsCount"
+                    min="1"
+                    max="30"
+                    expanded
+                  />
+                </b-field>
 
                 <b-field>
                   <template #label>

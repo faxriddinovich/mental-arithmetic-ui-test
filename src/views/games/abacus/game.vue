@@ -435,7 +435,7 @@ svg.is-abacus-board {
 
 img.is-trophy {
   display: block;
-  width: 100px;
+  width: 170px;
   margin-top: -100px;
   margin-left: auto;
   margin-right: auto;
@@ -446,18 +446,18 @@ img.is-trophy {
   filter: grayscale(1);
 }
 
+@include mobile {
+  img.is-trophy {
+    width: 160px;
+    margin-top: -80px;
+  }
+}
+
 .is-confetti {
   position: absolute;
   width: 100%;
   height: 100%;
   z-index: 99999;
   pointer-events: none;
-}
-
-@include mobile {
-  img.is-trophy {
-    width: 160px;
-    margin-top: -80px;
-  }
 }
 </style>

@@ -29,15 +29,19 @@ export default defineComponent({
     const waitForAnswer = ref<boolean>(true);
     const timerMins = ref<number>(1);
     const timerSecs = ref<number>(0);
+    const abacusColumnsCount = ref<number>(10);
 
     const sequence = ref<SequenceItem[]>([]);
 
     const canAddSequenceItem = computed(() => {
-      return theme.value.length && sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT;
+      return (
+        theme.value.length &&
+        sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT
+      );
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return sequence.value.length || theme.value.length >= 1;
+      return sequence.value.length > 0 || theme.value.length >= 1;
     });
 
     const config = context.root.$store.getters[
@@ -83,6 +87,7 @@ export default defineComponent({
         sequence: sequence.value,
         timerSecs: 60 * timerMins.value + timerSecs.value,
         waitForAnswer: waitForAnswer.value,
+        abacusColumnsCount: abacusColumnsCount.value,
       };
 
       const { commit } = context.root.$store;
@@ -112,6 +117,7 @@ export default defineComponent({
 
       timerMins,
       timerSecs,
+      abacusColumnsCount,
       waitForAnswer,
 
       sequence,

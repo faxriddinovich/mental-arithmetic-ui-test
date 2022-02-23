@@ -47,14 +47,13 @@ export default defineComponent({
       autoResize: true,
     });
 
-    const abacusValue = ref<number>(0);
-    const abacusBoard = new AbacusBoard(20);
-
     const config = context.root.$store.getters[
       "Abacus/config"
     ] as AbacusGameConfig;
-
     const sequence = ref<SequenceItem[]>(config.sequence);
+
+    const abacusValue = ref<number>(0);
+    const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
 
     const wonTheGame = computed<boolean>(() => {
       return (
