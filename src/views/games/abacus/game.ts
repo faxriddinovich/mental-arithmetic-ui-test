@@ -11,6 +11,7 @@ import { AbacusBoard } from "./board";
 import { AbacusGameConfig } from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
+import VictorySoundEffect from "@@/sounds/victory.mp3";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import confettiLib from "canvas-confetti";
 
@@ -28,7 +29,10 @@ import {
 } from "./constants";
 
 type TimerHandleKey = "rows-timer-handle";
-type SoundEffectKey = "timer-sound-effect" | "whistle-sound-effect";
+type SoundEffectKey =
+  | "timer-sound-effect"
+  | "whistle-sound-effect"
+  | "victory-sound-effect";
 type DisplayMode = "answer" | "cards" | "wait" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
@@ -174,9 +178,7 @@ export default defineComponent({
 
     const trophyClasses = computed<string[]>(() => {
       const classes = ["is-block", "is-trophy"];
-
       if (!v(wonTheGame)) classes.push("is-lost");
-
       return classes;
     });
 
@@ -256,6 +258,7 @@ export default defineComponent({
     const finishGame = () => {
       clearInterval(timerHandles.get("rows-timer-handle")!);
       setTimeout(() => {
+        if (v(wonTheGame)) playVictorySoundEffect();
         displayScores();
         if (v(wonTheGame)) playConfettiAnimation();
       }, 1000);
@@ -269,6 +272,12 @@ export default defineComponent({
       const audio = new Audio(TimerSoundEffect);
       audio.loop = loop;
       sounds.set("timer-sound-effect", audio);
+      return audio.play();
+    };
+
+    const playVictorySoundEffect = () => {
+      const audio = new Audio(VictorySoundEffect);
+      sounds.set("victory-sound-effect", audio);
       return audio.play();
     };
 

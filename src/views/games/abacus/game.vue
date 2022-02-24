@@ -445,7 +445,6 @@ img.is-trophy {
   margin-top: -100px;
   margin-left: auto;
   margin-right: auto;
-	overflow-y: scroll;
 }
 
 .is-trophy.is-lost {
@@ -459,11 +458,13 @@ img.is-trophy {
   }
 }
 
-.is-confetti {
+canvas.is-confetti {
   position: absolute;
   top: 0px;
   bottom: 0px;
   width: 100%;
+  height: 100%;
   pointer-events: none;
+  z-index: 999999;
 }
 </style>
