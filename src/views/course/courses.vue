@@ -30,7 +30,7 @@
           <b-input
             v-model="searchText"
             class="is-flex-grow-1"
-            :placeholder="$t('course-search-input-placeholder')"
+            :placeholder="$t('course_search_input_placeholder')"
             icon="search"
           >
           </b-input>
@@ -47,7 +47,7 @@
     <div class="mt-5">
       <cloud-loading v-if="isFetching" />
 
-      <not-found-box :text="$t('no-courses-found')" v-if="!courses.length" />
+      <not-found-box :text="$t('no_courses_found')" v-else-if="!courses.length" />
       <div class="columns is-mobile is-multiline" v-else>
         <div
           class="column is-12-mobile is-6-tablet is-4-desktop"
@@ -65,7 +65,7 @@
           @click="loadMore"
           :disabled="isFetching"
           expanded
-          >{{ $t("load-more") }}</b-button
+          >{{ $t("load_more") }}</b-button
         >
       </div>
     </div>
@@ -74,9 +74,9 @@
 <script lang="ts">
 import {
   defineComponent,
-  ref,
   onMounted,
   PropType,
+  ref,
 } from "@vue/composition-api";
 import CourseCard from "@/components/course/card.vue";
 import CloudLoading from "@/components/cloud-loading.vue";

@@ -1,5 +1,25 @@
 export namespace uz {
   export const ui = {
+    "mental_arithmetic": "Mental arifmetika",
+    "other_resources": "Boshqa resurslar",
+    "authentication": "Auntefikatsiya",
+    "abacus_game": "Abakus",
+    "big_numbers_game": "Katta raqamlar",
+    "flash_card_game": "Flesh karta",
+    "table_game": "Jadval",
+    "settings": "Sozlamalar",
+    "filter": "Filter",
+    "price": "Narx",
+    "popular": "Mashhur",
+    "purchased": "Sotib olingan",
+    "course_search_input_placeholder": "Kurs nomi yoki avtori bo'yicha qidirish",
+    "search": "Qidirish",
+    "load_more": "Ko'proq yuklash",
+    "no_courses_found": "Hechqanday kurslar topilmadi",
+    "download_application_notice": "Bizning kompyuter va mobile qurilmalar uchun mo'ljallangan be'pul ilovamizni quyidagi havolalar orqali yuklab olishingiz mumkin.",
+
+
+    /* games */
     "themes_input_instruction_text": "*Chap tomondagi tugmani bosib raqamlar xonasini tanlashingiz mumkin.",
   };
 

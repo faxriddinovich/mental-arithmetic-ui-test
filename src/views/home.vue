@@ -9,10 +9,7 @@
     >
       <div class="has-text-centered">
         <div class="mb-2 is-size-6-fullhd is-size-7-touch">
-          Download our offline
-          <span class="is-underlined has-text-weight-semibold">mobile</span> or
-          <span class="is-underlined has-text-weight-semibold">desktop</span>
-          app from the website or:
+          {{ $t("download_application_notice") }}
         </div>
         <img
           src="https://miro.medium.com/max/600/1*xqT83bMEz92IBYxS9UQNow.png"
@@ -40,7 +37,7 @@
       <b-tab-item value="main">
         <template #header>
           <b-icon icon="abacus" class="mx-0" />
-          <span class="is-hidden-mobile">{{ $t("mental-arithmetic") }}</span>
+          <span class="is-hidden-mobile">{{ $t("mental_arithmetic") }}</span>
         </template>
 
         <b-message
@@ -56,13 +53,10 @@
         </b-message>
 
         <div class="columns is-variable is-2 is-mobile is-multiline">
-          <div
-            class="column is-4-mobile is-4-tablet is-2-desktop"
-            v-for="item of items"
-            :key="item.icon"
-          >
+          <!-- abacus game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
             <router-link
-              :to="item.link"
+              :to="{ name: 'AbacusGameForm' }"
               class="
                 card
                 is-clickable
@@ -72,12 +66,113 @@
                 py-4
               "
             >
-              <b-icon :icon="item.icon" type="is-primary" size="is-large" />
+              <b-icon icon="abacus" type="is-primary" size="is-large" />
               <span class="has-text-weight-semibold-tablet mt-1">{{
-                item.title
+                $t("abacus_game")
               }}</span>
             </router-link>
           </div>
+          <!-- end abacus game -->
+          <!-- big numbers game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
+            <router-link
+              :to="{ name: 'BigNumbersGameForm' }"
+              class="
+                card
+                is-clickable
+                is-flex
+                is-flex-direction-column
+                is-align-items-center
+                py-4
+              "
+            >
+              <b-icon icon="10-plus" type="is-primary" size="is-large" />
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                $t("big_numbers_game")
+              }}</span>
+            </router-link>
+          </div>
+          <!-- end big numbers game -->
+          <!-- flash card game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
+            <router-link
+              :to="{ name: 'Home' }"
+              class="
+                card
+                is-clickable
+                is-flex
+                is-flex-direction-column
+                is-align-items-center
+                py-4
+              "
+            >
+              <b-icon icon="square-shape" type="is-primary" size="is-large" />
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                $t("flash_card_game")
+              }}</span>
+            </router-link>
+          </div>
+          <!-- end flash card game -->
+          <!-- flash card game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
+            <router-link
+              :to="{ name: 'Home' }"
+              class="
+                card
+                is-clickable
+                is-flex
+                is-flex-direction-column
+                is-align-items-center
+                py-4
+              "
+            >
+              <b-icon icon="browser" type="is-primary" size="is-large" />
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                $t("table_game")
+              }}</span>
+            </router-link>
+          </div>
+          <!-- end flash card game -->
+          <!-- flash card game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
+            <router-link
+              :to="{ name: 'Home' }"
+              class="
+                card
+                is-clickable
+                is-flex
+                is-flex-direction-column
+                is-align-items-center
+                py-4
+              "
+            >
+              <b-icon icon="chart-line" type="is-primary" size="is-large" />
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                $t("scores")
+              }}</span>
+            </router-link>
+          </div>
+          <!-- end flash card game -->
+          <!-- flash card game -->
+          <div class="column is-4-mobile is-4-tablet is-2-desktop">
+            <router-link
+              :to="{ name: 'Settings' }"
+              class="
+                card
+                is-clickable
+                is-flex
+                is-flex-direction-column
+                is-align-items-center
+                py-4
+              "
+            >
+              <b-icon icon="setting" type="is-primary" size="is-large" />
+              <span class="has-text-weight-semibold-tablet mt-1">{{
+                $t("settings")
+              }}</span>
+            </router-link>
+          </div>
+          <!-- end flash card game -->
         </div>
 
         <courses :kind="0" />
@@ -86,7 +181,7 @@
       <b-tab-item value="other">
         <template #header>
           <b-icon icon="cube" class="mx-0" />
-          <span class="is-hidden-mobile">{{ $t("other-resources") }}</span>
+          <span class="is-hidden-mobile">{{ $t("other_resources") }}</span>
         </template>
 
         <div>
@@ -97,7 +192,7 @@
         <template #header>
           <b-icon icon="user" class="mx-0" />
           <span class="is-hidden-mobile">{{
-            activeSession ? $t("account") : $t("authenticate")
+            activeSession ? $t("account") : $t("authentication")
           }}</span>
         </template>
       </b-tab-item>
@@ -124,19 +219,6 @@ export default defineComponent({
       () => context.root.$store.getters["Account/activeSession"]
     );
     const event = ref<EventContract | null>(null);
-
-    const items = ref([
-      { title: "Abacus", icon: "abacus", link: { name: "AbacusGameForm" } },
-      {
-        title: "Big numbers",
-        icon: "10-plus",
-        link: { name: "BigNumbersGameForm" },
-      },
-      { title: "Flash card", icon: "square-shape", link: "/" },
-      { title: "Table", icon: "browser", link: "/" },
-      { title: "Scores", icon: "chart-line", link: "/scores" },
-      { title: "Settings", icon: "setting", link: "/settings" },
-    ]);
 
     function getEvent() {
       const enabled =
@@ -175,7 +257,6 @@ export default defineComponent({
       openAppStore,
       openPlayMarket,
       changeTab,
-      items,
       event,
     };
   },

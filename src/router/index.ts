@@ -54,6 +54,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/settings",
+    name:  "Settings",
     component: Settings,
   },
   {
