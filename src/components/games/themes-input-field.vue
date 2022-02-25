@@ -5,11 +5,11 @@
         <template #trigger>
           <b-button>
             <b-icon icon="dialpad-alt" size="is-small" class="m-0" />
-            <span class="is-hidden-mobile ml-1">Digits</span>
+            <span class="is-hidden-mobile ml-1">{{ $t("digits") }}</span>
           </b-button>
         </template>
 
-        <b-dropdown-item custom>Select Digits</b-dropdown-item>
+        <b-dropdown-item custom>{{ $t("select_digits") }}</b-dropdown-item>
         <b-dropdown-item separator></b-dropdown-item>
         <b-dropdown-item :value="1">1</b-dropdown-item>
         <b-dropdown-item :value="2">2</b-dropdown-item>
@@ -20,7 +20,7 @@
       </b-dropdown>
     </p>
     <b-autocomplete
-      placeholder="Search a theme"
+      :placeholder="$t('themes_input_placeholder')"
       icon="search"
       :data="themes"
       dropdown-position="bottom"
@@ -35,11 +35,8 @@
       clearable
     >
       <template #header>
-        <span
-          >Found:
-          <span class="has-text-weight-semibold">{{ themes.length }}</span>
-          theme(s)</span
-        >
+        {{ $t("themes_found") }}:
+        <span class="has-text-weight-semibold">{{ themes.length }}</span>
       </template>
 
       <template slot-scope="props">
@@ -55,7 +52,7 @@
         </div>
       </template>
 
-      <template #empty>No results found</template>
+      <template #empty>{{ $t("no_themes_found") }}</template>
     </b-autocomplete>
   </b-field>
 </template>

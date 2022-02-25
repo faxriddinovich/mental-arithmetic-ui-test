@@ -17,10 +17,29 @@ export namespace uz {
     "load_more": "Ko'proq yuklash",
     "no_courses_found": "Hechqanday kurslar topilmadi",
     "download_application_notice": "Bizning kompyuter va mobile qurilmalar uchun mo'ljallangan be'pul ilovamizni quyidagi havolalar orqali yuklab olishingiz mumkin.",
-
-
-    /* games */
+    "form": "Forma",
+    "tips": "Foydali ma'lumotlar",
+    "theme": "Mavzu",
+    "digits": "Xonalar",
+    "select_digits": "Xonalarni tanlash",
+    "themes_input_placeholder": "Mavzu nomi bo'yicha qidirish",
     "themes_input_instruction_text": "*Chap tomondagi tugmani bosib raqamlar xonasini tanlashingiz mumkin.",
+    "themes_found": "Mavzular topildi",
+    "no_themes_found": "Hechqanday mavzular topilmadi",
+    "examples": "Misollar",
+    "time_between": "Orasidagi vaqt",
+    "rows": "Qatorlar",
+    "minutes": "Minutlar",
+    "seconds": "Sekundlar",
+    "wait_for_answer": "Javobni kutish",
+    "themes": "Mavzular",
+    "add_theme": "Mavzu qo'shish",
+    "play": "O'ynash",
+    "color": "Rang",
+    "abacus_columns": "Abakus ustunlari",
+    "other_settings": "Boshqa sozlamalar",
+    "display_numbers": "Raqamlarni ko'rsatish",
+    "speech_sound": "Nutq tovushi"
   };
 
   export const themes = {

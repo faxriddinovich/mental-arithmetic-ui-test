@@ -13,18 +13,20 @@
               <template #header>
                 <b-icon class="m-0" icon="notes" /><span
                   class="is-hidden-mobile"
-                  >&nbsp;Form</span
+                  >&nbsp;{{ $t("form") }}</span
                 ></template
               >
               <div class="box">
                 <form @submit.prevent="play">
                   <b-field>
-                    <template #label> <b-icon icon="file" /> Theme </template>
+                    <template #label>
+                      <b-icon icon="file" /> {{ $t("theme") }}
+                    </template>
                     <themes-input-field @pick="pickTheme" />
                   </b-field>
                   <div class="columns is-fullhd is-multiline is-gaples">
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Examples:" expanded>
+                      <b-field :label="$t('examples')" expanded>
                         <b-numberinput
                           v-model="examplesCount"
                           controls-position="compact"
@@ -35,7 +37,7 @@
                       </b-field>
                     </div>
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Timeout:" expanded>
+                      <b-field :label="$t('time_between')" expanded>
                         <b-numberinput
                           v-model="examplesTimeout"
                           controls-position="compact"
@@ -51,7 +53,7 @@
                   <!-- FIXME: mb-4 is a stupid idea -->
                   <div class="columns is-fullhd is-multiline mb-4">
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Rows:" expanded>
+                      <b-field :label="$t('rows')" expanded>
                         <b-numberinput
                           v-model="rowsCount"
                           controls-position="compact"
@@ -62,7 +64,7 @@
                       </b-field>
                     </div>
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Timeout:" expanded>
+                      <b-field :label="$t('time_between')" expanded>
                         <b-numberinput
                           v-model="rowsTimeout"
                           controls-position="compact"
@@ -75,7 +77,7 @@
                     </div>
                   </div>
                   <b-field grouped>
-                    <b-field label="Minutes:">
+                    <b-field :label="$t('minutes')">
                       <b-numberinput
                         v-model="timerMins"
                         :controls="false"
@@ -83,7 +85,7 @@
                         max="999"
                       />
                     </b-field>
-                    <b-field label="Seconds:">
+                    <b-field :label="$t('seconds')">
                       <b-numberinput
                         v-model="timerSecs"
                         :controls="false"
@@ -93,12 +95,14 @@
                     </b-field>
                   </b-field>
                   <b-field>
-                    <b-checkbox v-model="waitForAnswer"
-                      >Wait for answer</b-checkbox
-                    >
+                    <b-checkbox v-model="waitForAnswer">{{
+                      $t("wait_for_answer")
+                    }}</b-checkbox>
                   </b-field>
                   <b-field v-if="sequence.length">
-                    <template #label> <b-icon icon="file" /> Themes </template>
+                    <template #label>
+                      <b-icon icon="file" /> {{ $t("themes") }}
+                    </template>
                     <b-taglist>
                       <b-tag
                         v-for="(sequenceItem, sequenceItemIndex) of sequence"
@@ -117,7 +121,7 @@
                           icon-left="plus"
                           :disabled="!canAddSequenceItem"
                           @click="addSequenceItem"
-                          >Add theme</b-button
+                          >{{ $t("add_theme") }}</b-button
                         >
                       </p>
                     </div>
@@ -129,7 +133,7 @@
                       icon-left="play"
                       :disabled="!canPressPlayButton"
                       expanded
-                      >Play</b-button
+                      >{{ $t("play") }}</b-button
                     >
                   </div>
                 </form>
@@ -139,15 +143,17 @@
               <template #header>
                 <b-icon class="m-0" icon="setting" /><span
                   class="is-hidden-mobile"
-                  >&nbsp;Settings</span
+                  >&nbsp;{{ $t("settings") }}</span
                 ></template
               >
               <div class="box">
                 <b-field>
-                  <template #label> <b-icon icon="palette" /> Color: </template>
+                  <template #label>
+                    <b-icon icon="palette" /> {{ $t("color") }}:
+                  </template>
                   <color-palette v-model="fontColor" />
                 </b-field>
-                <b-field label="Abacus Columns:" style="width: 300px">
+                <b-field :label="$t('abacus_columns')" style="width: 300px">
                   <b-numberinput
                     v-model="abacusColumnsCount"
                     min="1"
@@ -214,12 +220,14 @@
 
                 <b-field>
                   <template #label>
-                    <b-icon icon="setting" /> Other settings
+                    <b-icon icon="setting" /> {{ $t("other_settings") }}
                   </template>
-                  <b-checkbox v-model="displayNumbers"
-                    >Display numbers</b-checkbox
-                  >
-                  <b-checkbox v-model="speechSound">Speech sound</b-checkbox>
+                  <b-checkbox v-model="displayNumbers">{{
+                    $t("display_numbers")
+                  }}</b-checkbox>
+                  <b-checkbox v-model="speechSound">{{
+                    $t("speech_sound")
+                  }}</b-checkbox>
                 </b-field>
               </div>
             </b-tab-item>
@@ -227,7 +235,7 @@
               <template #header>
                 <b-icon class="m-0" icon="lightbulb-alt" /><span
                   class="is-hidden-mobile"
-                  >&nbsp;Tips</span
+                  >&nbsp;{{ $t("tips") }}</span
                 ></template
               >
               <div class="box">
