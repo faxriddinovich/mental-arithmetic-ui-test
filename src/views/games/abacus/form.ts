@@ -48,7 +48,7 @@ export default defineComponent({
       "Abacus/config"
     ] as AbacusGameConfig;
 
-    if (config) {
+    if (config && config.sequence.length) {
       sequence.value.push(...config.sequence);
     }
 

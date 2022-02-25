@@ -22,9 +22,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-
-android/
-ios/
-
 #Electron-builder output
 /dist_electron
