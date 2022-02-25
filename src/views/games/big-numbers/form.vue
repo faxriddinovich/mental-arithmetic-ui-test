@@ -10,16 +10,20 @@
             expanded
           >
             <b-tab-item value="form">
-              <template #header> <b-icon icon="notes" /> Form </template>
+              <template #header>
+                <b-icon icon="notes" /> {{ $t("form") }}
+              </template>
               <div class="box">
                 <form @submit.prevent="play">
                   <b-field>
-                    <template #label> <b-icon icon="file" /> Theme </template>
+                    <template #label>
+                      <b-icon icon="file" /> {{ $t("theme") }}
+                    </template>
                     <themes-input-field @pick="pickTheme" />
                   </b-field>
                   <div class="columns is-fullhd is-multiline is-gaples">
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Examples:" expanded>
+                      <b-field :label="$t('examples')" expanded>
                         <b-numberinput
                           v-model="examplesCount"
                           controls-position="compact"
@@ -30,7 +34,7 @@
                       </b-field>
                     </div>
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Timeout:" expanded>
+                      <b-field :label="$t('time_between')" expanded>
                         <b-numberinput
                           v-model="examplesTimeout"
                           controls-position="compact"
@@ -46,7 +50,7 @@
                   <!-- FIXME: mb-4 is a stupid idea -->
                   <div class="columns is-fullhd is-multiline mb-4">
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Rows:" expanded>
+                      <b-field :label="$t('rows')" expanded>
                         <b-numberinput
                           v-model="rowsCount"
                           controls-position="compact"
@@ -57,7 +61,7 @@
                       </b-field>
                     </div>
                     <div class="column is-6-fullhd pb-0">
-                      <b-field label="Timeout:" expanded>
+                      <b-field :label="$t('time_between')" expanded>
                         <b-numberinput
                           v-model="rowsTimeout"
                           controls-position="compact"
@@ -73,24 +77,26 @@
                     <b-switch
                       v-model="answerAtEnd"
                       @disabled="instances.length > 1"
-                      >Answer at the end</b-switch
+                      >{{ $t("answer_at_end") }}</b-switch
                     >
                   </b-field>
 
                   <b-field>
-                    <b-switch v-model="multiplayerMode"
-                      >Multiplayer mode</b-switch
-                    >
+                    <b-switch v-model="multiplayerMode">{{
+                      $t("multiplayer_mode")
+                    }}</b-switch>
                   </b-field>
 
                   <b-field v-if="multiplayerMode">
-                    <b-switch v-model="sameExamples"
-                      >Same examples for all players</b-switch
-                    >
+                    <b-switch v-model="sameExamples">{{
+                      $t("same_examples")
+                    }}</b-switch>
                   </b-field>
 
                   <b-field v-if="sequence.length">
-                    <template #label> <b-icon icon="file" /> Themes </template>
+                    <template #label>
+                      <b-icon icon="file" /> {{ $t("themes") }}
+                    </template>
                     <b-taglist>
                       <b-tag
                         v-for="(sequenceItem, sequenceItemIndex) of sequence"
@@ -98,7 +104,7 @@
                         @close="removeSequenceItem(sequenceItemIndex)"
                         type="is-link"
                         closable
-                        >{{ sequenceItem.theme }}</b-tag
+                        >{{ $t(sequenceItem.theme, { digit }) }}</b-tag
                       >
                     </b-taglist>
                   </b-field>
@@ -116,7 +122,7 @@
                             instanceItem.sequence[0].fontColor +
                             '-color']: true,
                           }"
-                          >{{ instanceItemIndex + 1 }}. Player</span
+                          >{{ instanceItemIndex + 1 }}. {{ $t("player") }}</span
                         >
                         <b-icon
                           icon="trash"
@@ -148,7 +154,7 @@
                           icon-left="plus"
                           :disabled="!canAddSequenceItem"
                           @click="addSequenceItem"
-                          >Add theme</b-button
+                          >{{ $t("add_theme") }}</b-button
                         >
                       </p>
                       <p class="control" v-if="multiplayerMode">
@@ -156,7 +162,7 @@
                           icon-left="user-plus"
                           :disabled="!canAddInstanceItem"
                           @click="addInstanceItem"
-                          >Add player</b-button
+                          >{{ $t("add_player") }}</b-button
                         >
                       </p>
                     </div>
@@ -168,23 +174,27 @@
                       icon-left="play"
                       :disabled="!canPressPlayButton"
                       expanded
-                      >Play</b-button
+                      >{{ $t("play") }}</b-button
                     >
                   </div>
                 </form>
               </div>
             </b-tab-item>
             <b-tab-item value="settings">
-              <template #header> <b-icon icon="setting" /> Settings </template>
+              <template #header>
+                <b-icon icon="setting" /> {{ $t("settings") }}
+              </template>
               <div class="box">
                 <b-field>
-                  <template #label> <b-icon icon="palette" /> Color: </template>
+                  <template #label>
+                    <b-icon icon="palette" /> {{ $t("color") }}
+                  </template>
                   <color-palette v-model="fontColor" />
                 </b-field>
 
                 <b-field>
                   <template #label>
-                    <b-icon icon="crop-alt-rotate-right" /> Rotation
+                    <b-icon icon="crop-alt-rotate-right" /> {{ $t("rotation") }}
                   </template>
 
                   <b-radio-button
@@ -225,7 +235,9 @@
                 </b-field>
 
                 <b-field>
-                  <template #label> <b-icon icon="font" /> Font size </template>
+                  <template #label>
+                    <b-icon icon="font" /> {{ $t("font_size") }}</template
+                  >
                   <b-radio-button
                     v-model="fontSize"
                     type="is-primary"
@@ -240,15 +252,17 @@
 
                 <b-field>
                   <template #label>
-                    <b-icon icon="setting" /> Other settings
+                    <b-icon icon="setting" /> {{ $t("other_settings") }}
                   </template>
                   <b-checkbox
                     v-model="displayNumbers"
                     :disabled="multiplayerMode"
-                    >Display numbers</b-checkbox
+                    >{{ $t("display_numbers") }}</b-checkbox
                   >
-                  <b-checkbox v-model="speechSound" :disabled="multiplayerMode"
-                    >Speech sound</b-checkbox
+                  <b-checkbox
+                    v-model="speechSound"
+                    :disabled="multiplayerMode"
+                    >{{ $t("speech_sound") }}</b-checkbox
                   >
                 </b-field>
               </div>

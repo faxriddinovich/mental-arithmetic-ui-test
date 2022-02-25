@@ -39,7 +39,14 @@ export namespace uz {
     "abacus_columns": "Abakus ustunlari",
     "other_settings": "Boshqa sozlamalar",
     "display_numbers": "Raqamlarni ko'rsatish",
-    "speech_sound": "Nutq tovushi"
+    "speech_sound": "Nutq tovushi",
+    "answer_at_end": "Javobni ohirida kiritish",
+    "multiplayer_mode": "Ko'p o'yinchi rejimi",
+    "same_examples": "Hamma uchun bir xil misollar",
+    "player": "O'yinchi",
+    "add_player": "O'yinchi qo'shish",
+    "rotation": "Raqam transofmatsiyasi",
+    "font_size": "Raqam hajmi"
   };
 
   export const themes = {
