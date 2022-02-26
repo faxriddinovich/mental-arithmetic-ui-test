@@ -1,8 +1,8 @@
 import Vue from "vue";
-import VueRouter, {RouteConfig} from "vue-router";
+import VueRouter, { RouteConfig } from "vue-router";
 
 import Store from "@/store";
-import {Session} from '@/store/modules/account.module';
+import { acquireAccount } from '@/store/account';
 
 import Home from "@/views/home.vue";
 
@@ -31,8 +31,8 @@ import Scores from "@/views/scores.vue";
 import BigNumbersGameForm from "@/views/games/big-numbers/form.vue";
 import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 
-import AbacusGameForm from '@/views/games/abacus/form.vue';
-import PlayAbacusGame from '@/views/games/abacus/game.vue';
+import AbacusGameForm from "@/views/games/abacus/form.vue";
+import PlayAbacusGame from "@/views/games/abacus/game.vue";
 
 Vue.use(VueRouter);
 
@@ -54,7 +54,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/settings",
-    name:  "Settings",
+    name: "Settings",
     component: Settings,
   },
   {
@@ -65,7 +65,7 @@ const routes: Array<RouteConfig> = [
         path: "/",
         name: "UpdateAccount",
         component: UpdateAccount,
-        meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
+        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
       },
       {
         path: "/account/sessions",
@@ -76,25 +76,25 @@ const routes: Array<RouteConfig> = [
         path: "subscription",
         name: "AccountSubscription",
         component: AccountSubscription,
-        meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
+        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
       },
       {
         path: "platform-settings",
         name: "PlatformSettings",
         component: PlatformSettings,
-        meta: {requiresAuth: true, roles: ["root"]},
+        meta: { requiresAuth: true, roles: ["root"] },
       },
       {
         path: "accounts",
         name: "Accounts",
         component: Accounts,
-        meta: {requiresAuth: true, roles: ["root"]},
+        meta: { requiresAuth: true, roles: ["root"] },
       },
       {
         path: "manage-events",
         name: "ManageEvents",
         component: ManageEvents,
-        meta: {requiresAuth: true, roles: ["root"]},
+        meta: { requiresAuth: true, roles: ["root"] },
       },
     ],
   },
@@ -117,8 +117,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/games/big-numbers/form",
     name: "BigNumbersGameForm",
-    component: BigNumbersGameForm
-
+    component: BigNumbersGameForm,
   },
   {
     path: "/games/big-numbers/play",
@@ -128,25 +127,21 @@ const routes: Array<RouteConfig> = [
     beforeEnter: (to, from, next) => {
       const config = Store.getters["BigNumbers/config"];
 
-      if (!config)
-        return next({name: 'BigNumbersGameForm'});
+      if (!config) return next({ name: "BigNumbersGameForm" });
 
       next();
-    }
+    },
   },
-  {path: "/games/abacus", name: "AbacusGameForm", component: AbacusGameForm},
+  { path: "/games/abacus", name: "AbacusGameForm", component: AbacusGameForm },
   {
     path: "/games/abacus/play",
     name: "PlayAbacusGame",
     component: PlayAbacusGame,
     beforeEnter: (to, from, next) => {
       const config = Store.getters["Abacus/config"];
-
-      if (!config)
-        return next({name: 'AbacusGameForm'});
-
+      if (!config) return next({ name: "AbacusGameForm" });
       next();
-    }
+    },
   },
   {
     path: "/courses/:id",
@@ -157,13 +152,13 @@ const routes: Array<RouteConfig> = [
     path: "/course/create",
     name: "CreateCourse",
     component: CreateCourse,
-    meta: {requiresAuth: true, roles: ["root", "teacher"]},
+    meta: { requiresAuth: true, roles: ["root", "teacher"] },
   },
   {
     path: "/courses/:id/update",
     name: "UpdateCourse",
     component: UpdateCourse,
-    meta: {requiresAuth: true, roles: ["root", "teacher"]},
+    meta: { requiresAuth: true, roles: ["root", "teacher"] },
   },
   {
     path: "/lessons/:id",
@@ -188,29 +183,14 @@ const router = new VueRouter({
   routes,
 });
 
-
-function waitForSync() {
-  return new Promise<void>((resolve) => {
-    if (Store.state.synced)
-      return resolve();
-
-    const unwatch = Store.watch((state) => state.synced, () => {
-      resolve();
-      unwatch();
-    });
-  });
-}
-
 router.beforeEach(async (to, from, next) => {
-  if (!Store.state.synced)
-    await waitForSync();
-
+  console.error('[router] waiting for sync is not implemented');
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const activeSession = Store.getters['Account/activeSession'] as Session;
+    const activeSession = acquireAccount().activeSession;
 
-    if (!activeSession) return next({name: "Authenticate"});
+    if (!activeSession) return next({ name: "Authenticate" });
     if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
-      return next({name: "Home"});
+      return next({ name: "Home" });
   }
   next();
 });

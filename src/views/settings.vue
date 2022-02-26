@@ -102,7 +102,7 @@ import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { IdentifiedVoice } from "@/store/modules/text-to-speech.module";
 import { speak } from "@/services/tts";
-import { acquireSetting, Locales } from "@/store/settings";
+import { acquireSetting, Locales } from "@/store/setting";
 
 export default defineComponent({
   setup(_, context) {

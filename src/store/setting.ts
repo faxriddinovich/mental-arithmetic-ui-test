@@ -31,7 +31,6 @@ export const acquireSetting = defineStore({
     },
     async syncTheirs() {
       this.$state = await acquireSync().theirs(this.$id);
-      console.log(this.$state);
     }
   },
   getters: {

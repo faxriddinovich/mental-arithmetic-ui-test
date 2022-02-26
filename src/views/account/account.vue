@@ -131,19 +131,23 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "@vue/composition-api";
+import {
+  defineComponent,
+  ref,
+  computed,
+  onMounted,
+} from "@vue/composition-api";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
-import {
-  AccountContract,
-} from "@/services/rpc/contracts/account";
+import { AccountContract } from "@/services/rpc/contracts/account";
 import { avatarFactory, formatCurrency } from "@/common/utils";
-import { Session } from '@/store/modules/account.module';
+import { acquireAccount, Session } from "@/store/account";
 
 export default defineComponent({
-  setup(_, context) {
-    const activeSession = computed<Session | null>(() =>
-        context.root.$store.getters['Account/activeSession']);
+  setup() {
+    const activeSession = computed<Session | null>(() => {
+      return acquireAccount().activeSession;
+    });
     const account = ref<AccountContract | null>(null);
 
     function getAccount() {

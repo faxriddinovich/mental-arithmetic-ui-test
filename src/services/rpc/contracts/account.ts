@@ -35,3 +35,11 @@ export interface UpdateOwnAccountContract {
   email?: string,
   password?: string
 }
+
+export interface CreateAccountContract {
+  username: string,
+  role: string,
+  password: string,
+  captcha: string,
+  email?: string
+}

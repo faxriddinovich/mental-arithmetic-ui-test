@@ -211,19 +211,18 @@ import Courses from "@/views/course/courses.vue";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
 import { EventContract } from "@/services/rpc/contracts/event";
+import { acquireAccount } from "@/store/account";
+import { acquireSetting } from '@/store/setting';
 
 export default defineComponent({
   components: { Courses },
   setup(_, context) {
-    const activeSession = computed(
-      () => context.root.$store.getters["Account/activeSession"]
-    );
+    const activeSession = computed(() => acquireAccount().activeSession);
     const event = ref<EventContract | null>(null);
 
     function getEvent() {
-      const enabled =
-        context.root.$store.getters["Settings/get"]("showLatestEvent");
-      if (enabled) {
+      const canDisplayEvent = acquireSetting().one('show_latest_event');
+      if (canDisplayEvent) {
         rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((result) => {
           event.value = result;
         });

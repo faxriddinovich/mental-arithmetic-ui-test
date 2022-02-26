@@ -46,7 +46,23 @@ export namespace uz {
     "player": "O'yinchi",
     "add_player": "O'yinchi qo'shish",
     "rotation": "Raqam transofmatsiyasi",
-    "font_size": "Raqam hajmi"
+    "font_size": "Raqam hajmi",
+
+    "username": "Foydalanuvchi nomi",
+    "username_input_placeholder": "Ilimos foydalanuvchi nomini kiriting",
+    "email": "Pochta",
+    "email_input_placeholder": "Iltimos pochtangizni kiriting",
+    "role": "Rol",
+    "default_role": "Standard",
+    "teacher_role": "O'qituvchi",
+    "password": "Parol",
+    "password_input_placeholder": "Iltimiz parolingizni kiriting",
+    "create_an_account": "Akkaunt yaratish",
+    "home": "Bosh bo'limga",
+    "successful_authentication_message": "Muvaffaqiyatli !",
+    "invalid_credentials_message": "Iltimos ma'lumotlaringizni tekshirib ko'ring",
+    "success_account_creation_message": "Muvaffaqiyatli!",
+    "account_already_exists_error_message": "Ushbu akkaunt mavjud"
   };
 
   export const themes = {

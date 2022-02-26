@@ -18,7 +18,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { acquireSetting } from '@/store/settings';
+import { acquireSetting } from '@/store/setting';
+import { acquireAccount } from '@/store/account';
 
 interface Task {
   text: string;
@@ -41,13 +42,13 @@ export default defineComponent({
       },
       {
         text: "Syncing sessions..",
-        run: () => context.root.$store.dispatch("Account/sync"),
+        run: () => acquireAccount().syncTheirs(),
       },
       {
         text: "Initializing languages..",
         run: () => {
-          const locale = context.root.$store.getters["Settings/get"]("locale");
-          context.root.$i18n.locale = locale;
+          const locale = acquireSetting()['one']('locale');
+          context.root.$i18n.locale = locale as string;
           return Promise.resolve();
         },
       },
@@ -74,11 +75,8 @@ export default defineComponent({
       for (const task of tasks) {
         loadingText.value = task.text;
         await task.run();
-        await sleep(200); // a little bit delay
         completeTask();
       }
-
-      context.root.$store.state.synced = true;
     });
 
     return { isLoading, loadingText, syncPercentage };
