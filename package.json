@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^3.4.1",
+    "@types/canvas-confetti": "^1.4.2",
     "@types/deep-diff": "^1.0.1",
     "@types/electron-devtools-installer": "^2.2.0",
     "@vue/cli-plugin-pwa": "~5.0.0",

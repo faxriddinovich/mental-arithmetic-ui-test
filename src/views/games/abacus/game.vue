@@ -1,10 +1,7 @@
 <template>
   <div>
     <!-- controls bar -->
-    <section
-      class="card is-bordered"
-      v-if="displayMode !== 'scores'"
-    >
+    <section class="card is-bordered" v-if="displayMode !== 'scores'">
       <div class="p-2">
         <div
           class="is-flex is-align-items-center is-justify-content-space-between"
@@ -79,7 +76,10 @@
           :data-si="sequenceIndex"
         >
           <div class="is-attention-text">
-            <scalable-text :text="$t(sequenceItem.theme, { digit: sequenceItem.digit })" class="is-full-size" />
+            <scalable-text
+              :text="$t(sequenceItem.theme, { digit: sequenceItem.digit })"
+              class="is-full-size"
+            />
           </div>
         </div>
 
@@ -327,6 +327,9 @@
 @import "bulma/sass/utilities/mixins";
 @import "./node_modules/@egjs/vue-flicking/dist/flicking";
 
+$small: 376px;
+$extra-small: 321px;
+
 .flicking-camera {
   display: flex;
   flex-direction: row;
@@ -337,16 +340,15 @@
 
 .flicking-viewport {
   width: 100%;
-  margin-top:20px;
+  margin-top: 20px;
   pointer-events: none;
+
+  @include until($small) {
+    margin: 0px;
+  }
 }
 
 @include mobile {
-  .flicking-viewport {
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
   .flicking-panel {
     width: 100% !important;
   }
@@ -384,15 +386,17 @@
   position: relative;
   padding: 10px;
 
+  @include until($small) {
+    height: 220px !important;
+  }
+
   .is-attention-text {
     background: #fdcb6e;
   }
 
   div {
-    //background: #6c5ce7;
     height: 100%;
     border-radius: 5px;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -402,10 +406,10 @@
 }
 
 .is-abacus-board-container {
-	width: 100%;
+  width: 100%;
   position: absolute;
-	overflow-x: scroll;
-	overflow-y: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
   bottom: 0;
 }
 
@@ -413,30 +417,26 @@ svg.is-abacus-board {
   display: block;
   margin: auto;
   height: 569px !important;
-}
 
-@include mobile {
-	svg.is-abacus-board {
+  @include mobile {
     height: 350px !important;
-	}
-}
+  }
 
-@include tablet {
-	svg.is-abacus-board {
+  @include until($extra-small) {
+    height: 250px !important;
+  }
+
+  @include tablet {
     height: 390px !important;
-	}
-}
+  }
 
-@include desktop {
-	svg.is-abacus-board {
+  @include desktop {
     height: 390px !important;
-	}
-}
+  }
 
-@include widescreen {
-	svg.is-abacus-board {
+  @include widescreen {
     height: 500px !important;
-	}
+  }
 }
 
 img.is-trophy {
@@ -445,17 +445,15 @@ img.is-trophy {
   margin-top: -100px;
   margin-left: auto;
   margin-right: auto;
+
+  @include mobile {
+    width: 160px;
+    margin-top: -80px;
+  }
 }
 
 .is-trophy.is-lost {
   filter: grayscale(1);
-}
-
-@include mobile {
-  img.is-trophy {
-    width: 160px;
-    margin-top: -80px;
-  }
 }
 
 canvas.is-confetti {
