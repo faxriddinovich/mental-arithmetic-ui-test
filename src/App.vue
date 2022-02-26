@@ -18,6 +18,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
+import { acquireSetting } from '@/store/settings';
 
 interface Task {
   text: string;
@@ -36,7 +37,7 @@ export default defineComponent({
     const tasks: Task[] = [
       {
         text: "Syncing settings..",
-        run: () => context.root.$store.dispatch("Settings/sync"),
+        run: () => acquireSetting().syncTheirs(),
       },
       {
         text: "Syncing sessions..",

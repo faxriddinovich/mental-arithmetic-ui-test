@@ -4,13 +4,14 @@ import { isMobile } from "@/services/platform";
 import { SplashScreen } from "@capacitor/splash-screen";
 import VueCompositionAPI from "@vue/composition-api";
 import { Operation } from '@mental-arithmetic/themes';
+import { createPinia, PiniaVuePlugin } from 'pinia';
 
 Vue.use(VueCompositionAPI);
+Vue.use(PiniaVuePlugin);
+const pinia = createPinia();
 
 import App from "./App.vue";
-// #!if __BROWSER__
 import "./registerServiceWorker";
-// #!endif
 import router from "./router";
 import i18n from "./i18n";
 import store from "./store";
@@ -97,6 +98,7 @@ new Vue({
   router,
   store,
   i18n,
+  pinia,
   render: (h) => h(App),
   mounted() {
     if (isMobile()) SplashScreen.hide();

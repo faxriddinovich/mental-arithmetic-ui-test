@@ -4,7 +4,7 @@
       <div class="columns is-gapless is-centered" style="min-width: 100%">
         <div class="column is-half-fullhd is-three-quarters-desktop">
           <div class="box">
-            <form @submit.prevent="saveChanges">
+            <form @submit.prevent="changeSettings">
               <b-field>
                 <template #label>
                   <b-icon icon="mailbox" /> {{ $t("latest-event") }}
@@ -52,7 +52,7 @@
                 <template #label>
                   <b-icon icon="volume" /> {{ $t("voice") }}
                 </template>
-                <b-select placeholder="Select a name" v-model="voiceIdentity">
+                <b-select placeholder="Select a name" v-model="textToSpeechID">
                   <option
                     v-for="(voice, index) in supportedVoices"
                     :value="voice.identity"
@@ -62,7 +62,12 @@
                   </option>
                 </b-select>
                 <p class="control">
-                <b-button icon-left="volume" @click="testVoice" :disabled="!voiceIdentity">test</b-button>
+                  <b-button
+                    icon-left="volume"
+                    @click="saySomething"
+                    :disabled="!textToSpeechID"
+                    >test</b-button
+                  >
                 </p>
               </b-field>
 
@@ -93,29 +98,23 @@
   </section>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  onMounted,
-  watch
-} from "@vue/composition-api";
+import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { Settings } from "@/store/modules/settings.module";
 import { IdentifiedVoice } from "@/store/modules/text-to-speech.module";
 import { speak } from "@/services/tts";
+import { acquireSetting, Locales } from "@/store/settings";
 
 export default defineComponent({
   setup(_, context) {
-    const locale = ref<string>("en-US");
+    const locale = ref<Locales>("en-US");
     const showLatestEvent = ref<boolean>(false);
-    const voiceIdentity = ref<string | null>(null);
-
+    const textToSpeechID = ref<string | null>(null);
     const supportedVoices = ref<IdentifiedVoice[]>([]);
+    const settings = acquireSetting();
 
-    async function loadSettings() {
-      const settings = context.root.$store.getters["Settings/all"] as Settings;
-      locale.value = settings.locale;
-      showLatestEvent.value = settings.showLatestEvent;
+    function applySettings() {
+      locale.value = settings.locale as Locales;
+      showLatestEvent.value = settings.show_latest_event;
     }
 
     async function getSupportedVoices() {
@@ -123,54 +122,47 @@ export default defineComponent({
         "TextToSpeech/getSupportedVoicesByLocale",
         locale.value
       );
-      console.log(voices);
       supportedVoices.value = voices;
     }
 
     watch(locale, () => {
-      voiceIdentity.value = null;
+      textToSpeechID.value = null;
       getSupportedVoices();
     });
 
-    async function saveChanges() {
+    async function changeSettings() {
       if (context.root.$i18n.locale != locale.value) {
         context.root.$i18n.locale = locale.value;
       }
 
-      await context.root.$store.dispatch(
-        "TextToSpeech/update",
-        voiceIdentity.value
-      );
-
-      await context.root.$store.dispatch("Settings/update", {
-        showLatestEvent: showLatestEvent.value,
+      await settings.change({
+        show_latest_event: showLatestEvent.value,
         locale: locale.value,
       });
 
-      context.root.$router.push({ name: "Home" });
       showToastMessage(
         context.root.$i18n.t("changes-applied") as string,
         ToastType.Success
       );
+      context.root.$router.push({ name: "Home" });
     }
 
-    async function testVoice() {
-      speak("-123", 1, voiceIdentity.value);
+    function saySomething() {
+      speak("-123", 1, textToSpeechID.value!);
     }
 
     onMounted(() => {
-      loadSettings();
+      applySettings();
       getSupportedVoices();
     });
 
     return {
       locale,
       showLatestEvent,
-      loadSettings,
-      saveChanges,
+      changeSettings,
       supportedVoices,
-      voiceIdentity,
-      testVoice,
+      textToSpeechID,
+      saySomething,
     };
   },
 });
