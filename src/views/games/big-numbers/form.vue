@@ -146,18 +146,23 @@
                     <div class="field has-addons">
                       <p class="control">
                         <b-button
-                          icon-left="plus"
                           :disabled="!canAddSequenceItem"
                           @click="addSequenceItem"
-                          >{{ $t("add_theme") }}</b-button
+                        >
+                          <b-icon icon="plus" class="m-0" />
+                          <span class="is-hidden-mobile">{{
+                            $t("add_theme")
+                          }}</span></b-button
                         >
                       </p>
                       <p class="control" v-if="multiplayerMode">
                         <b-button
-                          icon-left="user-plus"
                           :disabled="!canAddInstanceItem"
                           @click="addInstanceItem"
-                          >{{ $t("add_player") }}</b-button
+                          ><b-icon icon="user-plus" class="m-0" /><span
+                            class="is-hidden-mobile"
+                            >{{ $t("add_player") }}</span
+                          ></b-button
                         >
                       </p>
                     </div>
