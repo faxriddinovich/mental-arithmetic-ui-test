@@ -1,60 +1,67 @@
 <template>
-  <b-field :message="$t('themes_input_instruction_text')">
-    <p class="control" v-if="themesInputFocus === false">
-      <b-dropdown v-model="digit" @change="pickDigit">
-        <template #trigger>
-          <b-button>
-            <b-icon icon="dialpad-alt" size="is-small" class="m-0" />
-            <span class="is-hidden-mobile ml-1">{{ $t("digits") }}</span>
-          </b-button>
+  <div>
+    <b-field>
+      <template #label> <b-icon icon="file" /> {{ $t("theme") }} </template>
+      <b-autocomplete
+        :placeholder="$t('themes_input_placeholder')"
+        icon="search"
+        :data="themes"
+        dropdown-position="bottom"
+        @focus="themesInputFocus = true"
+        @focusout.native="themesInputFocus = false"
+        :custom-formatter="(option) => $t(option.loc, { digit })"
+        @select="pickTheme"
+        v-model="theme"
+        open-on-focus
+        keep-first
+        expanded
+        clearable
+      >
+        <template #header>
+          {{ $t("themes_found") }}:
+          <span class="has-text-weight-semibold">{{ themes.length }}</span>
         </template>
 
-        <b-dropdown-item custom>{{ $t("select_digits") }}</b-dropdown-item>
-        <b-dropdown-item separator></b-dropdown-item>
-        <b-dropdown-item :value="1">1</b-dropdown-item>
-        <b-dropdown-item :value="2">2</b-dropdown-item>
-        <b-dropdown-item :value="3">3</b-dropdown-item>
-        <b-dropdown-item :value="4">4</b-dropdown-item>
-        <b-dropdown-item :value="5">5</b-dropdown-item>
-        <b-dropdown-item :value="6">6</b-dropdown-item>
-      </b-dropdown>
-    </p>
-    <b-autocomplete
-      :placeholder="$t('themes_input_placeholder')"
-      icon="search"
-      :data="themes"
-      dropdown-position="bottom"
-      @focus="themesInputFocus = true"
-      @focusout.native="themesInputFocus = false"
-      :custom-formatter="(option) => $t(option.loc, { digit })"
-      @select="pickTheme"
-      v-model="theme"
-      open-on-focus
-      keep-first
-      expanded
-      clearable
-    >
-      <template #header>
-        {{ $t("themes_found") }}:
-        <span class="has-text-weight-semibold">{{ themes.length }}</span>
-      </template>
-
-      <template slot-scope="props">
-        <div class="is-flex is-justify-content-space-between">
-          <div>
-            <b-icon icon="file" /> {{ $t(props.option.loc, { digit }) }}
+        <template slot-scope="props">
+          <div class="is-flex is-justify-content-space-between">
+            <div>
+              <b-icon icon="file" /> {{ $t(props.option.loc, { digit }) }}
+            </div>
+            <div class="has-text-weight-semibold">
+              <b-tag type="is-primary  ">
+                {{ props.option.metadata.operation | toOperation }}
+              </b-tag>
+            </div>
           </div>
-          <div class="has-text-weight-semibold">
-            <b-tag type="is-primary is-light">
-              {{ props.option.metadata.operation | toOperation }}
-            </b-tag>
-          </div>
-        </div>
-      </template>
+        </template>
 
-      <template #empty>{{ $t("no_themes_found") }}</template>
-    </b-autocomplete>
-  </b-field>
+        <template #empty>{{ $t("no_themes_found") }}</template>
+      </b-autocomplete>
+    </b-field>
+    <b-field title="esf">
+      <template #label>
+        <b-icon icon="draggabledots" /> {{ $t("digits") }}
+      </template>
+      <b-radio-button :native-value="1" v-model="digit" type="is-primary">
+        <span>1</span>
+      </b-radio-button>
+      <b-radio-button :native-value="2" v-model="digit" type="is-primary">
+        <span>2</span>
+      </b-radio-button>
+      <b-radio-button :native-value="3" v-model="digit" type="is-primary">
+        <span>3</span>
+      </b-radio-button>
+      <b-radio-button :native-value="4" v-model="digit" type="is-primary">
+        <span>4</span>
+      </b-radio-button>
+      <b-radio-button :native-value="5" v-model="digit" type="is-primary">
+        <span>5</span>
+      </b-radio-button>
+      <b-radio-button :native-value="6" v-model="digit" type="is-primary">
+        <span>6</span>
+      </b-radio-button>
+    </b-field>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent, computed, ref } from "@vue/composition-api";

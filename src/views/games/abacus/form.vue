@@ -18,12 +18,7 @@
               >
               <div class="box">
                 <form @submit.prevent="play">
-                  <b-field>
-                    <template #label>
-                      <b-icon icon="file" /> {{ $t("theme") }}
-                    </template>
-                    <themes-input-field @pick="pickTheme" />
-                  </b-field>
+                  <themes-input-field @pick="pickTheme" />
                   <div class="columns is-fullhd is-multiline is-gaples">
                     <div class="column is-6-fullhd pb-0">
                       <b-field :label="$t('examples')" expanded>
