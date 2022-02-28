@@ -9,6 +9,8 @@ import Store from "@/store";
 import { Session } from '@/store/modules/account.module';
 import { showToastMessage, ToastType } from "@/services/toast";
 
+import { acquireAccount } from '@/store/account';
+
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_RPC_URL,
 });
@@ -17,13 +19,14 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(async (response) => {
   if (response.status === 200) {
     if (response.data.error) {
+      const account = acquireAccount();
       const jsonrpcError = response.data.error;
-      const activeSession = Store.getters['Account/activeSession'] as Session;
+      const activeSession = account.activeSession;
 
       if (activeSession) {
         if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
           showToastMessage("Invalid session", ToastType.Danger);
-          await Store.dispatch('Account/deleteSession', activeSession.id);
+          account.deleteSession(activeSession.id);
           Router.push({ name: "Authenticate" });
           return response;
         } else if (
@@ -43,7 +46,7 @@ axiosInstance.interceptors.response.use(async (response) => {
 const excludedRoutes = ["Authenticate", "CreateAccount"];
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const activeSession = Store.getters['Account/activeSession'] as Session;
+  const activeSession = acquireAccount().activeSession;
   const notExcluded = !excludedRoutes.includes(Router.history.current.name);
 
   if (notExcluded && activeSession) {

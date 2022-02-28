@@ -37,11 +37,10 @@
             </div>
             <div>
               <hr class="is-marginless" />
-
               <nav class="level p-3">
                 <div class="level-item has-text-centered">
                   <div>
-                    <p class="heading">Balance (in sums)</p>
+                    <p class="heading">{{ $t('balance_in_soums') }}</p>
                     <!-- <p class="title">28.000</p> -->
                     <p class="title">
                       <span v-if="account">{{
@@ -59,7 +58,7 @@
               <b-menu-list>
                 <b-menu-item
                   icon="users-alt"
-                  label="Sessions"
+                  :label="$t('sessions')"
                   tag="router-link"
                   :to="{ name: 'AccountSessions' }"
                   :active="$route.name === 'AccountSessions'"
@@ -69,43 +68,43 @@
           </div>
           <div class="card mt-2 p-2 is-bordered" v-if="activeSession">
             <b-menu :activable="false">
-              <b-menu-list label="Account">
+              <b-menu-list :label="$t('account')">
                 <b-menu-item
                   icon="user-exclamation"
-                  label="Update account"
+                  :label="$t('update_account')"
                   tag="router-link"
                   :to="{ name: 'UpdateAccount' }"
                   :active="$route.name === 'UpdateAccount'"
                 ></b-menu-item>
                 <b-menu-item
                   icon="file-check"
-                  label="Subscription"
+                  :label="$t('subscription')"
                   tag="router-link"
                   :to="{ name: 'AccountSubscription' }"
                   :active="$route.name === 'AccountSubscription'"
                 ></b-menu-item>
               </b-menu-list>
               <b-menu-list
-                label="Control panel"
+                :label="$t('control_panel')"
                 v-if="activeSession && activeSession.role === 'root'"
               >
                 <b-menu-item
                   icon="users-alt"
-                  label="Accounts"
+                  :label="$t('accounts')"
                   tag="router-link"
                   :to="{ name: 'Accounts' }"
                   :active="$route.name === 'Accounts'"
                 ></b-menu-item>
                 <b-menu-item
                   icon="mailbox"
-                  label="Manage Events"
+                  :label="$t('events')"
                   tag="router-link"
                   :to="{ name: 'ManageEvents' }"
                   :active="$route.name === 'ManageEvents'"
                 ></b-menu-item>
                 <b-menu-item
                   icon="setting"
-                  label="Platform settings"
+                  :label="$t('platform_settings')"
                   tag="router-link"
                   :to="{ name: 'PlatformSettings' }"
                   :active="$route.name === 'PlatformSettings'"
@@ -120,7 +119,7 @@
             class="mt-2"
             outlined
             expanded
-            >Home</b-button
+            >{{ $t('home') }}</b-button
           >
         </div>
         <div class="column">
@@ -131,23 +130,15 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  computed,
-  onMounted,
-} from "@vue/composition-api";
+import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import { AccountContract } from "@/services/rpc/contracts/account";
 import { avatarFactory, formatCurrency } from "@/common/utils";
-import { acquireAccount, Session } from "@/store/account";
+import { acquireAccount } from "@/store/account";
 
 export default defineComponent({
   setup() {
-    const activeSession = computed<Session | null>(() => {
-      return acquireAccount().activeSession;
-    });
     const account = ref<AccountContract | null>(null);
 
     function getAccount() {
@@ -160,7 +151,12 @@ export default defineComponent({
       getAccount();
     });
 
-    return { activeSession, account, avatarFactory, formatCurrency };
+    return {
+      activeSession: acquireAccount().activeSession,
+      account,
+      avatarFactory,
+      formatCurrency,
+    };
   },
 });
 </script>

@@ -60,7 +60,21 @@ export namespace uz {
     "successful_authentication_message": "Muvaffaqiyatli !",
     "invalid_credentials_message": "Iltimos ma'lumotlaringizni tekshirib ko'ring",
     "success_account_creation_message": "Muvaffaqiyatli!",
-    "account_already_exists_error_message": "Ushbu akkaunt mavjud"
+    "account_already_exists_error_message": "Ushbu akkaunt mavjud",
+
+    "update_account": "Akkauntni tahrirlash",
+    "subscription": "Obuna",
+    "accounts": "Akkauntlar",
+    "events": "Hodisalar",
+    "platform_settings": "Platforma sozlamalari",
+    "control_panel": "Boshqarish paneli",
+    "balance_in_soums": "Balans (so'mda)",
+    "sessions": "Sessialar",
+    "add_account": "Akkaunt qo'shish",
+    "active": "Aktiv",
+    "delete": "O'chirish",
+    "active_session": "Aktivlash",
+    "save": "Saqlash"
   };
 
   export const themes = {

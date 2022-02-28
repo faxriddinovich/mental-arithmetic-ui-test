@@ -1,9 +1,9 @@
 <template>
   <div class="card p-4 is-bordered">
     <form @submit.prevent="updateAccount" v-if="account">
-      <b-field label="Username">
+      <b-field :label="$t('username')">
         <b-input
-          v-model="localAccount.username"
+          v-model="tmpAccount.username"
           minlength="4"
           maxlength="20"
           :has-counter="false"
@@ -11,18 +11,18 @@
         />
       </b-field>
 
-      <b-field label="Email">
+      <b-field :label="$t('email')">
         <b-input
           type="email"
-          v-model="localAccount.email"
+          v-model="tmpAccount.email"
           minlength="4"
           maxlength="20"
           :has-counter="false"
         />
       </b-field>
 
-      <b-field label="Password">
-        <b-input type="password" v-model="localAccount.password"></b-input>
+      <b-field :label="$t('password')">
+        <b-input type="password" v-model="tmpAccount.password"></b-input>
       </b-field>
 
       <div class="has-text-right">
@@ -30,8 +30,8 @@
           native-type="submit"
           icon-left="save"
           type="is-success"
-          :disabled="!changed"
-          >Save</b-button
+          :disabled="Object.keys(changedFields).length === 0"
+          >{{ $t('save') }}</b-button
         >
       </div>
     </form>
@@ -44,7 +44,7 @@ import {
   ref,
   onMounted,
 } from "@vue/composition-api";
-import { diff } from "deep-diff";
+import { updatedDiff } from 'deep-object-diff';
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
@@ -58,11 +58,11 @@ import {
 
 export default defineComponent({
   setup() {
-    const localAccount = ref<AccountContract | null>();
     const account = ref<AccountContract | null>(null);
+    const tmpAccount =  ref<AccountContract | null>(null);
 
-    const changed = computed(() => {
-      return diff(localAccount.value, account.value);
+    const changedFields = computed(() => {
+      return updatedDiff(account.value!, tmpAccount.value!);
     });
 
     const getAccount = () => {
@@ -70,19 +70,20 @@ export default defineComponent({
         .call(RPC_GET_ACCOUNT_METHOD)
         .then((remoteAccount: AccountContract) => {
           account.value = remoteAccount;
-          localAccount.value = Object.assign({}, remoteAccount);
+          tmpAccount.value = Object.assign({}, remoteAccount);
         });
     };
 
     const updateAccount = () => {
-      const params: UpdateOwnAccountContract = {};
+      const params: Partial<UpdateOwnAccountContract> = {};
 
-      for (const change of changed.value!) {
-        params[change!.path![0]] = (change as any).lhs; // FIXME
-      }
+      for(const field of Object.keys(changedFields.value!))
+        //@ts-ignore
+        params[field] = tmpAccount.value[field];
 
       rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
         showToastMessage("Successfully saved!", ToastType.Success);
+        account.value = Object.assign({}, tmpAccount.value);
       }).catch(() => {
         showToastMessage('Unable to save changes', ToastType.Danger);
       });;
@@ -92,7 +93,7 @@ export default defineComponent({
       getAccount();
     });
 
-    return { localAccount, account, changed, updateAccount };
+    return { tmpAccount, account, changedFields, updateAccount };
   },
 });
 </script>

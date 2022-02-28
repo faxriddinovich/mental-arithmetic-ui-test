@@ -6,7 +6,7 @@
         :to="{ name: 'Authenticate' }"
         type="is-success"
         icon-left="plus"
-        >Add account</b-button
+        >{{ $t('add_account') }}</b-button
       >
     </div>
 
@@ -24,7 +24,7 @@
           <span
             v-if="session.isActive"
             class="has-text-weight-bold has-text-success"
-            >- Active</span
+            >- {{ $t('active') }}</span
           >
           <br />
           {{ session.timestamp }}
@@ -33,40 +33,41 @@
       <div class="media-right buttons">
         <b-button
           size="is-small"
-          type="is-danger"
-          icon-left="trash-alt"
-          @click="deleteSession(session.id)"
-          >Delete</b-button
-        >
-        <b-button
-          size="is-small"
           type="is-primary"
           icon-left="arrow-right"
           v-if="!session.isActive"
           @click="setActiveSession(session.id)"
-          >Enter</b-button
+          >{{ $t('active_session') }}</b-button
+        >
+        <b-button
+          size="is-small"
+          type="is-danger"
+          icon-left="trash-alt"
+          @click="deleteSession(session.id)"
+          >{{ $t('delete') }}</b-button
         >
       </div>
     </article>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "@vue/composition-api";
-import { Session } from "@/store/modules/account.module";
+import { defineComponent, computed } from "@vue/composition-api";
+import { acquireAccount, Session } from "@/store/account";
 
 export default defineComponent({
   setup(_, context) {
+    const account = acquireAccount();
     const sessions = computed<Session[]>(() => {
-      return context.root.$store.getters["Account/sessions"];
+      return account.sessions;
     });
 
     async function deleteSession(sessionId: number) {
-      await context.root.$store.dispatch("Account/deleteSession", sessionId);
+      account.deleteSession(sessionId);
       context.root.$router.push({ name: "Home" });
     }
 
     async function setActiveSession(sessionId: number) {
-      await context.root.$store.dispatch('Account/setActiveSession', sessionId);
+      account.setActiveSession(sessionId);
       context.root.$router.push({ name: "Home" });
     }
 
