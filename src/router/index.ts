@@ -40,17 +40,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
-    component: Home,
-    beforeEnter: (to, from, next) => {
-      const urlOpen = localStorage.getItem("url-open");
-
-      if (urlOpen) {
-        localStorage.removeItem("url-open");
-        next(urlOpen);
-        return;
-      }
-      next();
-    },
+    component: Home
   },
   {
     path: "/settings",
@@ -175,6 +165,12 @@ const routes: Array<RouteConfig> = [
     name: "Scores",
     component: Scores,
   },
+  {
+    path: "*",
+    beforeEnter: (to, from, next) => {
+      next({ name: "Home" });
+    }
+  }
 ];
 
 const router = new VueRouter({
@@ -184,6 +180,15 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  const routeName = localStorage.getItem("open-url");
+  if (routeName) {
+    const resolved = router.resolve({ path: routeName });
+    if(resolved.resolved.matched.length > 0) {
+      localStorage.removeItem('open-url');
+      return next(routeName)
+    }
+  }
+
   console.error('[router] waiting for sync is not implemented');
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const activeSession = acquireAccount().activeSession;

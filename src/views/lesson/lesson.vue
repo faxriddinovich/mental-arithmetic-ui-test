@@ -386,8 +386,8 @@ export default defineComponent({
     async function copyLessonLink() {
       const currentPath = context.root.$route.path;
       const url = isNative()
-        ? "mental-arithmetic:/" + currentPath
-        : "http://production-ui.url" + currentPath;
+        ? process.env.VUE_APP_PROTOCOL + ':/' + currentPath
+        : "http://production-ui.url" + currentPath; // FIXME
       await writeToClipboard({ url });
       showToastMessage("Copied to clipboard", ToastType.Success);
     }

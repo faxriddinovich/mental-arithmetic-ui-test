@@ -16,7 +16,6 @@ async function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -24,6 +23,15 @@ async function createWindow() {
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
     }
   })
+
+  app.setAsDefaultProtocolClient(process.env.VUE_APP_PROTOCOL);
+
+  app.on('open-url', function (event, data) {
+    event.preventDefault();
+    const path = data.replace(process.env.VUE_APP_PROTOCOL + ':/', '');
+    win.webContents.executeJavaScript(`localStorage.setItem("open-url", "${path}")`);
+    win.reload();
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -35,6 +43,8 @@ async function createWindow() {
     win.loadURL('app://./index.html')
   }
 }
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
