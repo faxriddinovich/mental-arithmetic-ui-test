@@ -15,7 +15,6 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_RPC_URL,
 });
 
-// FIXME: this should be done using the @theta-rpc/json-rpc package
 axiosInstance.interceptors.response.use(async (response) => {
   if (response.status === 200) {
     if (response.data.error) {
@@ -26,7 +25,7 @@ axiosInstance.interceptors.response.use(async (response) => {
       if (activeSession) {
         if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
           showToastMessage("Invalid session", ToastType.Danger);
-          account.deleteSession(activeSession.id);
+          await account.deleteSession(activeSession.id);
           Router.push({ name: "Authenticate" });
           return response;
         } else if (

@@ -21,8 +21,11 @@ export const acquireAccount = defineStore({
   },
   actions: {
     addSession(session: SessionContract) {
-      const _session = this.sessions.find((s) => s.id === session.id);
       const timestamp = new Date().getTime();
+      const _session = this.sessions.find((s) => s.id === session.id);
+
+      for(const session of this.sessions)
+        session.isActive = false;
 
       if (_session) {
         _session.id = session.id;
@@ -37,35 +40,37 @@ export const acquireAccount = defineStore({
           role: session.role,
           session: session.session,
           timestamp: timestamp,
-          isActive: !this.sessions.length ? true : false,
+          isActive: true,
         });
       }
 
       return this.syncOurs();
     },
-    setActiveSession(sessionId: number) {
+    setActiveSession(accountId: number) {
       for (const session of this.sessions) {
-        if (session.isActive) session.isActive = false;
-        if (session.id === sessionId) {
-          session.isActive = true;
-        }
+        session.isActive = false;
+        if (session.id === accountId)session.isActive = true;
       }
 
       return this.syncOurs();
     },
-    async deleteSession(sessionId: number) {
-      let isActiveSession = false;
+    async deleteSession(accountId: number) {
+      let targetIsActive = false;
 
-      const _sessions = this.sessions.filter((session) => {
-        if (session.id === sessionId) {
-          if (session.isActive) isActiveSession = true;
-          return false;
+      for(const [index, session] of this.sessions.entries()) {
+        if(session.id === accountId) {
+          console.log(index, session.id, accountId);
+          // remove the target session
+          this.sessions.splice(index, 1);
+          // is the target session active?
+          if(session.isActive) targetIsActive = true;
         }
-        return true;
-      });
+      }
 
-      if (isActiveSession && _sessions.length) {
-        await this.setActiveSession(_sessions[0].id);
+      // the target session was active and there are sessions left
+      if (targetIsActive && this.sessions.length) {
+        // set the first session as active
+        await this.setActiveSession(this.sessions[0].id);
       }
 
       return this.syncOurs();
