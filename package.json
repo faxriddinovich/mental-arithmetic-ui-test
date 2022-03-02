@@ -25,6 +25,8 @@
     "buefy": "^0.9.17",
     "canvas-confetti": "^1.5.1",
     "chart.js": "^3.7.1",
+    "date-fns": "^2.28.0",
+    "dayjs": "^1.10.8",
     "deep-diff": "^1.0.2",
     "deep-object-diff": "^1.1.7",
     "jdenticon": "^3.1.1",

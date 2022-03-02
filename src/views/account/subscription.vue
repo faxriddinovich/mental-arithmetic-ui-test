@@ -3,8 +3,8 @@
     <nav class="level py-6">
       <div class="level-item has-text-centered">
         <div v-if="subscription">
-          <p class="heading">Your subscription expires</p>
-          <p class="title" v-if="subscription">
+          <p class="heading">{{ $t("subscription_expires") }}</p>
+          <p class="title">
             {{ formatDate(subscription.date) }}
           </p>
           <p class="mt-5">
@@ -17,14 +17,14 @@
               type="is-warning"
               icon-left="times"
               @click="displayCancelDialog"
-              >Cancel subscription</b-button
+              >{{ $t("cancel_subscription") }}</b-button
             >
           </p>
         </div>
         <div v-else>
           <form @submit.prevent="displayConfirmDialog">
             <p class="mb-4">
-              <b-field label="For how many days?">
+              <b-field :label="$t('how_many_days')">
                 <b-numberinput v-model="days" minlength="32"></b-numberinput>
               </b-field>
             </p>
@@ -33,7 +33,8 @@
                 native-type="submit"
                 type="is-primary"
                 icon-left="shopping-basket"
-                >Buy subscription</b-button
+                :disabled="days === 0"
+                >{{ $t("purchase") }}</b-button
               >
             </p>
           </form>
@@ -52,18 +53,15 @@ import {
   RPC_PURCHASE_SUBSCRIPTION_METHOD,
 } from "@/services/rpc/methods";
 import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from "@/services/rpc/error-codes";
-import moment from "moment";
-import { SettingsStorage } from "@/services/storages/settings";
+import { acquireSetting } from "@/store/setting";
+import { format } from "date-fns";
+import { uz, ru, enUS } from "date-fns/locale";
 
 export default defineComponent({
   setup(_, context) {
     const subscription = ref(null);
     const days = ref<number>(0);
-    const locale = ref<string>("en");
-
-    SettingsStorage.getSetting("locale").then((result) => {
-      locale.value = result;
-    });
+    const locale = acquireSetting().one("locale");
 
     function getSubscription() {
       rpc.call(RPC_GET_SUBSCRIPTION_METHOD).then((result) => {
@@ -72,21 +70,29 @@ export default defineComponent({
     }
 
     function formatDate(date: number) {
-      return moment(new Date(Number(date)))
-        .locale(locale.value)
-        .format("MMMM Do YYYY, h:mm a");
+      let loc;
+
+      if (locale === "uz-UZ") loc = uz;
+      else if (locale === "en-EN") loc = enUS;
+      else if (locale === "ru-RU") loc = ru;
+
+      return format(Number(date), "PPPpp", { locale: loc });
     }
 
     function cancelSubscription() {
       rpc.call(RPC_CANCEL_SUBSCRIPTION_METHOD).then(() => {
-        context.root.$router.go(0);
+        context.root.$router.push({ name: "Home" });
       });
     }
 
     function displayCancelDialog() {
       context.root.$buefy.dialog.confirm({
-        title: "Cancel the subscription",
-        message: "Do you really want to cancel the subscription?",
+        title: context.root.$i18n.t("cancel_subscription") as string,
+        message: context.root.$i18n.t(
+          "cancel_subscription_confirmation_text"
+        ) as string,
+        confirmText: context.root.$i18n.t("yes") as string,
+        cancelText: context.root.$i18n.t("cancel") as string,
         type: "is-warning",
         onConfirm: () => cancelSubscription(),
       });
@@ -94,8 +100,12 @@ export default defineComponent({
 
     function displayConfirmDialog() {
       context.root.$buefy.dialog.confirm({
-        title: "Purchase a subscription",
-        message: "Do you really want to purchase ?",
+        title: context.root.$i18n.t("purchase") as string,
+        message: context.root.$i18n.t(
+          "purchase_subscription_confirmation_text"
+        ) as string,
+        confirmText: context.root.$i18n.t("yes") as string,
+        cancelText: context.root.$i18n.t("cancel") as string,
         type: "is-warning",
         onConfirm: () => purchaseSubscription(),
       });
@@ -105,13 +115,16 @@ export default defineComponent({
       rpc
         .call(RPC_PURCHASE_SUBSCRIPTION_METHOD, { days: days.value })
         .then(() => {
-          context.root.$router.go(0);
+          context.root.$router.push({ name: "Home" });
         })
         .catch((error) => {
           if (error.jsonrpcError) {
             const { jsonrpcError } = error;
             if (jsonrpcError.code === RPC_INSUFFICIENT_BALANCE_ERR_CODE) {
-              showToastMessage("Insufficient balance", ToastType.Danger);
+              showToastMessage(
+                context.root.$i18n.t("insufficient_balance") as string,
+                ToastType.Danger
+              );
             }
           }
         });
@@ -125,8 +138,8 @@ export default defineComponent({
       displayConfirmDialog,
       displayCancelDialog,
       subscription,
-      days,
       formatDate,
+      days,
     };
   },
 });

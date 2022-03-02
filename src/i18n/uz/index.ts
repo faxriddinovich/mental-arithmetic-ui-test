@@ -74,7 +74,17 @@ export namespace uz {
     "active": "Aktiv",
     "delete": "O'chirish",
     "active_session": "Aktivlash",
-    "save": "Saqlash"
+    "save": "Saqlash",
+
+    "how_many_days": "Necha kunga?",
+    "purchase": "Harid qilish",
+    "cancel_subscription": "Obunani bekor qilish",
+    "purchase_subscription_confirmation_text": "Haqiqatdan ham hariq qilmoqchiisiz?",
+    "cancel_subscription_confirmation_text": "Haqiqatdan ham obunani bekor qilmoqchimisiz ?",
+    "cancel": "Bekor qilish",
+    "yes": "Ha",
+    "subscription_expires": "Obuna muddati tugashi vaqti",
+    "insufficient_balance": "Yetarli mablag' mavjud emas"
   };
 
   export const themes = {
