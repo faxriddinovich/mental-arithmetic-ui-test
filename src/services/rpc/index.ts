@@ -15,6 +15,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_RPC_URL,
 });
 
+let deletedId: number | null = null;
 axiosInstance.interceptors.response.use(async (response) => {
   if (response.status === 200) {
     if (response.data.error) {
@@ -24,9 +25,14 @@ axiosInstance.interceptors.response.use(async (response) => {
 
       if (activeSession) {
         if (jsonrpcError.code === RPC_MALFORMED_ACCESS_TOKEN_ERR_CODE) {
+          if(deletedId != null || deletedId === activeSession.id) {
+            deletedId = null;
+            return response;
+          }
           showToastMessage("Invalid session", ToastType.Danger);
+          deletedId = activeSession.id;
           await account.deleteSession(activeSession.id);
-          Router.push({ name: "Authenticate" });
+          Router.push({ name: "Authentication" });
           return response;
         } else if (
           jsonrpcError.code === RPC_ACCOUNT_IS_BLOCKED_ERR_CODE &&

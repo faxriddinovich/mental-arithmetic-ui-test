@@ -59,7 +59,6 @@ export const acquireAccount = defineStore({
 
       for(const [index, session] of this.sessions.entries()) {
         if(session.id === accountId) {
-          console.log(index, session.id, accountId);
           // remove the target session
           this.sessions.splice(index, 1);
           // is the target session active?
