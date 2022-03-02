@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 
 import Store from "@/store";
 import { acquireAccount } from '@/store/account';
+import { acquireGame } from '@/store/game';
 
 import Home from "@/views/home.vue";
 
@@ -114,11 +115,8 @@ const routes: Array<RouteConfig> = [
     name: "PlayBigNumbersGame",
     component: PlayBigNumbersGame,
     props: true,
-    beforeEnter: (to, from, next) => {
-      const config = Store.getters["BigNumbers/config"];
-
-      if (!config) return next({ name: "BigNumbersGameForm" });
-
+    beforeEnter: (_1, _2, next) => {
+      if (!acquireGame().big_numbers) return next({ name: "BigNumbersGameForm" });
       next();
     },
   },
@@ -127,9 +125,8 @@ const routes: Array<RouteConfig> = [
     path: "/games/abacus/play",
     name: "PlayAbacusGame",
     component: PlayAbacusGame,
-    beforeEnter: (to, from, next) => {
-      const config = Store.getters["Abacus/config"];
-      if (!config) return next({ name: "AbacusGameForm" });
+    beforeEnter: (_1, _2, next) => {
+      if (!acquireGame().abacus) return next({ name: "AbacusGameForm" });
       next();
     },
   },

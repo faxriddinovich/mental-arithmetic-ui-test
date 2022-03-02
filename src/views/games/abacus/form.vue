@@ -18,7 +18,54 @@
               >
               <div class="box">
                 <form @submit.prevent="play">
-                  <themes-input-field @pick="pickTheme" />
+                  <themes-input-field v-model="theme" :digit="digit" />
+                  <b-field>
+                    <template #label>
+                      <b-icon icon="draggabledots" /> {{ $t("digits") }}
+                    </template>
+                    <b-radio-button
+                      :native-value="1"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>1</span>
+                    </b-radio-button>
+                    <b-radio-button
+                      :native-value="2"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>2</span>
+                    </b-radio-button>
+                    <b-radio-button
+                      :native-value="3"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>3</span>
+                    </b-radio-button>
+                    <b-radio-button
+                      :native-value="4"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>4</span>
+                    </b-radio-button>
+                    <b-radio-button
+                      :native-value="5"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>5</span>
+                    </b-radio-button>
+                    <b-radio-button
+                      :native-value="6"
+                      v-model="digit"
+                      type="is-primary"
+                    >
+                      <span>6</span>
+                    </b-radio-button>
+                  </b-field>
                   <div class="columns is-fullhd is-multiline is-gaples">
                     <div class="column is-6-fullhd pb-0">
                       <b-field :label="$t('examples')" expanded>

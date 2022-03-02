@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { acquireSync } from "@/store/sync";
 import { SessionContract } from "@/services/rpc/contracts/account";
 
-export interface Session extends SessionContract  {
+export interface Session extends SessionContract {
   timestamp: number;
   isActive: boolean;
 }
@@ -24,8 +24,7 @@ export const acquireAccount = defineStore({
       const timestamp = new Date().getTime();
       const _session = this.sessions.find((s) => s.id === session.id);
 
-      for(const session of this.sessions)
-        session.isActive = false;
+      for (const session of this.sessions) session.isActive = false;
 
       if (_session) {
         _session.id = session.id;
@@ -49,7 +48,7 @@ export const acquireAccount = defineStore({
     setActiveSession(accountId: number) {
       for (const session of this.sessions) {
         session.isActive = false;
-        if (session.id === accountId)session.isActive = true;
+        if (session.id === accountId) session.isActive = true;
       }
 
       return this.syncOurs();
@@ -57,12 +56,12 @@ export const acquireAccount = defineStore({
     async deleteSession(accountId: number) {
       let targetIsActive = false;
 
-      for(const [index, session] of this.sessions.entries()) {
-        if(session.id === accountId) {
+      for (const [index, session] of this.sessions.entries()) {
+        if (session.id === accountId) {
           // remove the target session
           this.sessions.splice(index, 1);
           // is the target session active?
-          if(session.isActive) targetIsActive = true;
+          if (session.isActive) targetIsActive = true;
         }
       }
 

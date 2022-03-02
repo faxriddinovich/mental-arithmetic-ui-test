@@ -53,8 +53,8 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { BigNumbersGameConfig } from "@/views/games/big-numbers/interfaces";
 import { generateExamples, Example } from "@/services/generator";
+import { acquireGame } from '@/store/game';
 
 interface ThemeCache {
   theme: string;
@@ -66,22 +66,21 @@ interface ThemeCache {
 
 export default defineComponent({
   components: { BigNumbersGame },
-  setup(props, context) {
-    const rawConfig = context.root.$store.getters["BigNumbers/config"];
-    const config = ref<BigNumbersGameConfig>(rawConfig);
+  setup(_, context) {
+    const config = acquireGame().abacus!;
 
     const completedInstancesCount = ref<number>(0);
     const instancesCompleted = computed(() => {
-      return completedInstancesCount.value === config.value.instances.length;
+      return completedInstancesCount.value === config.instances.length;
     });
 
     const themeCaches: ThemeCache[] = [];
 
     // for each instance we generate examples
-    for (const instance of config.value.instances) {
+    for (const instance of config.instances) {
       for (const sequenceItem of instance.sequence) {
         const { examplesCount, rowsCount, theme, digit } = sequenceItem;
-        if (config.value.instances.length > 1 && config.value.sameExamples) {
+        if (config.instances.length > 1 && config.sameExamples) {
           const cachedTheme = themeCaches.find((cache) => {
             const sameExamplesCount = cache.examplesCount === examplesCount;
             const sameRowsCount = cache.rowsCount === rowsCount;
@@ -124,7 +123,7 @@ export default defineComponent({
     }
 
     function regenerateExamples() {
-      for (const instance of config.value.instances) {
+      for (const instance of config.instances) {
         for (const sequenceItem of instance.sequence) {
           const { theme, examplesCount, rowsCount, digit } = sequenceItem;
           sequenceItem.examples = generateExamples(
@@ -143,7 +142,7 @@ export default defineComponent({
       classes.push("column");
       classes.push("is-12-mobile");
 
-      if (instancesCompleted.value && config.value.answerAtEnd) {
+      if (instancesCompleted.value && config.answerAtEnd) {
         classes.push("is-12");
       } else {
         classes.push("is-6-tablet");

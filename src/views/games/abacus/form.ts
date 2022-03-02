@@ -1,11 +1,9 @@
 import { defineComponent, computed, ref } from "@vue/composition-api";
-import {
-  AbacusGameConfig,
-  SequenceItem,
-} from "@/views/games/abacus/interfaces";
+import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
+import { acquireGame, GAME_KIND } from "@/store/game";
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
 
@@ -44,18 +42,29 @@ export default defineComponent({
       return sequence.value.length > 0 || theme.value.length >= 1;
     });
 
-    const config = context.root.$store.getters[
-      "Abacus/config"
-    ] as AbacusGameConfig;
+    const gameConfig = acquireGame();
 
-    if (config && config.sequence.length) {
-      sequence.value.push(...config.sequence);
+    if (gameConfig.abacus) {
+      const abacusConfig = gameConfig.abacus;
+      if (abacusConfig.sequence) {
+        sequence.value.push(...abacusConfig.sequence);
+      }
+
+      const lastSequenceItem =
+        abacusConfig.sequence[abacusConfig.sequence.length - 1];
+
+      digit.value = lastSequenceItem.digit;
+      examplesCount.value = lastSequenceItem.examplesCount;
+      examplesTimeout.value = lastSequenceItem.examplesTimeout;
+      rowsCount.value = lastSequenceItem.rowsCount;
+      rowsTimeout.value = lastSequenceItem.rowsTimeout;
+
+      fontColor.value = lastSequenceItem.fontColor;
+      fontRotation.value = lastSequenceItem.fontRotation;
+      fontSize.value = lastSequenceItem.fontSize;
+      displayNumbers.value = lastSequenceItem.displayNumbers;
+      speechSound.value = lastSequenceItem.speechSound;
     }
-
-    const pickTheme = (pickedDigit: number, pickedTheme: string) => {
-      theme.value = pickedTheme;
-      digit.value = pickedDigit;
-    };
 
     function addSequenceItem() {
       sequence.value.push({
@@ -83,16 +92,12 @@ export default defineComponent({
         addSequenceItem();
       }
 
-      const gameConfig: AbacusGameConfig = {
+      gameConfig.set(GAME_KIND.ABACUS, {
         sequence: sequence.value,
         timerSecs: 60 * timerMins.value + timerSecs.value,
         waitForAnswer: waitForAnswer.value,
         abacusColumnsCount: abacusColumnsCount.value,
-      };
-
-      const { commit } = context.root.$store;
-      commit("Abacus/setConfig", gameConfig);
-      commit("Abacus/generateExamples");
+      });
       context.root.$router.push({ name: "PlayAbacusGame" });
     };
 
@@ -113,7 +118,6 @@ export default defineComponent({
       fontSizes,
       canAddSequenceItem,
       canPressPlayButton,
-      pickTheme,
 
       timerMins,
       timerSecs,

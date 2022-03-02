@@ -1,12 +1,14 @@
 import { defineComponent, computed, ref } from "@vue/composition-api";
 import {
-  BigNumbersGameConfig,
   InstanceItem,
   SequenceItem,
 } from "@/views/games/big-numbers/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
-import { Theme } from '@mental-arithmetic/themes';
+import { acquireGame, GAME_KIND } from "@/store/game";
+
+const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
+const MAX_ALLOWED_INSTANCES_COUNT = 9;
 
 export default defineComponent({
   components: { ColorPalette, ThemesInputField },
@@ -33,9 +35,6 @@ export default defineComponent({
     const instances = ref<InstanceItem[]>([]);
     const sequence = ref<SequenceItem[]>([]);
 
-    const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
-    const MAX_ALLOWED_INSTANCES_COUNT = 9;
-
     const canAddSequenceItem = computed(() => {
       return (
         sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
@@ -52,32 +51,45 @@ export default defineComponent({
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length;
+      return theme.value.length > 0;
     });
 
-    const config = context.root.$store.getters[
-      "BigNumbers/config"
-    ] as BigNumbersGameConfig;
+    const gameConfig = acquireGame();
 
-    if (config) {
-      if (config.instances.length === 1) {
-        const instance = config.instances[0];
+    if (gameConfig.big_numbers) {
+      const bigNumbersConfig = gameConfig.big_numbers;
+      if (bigNumbersConfig.instances.length === 1) {
+        const instance = bigNumbersConfig.instances[0];
         sequence.value.push(...instance.sequence!);
       } else {
-        for (const instance of config.instances) {
+        for (const instance of bigNumbersConfig.instances) {
           instances.value.push(instance);
         }
       }
 
-      multiplayerMode.value = config.multiplayerMode;
-      answerAtEnd.value = config.answerAtEnd;
-      sameExamples.value = config.sameExamples;
-    }
+      const lastInstance =
+        bigNumbersConfig.instances[bigNumbersConfig.instances.length - 1];
+      const lastSequenceItem =
+        lastInstance.sequence[lastInstance.sequence.length - 1];
 
-    const pickTheme = (pickedDigit: number, pickedTheme: string) => { 
-      theme.value = pickedTheme;
-      digit.value = pickedDigit;
-    };
+      digit.value = lastSequenceItem.digit;
+      examplesCount.value = lastSequenceItem.examplesCount;
+      examplesTimeout.value = lastSequenceItem.examplesTimeout;
+      rowsCount.value = lastSequenceItem.rowsCount;
+      rowsTimeout.value = lastSequenceItem.rowsTimeout;
+      answerAtEnd.value = bigNumbersConfig.answerAtEnd;
+      sameExamples.value = bigNumbersConfig.sameExamples;
+      multiplayerMode.value = bigNumbersConfig.multiplayerMode;
+
+      multiplayerMode.value = bigNumbersConfig.multiplayerMode;
+      answerAtEnd.value = bigNumbersConfig.answerAtEnd;
+      sameExamples.value = bigNumbersConfig.sameExamples;
+      fontColor.value = lastSequenceItem.fontColor;
+      fontRotation.value = lastSequenceItem.fontRotation;
+      fontSize.value = lastSequenceItem.fontSize;
+      displayNumbers.value = lastSequenceItem.displayNumbers;
+      speechSound.value = lastSequenceItem.speechSound;
+    }
 
     function addInstanceItem() {
       if (sequence.value.length) {
@@ -116,17 +128,14 @@ export default defineComponent({
 
     const play = () => {
       if (!sequence.value.length) addSequenceItem();
-
       if (!instances.value.length) addInstanceItem();
 
-      const gameConfig: BigNumbersGameConfig = {
+      gameConfig.set(GAME_KIND.BIG_NUMBERS, {
         answerAtEnd: answerAtEnd.value,
         multiplayerMode: multiplayerMode.value,
         sameExamples: sameExamples.value,
         instances: instances.value,
-      };
-
-      context.root.$store.commit("BigNumbers/setConfig", gameConfig);
+      });
       context.root.$router.push({ name: "PlayBigNumbersGame" });
     };
 
@@ -151,8 +160,6 @@ export default defineComponent({
       canAddSequenceItem,
       canAddInstanceItem,
       canPressPlayButton,
-
-      pickTheme,
 
       sequence,
       instances,

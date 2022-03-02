@@ -32,7 +32,7 @@ export default defineComponent({
       "brown",
     ]);
 
-    return { colors};
+    return { colors };
   },
 });
 </script>
