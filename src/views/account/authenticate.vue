@@ -148,8 +148,9 @@ export default defineComponent({
 
       rpc
         .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
-        .then((session: SessionContract) => {
-          accounts.addSession(session);
+        .then(async (session: SessionContract) => {
+          await accounts.addSession(session);
+          context.root.$router.push({ name: 'AccountSessions' });
           showToastMessage(
             context.root.$i18n.t("successful_authentication_message", {
               username: session.username,
