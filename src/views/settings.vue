@@ -55,10 +55,10 @@
                 <b-select placeholder="Select a name" v-model="textToSpeechID">
                   <option
                     v-for="(voice, index) in supportedVoices"
-                    :value="voice.identity"
+                    :value="voice"
                     :key="index"
                   >
-                    {{ voice.name }}
+                    {{ voice.split(':')[1] }}
                   </option>
                 </b-select>
                 <p class="control">
@@ -66,7 +66,7 @@
                     icon-left="volume"
                     @click="saySomething"
                     :disabled="!textToSpeechID"
-                    >test</b-button
+                    ></b-button
                   >
                 </p>
               </b-field>
@@ -100,44 +100,39 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { IdentifiedVoice } from "@/store/modules/text-to-speech.module";
 import { speak } from "@/services/tts";
 import { acquireSetting, Locales } from "@/store/setting";
+import { getVoices } from '@/services/tts';
 
 export default defineComponent({
   setup(_, context) {
-    const locale = ref<Locales>("en-US");
-    const showLatestEvent = ref<boolean>(false);
-    const textToSpeechID = ref<string | null>(null);
-    const supportedVoices = ref<IdentifiedVoice[]>([]);
-    const settings = acquireSetting();
-
-    function applySettings() {
-      locale.value = settings.locale as Locales;
-      showLatestEvent.value = settings.show_latest_event;
-    }
+    const setting = acquireSetting();
+    const locale = ref<Locales>(setting.one('locale') as Locales);
+    const supportedVoices = ref<string[]>([]);
+    const showLatestEvent = ref<boolean>(setting.one('show_latest_event'));
+    const textToSpeechID = ref<string>(setting.one('text_to_speech_id'));
 
     async function getSupportedVoices() {
-      const voices = await context.root.$store.dispatch(
-        "TextToSpeech/getSupportedVoicesByLocale",
-        locale.value
-      );
-      supportedVoices.value = voices;
+      supportedVoices.value = await getVoices(locale.value);
     }
 
-    watch(locale, () => {
-      textToSpeechID.value = null;
-      getSupportedVoices();
+    watch(locale, async () => {
+      await getSupportedVoices();
+      if(setting.one('locale') === locale.value) {
+        textToSpeechID.value = setting.one('text_to_speech_id');
+      } else if (supportedVoices.value.length) {
+        textToSpeechID.value = supportedVoices.value[0]!;
+      }
     });
 
     async function changeSettings() {
-      if (context.root.$i18n.locale != locale.value) {
+      if (context.root.$i18n.locale != locale.value)
         context.root.$i18n.locale = locale.value;
-      }
 
-      await settings.change({
+      await setting.change({
         show_latest_event: showLatestEvent.value,
-        locale: locale.value,
+        text_to_speech_id: textToSpeechID.value,
+        locale: locale.value
       });
 
       showToastMessage(
@@ -152,7 +147,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      applySettings();
       getSupportedVoices();
     });
 

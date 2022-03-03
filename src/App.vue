@@ -17,9 +17,9 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
-import { showToastMessage, ToastType } from "@/services/toast";
-import { acquireSetting } from '@/store/setting';
-import { acquireAccount } from '@/store/account';
+import { acquireSetting } from "@/store/setting";
+import { acquireAccount } from "@/store/account";
+import { getVoices } from "@/services/tts";
 
 interface Task {
   text: string;
@@ -31,9 +31,6 @@ export default defineComponent({
     const loadingText = ref<string>("");
     const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
-
-    const sleep = async (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
 
     const tasks: Task[] = [
       {
@@ -47,7 +44,7 @@ export default defineComponent({
       {
         text: "Initializing languages..",
         run: () => {
-          const locale = acquireSetting()['one']('locale');
+          const locale = acquireSetting()["one"]("locale");
           context.root.$i18n.locale = locale as string;
           return Promise.resolve();
         },
@@ -55,13 +52,11 @@ export default defineComponent({
       {
         text: "Initializing TTS service..",
         run: async () => {
-          try {
-            await context.root.$store.dispatch("TextToSpeech/sync");
-          } catch {
-            showToastMessage(
-              "Unable to initialize tts service",
-              ToastType.Warning
-            );
+          const setting = acquireSetting();
+          if (!setting.one("text_to_speech_id")) {
+            const voices = await getVoices(setting.one("locale") || undefined);
+            if (voices.length)
+              acquireSetting().change({ text_to_speech_id: voices[0] });
           }
         },
       },
