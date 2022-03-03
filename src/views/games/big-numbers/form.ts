@@ -54,10 +54,11 @@ export default defineComponent({
       return theme.value.length > 0;
     });
 
-    const gameConfig = acquireGame();
+    const game = acquireGame()
+    const gameConfig = game.get(GAME_KIND.BIG_NUMBERS)!;
 
-    if (gameConfig.big_numbers) {
-      const bigNumbersConfig = gameConfig.big_numbers;
+    if (gameConfig) {
+      const bigNumbersConfig = gameConfig;
       if (bigNumbersConfig.instances.length === 1) {
         const instance = bigNumbersConfig.instances[0];
         sequence.value.push(...instance.sequence!);
@@ -130,7 +131,7 @@ export default defineComponent({
       if (!sequence.value.length) addSequenceItem();
       if (!instances.value.length) addInstanceItem();
 
-      gameConfig.set(GAME_KIND.BIG_NUMBERS, {
+      game.set(GAME_KIND.BIG_NUMBERS, {
         answerAtEnd: answerAtEnd.value,
         multiplayerMode: multiplayerMode.value,
         sameExamples: sameExamples.value,

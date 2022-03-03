@@ -53,8 +53,8 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { generateExamples, Example } from "@/services/generator";
-import { acquireGame } from '@/store/game';
+import { acquireGame, GAME_KIND } from "@/store/game";
+import { acquireExample, Example } from "@/store/example";
 
 interface ThemeCache {
   theme: string;
@@ -67,7 +67,7 @@ interface ThemeCache {
 export default defineComponent({
   components: { BigNumbersGame },
   setup(_, context) {
-    const config = acquireGame().abacus!;
+    const config = acquireGame().get(GAME_KIND.BIG_NUMBERS)!;
 
     const completedInstancesCount = ref<number>(0);
     const instancesCompleted = computed(() => {
@@ -95,7 +95,7 @@ export default defineComponent({
             continue;
           }
           // we generate examples
-          const examples = generateExamples(
+          const examples = acquireExample().gen(
             theme,
             examplesCount,
             rowsCount,
@@ -113,7 +113,7 @@ export default defineComponent({
           continue;
         }
 
-        sequenceItem.examples = generateExamples(
+        sequenceItem.examples = acquireExample().gen(
           theme,
           examplesCount,
           rowsCount,
@@ -126,7 +126,7 @@ export default defineComponent({
       for (const instance of config.instances) {
         for (const sequenceItem of instance.sequence) {
           const { theme, examplesCount, rowsCount, digit } = sequenceItem;
-          sequenceItem.examples = generateExamples(
+          sequenceItem.examples = acquireExample().gen(
             theme,
             examplesCount,
             rowsCount,
@@ -163,7 +163,7 @@ export default defineComponent({
     }
 
     function emitNextExample() {
-      context.root.$emit('next-example');
+      context.root.$emit("next-example");
     }
 
     return {

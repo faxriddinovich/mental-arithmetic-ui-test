@@ -7,12 +7,13 @@ import {
   Ref,
   onUnmounted
 } from "@vue/composition-api";
-import {SequenceItem, Example} from "@/views/games/big-numbers/interfaces";
+import {SequenceItem} from "@/views/games/big-numbers/interfaces";
 import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
 import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
 import FinishSoundSrc from '@@/sounds/finish.mp3'
 import BubbleSoundSrc from '@@/sounds/bubble.mp3';
 import {SettingsStorage} from '@/services/storages/settings';
+import { Example } from '@/store/example';
 
 import {speak} from '@/services/tts';
 

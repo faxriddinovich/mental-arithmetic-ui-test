@@ -1,7 +1,4 @@
-export interface Example {
-  numbers: (string | number)[];
-  answer: number;
-}
+import { Example } from '@/store/example';
 
 export interface SequenceItem {
   theme: string;
