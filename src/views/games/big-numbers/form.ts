@@ -51,7 +51,7 @@ export default defineComponent({
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length > 0;
+      return theme.value.length > 0 || sequence.value.length > 0;
     });
 
     const game = acquireGame()
