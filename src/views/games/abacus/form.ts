@@ -58,6 +58,10 @@ export default defineComponent({
       examplesTimeout.value = lastSequenceItem.examplesTimeout;
       rowsCount.value = lastSequenceItem.rowsCount;
       rowsTimeout.value = lastSequenceItem.rowsTimeout;
+      abacusColumnsCount.value = abacusConfig.abacusColumnsCount;
+      timerMins.value = Math.floor(abacusConfig.timerSecs / 60);
+      timerSecs.value = abacusConfig.timerSecs % 60;
+      waitForAnswer.value = abacusConfig.waitForAnswer;
 
       fontColor.value = lastSequenceItem.fontColor;
       fontRotation.value = lastSequenceItem.fontRotation;

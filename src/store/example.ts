@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { themes } from "@mental-arithmetic/themes";
 
-interface Example {
+export interface Example {
   numbers: (string | number | BigInt)[];
   answer: BigInt | number;
 }

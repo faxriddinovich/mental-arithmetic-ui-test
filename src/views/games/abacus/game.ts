@@ -8,11 +8,13 @@ import {
 } from "@vue/composition-api";
 import { SVG } from "@svgdotjs/svg.js";
 import { AbacusBoard } from "./board";
-import { AbacusGameConfig } from "@/views/games/abacus/interfaces";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import VictorySoundEffect from "@@/sounds/victory.mp3";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
+import { acquireGame, GAME_KIND } from "@/store/game";
+import { acquireExample } from "@/store/example";
+import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
 
 import ScalableText from "@/components/scalable-text.vue";
@@ -57,10 +59,25 @@ export default defineComponent({
       autoResize: true,
     });
 
-    const config = context.root.$store.getters[
-      "Abacus/config"
-    ] as AbacusGameConfig;
+    const config = acquireGame().get(GAME_KIND.ABACUS)!;
     const sequence = ref<SequenceItem[]>(config.sequence);
+    const examplesGenerated = !!config.sequence[0].examples.length;
+
+    if (!examplesGenerated) generateExamples();
+    // TODO: since the length of examples may be very long, it may block the main thread. Consider using worker threads.
+    function generateExamples() {
+      const example = acquireExample();
+      for (const sequenceItem of config.sequence) {
+        const examples = example.gen(
+          sequenceItem.theme,
+          sequenceItem.examplesCount,
+          sequenceItem.rowsCount,
+          sequenceItem.digit
+        );
+
+        sequenceItem.examples.push(...examples);
+      }
+    }
 
     const abacusValue = ref<number>(0);
     const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
@@ -123,9 +140,9 @@ export default defineComponent({
         v(currentSequenceItem)!.rowsTimeout >= 1
           ? 1
           : 1 + v(currentSequenceItem)!.rowsTimeout + String(text).length / 2;
-      const voiceIdentity =
-        context.root.$store.getters["Settings/get"]("ttsVoiceIdentity");
-      speak(text, speechRate, voiceIdentity);
+
+      const voiceID = acquireSetting().one("text_to_speech_id");
+      speak(text, speechRate, voiceID);
     }
 
     const completeRow = () => {
