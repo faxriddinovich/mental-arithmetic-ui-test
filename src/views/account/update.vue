@@ -31,7 +31,7 @@
           icon-left="save"
           type="is-success"
           :disabled="Object.keys(changedFields).length === 0"
-          >{{ $t('save') }}</b-button
+          >{{ $t("save") }}</b-button
         >
       </div>
     </form>
@@ -44,7 +44,7 @@ import {
   ref,
   onMounted,
 } from "@vue/composition-api";
-import { updatedDiff } from 'deep-object-diff';
+import { updatedDiff } from "deep-object-diff";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
@@ -53,13 +53,17 @@ import {
 } from "@/services/rpc/methods";
 import {
   AccountContract,
-  UpdateOwnAccountContract ,
+  UpdateOwnAccountContract,
 } from "@/services/rpc/contracts/account";
+
+interface ExtendedAccountContract extends AccountContract {
+  password: string;
+}
 
 export default defineComponent({
   setup() {
-    const account = ref<AccountContract | null>(null);
-    const tmpAccount =  ref<AccountContract | null>(null);
+    const account = ref<ExtendedAccountContract | null>(null);
+    const tmpAccount = ref<ExtendedAccountContract | null>(null);
 
     const changedFields = computed(() => {
       return updatedDiff(account.value!, tmpAccount.value!);
@@ -69,24 +73,27 @@ export default defineComponent({
       rpc
         .call(RPC_GET_ACCOUNT_METHOD)
         .then((remoteAccount: AccountContract) => {
-          account.value = remoteAccount;
-          tmpAccount.value = Object.assign({}, remoteAccount);
+          account.value = { ...remoteAccount, password: '' };
+          tmpAccount.value = Object.assign({ password: "" }, remoteAccount);
         });
     };
 
     const updateAccount = () => {
       const params: Partial<UpdateOwnAccountContract> = {};
 
-      for(const field of Object.keys(changedFields.value!))
+      for (const field of Object.keys(changedFields.value!))
         //@ts-ignore
         params[field] = tmpAccount.value[field];
 
-      rpc.call(RPC_UPDATE_ACCOUNT_METHOD, params).then(() => {
-        showToastMessage("Successfully saved!", ToastType.Success);
-        account.value = Object.assign({}, tmpAccount.value);
-      }).catch(() => {
-        showToastMessage('Unable to save changes', ToastType.Danger);
-      });;
+      rpc
+        .call(RPC_UPDATE_ACCOUNT_METHOD, params)
+        .then(() => {
+          showToastMessage("Successfully saved!", ToastType.Success);
+          account.value = Object.assign({}, tmpAccount.value);
+        })
+        .catch(() => {
+          showToastMessage("Unable to save changes", ToastType.Danger);
+        });
     };
 
     onMounted(() => {

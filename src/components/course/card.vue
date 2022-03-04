@@ -81,7 +81,7 @@
             >
             <span v-else>
               <span :class="priceClasses">
-                {{ formatCurrency(course.price) }}
+                {{ course.price | formatCurrency }}
                 <span class="has-text-weight-light">uzs</span>
               </span></span
             >

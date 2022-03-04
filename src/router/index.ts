@@ -14,7 +14,8 @@ import UpdateAccount from "@/views/account/update.vue";
 import AccountSessions from "@/views/account/sessions.vue";
 import AccountSubscription from "@/views/account/subscription.vue";
 import PlatformSettings from "@/views/account/platform-settings.vue";
-import Accounts from "@/views/account/accounts.vue";
+import ControlPanelAccounts from "@/views/account/cp/accounts.vue";
+import ControlPanelUpdateAccount from '@/views/account/cp/update.vue';
 import ManageEvents from "@/views/account/manage-events.vue";
 import AccountBlocked from "@/views/account/blocked.vue";
 
@@ -77,8 +78,14 @@ const routes: Array<RouteConfig> = [
       },
       {
         path: "accounts",
-        name: "Accounts",
-        component: Accounts,
+        name: "ControlPanelAccounts",
+        component: ControlPanelAccounts,
+        meta: { requiresAuth: true, roles: ["root"] },
+      },
+      {
+        path: "accounts/:id",
+        name: "ControlPanelUpdateAccount",
+        component: ControlPanelUpdateAccount,
         meta: { requiresAuth: true, roles: ["root"] },
       },
       {

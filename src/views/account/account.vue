@@ -44,7 +44,7 @@
                     <!-- <p class="title">28.000</p> -->
                     <p class="title">
                       <span v-if="account">{{
-                        formatCurrency(account.balance)
+                        account.balance | formatCurrency
                       }}</span>
                       <b-skeleton width="150px" height="36px" v-else />
                     </p>
@@ -92,8 +92,8 @@
                   icon="users-alt"
                   :label="$t('accounts')"
                   tag="router-link"
-                  :to="{ name: 'Accounts' }"
-                  :active="$route.name === 'Accounts'"
+                  :to="{ name: 'ControlPanelAccounts' }"
+                  :active="['ControlPanelAccounts', 'ControlPanelUpdateAccount'].includes($route.name)"
                 ></b-menu-item>
                 <b-menu-item
                   icon="mailbox"
@@ -134,7 +134,7 @@ import { defineComponent, ref, onMounted } from "@vue/composition-api";
 import { rpc } from "@/services/rpc";
 import { RPC_GET_ACCOUNT_METHOD } from "@/services/rpc/methods";
 import { AccountContract } from "@/services/rpc/contracts/account";
-import { avatarFactory, formatCurrency } from "@/common/utils";
+import { avatarFactory } from "@/common/utils";
 import { acquireAccount } from "@/store/account";
 
 export default defineComponent({
@@ -155,7 +155,6 @@ export default defineComponent({
       activeSession: acquireAccount().activeSession,
       account,
       avatarFactory,
-      formatCurrency,
     };
   },
 });

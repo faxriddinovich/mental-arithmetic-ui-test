@@ -3,8 +3,8 @@ import Buefy from "buefy";
 import { isMobile } from "@/services/platform";
 import { SplashScreen } from "@capacitor/splash-screen";
 import VueCompositionAPI from "@vue/composition-api";
-import { Operation } from '@mental-arithmetic/themes';
-import { createPinia, PiniaVuePlugin } from 'pinia';
+import { Operation } from "@mental-arithmetic/themes";
+import { createPinia, PiniaVuePlugin } from "pinia";
 
 Vue.use(VueCompositionAPI);
 Vue.use(PiniaVuePlugin);
@@ -72,22 +72,29 @@ Vue.filter("timerFormat", (timerAbsolute: number) => {
   return `${minsStr}:${secsStr}`;
 });
 
-Vue.filter('toOperation', (ops: number) => {
-  let str = '';
+Vue.filter("toOperation", (ops: number) => {
+  let str = "";
 
-  if(ops & Operation.add)
-    str += '+ ';
+  if (ops & Operation.add) str += "+ ";
 
-  if(ops & Operation.sub)
-    str += '- '
+  if (ops & Operation.sub) str += "- ";
 
-  if(ops & Operation.div)
-    str += '÷ ';
+  if (ops & Operation.div) str += "÷ ";
 
-  if(ops & Operation.mult)
-    str += '×'
+  if (ops & Operation.mult) str += "×";
 
   return str;
+});
+
+Vue.filter("formatCurrency", (amount: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "UZS",
+    minimumFractionDigits: 0,
+  })
+    .formatToParts(amount)
+    .map((p) => (p.type != "literal" && p.type != "currency" ? p.value : ""))
+    .join("");
 });
 
 Vue.filter("normalizeSign", (n: BigInt | number) => {

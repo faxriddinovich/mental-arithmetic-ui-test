@@ -80,11 +80,19 @@ export namespace uz {
     "purchase": "Harid qilish",
     "cancel_subscription": "Obunani bekor qilish",
     "purchase_subscription_confirmation_text": "Haqiqatdan ham hariq qilmoqchiisiz?",
-    "cancel_subscription_confirmation_text": "Haqiqatdan ham obunani bekor qilmoqchimisiz ?",
+    "cancel_subscription_confirmation_text": "Haqiqatdan ham obunani bekor qilmoqchimisiz?",
     "cancel": "Bekor qilish",
     "yes": "Ha",
     "subscription_expires": "Obuna muddati tugashi vaqti",
-    "insufficient_balance": "Yetarli mablag' mavjud emas"
+    "insufficient_balance": "Yetarli mablag' mavjud emas",
+    "search_accounts_input_placeholder": "Akkaunt nomini yozing",
+    "edit": "O'zgartirish",
+    "no_accounts_found":  "Hechqanday akkauntlar topilmadi",
+    "blocked": "Bloklangan",
+    "no": "Yo'q",
+    "successfully_saved_message": "Muvaffaqiyatli saqlandi!",
+    "delete_confirmation_text": "Haqiqatdan ham o'chirmoqchimisiz?",
+    "back": "Ortga"
   };
 
   export const themes = {
