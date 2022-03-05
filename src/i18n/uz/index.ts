@@ -67,7 +67,7 @@ export namespace uz {
     "accounts": "Akkauntlar",
     "events": "Hodisalar",
     "platform_settings": "Platforma sozlamalari",
-    "control_panel": "Boshqarish paneli",
+    "control_panel": "Boshqaruv paneli",
     "balance_in_soums": "Balans (so'mda)",
     "sessions": "Sessialar",
     "add_account": "Akkaunt qo'shish",
@@ -92,7 +92,13 @@ export namespace uz {
     "no": "Yo'q",
     "successfully_saved_message": "Muvaffaqiyatli saqlandi!",
     "delete_confirmation_text": "Haqiqatdan ham o'chirmoqchimisiz?",
-    "back": "Ortga"
+    "back": "Ortga",
+
+    "new_event": "Yangi hodisa",
+    "successfully_created": "Muvaffaqiyatli yaratildi!",
+    "successfully_deleted": "Muvaffaqiyatli o'chirildi!",
+    "no_events_found": "Hechqanday hodisalar topilmadi",
+    "create": "Yaratish"
   };
 
   export const themes = {

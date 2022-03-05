@@ -6,7 +6,7 @@ export function getVoices(locale?: string): Promise<string[]> {
   let triesCount = 0;
   return new Promise((resolve, reject) => {
     const timerHandle = setInterval(async () => {
-      if (triesCount > GET_VOICES_MAX_TRIES_COUNT) {
+      if (triesCount >= GET_VOICES_MAX_TRIES_COUNT) {
         clearInterval(timerHandle);
         return reject();
       }
@@ -19,7 +19,6 @@ export function getVoices(locale?: string): Promise<string[]> {
           const [,, lang] = voice.split(':');
           return locale && lang === locale ? true : false;
         });
-        triesCount = 0;
         return resolve(identified);
       }
       triesCount++;

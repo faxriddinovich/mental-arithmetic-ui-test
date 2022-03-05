@@ -54,9 +54,11 @@ export default defineComponent({
         run: async () => {
           const setting = acquireSetting();
           if (!setting.one("text_to_speech_id")) {
+            try {
             const voices = await getVoices(setting.one("locale") || undefined);
             if (voices.length)
               acquireSetting().change({ text_to_speech_id: voices[0] });
+            } catch { }
           }
         },
       },

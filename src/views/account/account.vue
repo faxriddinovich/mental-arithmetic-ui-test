@@ -99,8 +99,8 @@
                   icon="mailbox"
                   :label="$t('events')"
                   tag="router-link"
-                  :to="{ name: 'ManageEvents' }"
-                  :active="$route.name === 'ManageEvents'"
+                  :to="{ name: 'ControlPanelEvents' }"
+                  :active="$route.name === 'ControlPanelEvents'"
                 ></b-menu-item>
                 <b-menu-item
                   icon="setting"

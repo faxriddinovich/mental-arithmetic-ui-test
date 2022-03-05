@@ -2,19 +2,19 @@
   <div>
     <div class="card mb-3 p-4 is-bordered">
       <form @submit.prevent="createEvent">
-        <b-field class="m-0" label="New event:">
+        <b-field class="m-0" :label="$t('new_event')">
           <b-input
             minlength="10"
             maxlength="255"
             type="textarea"
-            v-model="eventBody"
+            v-model="event"
             required
           ></b-input>
         </b-field>
         <div class="has-text-right">
-          <b-button native-type="submit" icon-left="plus" type="is-success"
-            >Create</b-button
-          >
+          <b-button native-type="submit" icon-left="plus" type="is-success">{{
+            $t("create")
+          }}</b-button>
         </div>
       </form>
     </div>
@@ -41,13 +41,13 @@
         </article>
       </div>
       <div class="has-text-centered has-text-weight-semibold" v-else>
-        No events found
+        {{ $t("no_events_found") }}
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Vue } from "vue-property-decorator";
+import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import {
@@ -56,33 +56,42 @@ import {
   RPC_DELETE_EVENT_METHOD,
 } from "@/services/rpc/methods";
 
-@Component
-export default class ManageEvents extends Vue {
-  public eventBody = "";
-  public events = [];
+export default defineComponent({
+  setup(_, context) {
+    const event = ref<string>("");
+    const events = ref<string[]>([]);
 
-  mounted() {
-    this.getEvents();
-  }
+    function getEvents() {
+      rpc.call(RPC_GET_EVENTS_METHOD).then((remoteEvents) => {
+        events.value = remoteEvents;
+      });
+    }
 
-  public getEvents() {
-    rpc.call(RPC_GET_EVENTS_METHOD).then((events) => {
-      this.events = events;
+    function createEvent() {
+      rpc.call(RPC_CREATE_EVENT_METHOD, { body: event.value }).then(() => {
+        showToastMessage(
+          context.root.$i18n.t("successfully_created") as string,
+          ToastType.Success
+        );
+        getEvents();
+      });
+    }
+
+    function deleteEvent(eventId: number) {
+      rpc.call(RPC_DELETE_EVENT_METHOD, { eventId }).then(() => {
+        showToastMessage(
+          context.root.$i18n.t("successfully_deleted") as string,
+          ToastType.Warning
+        );
+        getEvents();
+      });
+    }
+
+    onMounted(() => {
+      getEvents();
     });
-  }
 
-  public createEvent() {
-    rpc.call(RPC_CREATE_EVENT_METHOD, { body: this.eventBody }).then(() => {
-      showToastMessage("Successfully created!", ToastType.Success);
-      this.getEvents();
-    });
-  }
-
-  public deleteEvent(eventId: number) {
-    rpc.call(RPC_DELETE_EVENT_METHOD, { eventId }).then(() => {
-      showToastMessage("Successfully deleted!", ToastType.Warning);
-      this.getEvents();
-    });
-  }
-}
+    return { event, events, createEvent, deleteEvent };
+  },
+});
 </script>

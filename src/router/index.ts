@@ -16,7 +16,7 @@ import AccountSubscription from "@/views/account/subscription.vue";
 import PlatformSettings from "@/views/account/platform-settings.vue";
 import ControlPanelAccounts from "@/views/account/cp/accounts.vue";
 import ControlPanelUpdateAccount from '@/views/account/cp/update.vue';
-import ManageEvents from "@/views/account/manage-events.vue";
+import ControlPanelEvents from "@/views/account/cp/events.vue";
 import AccountBlocked from "@/views/account/blocked.vue";
 
 import Settings from "@/views/settings.vue";
@@ -89,9 +89,9 @@ const routes: Array<RouteConfig> = [
         meta: { requiresAuth: true, roles: ["root"] },
       },
       {
-        path: "manage-events",
-        name: "ManageEvents",
-        component: ManageEvents,
+        path: "events",
+        name: "ControlPanelEvents",
+        component: ControlPanelEvents,
         meta: { requiresAuth: true, roles: ["root"] },
       },
     ],
