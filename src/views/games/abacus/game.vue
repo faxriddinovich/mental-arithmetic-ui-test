@@ -61,7 +61,6 @@
         class="flicking-panel"
         v-for="(text, index) of attentionTexts"
         :key="index"
-        :data-at="true"
       >
         <div class="is-attention-text">
           <scalable-text :text="text" class="is-full-size" />
@@ -72,8 +71,6 @@
         <div
           class="flicking-panel"
           :key="'s-' + sequenceIndex"
-          :data-at="true"
-          :data-si="sequenceIndex"
         >
           <div class="is-attention-text">
             <scalable-text
@@ -87,7 +84,6 @@
           <div
             class="flicking-panel"
             :key="'e-' + sequenceIndex + '-' + exampleIndex"
-            :data-at="true"
           >
             <div class="is-attention-text">
               <scalable-text
@@ -106,7 +102,7 @@
               :data-ri="rowIndex"
               :data-rv="row"
             >
-              <div :class="`is-${sequenceItem.fontColor}-bg-color`">
+              <div :class="`is-${config.fontColor}-bg-color`">
                 <b-icon
                   icon="volume"
                   size="is-large"

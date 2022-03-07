@@ -31,7 +31,7 @@
               <b-icon icon="mailbox" /> <span v-html="event.body" />
               <br />
               <small class="has-text-weight-semibold">{{
-                event.createdAt
+                localizeDate(event.createdAt)
               }}</small>
             </div>
           </div>
@@ -55,8 +55,10 @@ import {
   RPC_CREATE_EVENT_METHOD,
   RPC_DELETE_EVENT_METHOD,
 } from "@/services/rpc/methods";
+import { dateMixin } from '@/mixins/date';
 
 export default defineComponent({
+  mixins: [dateMixin],
   setup(_, context) {
     const event = ref<string>("");
     const events = ref<string[]>([]);

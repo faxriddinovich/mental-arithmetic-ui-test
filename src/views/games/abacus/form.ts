@@ -55,19 +55,21 @@ export default defineComponent({
 
       digit.value = lastSequenceItem.digit;
       examplesCount.value = lastSequenceItem.examplesCount;
-      examplesTimeout.value = lastSequenceItem.examplesTimeout;
+
+      examplesTimeout.value = abacusConfig.examplesTimeout;
+
       rowsCount.value = lastSequenceItem.rowsCount;
-      rowsTimeout.value = lastSequenceItem.rowsTimeout;
+      rowsTimeout.value = abacusConfig.rowsTimeout;
       abacusColumnsCount.value = abacusConfig.abacusColumnsCount;
       timerMins.value = Math.floor(abacusConfig.timerSecs / 60);
       timerSecs.value = abacusConfig.timerSecs % 60;
       waitForAnswer.value = abacusConfig.waitForAnswer;
 
-      fontColor.value = lastSequenceItem.fontColor;
-      fontRotation.value = lastSequenceItem.fontRotation;
-      fontSize.value = lastSequenceItem.fontSize;
-      displayNumbers.value = lastSequenceItem.displayNumbers;
-      speechSound.value = lastSequenceItem.speechSound;
+      fontColor.value = abacusConfig.fontColor;
+      fontRotation.value = abacusConfig.fontRotation;
+      fontSize.value = abacusConfig.fontSize;
+      displayNumbers.value = abacusConfig.displayNumbers;
+      speechSound.value = abacusConfig.speechSound;
     }
 
     function addSequenceItem() {
@@ -76,14 +78,7 @@ export default defineComponent({
         theme: theme.value,
         digit: Number(digit.value),
         examplesCount: examplesCount.value,
-        examplesTimeout: examplesTimeout.value,
         rowsCount: rowsCount.value,
-        rowsTimeout: rowsTimeout.value,
-        displayNumbers: displayNumbers.value,
-        fontRotation: fontRotation.value,
-        fontColor: fontColor.value,
-        fontSize: fontSize.value,
-        speechSound: speechSound.value,
       });
     }
 
@@ -101,6 +96,13 @@ export default defineComponent({
         timerSecs: 60 * timerMins.value + timerSecs.value,
         waitForAnswer: waitForAnswer.value,
         abacusColumnsCount: abacusColumnsCount.value,
+        examplesTimeout: examplesTimeout.value,
+        rowsTimeout: rowsTimeout.value,
+        displayNumbers: displayNumbers.value,
+        fontRotation: fontRotation.value,
+        fontColor: fontColor.value,
+        fontSize: fontSize.value,
+        speechSound: speechSound.value,
       });
       context.root.$router.push({ name: "PlayAbacusGame" });
     };

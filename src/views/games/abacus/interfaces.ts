@@ -3,16 +3,9 @@ import { Example } from '@/store/example';
 export interface SequenceItem {
   theme: string;
   examples: Example[];
-  examplesTimeout: number;
-  rowsTimeout: number;
-  displayNumbers: boolean;
-  fontRotation: number;
-  fontColor: string;
-  fontSize: number;
-  speechSound: boolean;
-  examplesCount: number;
-  rowsCount: number;
   digit: number;
+  rowsCount: number;
+  examplesCount: number;
 }
 
 export interface AbacusGameConfig {
@@ -20,6 +13,13 @@ export interface AbacusGameConfig {
   timerSecs: number,
   waitForAnswer: boolean,
   abacusColumnsCount: number,
+  examplesTimeout: number;
+  rowsTimeout: number;
+  displayNumbers: boolean;
+  fontRotation: number;
+  fontColor: string;
+  fontSize: number;
+  speechSound: boolean;
 }
 
 export interface Drawable {

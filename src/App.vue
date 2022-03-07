@@ -91,6 +91,7 @@ body {
   background-color: #ecf3f4;
   font-family: "Inter", sans-serif;
   min-height: 100vh;
+  position: relative;
 }
 
 html::-webkit-scrollbar {

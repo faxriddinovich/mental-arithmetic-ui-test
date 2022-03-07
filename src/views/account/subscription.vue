@@ -5,7 +5,7 @@
         <div v-if="subscription">
           <p class="heading">{{ $t("subscription_expires") }}</p>
           <p class="title">
-            {{ formatDate(subscription.date) }}
+            {{ localizeDate(subscription.date) }}
           </p>
           <p class="mt-5">
             <!--
@@ -53,30 +53,18 @@ import {
   RPC_PURCHASE_SUBSCRIPTION_METHOD,
 } from "@/services/rpc/methods";
 import { RPC_INSUFFICIENT_BALANCE_ERR_CODE } from "@/services/rpc/error-codes";
-import { acquireSetting } from "@/store/setting";
-import { format } from "date-fns";
-import { uz, ru, enUS } from "date-fns/locale";
+import { dateMixin } from "@/mixins/date";
 
 export default defineComponent({
+  mixins: [dateMixin],
   setup(_, context) {
     const subscription = ref(null);
     const days = ref<number>(0);
-    const locale = acquireSetting().one("locale");
 
     function getSubscription() {
       rpc.call(RPC_GET_SUBSCRIPTION_METHOD).then((result) => {
         subscription.value = result;
       });
-    }
-
-    function formatDate(date: number) {
-      let loc;
-
-      if (locale === "uz-UZ") loc = uz;
-      else if (locale === "en-EN") loc = enUS;
-      else if (locale === "ru-RU") loc = ru;
-
-      return format(Number(date), "PPPpp", { locale: loc });
     }
 
     function cancelSubscription() {
@@ -138,7 +126,6 @@ export default defineComponent({
       displayConfirmDialog,
       displayCancelDialog,
       subscription,
-      formatDate,
       days,
     };
   },

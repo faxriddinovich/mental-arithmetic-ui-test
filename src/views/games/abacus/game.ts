@@ -30,7 +30,7 @@ import {
   ABACUS_FRAME_ABSOLUTE_X_PADDING,
 } from "./constants";
 
-type TimerHandleKey = "rows-timer-handle";
+type TimerHandleKey = "rows-timer-handle" | number;
 type SoundEffectKey =
   | "timer-sound-effect"
   | "whistle-sound-effect"
@@ -48,7 +48,7 @@ export default defineComponent({
     ScalableText,
     StackedCards,
   },
-  setup(_, context) {
+  setup(_) {
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
     const flickingRef = ref<Flicking>();
@@ -62,9 +62,11 @@ export default defineComponent({
     const config = acquireGame().get(GAME_KIND.ABACUS)!;
     const sequence = ref<SequenceItem[]>(config.sequence);
     const examplesGenerated = !!config.sequence[0].examples.length;
-
     if (!examplesGenerated) generateExamples();
-    // TODO: since the length of examples may be very long, it may block the main thread. Consider using worker threads.
+
+    // TODO: since the length of examples may be very long,
+    // it may block the main thread. We should consider using
+    // worker threads.
     function generateExamples() {
       const example = acquireExample();
       for (const sequenceItem of config.sequence) {
@@ -83,10 +85,8 @@ export default defineComponent({
     const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
 
     const wonTheGame = computed<boolean>(() => {
-      return (
-        (v(completedRowsCount) / v(totalRowsCount)) * 100 >=
-        MIN_ROWS_PERCENT_TO_WIN
-      );
+      const percent = (v(completedRowsCount) / v(totalRowsCount)) * 100;
+      return percent >= MIN_ROWS_PERCENT_TO_WIN;
     });
 
     const timerEnabled = ref<boolean>(false);
@@ -97,6 +97,7 @@ export default defineComponent({
       return (v(completedRowsCount) / v(totalRowsCount)) * 100;
     });
 
+    // FIXME: transalte me
     const attentionTexts = ref(["Good luck!"]);
 
     const displayMode = ref<DisplayMode>("cards");
@@ -136,10 +137,11 @@ export default defineComponent({
     });
 
     function speechSpeak(text: string | number) {
+      // FIXME: fix the speech rate
       const speechRate =
-        v(currentSequenceItem)!.rowsTimeout >= 1
+        config.rowsTimeout >= 1
           ? 1
-          : 1 + v(currentSequenceItem)!.rowsTimeout + String(text).length / 2;
+          : 1 + config.rowsTimeout + String(text).length / 2;
 
       const voiceID = acquireSetting().one("text_to_speech_id");
       speak(text, speechRate, voiceID);
@@ -161,36 +163,46 @@ export default defineComponent({
       const currentSlide = currentPanel.element;
       const dataset = currentSlide.dataset;
 
-      if (dataset.at) {
-        setTimeout(() => {
-          slideNext();
-        }, 200);
-      } else if (dataset.ri) {
-        if (parse(dataset.ri) === 0) abacusBoard.reset();
-
-        if (parse(dataset.ri) === 0) currentExampleHead.value = activeIndex;
-
-        if (parse(dataset.ri) === 0 && !v(timerEnabled)) enableTimer();
-
-        if (v(currentSequenceItem).speechSound) speechSpeak(String(dataset.rv));
-
-        if (!config.waitForAnswer) {
-          if (parse(dataset.ri) + 1 === v(currentExample).numbers.length) {
-            setTimeout(() => {
-              displayWait();
-            }, 500);
-          } else {
-            setTimeout(() => {
-              slideNext();
-            }, v(currentSequenceItem).rowsTimeout * 1000);
-          }
-        }
-
-        currentSequenceItemIndex.value = parse(dataset.si!);
-        currentExampleIndex.value = parse(dataset.ei!);
-
-        if (config.waitForAnswer) currentRowIndex.value = parse(dataset.ri!);
+      // header cards
+      if (!dataset.si) {
+        if (config.waitForAnswer) abacusBoard.lock();
+        return invokeAfter(() => slideNext(), 300);
       }
+
+      // if the current card is the first one
+      if (parse(dataset.ri!) === 0) {
+        // it doesn't make any sense to keep the old stones,
+        // so we just reset it
+        abacusBoard.reset();
+        // the abacus board was locked, now we can safely unlock it
+        abacusBoard.unlock();
+        currentExampleHead.value = activeIndex;
+        // if timer is not enabled, then we enable it
+        if (!v(timerEnabled)) enableTimer();
+      }
+
+      abacusBoard.unlock();
+
+      // if speech sound is enabled
+      if (config.speechSound) speechSpeak(String(dataset.rv));
+
+      // if "wait for answer" mode is enabled
+      if (!config.waitForAnswer) {
+        const currentExamplesLength = v(currentExample).numbers.length;
+        // is this card the last one?
+        if (parse(dataset.ri!) === currentExamplesLength - 1) {
+          setTimeout(() => {
+            displayWait();
+          }, 500);
+        } else {
+          // if this isn't not, then we just show the next card
+          invokeAfter(() => toNextCard(), config.rowsTimeout * 1000);
+        }
+      }
+
+      currentSequenceItemIndex.value = parse(dataset.si);
+      currentExampleIndex.value = parse(dataset.ei!);
+      if (config.waitForAnswer) currentRowIndex.value = parse(dataset.ri!);
     };
 
     const trophyClasses = computed<string[]>(() => {
@@ -234,17 +246,12 @@ export default defineComponent({
       return v(timerAbsolute) < TIMER_LESS_TIME_SECS;
     });
 
-    // TODO: some weird things happen here
-    const lastSequenceItem = computed(() => {
-      return !v(sequence)[v(currentSequenceItemIndex) + 1];
-    });
-
-    const lastExampleItem = computed(() => {
-      return !v(currentSequenceItem).examples[v(currentExampleIndex) + 1];
-    });
-
-    const lastRowItem = computed(() => {
-      return !v(currentExample).numbers[v(currentRowIndex) + 1];
+    const isFinalCard = computed(() => {
+      const lastSequenceItem = !v(sequence)[v(currentSequenceItemIndex) + 1];
+      const lastExampleItem =
+        !v(currentSequenceItem).examples[v(currentExampleIndex) + 1];
+      const lastRowItem = !v(currentExample).numbers[v(currentRowIndex) + 1];
+      return lastSequenceItem && lastExampleItem && lastRowItem;
     });
 
     const playConfettiAnimation = () => {
@@ -298,14 +305,23 @@ export default defineComponent({
       return audio.play();
     };
 
-    const v = (ref: Ref) => ref.value;
-
     const playWhistleSoundEffect = () => {
       const audio = new Audio(WhistleSoundEffect);
       audio.loop = false;
       sounds.set("whistle-sound-effect", audio);
       return audio.play();
     };
+
+    const v = (ref: Ref) => ref.value;
+
+    function invokeAfter(fn: Function, ms = 1000) {
+      const uniq = Date.now();
+      const timerHandle = setTimeout(() => {
+        fn();
+        timerHandles.delete(uniq);
+      }, ms);
+      timerHandles.set(uniq, timerHandle);
+    }
 
     function enableTimer() {
       timerEnabled.value = true;
@@ -337,17 +353,44 @@ export default defineComponent({
       flickingRef.value!.moveTo(index, ms);
     }
 
+    function toPrevExample() {}
+
+    function toNextExample() {}
+
+    function toNextSequenceItem() {}
+
+    function toNextCard() {
+      const rowsCount = v(currentExample).numbers.length;
+      const examplesCount = v(currentSequenceItem).examples.length;
+      const sequenceItemsCount = config.sequence.length;
+
+      if(config.waitForAnswer) abacusBoard.lock();
+
+      if (v(currentRowIndex) === rowsCount - 1) {
+        console.log('last row item');
+        if (v(currentExampleIndex) === examplesCount - 1) {
+          console.log('last example');
+          if (v(currentSequenceItemIndex) === sequenceItemsCount - 1) {
+            console.log('last sequence item');
+            return finishGame();
+          }
+          return invokeAfter(() => slideNext(), 500);
+        }
+        return invokeAfter(() => slideNext(), config.examplesTimeout * 1000);
+      }
+
+      invokeAfter(() => slideNext(), config.rowsTimeout * 1000);
+    }
+
     function onNextExample() {
       // TODO better solution
-      if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
+      if (v(isFinalCard)) {
         finishGame();
         return;
       }
 
       displayCards();
-      setTimeout(() => {
-        slideNext();
-      }, 500);
+      invokeAfter(() => slideNext(), 500);
     }
 
     function onShowAgain() {
@@ -421,37 +464,33 @@ export default defineComponent({
       abacusBoard.draw();
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
+      abacusBoard.lock();
     }
 
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
 
-      if (abacusValue == v(currentAnswerMap)) {
+      //if (config.waitForAnswer) abacusBoard.lock();
+
+      console.log(v(currentRowIndex));
+      // if the answer is correct
+      if (abacusValue === v(currentAnswerMap)) {
         completeRow();
 
-        // TODO better solution
-        if (v(lastSequenceItem) && v(lastExampleItem) && v(lastRowItem)) {
-          finishGame();
-          return;
-        }
+        if (config.waitForAnswer)
+          return toNextCard();
 
-        if (!config.waitForAnswer) {
-          if (v(lastRowItem)) {
+        const rowsCount = v(currentExample).numbers.length;
+
+        if (v(currentRowIndex) === rowsCount - 1) {
+          if(!config.waitForAnswer) {
             currentRowIndex.value = 0;
-            displayCards();
-            setTimeout(() => {
-              slideNext();
-            }, 500);
-            return;
+            if(v(displayMode) === 'wait') 
+              displayCards();
           }
-
-          currentRowIndex.value++;
-          return;
+          return toNextCard();
         }
-
-        setTimeout(() => {
-          slideNext();
-        }, 200);
+        currentRowIndex.value++;
       }
     });
 
