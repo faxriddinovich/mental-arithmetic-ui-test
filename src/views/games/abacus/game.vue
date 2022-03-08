@@ -134,7 +134,7 @@
     </Flicking>
     <!-- end cards display -->
 
-    <div class="buttons is-centered is-hidden-mobile">
+    <div class="buttons is-centered is-hidden-mobile" v-if="displayMode === 'cards'">
       <b-button icon-left="redo" @click="onReshowCurrentTheme">Reshow the current theme</b-button>
       <b-button icon-left="redo" @click="onReshowCurrentExample">Reshow the current example</b-button>
     </div>

@@ -288,7 +288,8 @@ export default defineComponent({
     const displayAnswer = () => (displayMode.value = "answer");
 
     const finishGame = () => {
-      clearInterval(timerHandles.get("rows-timer-handle")!);
+      clearSoundEffects();
+      clearTimerHandles();
       setTimeout(() => {
         if (v(wonTheGame)) playVictorySoundEffect();
         displayScores();
