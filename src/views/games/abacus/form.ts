@@ -1,4 +1,4 @@
-import { defineComponent, computed, ref } from "@vue/composition-api";
+import { defineComponent, computed, ref, watch } from "@vue/composition-api";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
@@ -30,6 +30,10 @@ export default defineComponent({
     const abacusColumnsCount = ref<number>(10);
 
     const sequence = ref<SequenceItem[]>([]);
+
+    watch(digit, (newDigit) => {
+      abacusColumnsCount.value = newDigit;
+    });
 
     const canAddSequenceItem = computed(() => {
       return (
