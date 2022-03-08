@@ -152,6 +152,7 @@ export default defineComponent({
     };
 
     const currentExampleHead = ref<number>(0);
+    const currentSequenceItemHead = ref<number>(0);
     const currentSequenceItemIndex = ref<number>(0);
     const currentExampleIndex = ref<number>(0);
     const currentRowIndex = ref<number>(0);
@@ -172,6 +173,10 @@ export default defineComponent({
         return invokeAfter(() => slideNext(), 300);
       }
 
+      if(parse(dataset.ei!) === 0 && parse(dataset.ri!) === 0) {
+        currentSequenceItemHead.value = activeIndex - 1;
+      }
+
       // the abacus board was locked, now we can safely unlock it
       abacusBoard.unlock();
 
@@ -180,7 +185,7 @@ export default defineComponent({
         // it doesn't make any sense to keep the old stones,
         // so we just reset it
         abacusBoard.reset();
-        currentExampleHead.value = activeIndex;
+        currentExampleHead.value = activeIndex - 1;
         // if timer is not enabled, then we enable it
         if (!v(timerEnabled)) enableTimer();
       }
@@ -438,6 +443,16 @@ export default defineComponent({
       }, 500);
     };
 
+    function onReshowCurrentTheme() {
+      displayCards();
+      invokeAfter(() => slideTo(v(currentSequenceItemHead)), 500);
+    }
+
+    function onReshowCurrentExample() {
+      displayCards();
+      invokeAfter(() => slideTo(v(currentExampleHead)), 500);
+    }
+
     function startGame() {
       setTimeout(() => {
         slideNext();
@@ -505,6 +520,8 @@ export default defineComponent({
       onShowAgain,
       onShowAnswer,
       onRepeat,
+      onReshowCurrentTheme,
+      onReshowCurrentExample,
 
       sequence,
       config,

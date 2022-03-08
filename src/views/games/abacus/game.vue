@@ -27,8 +27,24 @@
               <b-icon icon="abacus" size="is-large" type="is-primary" />
             </span>
           </div>
-          <b-button size="is-medium" active @click="onRepeat"
-            ><b-icon icon="refresh" class="m-0" /><span class="is-hidden-mobile"
+
+          <b-dropdown aria-role="list" class="is-hidden-tablet">
+            <template #trigger>
+              <b-button size="is-medium" active
+                ><b-icon icon="bars" class="m-0" /><span
+                  class="is-hidden-mobile"
+                  >Menu</span
+                ></b-button
+              >
+            </template>
+
+            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"><b-icon icon="redo" size="is-small"/> Reshow the current theme</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentExample"><b-icon icon="redo" size="is-small"/> Reshow the current example</b-dropdown-item>
+            <hr class="dropdown-divider" aria-role="menuitem">
+            <b-dropdown-item aria-role="listitem" @click="onRepeat"><b-icon icon="sync-exclamation" size="is-small"/> Repeat</b-dropdown-item>
+          </b-dropdown>
+          <b-button class="is-hidden-mobile" size="is-medium" active @click="onRepeat"
+            ><b-icon icon="redo" class="m-0" /><span class="is-hidden-mobile"
               >Repeat</span
             ></b-button
           >
@@ -68,10 +84,7 @@
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
-        <div
-          class="flicking-panel"
-          :key="'s-' + sequenceIndex"
-        >
+        <div class="flicking-panel" :key="'s-' + sequenceIndex">
           <div class="is-attention-text">
             <scalable-text
               :text="$t(sequenceItem.theme, { digit: sequenceItem.digit })"
@@ -120,6 +133,11 @@
       </template>
     </Flicking>
     <!-- end cards display -->
+
+    <div class="buttons is-centered is-hidden-mobile">
+      <b-button icon-left="redo" @click="onReshowCurrentTheme">Reshow the current theme</b-button>
+      <b-button icon-left="redo" @click="onReshowCurrentExample">Reshow the current example</b-button>
+    </div>
 
     <!-- wait display -->
     <section style="padding-top: 160px" v-if="displayMode === 'wait'">
