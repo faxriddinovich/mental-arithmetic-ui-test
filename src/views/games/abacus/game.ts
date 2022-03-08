@@ -114,9 +114,9 @@ export default defineComponent({
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
     });
 
-    const currentAnswerMap = computed(() => {
+    const currentAnswer = computed(() => {
       if (!v(currentExample)) return null;
-      return v(currentExample).answerMap[v(currentRowIndex)] || null;
+      return v(currentExample).answerMap[v(currentAnswerIndex)] || null;
     });
 
     const totalExamplesCount = computed<number>(() => {
@@ -155,6 +155,7 @@ export default defineComponent({
     const currentSequenceItemIndex = ref<number>(0);
     const currentExampleIndex = ref<number>(0);
     const currentRowIndex = ref<number>(0);
+    const currentAnswerIndex = ref<number>(0);
 
     const onCardChanged = (event: ChangedEvent) => {
       const { currentPanel } = event.currentTarget;
@@ -166,22 +167,23 @@ export default defineComponent({
       // header cards
       if (!dataset.si) {
         if (config.waitForAnswer) abacusBoard.lock();
+        // clear the answer index
+        currentAnswerIndex.value = 0;
         return invokeAfter(() => slideNext(), 300);
       }
+
+      // the abacus board was locked, now we can safely unlock it
+      abacusBoard.unlock();
 
       // if the current card is the first one
       if (parse(dataset.ri!) === 0) {
         // it doesn't make any sense to keep the old stones,
         // so we just reset it
         abacusBoard.reset();
-        // the abacus board was locked, now we can safely unlock it
-        abacusBoard.unlock();
         currentExampleHead.value = activeIndex;
         // if timer is not enabled, then we enable it
         if (!v(timerEnabled)) enableTimer();
       }
-
-      abacusBoard.unlock();
 
       // if speech sound is enabled
       if (config.speechSound) speechSpeak(String(dataset.rv));
@@ -191,9 +193,9 @@ export default defineComponent({
         const currentExamplesLength = v(currentExample).numbers.length;
         // is this card the last one?
         if (parse(dataset.ri!) === currentExamplesLength - 1) {
-          setTimeout(() => {
-            displayWait();
-          }, 500);
+          //if (v(currentRowIndex) !== v(currentExample).numbers.length - 1) {
+          displayWait();
+          //}
         } else {
           // if this isn't not, then we just show the next card
           invokeAfter(() => toNextCard(), config.rowsTimeout * 1000);
@@ -202,7 +204,8 @@ export default defineComponent({
 
       currentSequenceItemIndex.value = parse(dataset.si);
       currentExampleIndex.value = parse(dataset.ei!);
-      if (config.waitForAnswer) currentRowIndex.value = parse(dataset.ri!);
+      currentRowIndex.value = parse(dataset.ri!);
+      currentAnswerIndex.value = parse(dataset.ri!);
     };
 
     const trophyClasses = computed<string[]>(() => {
@@ -353,25 +356,16 @@ export default defineComponent({
       flickingRef.value!.moveTo(index, ms);
     }
 
-    function toPrevExample() {}
-
-    function toNextExample() {}
-
-    function toNextSequenceItem() {}
-
     function toNextCard() {
       const rowsCount = v(currentExample).numbers.length;
       const examplesCount = v(currentSequenceItem).examples.length;
       const sequenceItemsCount = config.sequence.length;
 
-      if(config.waitForAnswer) abacusBoard.lock();
+      abacusBoard.lock();
 
       if (v(currentRowIndex) === rowsCount - 1) {
-        console.log('last row item');
         if (v(currentExampleIndex) === examplesCount - 1) {
-          console.log('last example');
           if (v(currentSequenceItemIndex) === sequenceItemsCount - 1) {
-            console.log('last sequence item');
             return finishGame();
           }
           return invokeAfter(() => slideNext(), 500);
@@ -470,27 +464,22 @@ export default defineComponent({
     abacusBoard.on("update", (value) => {
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
 
-      //if (config.waitForAnswer) abacusBoard.lock();
-
-      console.log(v(currentRowIndex));
       // if the answer is correct
-      if (abacusValue === v(currentAnswerMap)) {
+      if (abacusValue === v(currentAnswer)) {
         completeRow();
 
         if (config.waitForAnswer)
           return toNextCard();
 
+        currentAnswerIndex.value++;
         const rowsCount = v(currentExample).numbers.length;
-
         if (v(currentRowIndex) === rowsCount - 1) {
           if(!config.waitForAnswer) {
-            currentRowIndex.value = 0;
             if(v(displayMode) === 'wait') 
               displayCards();
           }
           return toNextCard();
         }
-        currentRowIndex.value++;
       }
     });
 
