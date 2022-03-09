@@ -58,13 +58,13 @@
     </section>
     <!-- end controls bar -->
 
-    <!-- abacus board -->
-    <div v-show="canDisplayAbacus" class="is-abacus-board-container">
-      <div ref="abacusContainerRef" v-show="canDisplayAbacus" />
-    </div>
-
     <!-- confetti screen -->
     <canvas class="is-confetti" ref="confettiRef" />
+
+    <!-- abacus board -->
+    <div v-show="canDisplayAbacus" class="is-abacus-board-container">
+      <div ref="abacusContainerRef" />
+    </div>
 
     <!-- cards display -->
     <Flicking
@@ -332,7 +332,6 @@
         </div>
       </div>
     </section>
-
     <!-- end scores display -->
   </div>
 </template>

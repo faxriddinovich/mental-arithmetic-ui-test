@@ -89,10 +89,14 @@ export default defineComponent({
       return percent >= MIN_ROWS_PERCENT_TO_WIN;
     });
 
+
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
 
+    const accumulatedSequenceScores = ref<number>(0);
+    const accumulatedExampleScores = ref<number>(0);
     const completedRowsCount = ref<number>(0);
+
     const completedRowsPercent = computed<number>(() => {
       return (v(completedRowsCount) / v(totalRowsCount)) * 100;
     });
@@ -148,6 +152,8 @@ export default defineComponent({
     }
 
     const completeRow = () => {
+      accumulatedExampleScores.value++;
+      accumulatedSequenceScores.value++;
       completedRowsCount.value++;
     };
 
@@ -165,16 +171,27 @@ export default defineComponent({
       const currentSlide = currentPanel.element;
       const dataset = currentSlide.dataset;
 
+      if(!dataset) return;
+
       // header cards
       if (!dataset.si) {
         if (config.waitForAnswer) abacusBoard.lock();
         // clear the answer index
         currentAnswerIndex.value = 0;
+        // it doesn't make any sense to keep the old stones,
+        // so we just reset it
+        abacusBoard.reset();
         return invokeAfter(() => slideNext(), 300);
       }
 
+      if (parse(dataset.si!) !== v(currentSequenceItemIndex))
+        accumulatedSequenceScores.value = 0;
+
+      if(parse(dataset.ei!) !== v(currentExampleIndex))
+        accumulatedExampleScores.value = 0;
+
       if(parse(dataset.ei!) === 0 && parse(dataset.ri!) === 0) {
-        currentSequenceItemHead.value = activeIndex - 1;
+        currentSequenceItemHead.value = activeIndex;
       }
 
       // the abacus board was locked, now we can safely unlock it
@@ -182,10 +199,7 @@ export default defineComponent({
 
       // if the current card is the first one
       if (parse(dataset.ri!) === 0) {
-        // it doesn't make any sense to keep the old stones,
-        // so we just reset it
-        abacusBoard.reset();
-        currentExampleHead.value = activeIndex - 1;
+        currentExampleHead.value = activeIndex;
         // if timer is not enabled, then we enable it
         if (!v(timerEnabled)) enableTimer();
       }
@@ -297,7 +311,10 @@ export default defineComponent({
       }, 1000);
     };
 
+    //const canDisplayAbacus = ref(true);
+
     const canDisplayAbacus = computed(() => {
+      console.log(v(displayMode));
       return ["cards", "wait"].includes(v(displayMode));
     });
 
@@ -438,19 +455,20 @@ export default defineComponent({
     const onRepeat = () => {
       clearGameState();
       displayCards();
-
-      setTimeout(() => {
-        slideTo(0);
-      }, 500);
+      invokeAfter(() => slideTo(0), 500);
     };
 
     function onReshowCurrentTheme() {
       displayCards();
+      completedRowsCount.value -= accumulatedSequenceScores.value;
+      accumulatedSequenceScores.value = 0;
       invokeAfter(() => slideTo(v(currentSequenceItemHead)), 500);
     }
 
     function onReshowCurrentExample() {
       displayCards();
+      completedRowsCount.value -= accumulatedExampleScores.value;
+      accumulatedExampleScores.value = 0;
       invokeAfter(() => slideTo(v(currentExampleHead)), 500);
     }
 
