@@ -1,4 +1,4 @@
-import { defineComponent, computed, ref } from "@vue/composition-api";
+import { defineComponent, computed, watch, ref } from "@vue/composition-api";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
@@ -27,8 +27,10 @@ export default defineComponent({
     const waitForAnswer = ref<boolean>(true);
     const timerMins = ref<number>(1);
     const timerSecs = ref<number>(0);
-    const abacusColumnsCount = computed<number>(() => {
-      return digit.value + 1;
+    const abacusColumnsCount = ref<number>(digit.value + 1);
+
+    watch(digit, (val) => {
+      abacusColumnsCount.value = val + 1;
     });
 
     const sequence = ref<SequenceItem[]>([]);
