@@ -38,12 +38,27 @@
               >
             </template>
 
-            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"><b-icon icon="redo" size="is-small"/> Reshow the current theme</b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentExample"><b-icon icon="redo" size="is-small"/> Reshow the current example</b-dropdown-item>
-            <hr class="dropdown-divider" aria-role="menuitem">
-            <b-dropdown-item aria-role="listitem" @click="onRepeat"><b-icon icon="sync-exclamation" size="is-small"/> Repeat</b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"
+              ><b-icon icon="redo" size="is-small" /> Reshow the current
+              theme</b-dropdown-item
+            >
+            <b-dropdown-item
+              aria-role="listitem"
+              @click="onReshowCurrentExample"
+              ><b-icon icon="redo" size="is-small" /> Reshow the current
+              example</b-dropdown-item
+            >
+            <hr class="dropdown-divider" aria-role="menuitem" />
+            <b-dropdown-item aria-role="listitem" @click="onRepeat"
+              ><b-icon icon="sync-exclamation" size="is-small" />
+              Repeat</b-dropdown-item
+            >
           </b-dropdown>
-          <b-button class="is-hidden-mobile" size="is-medium" active @click="onRepeat"
+          <b-button
+            class="is-hidden-mobile"
+            size="is-medium"
+            active
+            @click="onRepeat"
             ><b-icon icon="redo" class="m-0" /><span class="is-hidden-mobile"
               >Repeat</span
             ></b-button
@@ -116,6 +131,12 @@
               :data-rv="row"
             >
               <div :class="`is-${config.fontColor}-bg-color`">
+                <div class="ma-operation">÷</div>
+                <div class="ma-divident"><span>444933</span></div>
+                <div class="ma-divisor">433</div>
+              </div>
+              <!--
+              <div :class="`is-${config.fontColor}-bg-color`">
                 <b-icon
                   icon="volume"
                   size="is-large"
@@ -127,6 +148,7 @@
                   v-else
                 />
               </div>
+              -->
             </div>
           </template>
         </template>
@@ -134,9 +156,16 @@
     </Flicking>
     <!-- end cards display -->
 
-    <div class="buttons is-centered is-hidden-mobile" v-if="displayMode === 'cards'">
-      <b-button icon-left="redo" @click="onReshowCurrentTheme">Reshow the current theme</b-button>
-      <b-button icon-left="redo" @click="onReshowCurrentExample">Reshow the current example</b-button>
+    <div
+      class="buttons is-centered is-hidden-mobile"
+      v-if="displayMode === 'cards'"
+    >
+      <b-button icon-left="redo" @click="onReshowCurrentTheme"
+        >Reshow the current theme</b-button
+      >
+      <b-button icon-left="redo" @click="onReshowCurrentExample"
+        >Reshow the current example</b-button
+      >
     </div>
 
     <!-- wait display -->
@@ -390,13 +419,36 @@ $extra-small: 321px;
     5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
 }
 
+.ma-divident {
+  text-align: right;
+  font-size: 90px;
+  line-height: 1;
+  margin-bottom:10px;
+  span {
+    border-bottom: 6px solid rgba(255, 255, 255, .5);
+  }
+}
+
+.ma-divisor {
+  text-align: right;
+  font-size: 90px;
+  line-height: 1;
+}
+
+.ma-operation {
+  font-size: 90px;
+  position: absolute !important;
+  bottom: 51% !important;
+  line-height: 0;
+}
+
 .flicking-panel {
+  position: relative;
   color: white;
   width: 30%;
   height: 250px;
   border-radius: 5px;
   margin-right: 15px;
-  position: relative;
   padding: 10px;
 
   @include until($small) {
@@ -406,16 +458,16 @@ $extra-small: 321px;
   .is-attention-text {
     background: #fdcb6e;
   }
+}
 
-  div {
-    height: 100%;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-weight: bold;
-  }
+.flicking-panel > div {
+  display: flex;
+  position: relative;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px !important;
+  font-weight: bold;
 }
 
 .is-abacus-board-container {

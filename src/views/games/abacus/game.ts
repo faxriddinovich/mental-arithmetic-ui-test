@@ -311,10 +311,7 @@ export default defineComponent({
       }, 1000);
     };
 
-    //const canDisplayAbacus = ref(true);
-
     const canDisplayAbacus = computed(() => {
-      console.log(v(displayMode));
       return ["cards", "wait"].includes(v(displayMode));
     });
 

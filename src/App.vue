@@ -1,4 +1,23 @@
 <template>
+<!--
+  <div>
+    <flicking>
+      <div class="flicking-panel2">
+        <div class="is-black-bg-color">
+          <div class="ma-operation">÷</div>
+          <div class="ma-divident">912870</div>
+          <div class="ma-divisor">1890</div>
+        </div>
+      </div>
+      <div class="flicking-panel2">
+        <div class="is-black-bg-color">2</div>
+      </div>
+      <div class="flicking-panel2">
+        <div class="is-black-bg-color">2</div>
+      </div>
+    </flicking>
+  </div>
+  -->
   <div class="is-unselectable">
     <div v-if="syncPercentage == 100">
       <router-view :key="$route.fullPath" />
@@ -15,11 +34,56 @@
     </section>
   </div>
 </template>
+<style lang="scss">
+/*
+.ma-divident {
+  font-size: 100px;
+  line-height: 1;
+}
+
+.ma-divisor {
+  font-size: 100px;
+  line-height: 1;
+}
+
+.ma-operation {
+  position: absolute !important;
+  display: inline !important;
+  bottom: 50% !important;
+  font-size: 100px;
+  line-height: 0;
+}
+*/
+
+.flicking-panel2 {
+  color: white;
+  width: 30%;
+  height: 250px;
+  border-radius: 5px;
+  margin-right: 15px;
+  position: relative;
+  //padding: 10px;
+
+  div {
+    padding: 8px;
+    position: relative;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    //justify-content: left;
+    //align-items: left;
+    text-align: right;
+    font-weight: bold;
+  }
+}
+</style>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { acquireSetting } from "@/store/setting";
 import { acquireAccount } from "@/store/account";
 import { getVoices } from "@/services/tts";
+import "@egjs/vue-flicking/dist/flicking.css";
+import { Flicking, FlickingOptions, ChangedEvent } from "@egjs/vue-flicking";
 
 interface Task {
   text: string;
@@ -27,6 +91,9 @@ interface Task {
 }
 
 export default defineComponent({
+  components: {
+    Flicking,
+  },
   setup(_, context) {
     const loadingText = ref<string>("");
     const syncPercentage = ref<number>(0);
@@ -55,10 +122,12 @@ export default defineComponent({
           const setting = acquireSetting();
           if (!setting.one("text_to_speech_id")) {
             try {
-            const voices = await getVoices(setting.one("locale") || undefined);
-            if (voices.length)
-              acquireSetting().change({ text_to_speech_id: voices[0] });
-            } catch { }
+              const voices = await getVoices(
+                setting.one("locale") || undefined
+              );
+              if (voices.length)
+                acquireSetting().change({ text_to_speech_id: voices[0] });
+            } catch {}
           }
         },
       },
