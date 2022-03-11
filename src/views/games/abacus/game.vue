@@ -68,7 +68,7 @@
       <b-progress
         type="is-success"
         class="completed-progress"
-        :value="completedRowsPercent"
+        :value="completedExamplesPercent"
       />
     </section>
     <!-- end controls bar -->
@@ -121,6 +121,24 @@
             </div>
           </div>
 
+          <div class="flicking-panel" :key="'rr' + sequenceIndex + exampleIndex"
+              :data-si="sequenceIndex"
+              :data-ei="exampleIndex"
+              :data-ri="1"
+              :data-rv="example.numbers[0]"
+
+          >
+            <div :class="`is-${config.fontColor}-bg-color`">
+                <svg class="is-full-size" viewBox="0 0 484 230">
+                  <text fill="#fff" x="0" y="115" dominant-baseline="middle" text-anchor="start" font-size="80px" opacity=".9">÷</text>
+                  <text fill="#fff" x="484" y="20" font-size="90px" text-anchor="end" dominant-baseline="hanging">{{ example.numbers[0] }}</text>
+                  <line x1="80" y1="115" x2="484" y2="115" stroke="white" stroke-width="6" stroke-opacity=".9" />
+                  <text fill="#fff" x="484" y="200" font-size="90px" text-anchor="end" dominant-baseline="auto">{{ example.numbers[1] }}</text>
+                </svg>
+            </div>
+          </div>
+
+          <!--
           <template v-for="(row, rowIndex) in example.numbers">
             <div
               class="flicking-panel"
@@ -131,26 +149,17 @@
               :data-rv="row"
             >
               <div :class="`is-${config.fontColor}-bg-color`">
-                <div class="ma-operation">÷</div>
-                <div class="ma-divident"><span>444933</span></div>
-                <div class="ma-divisor">433</div>
+                <svg class="is-full-size" viewBox="0 0 484 230">
+                  <text fill="#fff" x="0" y="115" dominant-baseline="middle" text-anchor="start" font-size="80px" opacity=".9">÷</text>
+                  <text fill="#fff" x="484" y="20" font-size="90px" text-anchor="end" dominant-baseline="hanging">{{ row }}</text>
+                  <line x1="80" y1="115" x2="484" y2="115" stroke="white" stroke-width="6" stroke-opacity=".9" />
+                  <text fill="#fff" x="484" y="200" font-size="90px" text-anchor="end" dominant-baseline="auto">{{ example.numbers[rowIndex+1] }}</text>
+                </svg>
               </div>
-              <!--
-              <div :class="`is-${config.fontColor}-bg-color`">
-                <b-icon
-                  icon="volume"
-                  size="is-large"
-                  v-if="sequenceItem.speechSound"
-                />
-                <scalable-text
-                  :text="String(row)"
-                  class="is-full-size"
-                  v-else
-                />
-              </div>
-              -->
             </div>
           </template>
+          -->
+
         </template>
       </template>
     </Flicking>
@@ -274,7 +283,7 @@
                   <b-progress
                     size="is-medium"
                     :type="wonTheGame ? 'is-success' : 'is-danger'"
-                    :value="completedRowsPercent"
+                    :value="completedExamplesPercent"
                     format="percent"
                     show-value
                   >
@@ -282,9 +291,9 @@
                   <nav class="level is-mobile">
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Completed rows</p>
+                        <p class="heading">Completed examples</p>
                         <p class="title">
-                          {{ completedRowsCount }}
+                          {{ completedExamplesCount }}
                         </p>
                       </div>
                     </div>

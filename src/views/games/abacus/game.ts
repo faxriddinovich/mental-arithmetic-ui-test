@@ -16,6 +16,7 @@ import { acquireGame, GAME_KIND } from "@/store/game";
 import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
+import { Operation } from '@mental-arithmetic/themes';
 
 import ScalableText from "@/components/scalable-text.vue";
 import "@egjs/vue-flicking/dist/flicking.css";
@@ -85,20 +86,17 @@ export default defineComponent({
     const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
 
     const wonTheGame = computed<boolean>(() => {
-      const percent = (v(completedRowsCount) / v(totalRowsCount)) * 100;
-      return percent >= MIN_ROWS_PERCENT_TO_WIN;
+      return v(completedExamplesPercent) >= MIN_ROWS_PERCENT_TO_WIN;
     });
-
 
     const timerEnabled = ref<boolean>(false);
     const timerAbsolute = ref<number>(config.timerSecs);
 
     const accumulatedSequenceScores = ref<number>(0);
-    const accumulatedExampleScores = ref<number>(0);
-    const completedRowsCount = ref<number>(0);
+    const completedExamplesCount = ref<number>(0);
 
-    const completedRowsPercent = computed<number>(() => {
-      return (v(completedRowsCount) / v(totalRowsCount)) * 100;
+    const completedExamplesPercent = computed<number>(() => {
+      return (v(completedExamplesCount) / v(totalExamplesCount)) * 100;
     });
 
     // FIXME: transalte me
@@ -131,15 +129,6 @@ export default defineComponent({
       return i;
     });
 
-    const totalRowsCount = computed<number>(() => {
-      let i = 0;
-
-      for (const sequenceItem of v(sequence))
-        i += sequenceItem.examplesCount * sequenceItem.rowsCount;
-
-      return i;
-    });
-
     function speechSpeak(text: string | number) {
       // FIXME: fix the speech rate
       const speechRate =
@@ -151,11 +140,10 @@ export default defineComponent({
       speak(text, speechRate, voiceID);
     }
 
-    const completeRow = () => {
-      accumulatedExampleScores.value++;
+    const completeExample = () => {
       accumulatedSequenceScores.value++;
-      completedRowsCount.value++;
-    };
+      completedExamplesCount.value++;
+    }
 
     const currentExampleHead = ref<number>(0);
     const currentSequenceItemHead = ref<number>(0);
@@ -179,8 +167,9 @@ export default defineComponent({
         // clear the answer index
         currentAnswerIndex.value = 0;
         // it doesn't make any sense to keep the old stones,
-        // so we just reset it
+        // so we just reset the board
         abacusBoard.reset();
+
         return invokeAfter(() => slideNext(), 300);
       }
 
@@ -188,7 +177,7 @@ export default defineComponent({
         accumulatedSequenceScores.value = 0;
 
       if(parse(dataset.ei!) !== v(currentExampleIndex))
-        accumulatedExampleScores.value = 0;
+        //accumulatedExampleScores.value = 0;
 
       if(parse(dataset.ei!) === 0 && parse(dataset.ri!) === 0) {
         currentSequenceItemHead.value = activeIndex;
@@ -382,7 +371,6 @@ export default defineComponent({
       const sequenceItemsCount = config.sequence.length;
 
       abacusBoard.lock();
-
       if (v(currentRowIndex) === rowsCount - 1) {
         if (v(currentExampleIndex) === examplesCount - 1) {
           if (v(currentSequenceItemIndex) === sequenceItemsCount - 1) {
@@ -437,7 +425,7 @@ export default defineComponent({
       currentRowIndex.value = 0;
       currentExampleIndex.value = 0;
       currentSequenceItemIndex.value = 0;
-      completedRowsCount.value = 0;
+      completedExamplesCount.value = 0;
       currentExampleHead.value = 0;
       clearSoundEffects();
       clearTimerHandles();
@@ -457,15 +445,13 @@ export default defineComponent({
 
     function onReshowCurrentTheme() {
       displayCards();
-      completedRowsCount.value -= accumulatedSequenceScores.value;
+      completedExamplesCount.value -= accumulatedSequenceScores.value;
       accumulatedSequenceScores.value = 0;
       invokeAfter(() => slideTo(v(currentSequenceItemHead)), 500);
     }
 
     function onReshowCurrentExample() {
       displayCards();
-      completedRowsCount.value -= accumulatedExampleScores.value;
-      accumulatedExampleScores.value = 0;
       invokeAfter(() => slideTo(v(currentExampleHead)), 500);
     }
 
@@ -496,15 +482,18 @@ export default defineComponent({
       const abacusValue = BigInt((value as CustomEvent<number>).detail);
 
       // if the answer is correct
-      if (abacusValue === v(currentAnswer)) {
-        completeRow();
+      if (abacusValue == v(currentAnswer)) {
+        const rowsCount = v(currentExample).numbers.length;
+        const lastRowItem = v(currentRowIndex) === rowsCount - 1;
+
+        if(lastRowItem)
+          completeExample();
 
         if (config.waitForAnswer)
           return toNextCard();
 
         currentAnswerIndex.value++;
-        const rowsCount = v(currentExample).numbers.length;
-        if (v(currentRowIndex) === rowsCount - 1) {
+        if (lastRowItem) {
           if(!config.waitForAnswer) {
             if(v(displayMode) === 'wait') 
               displayCards();
@@ -547,11 +536,10 @@ export default defineComponent({
 
       onCardChanged,
 
-      completedRowsPercent,
-      completedRowsCount,
+      completedExamplesPercent,
+      completedExamplesCount,
 
       totalExamplesCount,
-      totalRowsCount,
 
       canDisplayAbacus,
 
