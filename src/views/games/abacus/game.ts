@@ -72,7 +72,7 @@ export default defineComponent({
       const example = acquireExample();
       for (const sequenceItem of config.sequence) {
         const examples = example.gen(
-          sequenceItem.theme,
+          sequenceItem.theme.loc,
           sequenceItem.examplesCount,
           sequenceItem.rowsCount,
           sequenceItem.digit
@@ -527,6 +527,7 @@ export default defineComponent({
       onRepeat,
       onReshowCurrentTheme,
       onReshowCurrentExample,
+      Operation,
 
       sequence,
       config,

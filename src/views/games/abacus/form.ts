@@ -3,6 +3,7 @@ import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
+import { Theme } from '@mental-arithmetic/themes';
 import { acquireGame, GAME_KIND } from "@/store/game";
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
@@ -13,7 +14,7 @@ export default defineComponent({
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
 
-    const theme = ref<string>("");
+    const theme = ref<Theme | null>(null);
     const digit = ref<number>(1);
     const examplesCount = ref<number>(10);
     const examplesTimeout = ref<number>(1);
@@ -37,13 +38,13 @@ export default defineComponent({
 
     const canAddSequenceItem = computed(() => {
       return (
-        theme.value.length &&
+        theme.value &&
         sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT
       );
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return sequence.value.length > 0 || theme.value.length >= 1;
+      return sequence.value.length > 0 || !!theme.value;
     });
 
     const gameConfig = acquireGame();
@@ -79,7 +80,7 @@ export default defineComponent({
     function addSequenceItem() {
       sequence.value.push({
         examples: [],
-        theme: theme.value,
+        theme: theme.value!,
         digit: Number(digit.value),
         examplesCount: examplesCount.value,
         rowsCount: rowsCount.value,

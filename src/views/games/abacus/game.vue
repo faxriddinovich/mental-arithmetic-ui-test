@@ -88,54 +88,121 @@
       @changed="onCardChanged"
       v-show="displayMode === 'cards'"
     >
-      <div
-        class="flicking-panel"
-        v-for="(text, index) of attentionTexts"
-        :key="index"
-      >
-        <div class="is-attention-text">
-          <scalable-text :text="text" class="is-full-size" />
-        </div>
+      <div class="flicking-panel is-yellow-bg-color">
+        <scalable-text text="Good luck!" class="is-full-size" />
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
-        <div class="flicking-panel" :key="'s-' + sequenceIndex">
-          <div class="is-attention-text">
-            <scalable-text
-              :text="$t(sequenceItem.theme, { digit: sequenceItem.digit })"
-              class="is-full-size"
-            />
-          </div>
+        <!-- theme header card -->
+        <div
+          class="flicking-panel is-yellow-bg-color"
+          :key="'s-' + sequenceIndex"
+        >
+          <scalable-text
+            :text="$t(sequenceItem.theme.loc, { digit: sequenceItem.digit })"
+            class="is-full-size"
+          />
         </div>
+        <!-- end theme header card -->
 
         <template v-for="(example, exampleIndex) in sequenceItem.examples">
           <div
-            class="flicking-panel"
+            class="flicking-panel is-yellow-bg-color"
             :key="'e-' + sequenceIndex + '-' + exampleIndex"
           >
-            <div class="is-attention-text">
-              <scalable-text
-                :text="'Example ' + (exampleIndex + 1)"
-                class="is-full-size"
-              />
-            </div>
+            Example {{ exampleIndex + 1 }}
           </div>
 
-          <div class="flicking-panel" :key="'rr' + sequenceIndex + exampleIndex"
-              :data-si="sequenceIndex"
-              :data-ei="exampleIndex"
-              :data-ri="1"
-              :data-rv="example.numbers[0]"
-
+          <div
+            :class="{
+              'flicking-panel': true,
+              ['is-' + config.fontColor + '-bg-color']: true,
+            }"
+            :key="'rr' + sequenceIndex + exampleIndex"
+            :data-si="sequenceIndex"
+            :data-ei="exampleIndex"
+            :data-ri="1"
+            :data-rv="example.numbers[0]"
+            v-if="
+              sequenceItem.theme.metadata.operation & Operation.div ||
+              sequenceItem.theme.metadata.operation & Operation.mult
+            "
           >
-            <div :class="`is-${config.fontColor}-bg-color`">
-                <svg class="is-full-size" viewBox="0 0 484 230">
-                  <text fill="#fff" x="0" y="115" dominant-baseline="middle" text-anchor="start" font-size="80px" opacity=".9">÷</text>
-                  <text fill="#fff" x="484" y="20" font-size="90px" text-anchor="end" dominant-baseline="hanging">{{ example.numbers[0] }}</text>
-                  <line x1="80" y1="115" x2="484" y2="115" stroke="white" stroke-width="6" stroke-opacity=".9" />
-                  <text fill="#fff" x="484" y="200" font-size="90px" text-anchor="end" dominant-baseline="auto">{{ example.numbers[1] }}</text>
-                </svg>
-            </div>
+            <svg class="is-full-size" viewBox="0 0 484 230">
+              <!-- sign -->
+              <text
+                fill="#fff"
+                x="0"
+                y="115"
+                dominant-baseline="middle"
+                text-anchor="start"
+                font-size="80px"
+                opacity=".9"
+              >
+                {{
+                  sequenceItem.theme.metadata.operation & Operation.div
+                    ? "÷"
+                    : "×"
+                }}
+              </text>
+              <!-- divident -->
+              <text
+                fill="#fff"
+                x="484"
+                y="20"
+                font-size="90px"
+                text-anchor="end"
+                dominant-baseline="hanging"
+              >
+                {{ example.numbers[0] }}
+              </text>
+              <line
+                x1="80"
+                y1="115"
+                x2="484"
+                y2="115"
+                stroke="white"
+                stroke-width="6"
+                stroke-opacity=".9"
+              />
+              <!-- divisor -->
+              <text
+                fill="#fff"
+                x="484"
+                y="200"
+                font-size="90px"
+                text-anchor="end"
+                dominant-baseline="auto"
+              >
+                {{ example.numbers[1] }}
+              </text>
+            </svg>
+          </div>
+          <div
+            :class="{
+              'flicking-panel': true,
+              ['is-' + config.fontColor + '-bg-color']: true,
+            }"
+            v-for="(row, rowIndex) of example.numbers"
+            :key="'r-' + sequenceIndex + '-' + exampleIndex + '-' + rowIndex"
+            :data-si="sequenceIndex"
+            :data-ei="exampleIndex"
+            :data-ri="rowIndex"
+            :data-rv="row"
+            v-else
+          >
+            <svg viewBox="0 0 250 60" class="is-full-size">
+              <text
+                dominant-baseline="middle"
+                text-anchor="middle"
+                font-size="65px"
+                x="50%"
+                y="50%"
+                fill="#fff"
+              >
+                {{ row }}
+              </text>
+            </svg>
           </div>
 
           <!--
@@ -159,7 +226,6 @@
             </div>
           </template>
           -->
-
         </template>
       </template>
     </Flicking>
@@ -340,7 +406,7 @@
                         has-text-weight-bold
                         ml-2
                       "
-                      >{{ totalRowsCount }}</span
+                      >STATIC</span
                     >
                   </span>
 
@@ -399,24 +465,6 @@ $extra-small: 321px;
   }
 }
 
-@include mobile {
-  .flicking-panel {
-    width: 100% !important;
-  }
-}
-
-@include tablet {
-  .flicking-panel {
-    width: 50% !important;
-  }
-}
-
-@include desktop {
-  .flicking-panel {
-    width: 30% !important;
-  }
-}
-
 .flicking-camera {
   margin-bottom: 10px;
 }
@@ -428,55 +476,38 @@ $extra-small: 321px;
     5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
 }
 
-.ma-divident {
-  text-align: right;
-  font-size: 90px;
-  line-height: 1;
-  margin-bottom:10px;
-  span {
-    border-bottom: 6px solid rgba(255, 255, 255, .5);
-  }
-}
-
-.ma-divisor {
-  text-align: right;
-  font-size: 90px;
-  line-height: 1;
-}
-
-.ma-operation {
-  font-size: 90px;
-  position: absolute !important;
-  bottom: 51% !important;
-  line-height: 0;
-}
-
 .flicking-panel {
   position: relative;
-  color: white;
   width: 30%;
-  height: 250px;
+  height: 230px !important;
+  color: white;
   border-radius: 5px;
-  margin-right: 15px;
-  padding: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+  padding: 10px !important;
 
   @include until($small) {
-    height: 220px !important;
+    height: 200px !important;
   }
 
-  .is-attention-text {
-    background: #fdcb6e;
+  @include mobile {
+    width: 96% !important;
   }
-}
 
-.flicking-panel > div {
-  display: flex;
-  position: relative;
-  height: 100%;
-  flex-direction: column;
-  justify-content: center;
-  padding: 8px !important;
-  font-weight: bold;
+  @include tablet {
+    width: 40% !important;
+    height: 200px !important;
+  }
+
+  @include desktop {
+    width: 35% !important;
+    height: 240px !important;
+  }
+
+  @include fullhd {
+    width: 35% !important;
+    height: 260px !important;
+  }
 }
 
 .is-abacus-board-container {

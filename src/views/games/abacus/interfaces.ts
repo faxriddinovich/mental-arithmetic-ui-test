@@ -1,7 +1,8 @@
+import { Theme } from '@mental-arithmetic/themes';
 import { Example } from '@/store/example';
 
 export interface SequenceItem {
-  theme: string;
+  theme: Theme;
   examples: Example[];
   digit: number;
   rowsCount: number;

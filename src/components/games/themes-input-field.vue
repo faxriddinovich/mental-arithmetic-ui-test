@@ -68,7 +68,7 @@ export default defineComponent({
     });
 
     const pickTheme = (value: Theme) => {
-      context.emit("input", value.loc);
+      context.emit("input", value);
     };
 
     return {
