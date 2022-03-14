@@ -62,8 +62,8 @@ export default defineComponent({
 
     const config = acquireGame().get(GAME_KIND.ABACUS)!;
     const sequence = ref<SequenceItem[]>(config.sequence);
-    const examplesGenerated = !!config.sequence[0].examples.length;
-    if (!examplesGenerated) generateExamples();
+
+    generateExamples();
 
     // TODO: since the length of examples may be very long,
     // it may block the main thread. We should consider using
@@ -78,7 +78,7 @@ export default defineComponent({
           sequenceItem.digit
         );
 
-        sequenceItem.examples.push(...examples);
+        sequenceItem.examples = examples;
       }
     }
 
