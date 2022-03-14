@@ -13,7 +13,7 @@
             active
             ><b-icon icon="arrow-left" class="m-0" /><span
               class="is-hidden-mobile"
-              >Back</span
+              >{{ $t("back") }}</span
             ></b-button
           >
           <div class="is-flex is-align-items-center">
@@ -31,27 +31,25 @@
           <b-dropdown aria-role="list" class="is-hidden-tablet">
             <template #trigger>
               <b-button size="is-medium" active
-                ><b-icon icon="bars" class="m-0" /><span
-                  class="is-hidden-mobile"
-                  >Menu</span
-                ></b-button
+                ><b-icon icon="bars" class="m-0" /></b-button
               >
             </template>
 
             <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"
-              ><b-icon icon="redo" size="is-small" /> Reshow the current
-              theme</b-dropdown-item
+              ><b-icon icon="redo" size="is-small" />{{
+                $t("reshow_theme")
+              }}</b-dropdown-item
             >
             <b-dropdown-item
               aria-role="listitem"
               @click="onReshowCurrentExample"
-              ><b-icon icon="redo" size="is-small" /> Reshow the current
-              example</b-dropdown-item
+              ><b-icon icon="redo" size="is-small" />
+              {{ $t("reshow_example") }}</b-dropdown-item
             >
             <hr class="dropdown-divider" aria-role="menuitem" />
             <b-dropdown-item aria-role="listitem" @click="onRepeat"
               ><b-icon icon="sync-exclamation" size="is-small" />
-              Repeat</b-dropdown-item
+              {{ $t("repeat") }}</b-dropdown-item
             >
           </b-dropdown>
           <b-button
@@ -59,9 +57,9 @@
             size="is-medium"
             active
             @click="onRepeat"
-            ><b-icon icon="redo" class="m-0" /><span class="is-hidden-mobile"
-              >Repeat</span
-            ></b-button
+            ><b-icon icon="redo" class="m-0" /><span class="is-hidden-mobile">{{
+              $t("repeat")
+            }}</span></b-button
           >
         </div>
       </div>
@@ -88,29 +86,28 @@
       @changed="onCardChanged"
       v-show="displayMode === 'cards'"
     >
-      <div class="flicking-panel is-yellow-bg-color">
-        <scalable-text text="Good luck!" class="is-full-size" />
+      <div class="flicking-panel flicking-attention is-yellow-bg-color">
+        <span>{{ $t('good_luck') }}</span>
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
         <!-- theme header card -->
         <div
-          class="flicking-panel is-yellow-bg-color"
+          class="flicking-panel flicking-attention is-yellow-bg-color"
           :key="'s-' + sequenceIndex"
         >
-          <scalable-text
-            :text="$t(sequenceItem.theme.loc, { digit: sequenceItem.digit })"
-            class="is-full-size"
-          />
+          <span>{{
+            $t(sequenceItem.theme.loc, { digit: sequenceItem.digit })
+          }}</span>
         </div>
         <!-- end theme header card -->
 
         <template v-for="(example, exampleIndex) in sequenceItem.examples">
           <div
-            class="flicking-panel is-yellow-bg-color"
+            class="flicking-panel is-yellow-bg-color flicking-attention"
             :key="'e-' + sequenceIndex + '-' + exampleIndex"
           >
-            Example {{ exampleIndex + 1 }}
+            <span>{{ $t('example_n',  { example: exampleIndex + 1 }) }}</span>
           </div>
 
           <div
@@ -204,28 +201,6 @@
               </text>
             </svg>
           </div>
-
-          <!--
-          <template v-for="(row, rowIndex) in example.numbers">
-            <div
-              class="flicking-panel"
-              :key="'r-' + sequenceIndex + '-' + exampleIndex + '-' + rowIndex"
-              :data-si="sequenceIndex"
-              :data-ei="exampleIndex"
-              :data-ri="rowIndex"
-              :data-rv="row"
-            >
-              <div :class="`is-${config.fontColor}-bg-color`">
-                <svg class="is-full-size" viewBox="0 0 484 230">
-                  <text fill="#fff" x="0" y="115" dominant-baseline="middle" text-anchor="start" font-size="80px" opacity=".9">÷</text>
-                  <text fill="#fff" x="484" y="20" font-size="90px" text-anchor="end" dominant-baseline="hanging">{{ row }}</text>
-                  <line x1="80" y1="115" x2="484" y2="115" stroke="white" stroke-width="6" stroke-opacity=".9" />
-                  <text fill="#fff" x="484" y="200" font-size="90px" text-anchor="end" dominant-baseline="auto">{{ example.numbers[rowIndex+1] }}</text>
-                </svg>
-              </div>
-            </div>
-          </template>
-          -->
         </template>
       </template>
     </Flicking>
@@ -236,10 +211,10 @@
       v-if="displayMode === 'cards'"
     >
       <b-button icon-left="redo" @click="onReshowCurrentTheme"
-        >Reshow the current theme</b-button
+        >{{ $t('reshow_theme') }}</b-button
       >
       <b-button icon-left="redo" @click="onReshowCurrentExample"
-        >Reshow the current example</b-button
+        >{{ $t('reshow_example') }}</b-button
       >
     </div>
 
@@ -254,15 +229,15 @@
           has-text-weight-semibold
         "
       >
-        <span>Please solve the expressions sequentially</span>
+        <span>{{ $t('solve_examples_sequentially')  }}</span>
       </div>
       <div class="buttons is-justify-content-center">
-        <b-button icon-left="redo" @click="onShowAgain">Show again</b-button>
+        <b-button icon-left="redo" @click="onReshowCurrentExample">{{ $t('reshow_example') }}</b-button>
         <b-button icon-left="align-left-justify" @click="onShowAnswer"
-          >Answer</b-button
+          >{{ $t('show_answer') }}</b-button
         >
         <b-button type="is-link" icon-right="arrow-right" @click="onNextExample"
-          >Next</b-button
+          >{{ $t('next_example') }}</b-button
         >
       </div>
     </section>
@@ -312,15 +287,15 @@
 
               <hr class="mt-0 mb-2" />
               <div class="is-flex">
-                <b-button icon-left="redo" @click="onShowAgain" expanded
-                  >Show again</b-button
+                <b-button icon-left="redo" @click="onReshowCurrentExample" expanded
+                  >{{ $t('reshow_example') }}</b-button
                 >
                 <b-button
                   icon-right="arrow-right"
                   class="ml-3"
                   @click="onNextExample"
                   expanded
-                  >Next example</b-button
+                  >{{ $t('next_example') }}</b-button
                 >
               </div>
             </div>
@@ -343,7 +318,7 @@
                 />
                 <div class="p-4">
                   <div :class="gameScoresTextClasses">
-                    You {{ wonTheGame ? "won" : "lost" }}!
+{{ wonTheGame ? $t('you_won') : $t('you_lost') }}
                   </div>
 
                   <b-progress
@@ -357,7 +332,7 @@
                   <nav class="level is-mobile">
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Completed examples</p>
+                        <p class="heading">{{ $t('completed_examples') }}</p>
                         <p class="title">
                           {{ completedExamplesCount }}
                         </p>
@@ -365,7 +340,7 @@
                     </div>
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Spent time</p>
+                        <p class="heading">{{ $t('spent_time') }}</p>
                         <p class="title">
                           {{ (config.timerSecs - timerAbsolute) | timerFormat }}
                         </p>
@@ -373,7 +348,7 @@
                     </div>
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">Total time</p>
+                        <p class="heading">{{ $t('total_time') }}</p>
                         <p class="title">
                           {{ config.timerSecs | timerFormat }}
                         </p>
@@ -382,7 +357,7 @@
                   </nav>
                   <span class="is-dotted">
                     <span class="is-left is-size-5-tablet mr-3"
-                      >Total examples:</span
+                      >{{ $t('total_examples') }}:</span
                     >
                     <span class="is-dots"></span>
                     <span
@@ -397,7 +372,7 @@
 
                   <span class="is-dotted">
                     <span class="is-left is-size-5-tablet mr-3"
-                      >Total rows:</span
+                      >{{ $t('total_rows') }}:</span
                     >
                     <span class="is-dots"></span>
                     <span
@@ -418,7 +393,7 @@
                       icon-left="arrow-left"
                       expanded
                       active
-                      >Back</b-button
+                      >{{ $t('back') }}</b-button
                     >
                     <b-button
                       class="ml-2"
@@ -426,7 +401,7 @@
                       @click="onRepeat"
                       expanded
                       active
-                      >Repeat</b-button
+                      >{{ $t('repeat') }}</b-button
                     >
                   </div>
                 </div>
@@ -507,6 +482,19 @@ $extra-small: 321px;
   @include fullhd {
     width: 35% !important;
     height: 260px !important;
+  }
+}
+
+.flicking-attention {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 3.5rem;
+  line-height: normal;
+
+  span {
+    word-break: break-all;
   }
 }
 

@@ -98,7 +98,22 @@ export namespace uz {
     "successfully_created": "Muvaffaqiyatli yaratildi!",
     "successfully_deleted": "Muvaffaqiyatli o'chirildi!",
     "no_events_found": "Hechqanday hodisalar topilmadi",
-    "create": "Yaratish"
+    "create": "Yaratish",
+    "repeat": "Qaytarish",
+    "reshow_theme": "Mavzuni qaytarish",
+    "reshow_example": "Misolni qaytarish",
+    "solve_examples_sequentially": "Misollarni ketma-ketlikda yeching",
+    "show_answer": "Javobni ko'rsatish",
+    "next_example": "Keyingi misol",
+    "good_luck": "Omad!",
+    "example_n": "{example} - misol",
+    "you_won": "Siz yutdingiz!",
+    "you_lost": "Siz yutqazdingiz!",
+    "completed_examples": "Tugatilgan misollar",
+    "spent_time": "Ketgan vaqt",
+    "total_time": "Berilgan vaqt",
+    "total_examples": "Umumiy misollar",
+    "total_rows": "Umumiy qatorlar"
   };
 
   export const themes = {
