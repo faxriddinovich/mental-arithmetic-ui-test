@@ -31,8 +31,8 @@
           <b-dropdown aria-role="list" class="is-hidden-tablet">
             <template #trigger>
               <b-button size="is-medium" active
-                ><b-icon icon="bars" class="m-0" /></b-button
-              >
+                ><b-icon icon="bars" class="m-0"
+              /></b-button>
             </template>
 
             <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"
@@ -87,7 +87,7 @@
       v-show="displayMode === 'cards'"
     >
       <div class="flicking-panel flicking-attention is-yellow-bg-color">
-        <span>{{ $t('good_luck') }}</span>
+        <span>{{ $t("good_luck") }}</span>
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
@@ -107,7 +107,7 @@
             class="flicking-panel is-yellow-bg-color flicking-attention"
             :key="'e-' + sequenceIndex + '-' + exampleIndex"
           >
-            <span>{{ $t('example_n',  { example: exampleIndex + 1 }) }}</span>
+            <span>{{ $t("example_n", { example: exampleIndex + 1 }) }}</span>
           </div>
 
           <div
@@ -183,8 +183,11 @@
             v-for="(row, rowIndex) of example.numbers"
             :key="'r-' + sequenceIndex + '-' + exampleIndex + '-' + rowIndex"
             :data-si="sequenceIndex"
+            :data-lsi="sequenceIndex === sequence.length - 1"
             :data-ei="exampleIndex"
+            :data-lei="exampleIndex === sequenceItem.examples.length - 1"
             :data-ri="rowIndex"
+            :data-lri="rowIndex === example.numbers.length - 1"
             :data-rv="row"
             v-else
           >
@@ -210,12 +213,12 @@
       class="buttons is-centered is-hidden-mobile"
       v-if="displayMode === 'cards'"
     >
-      <b-button icon-left="redo" @click="onReshowCurrentTheme"
-        >{{ $t('reshow_theme') }}</b-button
-      >
-      <b-button icon-left="redo" @click="onReshowCurrentExample"
-        >{{ $t('reshow_example') }}</b-button
-      >
+      <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
+        $t("reshow_theme")
+      }}</b-button>
+      <b-button icon-left="redo" @click="onReshowCurrentExample">{{
+        $t("reshow_example")
+      }}</b-button>
     </div>
 
     <!-- wait display -->
@@ -229,15 +232,20 @@
           has-text-weight-semibold
         "
       >
-        <span>{{ $t('solve_examples_sequentially')  }}</span>
+        <span>{{ $t("solve_examples_sequentially") }}</span>
       </div>
       <div class="buttons is-justify-content-center">
-        <b-button icon-left="redo" @click="onReshowCurrentExample">{{ $t('reshow_example') }}</b-button>
-        <b-button icon-left="align-left-justify" @click="onShowAnswer"
-          >{{ $t('show_answer') }}</b-button
-        >
-        <b-button type="is-link" icon-right="arrow-right" @click="onNextExample"
-          >{{ $t('next_example') }}</b-button
+        <b-button icon-left="redo" @click="onReshowCurrentExample">{{
+          $t("reshow_example")
+        }}</b-button>
+        <b-button icon-left="align-left-justify" @click="onShowAnswer">{{
+          $t("show_answer")
+        }}</b-button>
+        <b-button
+          type="is-link"
+          icon-right="arrow-right"
+          @click="onNextExample"
+          >{{ $t("next_example") }}</b-button
         >
       </div>
     </section>
@@ -287,15 +295,18 @@
 
               <hr class="mt-0 mb-2" />
               <div class="is-flex">
-                <b-button icon-left="redo" @click="onReshowCurrentExample" expanded
-                  >{{ $t('reshow_example') }}</b-button
+                <b-button
+                  icon-left="redo"
+                  @click="onReshowCurrentExample"
+                  expanded
+                  >{{ $t("reshow_example") }}</b-button
                 >
                 <b-button
                   icon-right="arrow-right"
                   class="ml-3"
                   @click="onNextExample"
                   expanded
-                  >{{ $t('next_example') }}</b-button
+                  >{{ $t("next_example") }}</b-button
                 >
               </div>
             </div>
@@ -318,7 +329,7 @@
                 />
                 <div class="p-4">
                   <div :class="gameScoresTextClasses">
-{{ wonTheGame ? $t('you_won') : $t('you_lost') }}
+                    {{ wonTheGame ? $t("you_won") : $t("you_lost") }}
                   </div>
 
                   <b-progress
@@ -332,7 +343,7 @@
                   <nav class="level is-mobile">
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">{{ $t('completed_examples') }}</p>
+                        <p class="heading">{{ $t("completed_examples") }}</p>
                         <p class="title">
                           {{ completedExamplesCount }}
                         </p>
@@ -340,7 +351,7 @@
                     </div>
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">{{ $t('spent_time') }}</p>
+                        <p class="heading">{{ $t("spent_time") }}</p>
                         <p class="title">
                           {{ (config.timerSecs - timerAbsolute) | timerFormat }}
                         </p>
@@ -348,7 +359,7 @@
                     </div>
                     <div class="level-item has-text-centered">
                       <div>
-                        <p class="heading">{{ $t('total_time') }}</p>
+                        <p class="heading">{{ $t("total_time") }}</p>
                         <p class="title">
                           {{ config.timerSecs | timerFormat }}
                         </p>
@@ -357,7 +368,7 @@
                   </nav>
                   <span class="is-dotted">
                     <span class="is-left is-size-5-tablet mr-3"
-                      >{{ $t('total_examples') }}:</span
+                      >{{ $t("total_examples") }}:</span
                     >
                     <span class="is-dots"></span>
                     <span
@@ -372,7 +383,7 @@
 
                   <span class="is-dotted">
                     <span class="is-left is-size-5-tablet mr-3"
-                      >{{ $t('total_rows') }}:</span
+                      >{{ $t("total_rows") }}:</span
                     >
                     <span class="is-dots"></span>
                     <span
@@ -393,7 +404,7 @@
                       icon-left="arrow-left"
                       expanded
                       active
-                      >{{ $t('back') }}</b-button
+                      >{{ $t("back") }}</b-button
                     >
                     <b-button
                       class="ml-2"
@@ -401,7 +412,7 @@
                       @click="onRepeat"
                       expanded
                       active
-                      >{{ $t('repeat') }}</b-button
+                      >{{ $t("repeat") }}</b-button
                     >
                   </div>
                 </div>

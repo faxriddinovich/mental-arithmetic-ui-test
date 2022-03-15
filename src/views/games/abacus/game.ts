@@ -152,6 +152,13 @@ export default defineComponent({
     const currentRowIndex = ref<number>(0);
     const currentAnswerIndex = ref<number>(0);
 
+    const isLastSequenceItem = ref<boolean>(false);
+    const isLastExampleItem = ref<boolean>(false);
+    const isLastRowItem = ref<boolean>(false);
+    const isLastCard = computed(() => {
+      return v(isLastSequenceItem) && v(isLastExampleItem) && v(isLastRowItem);
+    });
+
     const onCardChanged = (event: ChangedEvent) => {
       const { currentPanel } = event.currentTarget;
       const activeIndex = currentPanel.index;
