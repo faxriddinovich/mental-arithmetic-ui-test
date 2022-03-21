@@ -3,6 +3,10 @@
 
 $border-color: rgb(149, 165, 166);
 
+.is-border-radiusless {
+  border-radius: 0px !important;
+}
+
 .is-absolute {
   position: absolute !important;
 }

@@ -16,7 +16,7 @@ import { acquireGame, GAME_KIND } from "@/store/game";
 import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
-import { Operation } from '@mental-arithmetic/themes';
+import { Operation } from "@mental-arithmetic/themes";
 
 import ScalableText from "@/components/scalable-text.vue";
 import "@egjs/vue-flicking/dist/flicking.css";
@@ -36,13 +36,266 @@ type SoundEffectKey =
   | "timer-sound-effect"
   | "whistle-sound-effect"
   | "victory-sound-effect";
-type DisplayMode = "answer" | "cards" | "wait" | "scores";
+
+type DisplayMode = "answer" | "helper-text-cards" | "cards" | "wait" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
 
 const parse = (str: string) => JSON.parse(str);
 
+export default defineComponent({
+  components: { StackedCards },
+  setup() {
+    const config = acquireGame().get(GAME_KIND.ABACUS)!;
+
+    const abacusContainerRef = ref<HTMLElement>();
+    const confettiRef = ref<HTMLCanvasElement>();
+    const abacusValue = ref<number>(0);
+    const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
+
+    const sequence = ref<SequenceItem[]>(config.sequence);
+
+    const v = (ref: Ref) => ref.value;
+
+    generateExamples();
+
+    // TODO: since the length of examples may be very long,
+    // it may block the main thread. We should consider using
+    // worker threads.
+    function generateExamples() {
+      const example = acquireExample();
+      for (const sequenceItem of config.sequence) {
+        const examples = example.gen(
+          sequenceItem.theme.loc,
+          sequenceItem.examplesCount,
+          sequenceItem.rowsCount,
+          sequenceItem.digit
+        );
+
+        sequenceItem.examples = examples;
+      }
+    }
+
+    const wonTheGame = computed<boolean>(() => {
+      return v(completedExamplesPercent) >= MIN_ROWS_PERCENT_TO_WIN;
+    });
+
+    const completedExamplesCount = ref<number>(0);
+
+    const completedExamplesPercent = computed<number>(() => {
+      return (v(completedExamplesCount) / v(totalExamplesCount)) * 100;
+    });
+
+    const timerExpired = computed(() => {
+      return v(timerAbsolute) === 0;
+    });
+
+    const lessTimeLeft = computed(() => {
+      return v(timerAbsolute) < TIMER_LESS_TIME_SECS;
+    });
+
+    const playTimerSoundEffect = (loop = true) => {
+      const audio = new Audio(TimerSoundEffect);
+      audio.loop = loop;
+      sounds.set("timer-sound-effect", audio);
+      return audio.play();
+    };
+
+    const playVictorySoundEffect = () => {
+      const audio = new Audio(VictorySoundEffect);
+      sounds.set("victory-sound-effect", audio);
+      return audio.play();
+    };
+
+    const playWhistleSoundEffect = () => {
+      const audio = new Audio(WhistleSoundEffect);
+      audio.loop = false;
+      sounds.set("whistle-sound-effect", audio);
+      return audio.play();
+    };
+
+    const displayWait = () => (displayMode.value = "wait");
+    const displayCards = () => (displayMode.value = "cards");
+    const displayScores = () => (displayMode.value = "scores");
+    const displayAnswer = () => (displayMode.value = "answer");
+    const displayHelperText = () => (displayMode.value = "helper-text-cards");
+
+    function enableTimer() {
+      timerEnabled.value = true;
+      timerHandles.set(
+        "rows-timer-handle",
+        setInterval(() => {
+          if (v(timerAbsolute) > 0) {
+            timerAbsolute.value -= 1;
+          }
+
+          if (v(lessTimeLeft) && !sounds.has("timer-sound-effect")) {
+            playTimerSoundEffect();
+          } else if (v(timerExpired)) {
+            if (sounds.has("timer-sound-effect"))
+              sounds.get("timer-sound-effect")!.pause();
+
+            playWhistleSoundEffect();
+            finishGame();
+          }
+        }, 1000)
+      );
+    }
+
+    // FIXME: transalte me
+    const helperTexts = ["Good luck!"];
+
+    /* game state */
+    const displayMode = ref<DisplayMode>("helper-text-cards");
+    const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
+    const timerHandles = new Map<TimerHandleKey, NodeJS.Timer>();
+    const timerEnabled = ref<boolean>(false);
+    const timerAbsolute = ref<number>(config.timerSecs);
+
+    const currentSequenceItemIndex = ref<number>(0);
+    const currentRowIndex = ref<number>(0);
+    const currentExampleIndex = ref<number>(0);
+    const currentAnswerIndex = ref<number>(0);
+
+    const canDisplayAbacus = computed(() => {
+      return ["helper-texts-card", "cards", "wait"].includes(v(displayMode));
+    });
+
+    const canDisplayCards = computed(() => {
+      return ["attention-text-cards", "cards"].includes(v(displayMode));
+    });
+
+    const timerClasses = computed<string[]>(() => {
+      const classes: string[] = [
+        "ml-1",
+        "is-size-3",
+        "has-text-weight-semibold",
+      ];
+
+      if (v(lessTimeLeft)) {
+        classes.push(...["has-text-danger", "is-shaking-text"]);
+      }
+
+      return classes;
+    });
+
+    const cardClasses = computed<string[]>(() => {
+      const classes: string[] = ["abacus-game-card"];
+      if (v(displayMode) === "attention-text-cards") {
+        classes.push("is-yellow-bg-color");
+      } else {
+        classes.push(`is-${config.fontColor}-bg-color`);
+      }
+      return classes;
+    });
+
+    const currentRow = computed<string | string[]>(() => {
+      const { operation } = v(currentSequenceItem).theme.metadata;
+
+      if (operation & Operation.add || operation & Operation.sub)
+        return v(currentExample).numbers[v(currentRowIndex)];
+
+      return v(currentExample).numbers;
+    });
+
+    const helperText = ref<string>("");
+
+    const currentSequenceItem = computed(() => {
+      return v(sequence)[v(currentSequenceItemIndex)] || null;
+    });
+
+    const currentThemeOperation = computed(() => {
+      return v(currentSequenceItem).theme.metadata.operation;
+    });
+
+    const currentExample = computed(() => {
+      if (!v(currentSequenceItem)) return null;
+      return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
+    });
+
+    const currentAnswer = computed(() => {
+      if (!v(currentExample)) return null;
+      return v(currentExample).answerMap[v(currentAnswerIndex)] || null;
+    });
+
+    const totalExamplesCount = computed<number>(() => {
+      let i = 0;
+      //prettier-ignore
+      for (const sequenceItem of v(sequence))
+        i += sequenceItem.examplesCount;
+      return i;
+    });
+
+    function displayHelperTexts() {
+      let helperTextIndex: number = 0;
+      const timerHandle = setInterval(() => {
+        if (helperTextIndex > helperTexts.length - 1) {
+          clearTimeout(timerHandle);
+          displayExamples();
+          return;
+        }
+
+        helperText.value = helperTexts[helperTextIndex];
+        helperTextIndex++;
+      }, 1000);
+
+      timerHandles.set(timerHandles.size, timerHandle);
+    }
+
+    function displayExamples() {
+      if (v(timerEnabled) == false) enableTimer();
+      displayCards();
+
+      const timerHandle = setInterval(() => {
+        if (v(currentRowIndex) > v(currentExample).numbers.length) {
+          currentExampleIndex.value++;
+          clearInterval(timerHandle);
+          return;
+        }
+
+        currentRowIndex.value++;
+      }, /*v(currentSequenceItem).rowsTimeout **/ 1000);
+
+    }
+
+    function startGame() {
+      displayHelperTexts();
+    }
+
+    function finishGame() {}
+
+    function onReshowCurrentTheme() {}
+    function onReshowCurrentExample() {}
+    function onRepeat() {}
+
+    onMounted(() => {
+      startGame();
+    });
+
+    return {
+      completedExamplesPercent,
+
+      onReshowCurrentTheme,
+      onReshowCurrentExample,
+      onRepeat,
+
+      canDisplayAbacus,
+      canDisplayCards,
+
+      cardClasses,
+      timerClasses,
+      helperText,
+      currentRow,
+
+      displayMode,
+      timerEnabled,
+      timerAbsolute,
+    };
+  },
+});
+
+/*
 export default defineComponent({
   components: {
     Flicking,
@@ -561,3 +814,4 @@ export default defineComponent({
     };
   },
 });
+*/

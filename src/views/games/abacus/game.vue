@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- controls bar -->
-    <section class="card is-bordered" v-if="displayMode !== 'scores'">
+    <section class="card is-border-radiusless" v-if="displayMode !== 'scores'">
       <div class="p-2">
         <div
           class="is-flex is-align-items-center is-justify-content-space-between"
@@ -72,14 +72,50 @@
     <!-- end controls bar -->
 
     <!-- confetti screen -->
-    <canvas class="is-confetti" ref="confettiRef" />
+    <canvas class="abacus-game-confetti" ref="confettiRef" />
 
     <!-- abacus board -->
     <div v-show="canDisplayAbacus" class="is-abacus-board-container">
       <div ref="abacusContainerRef" />
     </div>
 
+    <div class="is-flex is-justify-content-center mt-4" v-if="canDisplayCards">
+      <div class="abacus-game-card-container">
+        <div :class="cardClasses">
+          <div
+            class="
+              is-size-1
+              is-flex
+              is-yellow-bg-color
+              is-justify-content-center
+              is-align-items-center
+              is-full-size
+            "
+            v-if="displayMode == 'helper-text-cards'"
+          >
+            {{ helperText }}
+          </div>
+          <svg viewBox="0 0 150 65" class="is-full-size" v-else>
+            <transition name="fade-animation" mode="in-out">
+              <text
+                dominant-baseline="central"
+                text-anchor="middle"
+                font-size="65px"
+                x="50%"
+                y="50%"
+                fill="#fff"
+                :key="'row' + currentRow"
+              >
+                {{ currentRow }}
+              </text>
+            </transition>
+          </svg>
+        </div>
+      </div>
+    </div>
+
     <!-- cards display -->
+    <!--
     <Flicking
       :options="flickingOptions"
       ref="flickingRef"
@@ -91,7 +127,6 @@
       </div>
 
       <template v-for="(sequenceItem, sequenceIndex) in sequence">
-        <!-- theme header card -->
         <div
           class="flicking-panel flicking-attention is-yellow-bg-color"
           :key="'s-' + sequenceIndex"
@@ -100,7 +135,6 @@
             $t(sequenceItem.theme.loc, { digit: sequenceItem.digit })
           }}</span>
         </div>
-        <!-- end theme header card -->
 
         <template v-for="(example, exampleIndex) in sequenceItem.examples">
           <div
@@ -126,7 +160,6 @@
             "
           >
             <svg class="is-full-size" viewBox="0 0 484 230">
-              <!-- sign -->
               <text
                 fill="#fff"
                 x="0"
@@ -142,7 +175,6 @@
                     : "×"
                 }}
               </text>
-              <!-- divident -->
               <text
                 fill="#fff"
                 x="484"
@@ -162,7 +194,6 @@
                 stroke-width="6"
                 stroke-opacity=".9"
               />
-              <!-- divisor -->
               <text
                 fill="#fff"
                 x="484"
@@ -207,10 +238,11 @@
         </template>
       </template>
     </Flicking>
+    -->
     <!-- end cards display -->
 
     <div
-      class="buttons is-centered is-hidden-mobile"
+      class="buttons is-centered is-hidden-mobile mt-4"
       v-if="displayMode === 'cards'"
     >
       <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
@@ -456,21 +488,14 @@ $extra-small: 321px;
 }
 
 /* unused, but looks cool */
-.flicking-panel.active {
+.abacus-game-card-container {
+  padding: 10px;
+  position: relative;
+  width: 30%;
+  height: 270px !important;
   box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.05),
     inset -5px -5px 5px rgba(255, 255, 255, 0.5),
     5px 5px 5px rgba(0, 0, 0, 0.05), -5px -5px 5px rgba(255, 255, 255, 0.5);
-}
-
-.flicking-panel {
-  position: relative;
-  width: 30%;
-  height: 230px !important;
-  color: white;
-  border-radius: 5px;
-  margin-right: 10px;
-  margin-left: 10px;
-  padding: 10px !important;
 
   @include until($small) {
     height: 200px !important;
@@ -494,6 +519,13 @@ $extra-small: 321px;
     width: 35% !important;
     height: 260px !important;
   }
+}
+
+.abacus-game-card {
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  height: 100%;
 }
 
 .flicking-attention {
@@ -543,7 +575,21 @@ svg.is-abacus-board {
   }
 }
 
-img.is-trophy {
+.fade-animation-enter-active {
+  opacity: 0;
+}
+
+.fade-animation-leave-active {
+  opacity: 1;
+}
+
+/*
+.fade-animation-enter, .fade-animation-leave-to {
+  opacity: 0;
+}
+*/
+
+img.abacus-game-trophy {
   display: block;
   width: 170px;
   margin-top: -100px;
@@ -556,11 +602,11 @@ img.is-trophy {
   }
 }
 
-.is-trophy.is-lost {
+.abacus-game-trophy.is-lost {
   filter: grayscale(1);
 }
 
-canvas.is-confetti {
+canvas.abacus-game-confetti {
   position: absolute;
   top: 0px;
   bottom: 0px;
