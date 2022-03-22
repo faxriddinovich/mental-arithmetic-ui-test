@@ -3,7 +3,8 @@ import { themes } from "@mental-arithmetic/themes";
 
 export interface Example {
   numbers: (string | number | BigInt)[];
-  answer: BigInt | number;
+  answer: number | BigInt;
+  answerMap: (number | BigInt)[]
 }
 
 export const acquireExample = defineStore({

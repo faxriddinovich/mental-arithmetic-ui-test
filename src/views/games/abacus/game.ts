@@ -3,6 +3,7 @@ import {
   ref,
   onMounted,
   onUnmounted,
+  watch,
   computed,
   Ref,
 } from "@vue/composition-api";
@@ -13,7 +14,7 @@ import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import VictorySoundEffect from "@@/sounds/victory.mp3";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import { acquireGame, GAME_KIND } from "@/store/game";
-import { acquireExample } from "@/store/example";
+import { acquireExample, Example } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
 import { Operation } from "@mental-arithmetic/themes";
@@ -37,12 +38,10 @@ type SoundEffectKey =
   | "whistle-sound-effect"
   | "victory-sound-effect";
 
-type DisplayMode = "answer" | "helper-text-cards" | "cards" | "wait" | "scores";
+type DisplayMode = "answer" | "attention-card" | "row-card" | "wait" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
-
-const parse = (str: string) => JSON.parse(str);
 
 export default defineComponent({
   components: { StackedCards },
@@ -56,7 +55,9 @@ export default defineComponent({
 
     const sequence = ref<SequenceItem[]>(config.sequence);
 
-    const v = (ref: Ref) => ref.value;
+    const v = <T extends Ref, K>(
+      ref: T
+    ): T extends Ref<infer K> ? K : unknown => ref.value;
 
     generateExamples();
 
@@ -115,11 +116,45 @@ export default defineComponent({
       return audio.play();
     };
 
+    const clearSoundEffects = () => {
+      for (const [soundEffectKey, soundEffect] of sounds.entries()) {
+        soundEffect.pause();
+        sounds.delete(soundEffectKey);
+      }
+    };
+
+    const clearTimerHandles = () => {
+      for (const [timerHandleKey, timerHandle] of timerHandles.entries()) {
+        clearInterval(timerHandle);
+        timerHandles.delete(timerHandleKey);
+      }
+    };
+
+    const playConfettiAnimation = () => {
+      const confetti = confettiLib.create(confettiRef.value!, {
+        resize: true,
+        useWorker: true,
+      });
+
+      confetti({
+        particleCount: 200,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+      });
+      confetti({
+        particleCount: 200,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+      });
+    };
+
     const displayWait = () => (displayMode.value = "wait");
-    const displayCards = () => (displayMode.value = "cards");
+    const displayRowCard = () => (displayMode.value = "row-card");
     const displayScores = () => (displayMode.value = "scores");
     const displayAnswer = () => (displayMode.value = "answer");
-    const displayHelperText = () => (displayMode.value = "helper-text-cards");
+    const displayAttentionCard = () => (displayMode.value = "attention-card");
 
     function enableTimer() {
       timerEnabled.value = true;
@@ -143,11 +178,8 @@ export default defineComponent({
       );
     }
 
-    // FIXME: transalte me
-    const helperTexts = ["Good luck!"];
-
     /* game state */
-    const displayMode = ref<DisplayMode>("helper-text-cards");
+    const displayMode = ref<DisplayMode>("attention-card");
     const sounds = new Map<SoundEffectKey, HTMLAudioElement>();
     const timerHandles = new Map<TimerHandleKey, NodeJS.Timer>();
     const timerEnabled = ref<boolean>(false);
@@ -158,13 +190,28 @@ export default defineComponent({
     const currentExampleIndex = ref<number>(0);
     const currentAnswerIndex = ref<number>(0);
 
+    const currentSequenceItem = computed(() => {
+      return v(sequence)[v(currentSequenceItemIndex)] || null;
+    });
+
+    const currentThemeOperation = computed(() => {
+      return v(currentSequenceItem).theme.metadata.operation;
+    });
+
+    const currentExample = computed(() => {
+      if (!v(currentSequenceItem)) return null;
+      return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
+    });
+
     const canDisplayAbacus = computed(() => {
-      return ["helper-texts-card", "cards", "wait"].includes(v(displayMode));
+      return ["attention-card", "row-card", "wait"].includes(v(displayMode));
     });
 
     const canDisplayCards = computed(() => {
-      return ["attention-text-cards", "cards"].includes(v(displayMode));
+      return ["attention-card", "row-card"].includes(v(displayMode));
     });
+
+    const canEnterAnswer = ref<boolean>(false);
 
     const timerClasses = computed<string[]>(() => {
       const classes: string[] = [
@@ -182,7 +229,7 @@ export default defineComponent({
 
     const cardClasses = computed<string[]>(() => {
       const classes: string[] = ["abacus-game-card"];
-      if (v(displayMode) === "attention-text-cards") {
+      if (v(displayMode) === "attention-card") {
         classes.push("is-yellow-bg-color");
       } else {
         classes.push(`is-${config.fontColor}-bg-color`);
@@ -201,19 +248,6 @@ export default defineComponent({
 
     const helperText = ref<string>("");
 
-    const currentSequenceItem = computed(() => {
-      return v(sequence)[v(currentSequenceItemIndex)] || null;
-    });
-
-    const currentThemeOperation = computed(() => {
-      return v(currentSequenceItem).theme.metadata.operation;
-    });
-
-    const currentExample = computed(() => {
-      if (!v(currentSequenceItem)) return null;
-      return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
-    });
-
     const currentAnswer = computed(() => {
       if (!v(currentExample)) return null;
       return v(currentExample).answerMap[v(currentAnswerIndex)] || null;
@@ -227,43 +261,187 @@ export default defineComponent({
       return i;
     });
 
-    function displayHelperTexts() {
-      let helperTextIndex: number = 0;
-      const timerHandle = setInterval(() => {
-        if (helperTextIndex > helperTexts.length - 1) {
-          clearTimeout(timerHandle);
-          displayExamples();
-          return;
+    type RowType = string | number | BigInt;
+    type AnswerType = number | BigInt;
+
+    class RowCard {
+      constructor(
+        public row: RowType | RowType[],
+        public answer: AnswerType,
+        public sequenceItem: SequenceItem
+      ) {}
+    }
+
+    class AttentionCard {
+      constructor(
+        public text: string,
+        //public flags: number,
+        public next: number | null = null
+      ) {}
+    }
+
+    const computedCards = ref<(RowCard | AttentionCard)[]>([]);
+    const currentCardIndex = ref<number>(0);
+    const currentCard = computed(() => {
+      const current = v(computedCards)[v(currentCardIndex)];
+
+      if (current instanceof AttentionCard || v(canEnterAnswer))
+        displayAttentionCard();
+      else displayRowCard();
+
+      return current;
+    });
+
+    const currentAnser = computed(() => {
+      if (v(currentCard) instanceof RowCard)
+        return (v(currentCard) as RowCard).answer;
+      return null;
+    });
+
+    const upcomingCard = computed(() => {
+      return v(computedCards)[v(currentCardIndex) + 1];
+    });
+
+    const prevCard = computed(() => {
+      return v(computedCards)[v(currentCardIndex) - 1];
+    });
+
+    function computeCards() {
+      let head = 0;
+      for (const sequenceItem of config.sequence) {
+        const nextSequenceHead =
+          head +
+          sequenceItem.examplesCount +
+          sequenceItem.examplesCount * sequenceItem.rowsCount;
+        v(computedCards).push(
+          new AttentionCard(sequenceItem.theme.loc, nextSequenceHead)
+        );
+
+        for (const [exampleIndex, example] of sequenceItem.examples.entries()) {
+          const nextExampleHead = head + sequenceItem.rowsCount;
+          v(computedCards).push(
+            new AttentionCard("Example: " + exampleIndex + 1, nextExampleHead)
+          );
+
+          const operation = sequenceItem.theme.metadata.operation || 0;
+          if (operation & Operation.div || operation & Operation.mult) {
+            const rows = example.numbers;
+            v(computedCards).push(
+              new RowCard([rows[0], rows[1]], example.answer, sequenceItem)
+            );
+          } else {
+            for (const [rowIndex, row] of example.numbers.entries()) {
+              v(computedCards).push(
+                new RowCard(row, example.answerMap[rowIndex], sequenceItem)
+              );
+            }
+          }
         }
+        head += nextSequenceHead;
+      }
+    }
 
-        helperText.value = helperTexts[helperTextIndex];
-        helperTextIndex++;
-      }, 1000);
+    computeCards();
 
+    function drawAbacus() {
+      const width =
+        ABACUS_STONE_WIDTH * config.abacusColumnsCount +
+        ABACUS_FRAME_WIDTH +
+        ABACUS_FRAME_ABSOLUTE_X_PADDING;
+
+      const abacusDraw = SVG()
+        .addTo(abacusContainerRef.value!)
+        .viewbox(0, -55, width, 469)
+        .addClass("is-abacus-board");
+
+      abacusBoard.draw();
+      abacusDraw.add(abacusBoard);
+      abacusBoard.construct();
+    }
+
+    function incCardIndex() {
+      currentCardIndex.value++;
+    }
+
+    function executeAfter(cb: Function, ms = 1000) {
+      const timerHandle = setTimeout(cb, ms);
       timerHandles.set(timerHandles.size, timerHandle);
     }
 
-    function displayExamples() {
-      if (v(timerEnabled) == false) enableTimer();
-      displayCards();
+    function toNextCard() {
+      executeAfter(() => {
+        incCardIndex();
 
-      const timerHandle = setInterval(() => {
-        if (v(currentRowIndex) > v(currentExample).numbers.length) {
-          currentExampleIndex.value++;
-          clearInterval(timerHandle);
-          return;
+        const prevIsRowCard = v(prevCard) instanceof RowCard;
+        const currentIsAttention = v(currentCard) instanceof AttentionCard;
+
+        if (currentIsAttention) abacusBoard.reset();
+
+        /*
+         * +-------+ +-------+
+         * |  +3   | |  XXX  |
+         * +-------+ +-------+
+         *               ^~~~~~~~~~ we're here
+         */
+
+        if (!config.waitForAnswer) {
+          console.log(prevIsRowCard, currentIsAttention);
+          if (prevIsRowCard && currentIsAttention) {
+            return (canEnterAnswer.value = true);
+          }
+          return toNextCard();
         }
 
-        currentRowIndex.value++;
-      }, /*v(currentSequenceItem).rowsTimeout **/ 1000);
+        if (currentIsAttention) return toNextCard();
+      }, 1000);
 
+      /*
+      if (v(currentCard) == undefined) {
+        return finishGame();
+      }
+
+      const prevIsRowCard = v(prevCard) instanceof RowCard;
+      const currentIsAttention = v(currentCard) instanceof AttentionCard;
+
+      if (!config.waitForAnswer && prevIsRowCard && currentIsAttention) {
+        canEnterAnswer.value = true;
+        return;
+      }
+
+      if (!currentIsAttention) return;
+
+      const timerHandle = setTimeout(
+        () => {
+          toNextCard();
+        },
+        currentIsAttention ? 500 : 1000
+      ); // FIXME: static
+      timerHandles.set(timerHandles.size, timerHandle);
+      */
     }
+
+    abacusBoard.on("update", (event) => {
+      const answer = (event as CustomEvent<number>).detail;
+
+      if (answer == (v(currentCard) as RowCard).answer) {
+        toNextCard();
+      }
+    });
 
     function startGame() {
-      displayHelperTexts();
+      drawAbacus();
+      toNextCard();
     }
 
-    function finishGame() {}
+    function finishGame() {
+      clearSoundEffects();
+      clearTimerHandles();
+      setTimeout(() => {
+        if (v(wonTheGame)) playVictorySoundEffect();
+        displayScores();
+        if (v(wonTheGame)) playConfettiAnimation();
+      }, 1000);
+    }
 
     function onReshowCurrentTheme() {}
     function onReshowCurrentExample() {}
@@ -276,12 +454,17 @@ export default defineComponent({
     return {
       completedExamplesPercent,
 
+      currentCard,
+
+      abacusContainerRef,
+
       onReshowCurrentTheme,
       onReshowCurrentExample,
       onRepeat,
 
       canDisplayAbacus,
       canDisplayCards,
+      canEnterAnswer,
 
       cardClasses,
       timerClasses,

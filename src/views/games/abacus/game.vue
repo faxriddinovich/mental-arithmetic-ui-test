@@ -86,14 +86,17 @@
             class="
               is-size-1
               is-flex
-              is-yellow-bg-color
               is-justify-content-center
               is-align-items-center
               is-full-size
+              has-text-centered
             "
-            v-if="displayMode == 'helper-text-cards'"
+            v-if="displayMode == 'attention-card'"
           >
-            {{ helperText }}
+          <span v-if="canEnterAnswer">
+            <b-icon icon="abacus" size="is-large" /> Please enter your answer
+          </span>
+          <span v-else>{{ currentCard.text }}</span>
           </div>
           <svg viewBox="0 0 150 65" class="is-full-size" v-else>
             <transition name="fade-animation" mode="in-out">
@@ -106,7 +109,7 @@
                 fill="#fff"
                 :key="'row' + currentRow"
               >
-                {{ currentRow }}
+                {{ currentCard.row }}
               </text>
             </transition>
           </svg>
@@ -464,28 +467,6 @@
 
 $small: 376px;
 $extra-small: 321px;
-
-.flicking-camera {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  position: relative;
-  width: 100%;
-}
-
-.flicking-viewport {
-  width: 100%;
-  margin-top: 20px;
-  pointer-events: none;
-
-  @include until($small) {
-    margin: 0px;
-  }
-}
-
-.flicking-camera {
-  margin-bottom: 10px;
-}
 
 /* unused, but looks cool */
 .abacus-game-card-container {
