@@ -10,8 +10,8 @@ import {
 import { SVG } from "@svgdotjs/svg.js";
 import { AbacusBoard } from "./board";
 import TimerSoundEffect from "@@/sounds/timer.wav";
-import WhistleSoundEffect from "@@/sounds/whistle.mp3";
 import VictorySoundEffect from "@@/sounds/victory.mp3";
+import LostSoundEffect from '@@/sounds/lost.wav';
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import { acquireGame, GAME_KIND } from "@/store/game";
 import { acquireExample, Example } from "@/store/example";
@@ -33,8 +33,8 @@ import {
 type TimerHandleKey = "rows-timer-handle" | number;
 type SoundEffectKey =
   | "timer-sound-effect"
-  | "whistle-sound-effect"
-  | "victory-sound-effect";
+  | "victory-sound-effect"
+  | "lost-sound-effect";
 
 type DisplayMode = "answer" | "attention-card" | "row-card" | "wait" | "scores";
 
@@ -124,10 +124,10 @@ export default defineComponent({
       return audio.play();
     };
 
-    const playWhistleSoundEffect = () => {
-      const audio = new Audio(WhistleSoundEffect);
+    const playLostSoundEffect = () => {
+      const audio = new Audio(LostSoundEffect);
       audio.loop = false;
-      sounds.set("whistle-sound-effect", audio);
+      sounds.set("lost-sound-effect", audio);
       return audio.play();
     };
 
@@ -185,7 +185,6 @@ export default defineComponent({
             if (sounds.has("timer-sound-effect"))
               sounds.get("timer-sound-effect")!.pause();
 
-            playWhistleSoundEffect();
             finishGame();
           }
         }, 1000)
@@ -492,8 +491,12 @@ export default defineComponent({
       clearSoundEffects();
       clearTimerHandles();
       displayScores();
-      if (v(wonTheGame)) playVictorySoundEffect();
-      if (v(wonTheGame)) playConfettiAnimation();
+      if (v(wonTheGame)) {
+        playVictorySoundEffect();
+        playConfettiAnimation();
+      } else {
+        playLostSoundEffect();
+      }
     }
 
     function onReshowCurrentTheme() {}
