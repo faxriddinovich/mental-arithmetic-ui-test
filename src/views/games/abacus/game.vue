@@ -93,11 +93,57 @@
             "
             v-if="displayMode == 'attention-card'"
           >
-          <span v-if="canEnterAnswer">
-            <b-icon icon="abacus" size="is-large" /> Please enter your answer
-          </span>
-          <span v-else>{{ currentCard.text }}</span>
+            <span>{{ currentCard.text }}</span>
           </div>
+          <svg
+            class="is-full-size"
+            viewBox="0 0 484 230"
+            v-else-if="
+              currentThemeOperation & Operation.mult ||
+              currentThemeOperation & Operation.div
+            "
+          >
+            <text
+              fill="#fff"
+              x="0"
+              y="115"
+              dominant-baseline="middle"
+              text-anchor="start"
+              font-size="80px"
+              opacity=".9"
+            >
+              {{ currentThemeOperation & Operation.mult ? "×": "÷"}}
+            </text>
+            <text
+              fill="#fff"
+              x="484"
+              y="20"
+              font-size="90px"
+              text-anchor="end"
+              dominant-baseline="hanging"
+            >
+              {{ currentCard.row[0] }}
+            </text>
+            <line
+              x1="80"
+              y1="115"
+              x2="484"
+              y2="115"
+              stroke="white"
+              stroke-width="6"
+              stroke-opacity=".9"
+            />
+            <text
+              fill="#fff"
+              x="484"
+              y="200"
+              font-size="90px"
+              text-anchor="end"
+              dominant-baseline="auto"
+            >
+              {{ currentCard.row[1] }}
+            </text>
+          </svg>
           <svg viewBox="0 0 150 65" class="is-full-size" v-else>
             <transition name="fade-animation" mode="in-out">
               <text
@@ -162,52 +208,6 @@
               sequenceItem.theme.metadata.operation & Operation.mult
             "
           >
-            <svg class="is-full-size" viewBox="0 0 484 230">
-              <text
-                fill="#fff"
-                x="0"
-                y="115"
-                dominant-baseline="middle"
-                text-anchor="start"
-                font-size="80px"
-                opacity=".9"
-              >
-                {{
-                  sequenceItem.theme.metadata.operation & Operation.div
-                    ? "÷"
-                    : "×"
-                }}
-              </text>
-              <text
-                fill="#fff"
-                x="484"
-                y="20"
-                font-size="90px"
-                text-anchor="end"
-                dominant-baseline="hanging"
-              >
-                {{ example.numbers[0] }}
-              </text>
-              <line
-                x1="80"
-                y1="115"
-                x2="484"
-                y2="115"
-                stroke="white"
-                stroke-width="6"
-                stroke-opacity=".9"
-              />
-              <text
-                fill="#fff"
-                x="484"
-                y="200"
-                font-size="90px"
-                text-anchor="end"
-                dominant-baseline="auto"
-              >
-                {{ example.numbers[1] }}
-              </text>
-            </svg>
           </div>
           <div
             :class="{

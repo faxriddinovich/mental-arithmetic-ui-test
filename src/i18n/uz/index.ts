@@ -102,7 +102,7 @@ export namespace uz {
     "repeat": "Qaytarish",
     "reshow_theme": "Mavzuni qaytarish",
     "reshow_example": "Misolni qaytarish",
-    "solve_examples_sequentially": "Misollarni ketma-ketlikda yeching",
+    "enter_answer": "Iltimos misol javobini kiriting",
     "show_answer": "Javobni ko'rsatish",
     "next_example": "Keyingi misol",
     "good_luck": "Omad!",
