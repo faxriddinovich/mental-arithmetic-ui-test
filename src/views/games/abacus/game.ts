@@ -11,7 +11,7 @@ import { SVG } from "@svgdotjs/svg.js";
 import { AbacusBoard } from "./board";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import VictorySoundEffect from "@@/sounds/victory.mp3";
-import LostSoundEffect from '@@/sounds/lost.wav';
+import LostSoundEffect from "@@/sounds/lost.wav";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import { acquireGame, GAME_KIND } from "@/store/game";
 import { acquireExample, Example } from "@/store/example";
@@ -326,13 +326,23 @@ export default defineComponent({
       completedExamplesCount.value++;
     };
 
+    /*
+     *
+     * +-------+
+     * |  xxx  |
+     * +-------+
+     *
+     *
+     */
     function computeCards() {
       let head = 0;
       for (const [sequenceIndex, sequenceItem] of config.sequence.entries()) {
-        const nextSequenceHead =
+        const nextSequenceItemIndex =
           head +
           sequenceItem.examplesCount +
-          sequenceItem.examplesCount * sequenceItem.rowsCount;
+          sequenceItem.examplesCount * sequenceItem.rowsCount +
+          (!config.waitForAnswer ? sequenceItem.examplesCount : 0);
+
         v(computedCards).push(
           new AttentionCard(
             AttentionKind.Sequence,
@@ -340,7 +350,7 @@ export default defineComponent({
             context.root.$i18n.t(sequenceItem.theme.loc, {
               digit: sequenceItem.digit,
             }) as string,
-            nextSequenceHead
+            nextSequenceItemIndex
           )
         );
 
@@ -352,8 +362,7 @@ export default defineComponent({
               exampleIndex,
               context.root.$i18n.t("example_n", {
                 example: exampleIndex + 1,
-              }) as string,
-              nextExampleHead
+              }) as string
             )
           );
 
@@ -381,7 +390,7 @@ export default defineComponent({
           }
         }
 
-        head += nextSequenceHead;
+        head += nextSequenceItemIndex;
       }
     }
 
@@ -455,7 +464,6 @@ export default defineComponent({
 
     abacusBoard.on("update", (event) => {
       const answer = (event as CustomEvent<number>).detail;
-      console.log(v(currentAnswerIndex));
 
       if (answer == v(currentAnswer)) {
         if (v(currentCard) instanceof AttentionCard) {
@@ -499,8 +507,63 @@ export default defineComponent({
       }
     }
 
-    function onReshowCurrentTheme() {}
-    function onReshowCurrentExample() {}
+    function onReshowCurrentTheme() {
+      let index = v(currentCardIndex);
+
+      while (1 * 1 == 1) {
+        const card = v(computedCards)[index];
+        if (!card) break;
+
+        if (card instanceof AttentionCard) {
+          if (card.kind == AttentionKind.Sequence) {
+            currentCardIndex.value = index;
+            toNextCard();
+            return;
+          }
+        }
+
+        index--;
+      }
+    }
+
+    function onReshowCurrentExample() {
+      let index = v(currentCardIndex);
+
+      while (1 * 1 == 1) {
+        const card = v(computedCards)[index];
+        if (!card) break;
+
+        if (card instanceof AttentionCard) {
+          if (card.kind == AttentionKind.Example) {
+            currentCardIndex.value = index;
+            toNextCard();
+            return;
+          }
+        }
+
+        index--;
+      }
+    }
+
+    function onShowNextTheme() {
+      let index = v(currentCardIndex);
+
+      while (1 * 1 == 1) {
+        const card = v(computedCards)[index];
+        if (!card) break;
+
+        if (card instanceof AttentionCard) {
+          if (card.kind == AttentionKind.Sequence) {
+            currentCardIndex.value = index;
+            toNextCard();
+            return;
+          }
+        }
+
+        index++;
+      }
+    }
+
     function onRepeat() {}
 
     onMounted(() => {
@@ -512,6 +575,10 @@ export default defineComponent({
       totalExamplesCount,
       completedExamplesCount,
 
+      onReshowCurrentTheme,
+      onReshowCurrentExample,
+      onShowNextTheme,
+
       Operation,
 
       currentThemeOperation,
@@ -522,8 +589,6 @@ export default defineComponent({
 
       abacusContainerRef,
 
-      onReshowCurrentTheme,
-      onReshowCurrentExample,
       onRepeat,
 
       canDisplayAbacus,

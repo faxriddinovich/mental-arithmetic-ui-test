@@ -163,90 +163,9 @@
       </div>
     </div>
 
-    <!-- cards display -->
-    <!--
-    <Flicking
-      :options="flickingOptions"
-      ref="flickingRef"
-      @changed="onCardChanged"
-      v-show="displayMode === 'cards'"
-    >
-      <div class="flicking-panel flicking-attention is-yellow-bg-color">
-        <span>{{ $t("good_luck") }}</span>
-      </div>
-
-      <template v-for="(sequenceItem, sequenceIndex) in sequence">
-        <div
-          class="flicking-panel flicking-attention is-yellow-bg-color"
-          :key="'s-' + sequenceIndex"
-        >
-          <span>{{
-            $t(sequenceItem.theme.loc, { digit: sequenceItem.digit })
-          }}</span>
-        </div>
-
-        <template v-for="(example, exampleIndex) in sequenceItem.examples">
-          <div
-            class="flicking-panel is-yellow-bg-color flicking-attention"
-            :key="'e-' + sequenceIndex + '-' + exampleIndex"
-          >
-            <span>{{ $t("example_n", { example: exampleIndex + 1 }) }}</span>
-          </div>
-
-          <div
-            :class="{
-              'flicking-panel': true,
-              ['is-' + config.fontColor + '-bg-color']: true,
-            }"
-            :key="'rr' + sequenceIndex + exampleIndex"
-            :data-si="sequenceIndex"
-            :data-ei="exampleIndex"
-            :data-ri="1"
-            :data-rv="example.numbers[0]"
-            v-if="
-              sequenceItem.theme.metadata.operation & Operation.div ||
-              sequenceItem.theme.metadata.operation & Operation.mult
-            "
-          >
-          </div>
-          <div
-            :class="{
-              'flicking-panel': true,
-              ['is-' + config.fontColor + '-bg-color']: true,
-            }"
-            v-for="(row, rowIndex) of example.numbers"
-            :key="'r-' + sequenceIndex + '-' + exampleIndex + '-' + rowIndex"
-            :data-si="sequenceIndex"
-            :data-lsi="sequenceIndex === sequence.length - 1"
-            :data-ei="exampleIndex"
-            :data-lei="exampleIndex === sequenceItem.examples.length - 1"
-            :data-ri="rowIndex"
-            :data-lri="rowIndex === example.numbers.length - 1"
-            :data-rv="row"
-            v-else
-          >
-            <svg viewBox="0 0 250 60" class="is-full-size">
-              <text
-                dominant-baseline="middle"
-                text-anchor="middle"
-                font-size="65px"
-                x="50%"
-                y="50%"
-                fill="#fff"
-              >
-                {{ row }}
-              </text>
-            </svg>
-          </div>
-        </template>
-      </template>
-    </Flicking>
-    -->
-    <!-- end cards display -->
-
     <div
       class="buttons is-centered is-hidden-mobile mt-4"
-      v-if="displayMode === 'cards'"
+      v-if="displayMode === 'row-card'"
     >
       <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
         $t("reshow_theme")
@@ -254,6 +173,7 @@
       <b-button icon-left="redo" @click="onReshowCurrentExample">{{
         $t("reshow_example")
       }}</b-button>
+      <b-button icon-right="arrow-right" @click="onShowNextTheme">Keyingi mavzu</b-button>
     </div>
 
     <!-- wait display -->
