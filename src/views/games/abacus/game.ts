@@ -564,10 +564,26 @@ export default defineComponent({
       }
     }
 
-    function onRepeat() {}
+    function clearGameState() {
+      clearTimerHandles();
+      clearSoundEffects();
+      currentCardIndex.value = 0;
+      abacusBoard.reset();
+      toNextCard();
+
+    }
+
+    function onRestart() {
+      clearGameState();
+      toNextCard();
+    }
 
     onMounted(() => {
       startGame();
+    });
+
+    onUnmounted(() => {
+      clearGameState();
     });
 
     return {
@@ -578,6 +594,7 @@ export default defineComponent({
       onReshowCurrentTheme,
       onReshowCurrentExample,
       onShowNextTheme,
+      onRestart,
 
       Operation,
 
@@ -588,8 +605,6 @@ export default defineComponent({
       wonTheGame,
 
       abacusContainerRef,
-
-      onRepeat,
 
       canDisplayAbacus,
       canDisplayCards,

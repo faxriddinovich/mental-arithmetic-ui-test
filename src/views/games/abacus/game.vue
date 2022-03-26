@@ -47,7 +47,7 @@
               {{ $t("reshow_example") }}</b-dropdown-item
             >
             <hr class="dropdown-divider" aria-role="menuitem" />
-            <b-dropdown-item aria-role="listitem" @click="onRepeat"
+            <b-dropdown-item aria-role="listitem" @click="onRestart"
               ><b-icon icon="sync-exclamation" size="is-small" />
               {{ $t("repeat") }}</b-dropdown-item
             >
@@ -56,7 +56,7 @@
             class="is-hidden-mobile"
             size="is-medium"
             active
-            @click="onRepeat"
+            @click="onRestart"
             ><b-icon icon="redo" class="m-0" /><span class="is-hidden-mobile">{{
               $t("repeat")
             }}</span></b-button
@@ -112,7 +112,7 @@
               font-size="80px"
               opacity=".9"
             >
-              {{ currentThemeOperation & Operation.mult ? "×": "÷"}}
+              {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
             </text>
             <text
               fill="#fff"
@@ -173,7 +173,9 @@
       <b-button icon-left="redo" @click="onReshowCurrentExample">{{
         $t("reshow_example")
       }}</b-button>
-      <b-button icon-right="arrow-right" @click="onShowNextTheme">Keyingi mavzu</b-button>
+      <b-button icon-right="arrow-right" @click="onShowNextTheme"
+        >Keyingi mavzu</b-button
+      >
     </div>
 
     <!-- wait display -->
@@ -364,7 +366,7 @@
                     <b-button
                       class="ml-2"
                       icon-left="refresh"
-                      @click="onRepeat"
+                      @click="onRestart"
                       expanded
                       active
                       >{{ $t("repeat") }}</b-button
