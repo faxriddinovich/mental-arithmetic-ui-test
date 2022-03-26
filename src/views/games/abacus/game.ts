@@ -14,12 +14,11 @@ import VictorySoundEffect from "@@/sounds/victory.mp3";
 import LostSoundEffect from "@@/sounds/lost.wav";
 import { SequenceItem } from "@/views/games/abacus/interfaces";
 import { acquireGame, GAME_KIND } from "@/store/game";
-import { acquireExample, Example } from "@/store/example";
+import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
 import { Operation } from "@mental-arithmetic/themes";
 
-import "@egjs/vue-flicking/dist/flicking.css";
 import { speak } from "@/services/tts";
 
 import StackedCards from "@/components/stacked-cards.vue";
@@ -30,13 +29,18 @@ import {
   ABACUS_FRAME_ABSOLUTE_X_PADDING,
 } from "./constants";
 
-type TimerHandleKey = "rows-timer-handle" | number;
+type TimerHandleKey = number;
 type SoundEffectKey =
   | "timer-sound-effect"
   | "victory-sound-effect"
   | "lost-sound-effect";
 
-type DisplayMode = "answer" | "attention-card" | "row-card" | "wait" | "scores";
+type DisplayMode =
+  | "answer"
+  | "enter-answer"
+  | "attention-card"
+  | "row-card"
+  | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
@@ -173,7 +177,7 @@ export default defineComponent({
     function enableTimer() {
       timerEnabled.value = true;
       timerHandles.set(
-        "rows-timer-handle",
+        timerHandles.size,
         setInterval(() => {
           if (v(timerAbsolute) > 0) {
             timerAbsolute.value -= 1;
@@ -226,6 +230,19 @@ export default defineComponent({
 
     const canDisplayCards = computed(() => {
       return ["attention-card", "row-card"].includes(v(displayMode));
+    });
+
+    const canDisplayButtons = computed(() => {
+      if (v(currentCard) instanceof AttentionCard || v(currentCard) == null) return false;
+      return (v(currentCard) as AttentionCard).kind != AttentionKind.Sequence;
+    });
+
+    const canDisplayScores = computed(() => {
+      return v(displayMode) == "scores";
+    });
+
+    const canDisplayAnswer = computed(() => {
+      return v(displayMode) == "answer";
     });
 
     const timerClasses = computed<string[]>(() => {
@@ -303,7 +320,7 @@ export default defineComponent({
     enum AttentionKind {
       Sequence,
       Example,
-      Answer,
+      EnterAnswer,
     }
 
     class AttentionCard {
@@ -355,7 +372,7 @@ export default defineComponent({
           if (operation & Operation.div || operation & Operation.mult) {
             const rows = example.numbers;
             v(computedCards).push(
-              new RowCard([rows[0], rows[1]], operation,  example.answer, false)
+              new RowCard([rows[0], rows[1]], operation, example.answer, false)
             );
           } else {
             for (const [rowIndex, row] of example.numbers.entries()) {
@@ -367,7 +384,7 @@ export default defineComponent({
           if (!config.waitForAnswer) {
             v(computedCards).push(
               new AttentionCard(
-                AttentionKind.Answer,
+                AttentionKind.EnterAnswer,
                 0,
                 context.root.$i18n.t("enter_answer") as string
               )
@@ -417,6 +434,7 @@ export default defineComponent({
           currentExampleIndex.value = card.index;
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
+        } else if (card.kind == AttentionKind.EnterAnswer) {
         }
       } else if (card instanceof RowCard) {
         card.speech();
@@ -435,7 +453,9 @@ export default defineComponent({
         abacusBoard.unlock();
 
         if (v(currentCard) instanceof AttentionCard) {
-          if ((v(currentCard) as AttentionCard).kind == AttentionKind.Answer) {
+          if (
+            (v(currentCard) as AttentionCard).kind == AttentionKind.EnterAnswer
+          ) {
             return;
           }
 
@@ -549,16 +569,20 @@ export default defineComponent({
       }
     }
 
+    function onRestart() {
+      clearGameState();
+      toNextCard();
+    }
+
+    function onShowAnswer() {
+      displayAnswer();
+    }
+
     function clearGameState() {
       clearTimerHandles();
       clearSoundEffects();
       currentCardIndex.value = 0;
       abacusBoard.reset();
-      toNextCard();
-    }
-
-    function onRestart() {
-      clearGameState();
       toNextCard();
     }
 
@@ -578,6 +602,7 @@ export default defineComponent({
       onReshowCurrentTheme,
       onReshowCurrentExample,
       onShowNextTheme,
+      onShowAnswer,
       onRestart,
 
       Operation,
@@ -593,7 +618,10 @@ export default defineComponent({
       canDisplayAbacus,
       canDisplayCards,
       canEnterAnswer,
+      canDisplayButtons,
       config,
+      canDisplayAnswer,
+      canDisplayScores,
 
       trophyClasses,
       gameScoresTextClasses,

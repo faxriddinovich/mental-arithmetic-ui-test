@@ -176,10 +176,13 @@
 
     <div
       class="buttons is-centered is-hidden-mobile mt-4"
-      v-if="displayMode === 'row-card'"
+      v-if="canDisplayButtons"
     >
       <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
         $t("reshow_theme")
+      }}</b-button>
+      <b-button icon-left="align-left-justify" @click="onShowAnswer">{{
+        $t("show_answer")
       }}</b-button>
       <b-button icon-left="redo" @click="onReshowCurrentExample">{{
         $t("reshow_example")
@@ -189,38 +192,8 @@
       >
     </div>
 
-    <!-- wait display -->
-    <section style="padding-top: 160px" v-if="displayMode === 'wait'">
-      <div
-        class="
-          has-text-centered
-          is-size-4-touch is-size-2-desktop
-          mb-5
-          mx-4
-          has-text-weight-semibold
-        "
-      >
-        <span>{{ $t("solve_examples_sequentially") }}</span>
-      </div>
-      <div class="buttons is-justify-content-center">
-        <b-button icon-left="redo" @click="onReshowCurrentExample">{{
-          $t("reshow_example")
-        }}</b-button>
-        <b-button icon-left="align-left-justify" @click="onShowAnswer">{{
-          $t("show_answer")
-        }}</b-button>
-        <b-button
-          type="is-link"
-          icon-right="arrow-right"
-          @click="onNextExample"
-          >{{ $t("next_example") }}</b-button
-        >
-      </div>
-    </section>
-    <!-- end wait display -->
-
     <!-- answer display -->
-    <section class="hero is-fullheight" v-else-if="displayMode === 'answer'">
+    <section class="hero is-fullheight" v-if="canDisplayAnswer">
       <div class="hero-body is-justify-content-center p-0">
         <div class="columns is-gapless is-centered" style="min-width: 100%">
           <div class="column is-5-fullhd is-three-quarters-desktop">
@@ -396,7 +369,6 @@
 <script lang="ts" src="./game.ts"></script>
 <style lang="scss">
 @import "bulma/sass/utilities/mixins";
-@import "./node_modules/@egjs/vue-flicking/dist/flicking";
 
 $small: 376px;
 $extra-small: 321px;
@@ -440,19 +412,6 @@ $extra-small: 321px;
   border-radius: 5px;
   padding: 10px;
   height: 100%;
-}
-
-.flicking-attention {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 3.5rem;
-  line-height: normal;
-
-  span {
-    word-break: break-all;
-  }
 }
 
 .is-abacus-board-container {
