@@ -112,7 +112,7 @@
               font-size="80px"
               opacity=".9"
             >
-              {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
+              {{ currentCard.operation & Operation.mult ? "×" : "÷" }}
             </text>
             <text
               fill="#fff"
@@ -144,6 +144,17 @@
               {{ currentCard.row[1] }}
             </text>
           </svg>
+          <div
+            class="
+              is-flex
+              is-full-size
+              is-align-items-center
+              is-justify-content-center
+            "
+            v-else-if="currentCard.speechOnly"
+          >
+            <b-icon icon="volume" size="is-large" />
+          </div>
           <svg viewBox="0 0 150 65" class="is-full-size" v-else>
             <transition name="fade-animation" mode="in-out">
               <text

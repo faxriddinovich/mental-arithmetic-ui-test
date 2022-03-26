@@ -215,11 +215,6 @@ export default defineComponent({
       return v(currentSequenceItem).theme.metadata.operation || 0;
     });
 
-    const isCurrentThemeMultOrDiv = computed(() => {
-      const operation = v(currentSequenceItem).theme.metadata.operaation || 0;
-      return operation & Operation.mult || operation & Operation.div;
-    });
-
     const currentExample = computed(() => {
       if (!v(currentSequenceItem)) return null;
       return v(currentSequenceItem).examples[v(currentExampleIndex)] || null;
@@ -289,12 +284,20 @@ export default defineComponent({
     type RowType = string | number | BigInt;
     type AnswerType = number | BigInt;
 
+    const speechId = acquireSetting().one("text_to_speech_id");
+
     class RowCard {
       constructor(
         public row: RowType | RowType[],
+        public operation: number,
         public answer: AnswerType,
-        public sequenceItem: SequenceItem
+        public speechOnly: boolean
       ) {}
+
+      public speech() {
+        //const str = this.row[0] + ' multiplied by ' + this.row[1];
+        return speak(String(this.row), 400, speechId);
+      }
     }
 
     enum AttentionKind {
@@ -307,8 +310,7 @@ export default defineComponent({
       constructor(
         public kind: AttentionKind,
         public index: number,
-        public text: string,
-        public next: number | null = null
+        public text: string
       ) {}
     }
 
@@ -326,36 +328,19 @@ export default defineComponent({
       completedExamplesCount.value++;
     };
 
-    /*
-     *
-     * +-------+
-     * |  xxx  |
-     * +-------+
-     *
-     *
-     */
     function computeCards() {
-      let head = 0;
       for (const [sequenceIndex, sequenceItem] of config.sequence.entries()) {
-        const nextSequenceItemIndex =
-          head +
-          sequenceItem.examplesCount +
-          sequenceItem.examplesCount * sequenceItem.rowsCount +
-          (!config.waitForAnswer ? sequenceItem.examplesCount : 0);
-
         v(computedCards).push(
           new AttentionCard(
             AttentionKind.Sequence,
             sequenceIndex,
             context.root.$i18n.t(sequenceItem.theme.loc, {
               digit: sequenceItem.digit,
-            }) as string,
-            nextSequenceItemIndex
+            }) as string
           )
         );
 
         for (const [exampleIndex, example] of sequenceItem.examples.entries()) {
-          const nextExampleHead = head + sequenceItem.rowsCount;
           v(computedCards).push(
             new AttentionCard(
               AttentionKind.Example,
@@ -370,12 +355,12 @@ export default defineComponent({
           if (operation & Operation.div || operation & Operation.mult) {
             const rows = example.numbers;
             v(computedCards).push(
-              new RowCard([rows[0], rows[1]], example.answer, sequenceItem)
+              new RowCard([rows[0], rows[1]], operation,  example.answer, false)
             );
           } else {
             for (const [rowIndex, row] of example.numbers.entries()) {
               v(computedCards).push(
-                new RowCard(row, example.answerMap[rowIndex], sequenceItem)
+                new RowCard(row, operation, example.answerMap[rowIndex], false)
               );
             }
           }
@@ -389,8 +374,6 @@ export default defineComponent({
             );
           }
         }
-
-        head += nextSequenceItemIndex;
       }
     }
 
@@ -435,6 +418,8 @@ export default defineComponent({
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
         }
+      } else if (card instanceof RowCard) {
+        card.speech();
       }
     });
 
@@ -570,7 +555,6 @@ export default defineComponent({
       currentCardIndex.value = 0;
       abacusBoard.reset();
       toNextCard();
-
     }
 
     function onRestart() {
