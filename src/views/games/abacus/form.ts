@@ -3,7 +3,7 @@ import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
-import { Theme } from '@mental-arithmetic/themes';
+import { Theme } from "@mental-arithmetic/themes";
 import { acquireGame, GAME_KIND } from "@/store/game";
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
@@ -38,8 +38,7 @@ export default defineComponent({
 
     const canAddSequenceItem = computed(() => {
       return (
-        theme.value &&
-        sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT
+        theme.value && sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT
       );
     });
 
@@ -61,29 +60,37 @@ export default defineComponent({
       digit.value = lastSequenceItem.digit;
       examplesCount.value = lastSequenceItem.examplesCount;
 
-      examplesTimeout.value = abacusConfig.examplesTimeout;
+      examplesTimeout.value = lastSequenceItem.examplesTimeout;
 
       rowsCount.value = lastSequenceItem.rowsCount;
-      rowsTimeout.value = abacusConfig.rowsTimeout;
-      abacusColumnsCount.value = abacusConfig.abacusColumnsCount;
+      rowsTimeout.value = lastSequenceItem.rowsTimeout;
+      abacusColumnsCount.value = lastSequenceItem.abacusColumnsCount;
       timerMins.value = Math.floor(abacusConfig.timerSecs / 60);
       timerSecs.value = abacusConfig.timerSecs % 60;
       waitForAnswer.value = abacusConfig.waitForAnswer;
 
-      fontColor.value = abacusConfig.fontColor;
-      fontRotation.value = abacusConfig.fontRotation;
-      fontSize.value = abacusConfig.fontSize;
-      displayNumbers.value = abacusConfig.displayNumbers;
-      speechSound.value = abacusConfig.speechSound;
+      fontColor.value =lastSequenceItem.fontColor;
+      fontRotation.value =lastSequenceItem.fontRotation;
+      fontSize.value =lastSequenceItem.fontSize;
+      displayNumbers.value =lastSequenceItem.displayNumbers;
+      speechSound.value =lastSequenceItem.speechSound;
     }
 
     function addSequenceItem() {
       sequence.value.push({
-        examples: [],
         theme: theme.value!,
+        examples: [],
         digit: Number(digit.value),
         examplesCount: examplesCount.value,
         rowsCount: rowsCount.value,
+        abacusColumnsCount: abacusColumnsCount.value,
+        examplesTimeout: examplesTimeout.value,
+        rowsTimeout: rowsTimeout.value,
+        displayNumbers: displayNumbers.value,
+        fontRotation: fontRotation.value,
+        fontColor: fontColor.value,
+        fontSize: fontSize.value,
+        speechSound: speechSound.value
       });
     }
 

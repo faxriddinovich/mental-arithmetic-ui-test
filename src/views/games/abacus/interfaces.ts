@@ -7,12 +7,6 @@ export interface SequenceItem {
   digit: number;
   rowsCount: number;
   examplesCount: number;
-}
-
-export interface AbacusGameConfig {
-  sequence: SequenceItem[],
-  timerSecs: number,
-  waitForAnswer: boolean,
   abacusColumnsCount: number,
   examplesTimeout: number;
   rowsTimeout: number;
@@ -21,6 +15,12 @@ export interface AbacusGameConfig {
   fontColor: string;
   fontSize: number;
   speechSound: boolean;
+}
+
+export interface AbacusGameConfig {
+  sequence: SequenceItem[],
+  timerSecs: number,
+  waitForAnswer: boolean,
 }
 
 export interface Drawable {

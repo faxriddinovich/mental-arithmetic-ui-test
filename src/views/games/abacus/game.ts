@@ -44,6 +44,7 @@ type DisplayMode =
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
+const ATTENTION_CARD_TIMEOUT = 1000;
 
 export default defineComponent({
   components: { StackedCards },
@@ -233,7 +234,8 @@ export default defineComponent({
     });
 
     const canDisplayButtons = computed(() => {
-      if (v(currentCard) instanceof AttentionCard || v(currentCard) == null) return false;
+      if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
+        return false;
       return (v(currentCard) as AttentionCard).kind != AttentionKind.Sequence;
     });
 
@@ -264,7 +266,8 @@ export default defineComponent({
       if (v(displayMode) === "attention-card") {
         classes.push("is-yellow-bg-color");
       } else {
-        classes.push(`is-${config.fontColor}-bg-color`);
+        const color = v(currentSequenceItem).fontColor;
+        classes.push(`is-${color}-bg-color`);
       }
       return classes;
     });
@@ -448,6 +451,17 @@ export default defineComponent({
 
     function toNextCard() {
       abacusBoard.lock();
+      const currentIsAttention = v(currentCard) instanceof AttentionCard;
+      const currentIsExample =
+        currentIsAttention &&
+        (v(currentCard) as AttentionCard).kind == AttentionKind.Example;
+
+      const executeTimeout = currentIsAttention
+        ? ATTENTION_CARD_TIMEOUT
+        : currentIsExample
+        ? v(currentSequenceItem).examplesTimeout * 1000
+        : v(currentSequenceItem).rowsTimeout * 1000;
+
       executeAfter(() => {
         incCardIndex();
         abacusBoard.unlock();
@@ -464,7 +478,7 @@ export default defineComponent({
 
         if (!config.waitForAnswer && v(currentCard) instanceof RowCard)
           toNextCard();
-      }, 1000);
+      }, executeTimeout);
     }
 
     abacusBoard.on("update", (event) => {
@@ -472,7 +486,9 @@ export default defineComponent({
 
       if (answer == v(currentAnswer)) {
         if (v(currentCard) instanceof AttentionCard) {
-          if ((v(currentCard) as AttentionCard).kind == AttentionKind.Answer) {
+          if (
+            (v(currentCard) as AttentionCard).kind == AttentionKind.EnterAnswer
+          ) {
             if (
               v(currentAnswerIndex) ==
               v(currentExample)!.numbers.length - 1
