@@ -151,7 +151,7 @@
               is-align-items-center
               is-justify-content-center
             "
-            v-else-if="currentCard.speechOnly"
+            v-else-if="currentCard.speechSound && !currentCard.displayRow"
           >
             <b-icon icon="volume" size="is-large" />
           </div>
@@ -175,7 +175,7 @@
     </div>
 
     <div
-      class="buttons is-centered is-hidden-mobile mt-4"
+      class="buttons is-centered has-addons is-hidden-mobile mt-4"
       v-if="canDisplayButtons"
     >
       <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
@@ -187,6 +187,11 @@
       <b-button icon-left="redo" @click="onReshowCurrentExample">{{
         $t("reshow_example")
       }}</b-button>
+
+      <b-button icon-right="arrow-right" @click="onShowNextExample">{{
+        $t("next_example")
+      }}</b-button>
+
       <b-button icon-right="arrow-right" @click="onShowNextTheme"
         >Keyingi mavzu</b-button
       >
@@ -200,6 +205,17 @@
             <div class="box mx-2">
               <div class="is-size-3 has-text-weight-semibold has-text-centered">
                 <span
+                  v-if="
+                    currentThemeOperation & Operation.mult ||
+                    currentThemeOperation & Operation.div
+                  "
+                >
+                  {{ currentRow[0] }}
+                  {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
+                  {{ currentRow[1] }}
+                </span>
+                <span
+                  v-else
                   v-for="(row, rowIndex) of currentExample.numbers"
                   :key="rowIndex"
                 >
@@ -212,6 +228,7 @@
                 </div>
               </div>
 
+              <!--
               <hr class="my-4" />
               <div class="field is-grouped is-grouped-multiline">
                 <div
@@ -233,6 +250,7 @@
                   </div>
                 </div>
               </div>
+              -->
 
               <hr class="mt-0 mb-2" />
               <div class="is-flex">
@@ -245,7 +263,7 @@
                 <b-button
                   icon-right="arrow-right"
                   class="ml-3"
-                  @click="onNextExample"
+                  @click="onShowNextExample"
                   expanded
                   >{{ $t("next_example") }}</b-button
                 >

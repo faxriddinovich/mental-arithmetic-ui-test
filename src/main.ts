@@ -98,7 +98,7 @@ Vue.filter("formatCurrency", (amount: number) => {
 });
 
 Vue.filter("normalizeSign", (n: BigInt | number) => {
-  return n > 0 ? "+ " + n : n;
+  return n > 0 ? "+" + n : n;
 });
 
 new Vue({

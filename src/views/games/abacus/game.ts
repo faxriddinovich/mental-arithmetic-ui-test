@@ -53,7 +53,7 @@ export default defineComponent({
 
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
-    const abacusBoard = new AbacusBoard(config.abacusColumnsCount);
+    const abacusBoard = new AbacusBoard(10); // FIXME
 
     const sequence = ref<SequenceItem[]>(config.sequence);
 
@@ -236,6 +236,8 @@ export default defineComponent({
     const canDisplayButtons = computed(() => {
       if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
         return false;
+      if (v(canDisplayAnswer)) return false;
+      if (v(canDisplayScores)) return false;
       return (v(currentCard) as AttentionCard).kind != AttentionKind.Sequence;
     });
 
@@ -311,7 +313,8 @@ export default defineComponent({
         public row: RowType | RowType[],
         public operation: number,
         public answer: AnswerType,
-        public speechOnly: boolean
+        public displayRow: boolean,
+        public speechSound: boolean
       ) {}
 
       public speech() {
@@ -375,12 +378,24 @@ export default defineComponent({
           if (operation & Operation.div || operation & Operation.mult) {
             const rows = example.numbers;
             v(computedCards).push(
-              new RowCard([rows[0], rows[1]], operation, example.answer, false)
+              new RowCard(
+                [rows[0], rows[1]],
+                operation,
+                example.answer,
+                sequenceItem.displayNumbers,
+                sequenceItem.speechSound
+              )
             );
           } else {
             for (const [rowIndex, row] of example.numbers.entries()) {
               v(computedCards).push(
-                new RowCard(row, operation, example.answerMap[rowIndex], false)
+                new RowCard(
+                  row,
+                  operation,
+                  example.answerMap[rowIndex],
+                  sequenceItem.displayNumbers,
+                  sequenceItem.speechSound
+                )
               );
             }
           }
@@ -401,7 +416,7 @@ export default defineComponent({
 
     function drawAbacus() {
       const width =
-        ABACUS_STONE_WIDTH * config.abacusColumnsCount +
+        ABACUS_STONE_WIDTH * 20 + // FIXME
         ABACUS_FRAME_WIDTH +
         ABACUS_FRAME_ABSOLUTE_X_PADDING;
 
@@ -440,7 +455,7 @@ export default defineComponent({
         } else if (card.kind == AttentionKind.EnterAnswer) {
         }
       } else if (card instanceof RowCard) {
-        card.speech();
+        if (v(currentSequenceItem).speechSound) card.speech();
       }
     });
 
@@ -585,6 +600,26 @@ export default defineComponent({
       }
     }
 
+    function onShowNextExample() {
+      let index = v(currentCardIndex);
+
+      while (1 * 1 == 1) {
+        const card = v(computedCards)[index];
+        if (!card) break;
+
+        if (card instanceof AttentionCard) {
+          if (card.kind == AttentionKind.Example) {
+            currentCardIndex.value = index;
+            toNextCard();
+            return;
+          }
+        }
+
+        index++;
+      }
+
+    }
+
     function onRestart() {
       clearGameState();
       toNextCard();
@@ -615,6 +650,7 @@ export default defineComponent({
       totalExamplesCount,
       completedExamplesCount,
 
+      onShowNextExample,
       onReshowCurrentTheme,
       onReshowCurrentExample,
       onShowNextTheme,
@@ -643,6 +679,8 @@ export default defineComponent({
       gameScoresTextClasses,
       cardClasses,
       timerClasses,
+
+      currentExample,
       currentRow,
 
       displayMode,
