@@ -100,6 +100,10 @@ export class AbacusColumns extends G implements Drawable {
       this.add(column);
     }
   }
+  
+  public setColumns(columns: number) {
+    this.columns = columns;
+  }
 
   public lock() {
     for (const stone of this.children())

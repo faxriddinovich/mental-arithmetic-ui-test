@@ -18,7 +18,6 @@ import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
 import { Operation } from "@mental-arithmetic/themes";
-
 import { speak } from "@/services/tts";
 
 import StackedCards from "@/components/stacked-cards.vue";
@@ -53,7 +52,6 @@ export default defineComponent({
 
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
-    const abacusBoard = new AbacusBoard(10); // FIXME
 
     const sequence = ref<SequenceItem[]>(config.sequence);
 
@@ -232,6 +230,8 @@ export default defineComponent({
     const canDisplayCards = computed(() => {
       return ["attention-card", "row-card"].includes(v(displayMode));
     });
+
+    let abacusBoard = new AbacusBoard(v(currentSequenceItem).abacusColumnsCount); // FIXME
 
     const canDisplayButtons = computed(() => {
       if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
@@ -414,19 +414,34 @@ export default defineComponent({
 
     computeCards();
 
-    function drawAbacus() {
+    function drawAbacus(columns: number) {
       const width =
-        ABACUS_STONE_WIDTH * 20 + // FIXME
+        ABACUS_STONE_WIDTH * columns + // FIXME
         ABACUS_FRAME_WIDTH +
         ABACUS_FRAME_ABSOLUTE_X_PADDING;
 
-      const abacusDraw = SVG()
-        .addTo(abacusContainerRef.value!)
-        .viewbox(0, -55, width, 469)
+      const parent = abacusBoard.parent();
+      console.log(parent);
+      // we already have an old abacus board
+      if (parent) {
+        const abacusClone = abacusBoard.clone();
+        abacusBoard.remove();
+        abacusBoard = abacusClone;
+      }
+
+      const abacusDraw = SVG();
+
+      if (!parent) abacusDraw.addTo(abacusContainerRef.value!)
+
+      abacusDraw.viewbox(0, -55, width, 469)
+        .attr('width', width)
         .addClass("is-abacus-board");
 
+      abacusBoard.setColumns(columns);
+
       abacusBoard.draw();
-      abacusDraw.add(abacusBoard);
+      if (parent) parent.add(abacusBoard);
+      else abacusDraw.add(abacusBoard);
       abacusBoard.construct();
     }
 
@@ -447,6 +462,7 @@ export default defineComponent({
       if (card instanceof AttentionCard) {
         if (card.kind == AttentionKind.Sequence) {
           currentSequenceItemIndex.value = card.index;
+          drawAbacus(v(currentSequenceItem).abacusColumnsCount);
         } else if (card.kind == AttentionKind.Example) {
           abacusBoard.reset();
           currentExampleIndex.value = card.index;
@@ -527,7 +543,7 @@ export default defineComponent({
     });
 
     function startGame() {
-      drawAbacus();
+      drawAbacus(5);
       toNextCard();
     }
 

@@ -181,17 +181,17 @@
       <b-button icon-left="redo" @click="onReshowCurrentTheme">{{
         $t("reshow_theme")
       }}</b-button>
-      <b-button icon-left="align-left-justify" @click="onShowAnswer">{{
-        $t("show_answer")
-      }}</b-button>
       <b-button icon-left="redo" @click="onReshowCurrentExample">{{
         $t("reshow_example")
+      }}</b-button>
+
+      <b-button icon-left="align-left-justify" @click="onShowAnswer">{{
+        $t("show_answer")
       }}</b-button>
 
       <b-button icon-right="arrow-right" @click="onShowNextExample">{{
         $t("next_example")
       }}</b-button>
-
       <b-button icon-right="arrow-right" @click="onShowNextTheme"
         >Keyingi mavzu</b-button
       >
@@ -426,44 +426,48 @@ $extra-small: 321px;
 }
 
 .abacus-game-card {
-  color: white;
   border-radius: 5px;
+  color: white;
   padding: 10px;
   height: 100%;
 }
 
 .is-abacus-board-container {
-  width: 100%;
   position: absolute;
-  overflow-x: scroll;
-  overflow-y: hidden;
+  width: 100%;
   bottom: 0;
 }
 
 svg.is-abacus-board {
-  display: block;
-  margin: auto;
-  height: 569px !important;
-
-  @include mobile {
-    height: 350px !important;
-  }
-
-  @include until($extra-small) {
-    height: 250px !important;
-  }
-
-  @include tablet {
-    height: 390px !important;
-  }
-
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  /*
   @include desktop {
-    height: 390px !important;
+    max-width: 380px !important;
   }
 
   @include widescreen {
-    height: 500px !important;
+    max-width: 1094px !important;
   }
+
+  @include mobile {
+    max-width: 300px !important;
+  }
+  */
+
+  /*
+
+  @include tablet {
+    max-width: 200px !important;
+  }
+
+
+
+  @include until($extra-small) {
+    max-width: 150px !important;
+  }
+  */
 }
 
 .fade-animation-enter-active {
