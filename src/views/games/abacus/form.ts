@@ -28,10 +28,24 @@ export default defineComponent({
     const waitForAnswer = ref<boolean>(true);
     const timerMins = ref<number>(1);
     const timerSecs = ref<number>(0);
-    const abacusColumnsCount = ref<number>(digit.value + 1);
+    const abacusColumnsCount = ref<number>(2);
 
-    watch(digit, (val) => {
-      abacusColumnsCount.value = val + 1;
+    function greater(a: number, b: number) {
+      return a > b ? a : b;
+    }
+
+    watch(digit, (value) => {
+      context.root.$nextTick(() => {
+        abacusColumnsCount.value =
+          theme.value && theme.value.data
+            ? greater(value, theme.value.data as number)
+            : value + 1;
+      });
+    });
+
+    watch(theme, (val) => {
+      if (val == null || !val.data) return;
+      abacusColumnsCount.value = greater(digit.value, val.data as number) + 1;
     });
 
     const sequence = ref<SequenceItem[]>([]);
@@ -69,11 +83,11 @@ export default defineComponent({
       timerSecs.value = abacusConfig.timerSecs % 60;
       waitForAnswer.value = abacusConfig.waitForAnswer;
 
-      fontColor.value =lastSequenceItem.fontColor;
-      fontRotation.value =lastSequenceItem.fontRotation;
-      fontSize.value =lastSequenceItem.fontSize;
-      displayNumbers.value =lastSequenceItem.displayNumbers;
-      speechSound.value =lastSequenceItem.speechSound;
+      fontColor.value = lastSequenceItem.fontColor;
+      fontRotation.value = lastSequenceItem.fontRotation;
+      fontSize.value = lastSequenceItem.fontSize;
+      displayNumbers.value = lastSequenceItem.displayNumbers;
+      speechSound.value = lastSequenceItem.speechSound;
     }
 
     function addSequenceItem() {
@@ -90,7 +104,7 @@ export default defineComponent({
         fontRotation: fontRotation.value,
         fontColor: fontColor.value,
         fontSize: fontSize.value,
-        speechSound: speechSound.value
+        speechSound: speechSound.value,
       });
     }
 
