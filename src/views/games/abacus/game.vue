@@ -439,35 +439,29 @@ $extra-small: 321px;
 }
 
 svg.is-abacus-board {
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-  /*
+  margin: auto;
+  display: inline-block;
+  display: block;
+
   @include desktop {
-    max-width: 380px !important;
+    max-height: 380px !important;
   }
 
-  @include widescreen {
-    max-width: 1094px !important;
+  @include tablet {
+    max-height: 350px !important;
   }
 
   @include mobile {
-    max-width: 300px !important;
+    max-height: 350px !important;
   }
-  */
-
-  /*
-
-  @include tablet {
-    max-width: 200px !important;
-  }
-
-
 
   @include until($extra-small) {
-    max-width: 150px !important;
+    max-height: 260px !important;
   }
-  */
+
+  @include widescreen {
+    max-height: 530px !important;
+  }
 }
 
 .fade-animation-enter-active {

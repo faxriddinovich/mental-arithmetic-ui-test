@@ -231,7 +231,9 @@ export default defineComponent({
       return ["attention-card", "row-card"].includes(v(displayMode));
     });
 
-    let abacusBoard = new AbacusBoard(v(currentSequenceItem).abacusColumnsCount); // FIXME
+    let abacusBoard = new AbacusBoard(
+      v(currentSequenceItem).abacusColumnsCount
+    ); // FIXME
 
     const canDisplayButtons = computed(() => {
       if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
@@ -414,35 +416,62 @@ export default defineComponent({
 
     computeCards();
 
+    function listenAbacus() {
+      abacusBoard.on("update", (event) => {
+        const answer = (event as CustomEvent<number>).detail;
+
+        if (answer == v(currentAnswer)) {
+          if (v(currentCard) instanceof AttentionCard) {
+            if (
+              (v(currentCard) as AttentionCard).kind ==
+              AttentionKind.EnterAnswer
+            ) {
+              if (
+                v(currentAnswerIndex) ==
+                v(currentExample)!.numbers.length - 1
+              ) {
+                completeExample();
+                toNextCard();
+              }
+            }
+          }
+
+          if (v(currentCard) instanceof RowCard) {
+            // FIXME: duplicate code
+            if (
+              v(currentAnswerIndex) ==
+              v(currentExample)!.numbers.length - 1
+            ) {
+              completeExample();
+            }
+            toNextCard();
+          }
+
+          incAnswerIndex();
+        }
+      });
+    }
+
     function drawAbacus(columns: number) {
       const width =
         ABACUS_STONE_WIDTH * columns + // FIXME
         ABACUS_FRAME_WIDTH +
         ABACUS_FRAME_ABSOLUTE_X_PADDING;
 
-      const parent = abacusBoard.parent();
-      console.log(parent);
-      // we already have an old abacus board
-      if (parent) {
-        const abacusClone = abacusBoard.clone();
-        abacusBoard.remove();
-        abacusBoard = abacusClone;
-      }
+      if (v(abacusContainerRef)!.children.length)
+        v(abacusContainerRef)!.children[0].remove();
 
-      const abacusDraw = SVG();
+      abacusBoard = new AbacusBoard(columns);
 
-      if (!parent) abacusDraw.addTo(abacusContainerRef.value!)
-
-      abacusDraw.viewbox(0, -55, width, 469)
-        .attr('width', width)
+      const abacusDraw = SVG()
+        .addTo(abacusContainerRef.value!)
+        .viewbox(0, -55, width, 469)
         .addClass("is-abacus-board");
 
-      abacusBoard.setColumns(columns);
-
       abacusBoard.draw();
-      if (parent) parent.add(abacusBoard);
-      else abacusDraw.add(abacusBoard);
+      abacusDraw.add(abacusBoard);
       abacusBoard.construct();
+      listenAbacus();
     }
 
     function incCardIndex() {
@@ -512,38 +541,8 @@ export default defineComponent({
       }, executeTimeout);
     }
 
-    abacusBoard.on("update", (event) => {
-      const answer = (event as CustomEvent<number>).detail;
-
-      if (answer == v(currentAnswer)) {
-        if (v(currentCard) instanceof AttentionCard) {
-          if (
-            (v(currentCard) as AttentionCard).kind == AttentionKind.EnterAnswer
-          ) {
-            if (
-              v(currentAnswerIndex) ==
-              v(currentExample)!.numbers.length - 1
-            ) {
-              completeExample();
-              toNextCard();
-            }
-          }
-        }
-
-        if (v(currentCard) instanceof RowCard) {
-          // FIXME: duplicate code
-          if (v(currentAnswerIndex) == v(currentExample)!.numbers.length - 1) {
-            completeExample();
-          }
-          toNextCard();
-        }
-
-        incAnswerIndex();
-      }
-    });
-
     function startGame() {
-      drawAbacus(5);
+      drawAbacus(v(currentSequenceItem).abacusColumnsCount);
       toNextCard();
     }
 
@@ -633,7 +632,6 @@ export default defineComponent({
 
         index++;
       }
-
     }
 
     function onRestart() {
