@@ -30,22 +30,19 @@ export default defineComponent({
     const timerSecs = ref<number>(0);
     const abacusColumnsCount = ref<number>(2);
 
-    function greater(a: number, b: number) {
-      return a > b ? a : b;
-    }
-
     watch(digit, (value) => {
       context.root.$nextTick(() => {
         abacusColumnsCount.value =
           theme.value && theme.value.data
-            ? greater(value, theme.value.data as number)
+            ? (theme.value.data as number) + value + 1
             : value + 1;
       });
     });
 
     watch(theme, (val) => {
       if (val == null || !val.data) return;
-      abacusColumnsCount.value = greater(digit.value, val.data as number) + 1;
+      abacusColumnsCount.value =
+        (((val.data as number) + digit.value) as number) + 1;
     });
 
     const sequence = ref<SequenceItem[]>([]);
