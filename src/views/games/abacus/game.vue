@@ -155,7 +155,7 @@
           >
             <b-icon icon="volume" size="is-large" />
           </div>
-          <svg viewBox="0 0 150 65" class="is-full-size" v-else>
+          <svg viewBox="0 0 230 65" class="is-full-size" v-else>
             <transition name="fade-animation" mode="in-out">
               <text
                 dominant-baseline="central"
