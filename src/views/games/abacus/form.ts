@@ -110,9 +110,7 @@ export default defineComponent({
     };
 
     const play = () => {
-      if (!sequence.value.length) {
-        addSequenceItem();
-      }
+      addSequenceItem();
 
       gameConfig.set(GAME_KIND.ABACUS, {
         sequence: sequence.value,
