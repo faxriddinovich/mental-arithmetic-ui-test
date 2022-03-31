@@ -1,6 +1,10 @@
-import {G, Rect, Text} from '@svgdotjs/svg.js';
-import {ABACUS_VALUE_BOX_WIDTH, ABACUS_VALUE_BOX_HEIGHT, ABACUS_VALUE_BOX_BG_COLOR} from './constants';
-import {Drawable} from './interfaces';
+import { G, Rect, Text } from "@svgdotjs/svg.js";
+import {
+  ABACUS_VALUE_BOX_WIDTH,
+  ABACUS_VALUE_BOX_HEIGHT,
+  ABACUS_VALUE_BOX_BG_COLOR,
+} from "./constants";
+import { Drawable } from "./interfaces";
 
 export class AbacusValueBox extends G implements Drawable {
   private value = new Text();
@@ -9,9 +13,9 @@ export class AbacusValueBox extends G implements Drawable {
   public draw() {
     this.box.width(ABACUS_VALUE_BOX_WIDTH).height(ABACUS_VALUE_BOX_HEIGHT);
     this.box.fill(ABACUS_VALUE_BOX_BG_COLOR);
-    this.box.attr({rx: 5, ry: 5});
+    this.box.attr({ rx: 5, ry: 5 });
 
-    this.value.text('0').fill('white').font({size: '3em'});
+    this.value.text("0").fill("white").font({ size: "3em" });
     this.centerText();
 
     this.add(this.box);
@@ -19,8 +23,8 @@ export class AbacusValueBox extends G implements Drawable {
   }
 
   public centerText() {
-    this.value.cx(this.box.cx());
-    this.value.cy(this.box.cy());
+    this.value.cx(this.box.bbox().cx);
+    this.value.cy(this.box.bbox().cy);
   }
 
   public reset() {
