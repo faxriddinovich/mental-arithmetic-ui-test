@@ -35,7 +35,6 @@ type SoundEffectKey =
   | "lost-sound-effect";
 
 type DisplayMode =
-  | "answer"
   | "enter-answer"
   | "attention-card"
   | "row-card"
@@ -102,6 +101,7 @@ export default defineComponent({
       return classes;
     });
 
+    const accumulatedCompletedExamplesCount = ref<number>(0);
     const completedExamplesCount = ref<number>(0);
 
     const completedExamplesPercent = computed<number>(() => {
@@ -172,7 +172,6 @@ export default defineComponent({
 
     const displayRowCard = () => (displayMode.value = "row-card");
     const displayScores = () => (displayMode.value = "scores");
-    const displayAnswer = () => (displayMode.value = "answer");
     const displayAttentionCard = () => (displayMode.value = "attention-card");
 
     function enableTimer() {
@@ -353,6 +352,7 @@ export default defineComponent({
 
     const completeExample = () => {
       completedExamplesCount.value++;
+      accumulatedCompletedExamplesCount.value++;
     };
 
     function computeCards() {
@@ -494,12 +494,12 @@ export default defineComponent({
         if (card.kind == AttentionKind.Sequence) {
           currentSequenceItemIndex.value = card.index;
           drawAbacus(v(currentSequenceItem).abacusColumnsCount);
+          accumulatedCompletedExamplesCount.value = 0;
         } else if (card.kind == AttentionKind.Example) {
           abacusBoard.reset();
           currentExampleIndex.value = card.index;
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
-        } else if (card.kind == AttentionKind.EnterAnswer) {
         }
       } else if (card instanceof RowCard) {
         if (v(currentSequenceItem).speechSound) card.speech();
@@ -562,6 +562,9 @@ export default defineComponent({
 
     function onReshowCurrentTheme() {
       let index = v(currentCardIndex);
+
+      completedExamplesCount.value -= v(accumulatedCompletedExamplesCount);
+      accumulatedCompletedExamplesCount.value = 0;
 
       while (1 * 1 == 1) {
         const card = v(computedCards)[index];
