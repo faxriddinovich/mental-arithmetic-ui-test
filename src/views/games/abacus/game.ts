@@ -239,17 +239,12 @@ export default defineComponent({
     const canDisplayButtons = computed(() => {
       if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
         return false;
-      if (v(canDisplayAnswer)) return false;
       if (v(canDisplayScores)) return false;
       return (v(currentCard) as AttentionCard).kind != AttentionKind.Sequence;
     });
 
     const canDisplayScores = computed(() => {
       return v(displayMode) == "scores";
-    });
-
-    const canDisplayAnswer = computed(() => {
-      return v(displayMode) == "answer";
     });
 
     const timerClasses = computed<string[]>(() => {
@@ -641,7 +636,7 @@ export default defineComponent({
 
     function onRestart() {
       clearGameState();
-      toNextCard();
+      startGame();
     }
 
     function onShowAnswer() {
@@ -653,8 +648,13 @@ export default defineComponent({
       clearTimerHandles();
       clearSoundEffects();
       currentCardIndex.value = 0;
+      currentSequenceItemIndex.value = 0;
+      currentExampleIndex.value = 0;
+      currentRowIndex.value = 0;
+      currentAnswerIndex.value = 0;
+      accumulatedCompletedExamplesCount.value = 0;
+      completedExamplesCount.value = 0;
       abacusBoard.reset();
-      toNextCard();
     }
 
     onMounted(() => {
@@ -694,7 +694,6 @@ export default defineComponent({
       canEnterAnswer,
       canDisplayButtons,
       config,
-      canDisplayAnswer,
       canDisplayScores,
 
       trophyClasses,

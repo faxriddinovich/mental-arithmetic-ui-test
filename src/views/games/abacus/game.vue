@@ -92,7 +92,7 @@
     <canvas class="abacus-game-confetti" ref="confettiRef" />
 
     <!-- abacus board -->
-    <div v-show="canDisplayAbacus" class="is-abacus-board-container">
+    <div v-if="canDisplayAbacus" class="is-abacus-board-container">
       <div ref="abacusContainerRef" />
     </div>
 
