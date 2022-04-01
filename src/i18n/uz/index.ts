@@ -105,6 +105,7 @@ export namespace uz {
     "enter_answer": "Iltimos misol javobini kiriting",
     "show_answer": "Javobni ko'rsatish",
     "next_example": "Keyingi misol",
+    "next_theme": "Keyingi mavzu",
     "good_luck": "Omad!",
     "example_n": "{example} - misol",
     "you_won": "Siz yutdingiz!",
@@ -113,7 +114,8 @@ export namespace uz {
     "spent_time": "Ketgan vaqt",
     "total_time": "Berilgan vaqt",
     "total_examples": "Umumiy misollar",
-    "total_rows": "Umumiy qatorlar"
+    "total_rows": "Umumiy qatorlar",
+    "close": "Yopish"
   };
 
   export const themes = {

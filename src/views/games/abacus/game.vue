@@ -35,17 +35,34 @@
               /></b-button>
             </template>
 
-            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"
-              ><b-icon icon="redo" size="is-small" />{{
-                $t("reshow_theme")
-              }}</b-dropdown-item
-            >
             <b-dropdown-item
               aria-role="listitem"
               @click="onReshowCurrentExample"
               ><b-icon icon="redo" size="is-small" />
               {{ $t("reshow_example") }}</b-dropdown-item
             >
+
+            <b-dropdown-item aria-role="listitem" @click="onReshowCurrentTheme"
+              ><b-icon icon="redo" size="is-small" />
+              {{ $t("reshow_theme") }}</b-dropdown-item
+            >
+
+            <b-dropdown-item aria-role="lititem" @click="onShowAnswer">
+              <b-icon icon="align-left-justify" size="is-small" />
+              {{ $t("show_answer") }}</b-dropdown-item
+            >
+
+            <b-dropdown-item aria-role="lititem" @click="onShowNextExample">
+              <b-icon icon="arrow-right" />
+
+              {{ $t("next_example") }}</b-dropdown-item
+            >
+
+            <b-dropdown-item aria-role="lititem" @click="onShowNextTheme">
+              <b-icon icon="arrow-right" />
+              {{ $t("next_theme") }}</b-dropdown-item
+            >
+
             <hr class="dropdown-divider" aria-role="menuitem" />
             <b-dropdown-item aria-role="listitem" @click="onRestart"
               ><b-icon icon="sync-exclamation" size="is-small" />
@@ -192,91 +209,52 @@
       <b-button icon-right="arrow-right" @click="onShowNextExample">{{
         $t("next_example")
       }}</b-button>
-      <b-button icon-right="arrow-right" @click="onShowNextTheme"
-        >Keyingi mavzu</b-button
-      >
+      <b-button icon-right="arrow-right" @click="onShowNextTheme">{{
+        $t("next_theme")
+      }}</b-button>
     </div>
 
-    <!-- answer display -->
-    <section class="hero is-fullheight" v-if="canDisplayAnswer">
-      <div class="hero-body is-justify-content-center p-0">
-        <div class="columns is-gapless is-centered" style="min-width: 100%">
-          <div class="column is-5-fullhd is-three-quarters-desktop">
-            <div class="box mx-2">
-              <div class="is-size-3 has-text-weight-semibold has-text-centered">
-                <span
-                  v-if="
-                    currentThemeOperation & Operation.mult ||
-                    currentThemeOperation & Operation.div
-                  "
-                >
-                  {{ currentRow[0] }}
-                  {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
-                  {{ currentRow[1] }}
-                </span>
-                <span
-                  v-else
-                  v-for="(row, rowIndex) of currentExample.numbers"
-                  :key="rowIndex"
-                >
-                  {{ row | normalizeSign }}&nbsp;
-                </span>
-                <div class="has-text-centered">
-                  <span class="has-text-success has-text-weight-bold is-size-2"
-                    >= {{ currentExample.answer }}</span
-                  >
-                </div>
-              </div>
-
-              <!--
-              <hr class="my-4" />
-              <div class="field is-grouped is-grouped-multiline">
-                <div
-                  class="control"
-                  v-for="(row, rowIndex) in currentExample.numbers.length - 1"
-                  :key="rowIndex"
-                >
-                  <div class="tags has-addons">
-                    <span class="tag is-medium"
-                      ><span class="has-text-weight-bold"
-                        >{{ currentExample.answerMap[rowIndex] }}&nbsp;</span
-                      >
-                      {{ currentExample.numbers[rowIndex + 1] | normalizeSign }}
-                      =
-                    </span>
-                    <span class="tag is-primary is-medium">{{
-                      currentExample.answerMap[rowIndex + 1]
-                    }}</span>
-                  </div>
-                </div>
-              </div>
-              -->
-
-              <hr class="mt-0 mb-2" />
-              <div class="is-flex">
-                <b-button
-                  icon-left="redo"
-                  @click="onReshowCurrentExample"
-                  expanded
-                  >{{ $t("reshow_example") }}</b-button
-                >
-                <b-button
-                  icon-right="arrow-right"
-                  class="ml-3"
-                  @click="onShowNextExample"
-                  expanded
-                  >{{ $t("next_example") }}</b-button
-                >
-              </div>
-            </div>
+    <b-modal v-model="isAnswerModalActive" :can-cancel="['escape', 'outside']">
+      <div class="box mx-4">
+        <div class="is-size-3 has-text-weight-semibold has-text-centered">
+          <span
+            v-if="
+              currentThemeOperation & Operation.mult ||
+              currentThemeOperation & Operation.div
+            "
+          >
+            {{ currentRow[0] }}
+            {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
+            {{ currentRow[1] }}
+          </span>
+          <span
+            v-else
+            v-for="(row, rowIndex) of currentExample.numbers"
+            :key="rowIndex"
+          >
+            {{ row | normalizeSign }}&nbsp;
+          </span>
+          <div class="has-text-centered">
+            <span class="has-text-success has-text-weight-bold is-size-2"
+              >= {{ currentExample.answer }}</span
+            >
           </div>
         </div>
+
+        <hr class="mt-0 mb-2" />
+        <div class="is-flex">
+          <b-button
+            icon-left="times"
+            @click="isAnswerModalActive = false"
+            expanded
+            >{{ $t("close") }}</b-button
+          >
+        </div>
       </div>
-    </section>
-    <!-- end answer display -->
+    </b-modal>
 
     <!-- scores display -->
-    <section class="hero is-fullheight" v-else-if="displayMode === 'scores'">
+    <section class="hero is-fullheight" v-if="displayMode === 'scores'">
       <div class="hero-body is-justify-content-center p-0">
         <div class="columns is-gapless is-centered" style="min-width: 100%">
           <div class="column is-10-tablet is-7-desktop is-6-fullhd">

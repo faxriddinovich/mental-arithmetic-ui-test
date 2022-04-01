@@ -53,6 +53,8 @@ export default defineComponent({
     const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
 
+    const isAnswerModalActive = ref<boolean>(false);
+
     const sequence = ref<SequenceItem[]>(config.sequence);
 
     const v = <T extends Ref>(ref: T): T extends Ref<infer K> ? K : unknown =>
@@ -640,7 +642,8 @@ export default defineComponent({
     }
 
     function onShowAnswer() {
-      displayAnswer();
+      isAnswerModalActive.value = true;
+      //displayAnswer();
     }
 
     function clearGameState() {
@@ -674,6 +677,8 @@ export default defineComponent({
       Operation,
 
       currentThemeOperation,
+
+      isAnswerModalActive,
 
       currentCard,
 
