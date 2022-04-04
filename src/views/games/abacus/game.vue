@@ -92,9 +92,11 @@
     <canvas class="abacus-game-confetti" ref="confettiRef" />
 
     <!-- abacus board -->
-    <div v-if="canDisplayAbacus" class="is-abacus-board-container">
-      <div ref="abacusContainerRef" />
-    </div>
+    <div
+      ref="abacusContainerRef"
+      v-if="canDisplayAbacus"
+      class="is-abacus-board-container"
+    />
 
     <div class="is-flex is-justify-content-center mt-4" v-if="canDisplayCards">
       <div class="abacus-game-card-container">

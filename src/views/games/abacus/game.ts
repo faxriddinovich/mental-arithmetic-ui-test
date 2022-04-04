@@ -34,11 +34,7 @@ type SoundEffectKey =
   | "victory-sound-effect"
   | "lost-sound-effect";
 
-type DisplayMode =
-  | "enter-answer"
-  | "attention-card"
-  | "row-card"
-  | "scores";
+type DisplayMode = "enter-answer" | "attention-card" | "row-card" | "scores";
 
 const MIN_ROWS_PERCENT_TO_WIN = 50;
 const TIMER_LESS_TIME_SECS = 30;
@@ -450,25 +446,27 @@ export default defineComponent({
     }
 
     function drawAbacus(columns: number) {
-      const width =
-        ABACUS_STONE_WIDTH * columns + // FIXME
-        ABACUS_FRAME_WIDTH +
-        ABACUS_FRAME_ABSOLUTE_X_PADDING;
+      context.root.$nextTick(() => {
+        const width =
+          ABACUS_STONE_WIDTH * columns + // FIXME
+          ABACUS_FRAME_WIDTH +
+          ABACUS_FRAME_ABSOLUTE_X_PADDING;
 
-      if (v(abacusContainerRef)!.children.length)
-        v(abacusContainerRef)!.children[0].remove();
+        if (v(abacusContainerRef)?.children?.length)
+          v(abacusContainerRef)!.children[0].remove();
 
-      abacusBoard = new AbacusBoard(columns);
+        abacusBoard = new AbacusBoard(columns);
 
-      const abacusDraw = SVG()
-        .addTo(abacusContainerRef.value!)
-        .viewbox(0, -55, width, 469)
-        .addClass("is-abacus-board");
+        const abacusDraw = SVG()
+          .addTo(abacusContainerRef.value!)
+          .viewbox(0, -55, width, 469)
+          .addClass("is-abacus-board");
 
-      abacusBoard.draw();
-      abacusDraw.add(abacusBoard);
-      abacusBoard.construct();
-      listenAbacus();
+        abacusBoard.draw();
+        abacusDraw.add(abacusBoard);
+        abacusBoard.construct();
+        listenAbacus();
+      });
     }
 
     function incCardIndex() {
@@ -488,7 +486,9 @@ export default defineComponent({
       if (card instanceof AttentionCard) {
         if (card.kind == AttentionKind.Sequence) {
           currentSequenceItemIndex.value = card.index;
-          drawAbacus(v(currentSequenceItem).abacusColumnsCount);
+          const { abacusColumnsCount } = v(currentSequenceItem);
+          if (abacusColumnsCount !== abacusBoard["columns"])
+            drawAbacus(v(currentSequenceItem).abacusColumnsCount);
           accumulatedCompletedExamplesCount.value = 0;
         } else if (card.kind == AttentionKind.Example) {
           abacusBoard.reset();
@@ -635,15 +635,13 @@ export default defineComponent({
     }
 
     function onRestart() {
+      displayAttentionCard();
       clearGameState();
       startGame();
-      timerEnabled.value = false;
-      timerAbsolute.value = config.timerSecs;
     }
 
     function onShowAnswer() {
       isAnswerModalActive.value = true;
-      //displayAnswer();
     }
 
     function clearGameState() {
@@ -656,6 +654,8 @@ export default defineComponent({
       currentAnswerIndex.value = 0;
       accumulatedCompletedExamplesCount.value = 0;
       completedExamplesCount.value = 0;
+      timerEnabled.value = false;
+      timerAbsolute.value = config.timerSecs;
       abacusBoard.reset();
     }
 
