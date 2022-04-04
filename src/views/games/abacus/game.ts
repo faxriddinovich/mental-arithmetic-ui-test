@@ -637,6 +637,8 @@ export default defineComponent({
     function onRestart() {
       clearGameState();
       startGame();
+      timerEnabled.value = false;
+      timerAbsolute.value = config.timerSecs;
     }
 
     function onShowAnswer() {
