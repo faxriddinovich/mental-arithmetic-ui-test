@@ -3,7 +3,7 @@ import { SequenceItem } from "@/views/games/abacus/interfaces";
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
-import { Theme } from "@mental-arithmetic/themes";
+import { Theme, Operation } from "@mental-arithmetic/themes";
 import { acquireGame, GAME_KIND } from "@/store/game";
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
@@ -30,19 +30,27 @@ export default defineComponent({
     const timerSecs = ref<number>(0);
     const abacusColumnsCount = ref<number>(2);
 
-    watch(digit, (value) => {
-      context.root.$nextTick(() => {
-        abacusColumnsCount.value =
-          theme.value && theme.value.data
-            ? (theme.value.data as number) + value + 1
-            : value + 1;
-      });
+    const greater = (a: number, b: number): number => {
+      return a > b ? a : b;
+    };
+
+    watch(digit, () => {
+      theme.value = null;
     });
 
     watch(theme, (val) => {
-      if (val == null || !val.data) return;
+      if (val == null) return;
+      const operation = val.metadata.operation || 0;
+
+      if (!val.data) {
+        abacusColumnsCount.value = digit.value + 1;
+        return;
+      }
+
       abacusColumnsCount.value =
-        (((val.data as number) + digit.value) as number) + 1;
+        operation & Operation.mult
+          ? (val.data as number) + digit.value + 1
+          : greater(val.data as number, digit.value);
     });
 
     const sequence = ref<SequenceItem[]>([]);

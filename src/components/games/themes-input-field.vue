@@ -38,7 +38,7 @@
   </b-field>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ref } from "@vue/composition-api";
+import { defineComponent, computed, ref, watch } from "@vue/composition-api";
 import { Theme } from "@mental-arithmetic/themes";
 import { getThemes } from "@/services/generator";
 
@@ -70,6 +70,11 @@ export default defineComponent({
     const pickTheme = (value: Theme) => {
       context.emit("input", value);
     };
+
+    watch(
+      () => props.digit,
+      () => (theme.value = "")
+    );
 
     return {
       theme,
