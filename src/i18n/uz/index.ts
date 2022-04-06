@@ -113,8 +113,8 @@ export namespace uz {
     "completed_examples": "Tugatilgan misollar",
     "spent_time": "Ketgan vaqt",
     "total_time": "Berilgan vaqt",
+    "total_themes": "Umumiy mavzular",
     "total_examples": "Umumiy misollar",
-    "total_rows": "Umumiy qatorlar",
     "close": "Yopish"
   };
 

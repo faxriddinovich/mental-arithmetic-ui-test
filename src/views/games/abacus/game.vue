@@ -307,6 +307,21 @@
                   </nav>
                   <span class="is-dotted">
                     <span class="is-left is-size-5-tablet mr-3"
+                      >{{ $t("total_themes") }}:</span
+                    >
+                    <span class="is-dots"></span>
+                    <span
+                      class="
+                        is-right is-size-5-mobile is-size-4-tablet
+                        has-text-weight-bold
+                        ml-2
+                      "
+                      >{{ totalSequenceItemsCount }}</span
+                    >
+                  </span>
+
+                  <span class="is-dotted">
+                    <span class="is-left is-size-5-tablet mr-3"
                       >{{ $t("total_examples") }}:</span
                     >
                     <span class="is-dots"></span>
@@ -317,21 +332,6 @@
                         ml-2
                       "
                       >{{ totalExamplesCount }}</span
-                    >
-                  </span>
-
-                  <span class="is-dotted">
-                    <span class="is-left is-size-5-tablet mr-3"
-                      >{{ $t("total_rows") }}:</span
-                    >
-                    <span class="is-dots"></span>
-                    <span
-                      class="
-                        is-right is-size-5-mobile is-size-4-tablet
-                        has-text-weight-bold
-                        ml-2
-                      "
-                      >STATIC</span
                     >
                   </span>
 

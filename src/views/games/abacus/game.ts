@@ -297,6 +297,8 @@ export default defineComponent({
       return i;
     });
 
+    const totalSequenceItemsCount = ref<number>(config.sequence.length);
+
     type RowType = string | number | BigInt;
     type AnswerType = number | BigInt;
 
@@ -670,6 +672,7 @@ export default defineComponent({
     return {
       completedExamplesPercent,
       totalExamplesCount,
+      totalSequenceItemsCount,
       completedExamplesCount,
 
       onShowNextExample,
