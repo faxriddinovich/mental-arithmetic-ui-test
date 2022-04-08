@@ -86,7 +86,7 @@ export default defineComponent({
 
     const gameScoresTextClasses = computed<string[]>(() => {
       const classes = [
-        " has-text-centered",
+        "has-text-centered",
         "is-size-1",
         "has-text-weight-bold",
       ];

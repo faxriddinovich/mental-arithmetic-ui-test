@@ -18,7 +18,7 @@
               >
               <div class="box">
                 <form @submit.prevent="play">
-                  <themes-input-field v-model="theme" :digit="digit" />
+                  <themes-input-field ref="themesInputRef" v-model="theme" :digit="digit" />
                   <b-field>
                     <template #label>
                       <b-icon icon="draggabledots" /> {{ $t("digits") }}
@@ -152,7 +152,7 @@
                         @close="removeSequenceItem(sequenceItemIndex)"
                         type="is-link"
                         closable
-                        >{{ $t(sequenceItem.theme.loc, { digit }) }}</b-tag
+                        >{{ $t(sequenceItem.theme.loc, { digit: sequenceItem.digit }) }}</b-tag
                       >
                     </b-taglist>
                   </b-field>

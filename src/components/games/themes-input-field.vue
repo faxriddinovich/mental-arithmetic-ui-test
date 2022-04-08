@@ -76,9 +76,17 @@ export default defineComponent({
       () => (theme.value = "")
     );
 
+    function setTheme(_theme: Theme) {
+      theme.value = context.root.$i18n.t(_theme.loc, {
+        digit: props.digit,
+      }) as string;
+      context.emit('input', _theme);
+    }
+
     return {
       theme,
       themes,
+      setTheme,
       pickTheme,
       themesInputFocus,
     };

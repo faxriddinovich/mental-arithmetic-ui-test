@@ -30,6 +30,8 @@ export default defineComponent({
     const timerSecs = ref<number>(0);
     const abacusColumnsCount = ref<number>(2);
 
+    const themesInputRef = ref()
+
     const greater = (a: number, b: number): number => {
       return a > b ? a : b;
     };
@@ -66,27 +68,30 @@ export default defineComponent({
     });
 
     const gameConfig = acquireGame();
+    const abacusGameConfig = gameConfig.get(GAME_KIND.ABACUS);
 
-    if (gameConfig.abacus) {
-      const abacusConfig = gameConfig.abacus;
-      if (abacusConfig.sequence) {
-        sequence.value.push(...abacusConfig.sequence);
+    if (abacusGameConfig) {
+      if (abacusGameConfig.sequence.length !== 1) {
+        sequence.value.push(...abacusGameConfig.sequence);
       }
 
       const lastSequenceItem =
-        abacusConfig.sequence[abacusConfig.sequence.length - 1];
+        abacusGameConfig.sequence[abacusGameConfig.sequence.length - 1];
+
+      context.root.$nextTick(() => {
+        themesInputRef.value!.setTheme(lastSequenceItem.theme);
+      });
 
       digit.value = lastSequenceItem.digit;
       examplesCount.value = lastSequenceItem.examplesCount;
-
       examplesTimeout.value = lastSequenceItem.examplesTimeout;
 
       rowsCount.value = lastSequenceItem.rowsCount;
       rowsTimeout.value = lastSequenceItem.rowsTimeout;
       abacusColumnsCount.value = lastSequenceItem.abacusColumnsCount;
-      timerMins.value = Math.floor(abacusConfig.timerSecs / 60);
-      timerSecs.value = abacusConfig.timerSecs % 60;
-      waitForAnswer.value = abacusConfig.waitForAnswer;
+      timerMins.value = Math.floor(abacusGameConfig.timerSecs / 60);
+      timerSecs.value = abacusGameConfig.timerSecs % 60;
+      waitForAnswer.value = abacusGameConfig.waitForAnswer;
 
       fontColor.value = lastSequenceItem.fontColor;
       fontRotation.value = lastSequenceItem.fontRotation;
@@ -118,20 +123,15 @@ export default defineComponent({
     };
 
     const play = () => {
-      addSequenceItem();
+      //if (!abacusGameConfig) addSequenceItem();
+      if (sequence.value.length === 0) {
+        addSequenceItem();
+      }
 
       gameConfig.set(GAME_KIND.ABACUS, {
         sequence: sequence.value,
         timerSecs: 60 * timerMins.value + timerSecs.value,
         waitForAnswer: waitForAnswer.value,
-        abacusColumnsCount: abacusColumnsCount.value,
-        examplesTimeout: examplesTimeout.value,
-        rowsTimeout: rowsTimeout.value,
-        displayNumbers: displayNumbers.value,
-        fontRotation: fontRotation.value,
-        fontColor: fontColor.value,
-        fontSize: fontSize.value,
-        speechSound: speechSound.value,
       });
       context.root.$router.push({ name: "PlayAbacusGame" });
     };
@@ -153,6 +153,8 @@ export default defineComponent({
       fontSizes,
       canAddSequenceItem,
       canPressPlayButton,
+
+      themesInputRef,
 
       timerMins,
       timerSecs,
