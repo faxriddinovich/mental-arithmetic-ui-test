@@ -416,32 +416,19 @@ export default defineComponent({
         const answer = (event as CustomEvent<number>).detail;
 
         if (answer == v(currentAnswer)) {
-          if (v(currentCard) instanceof AttentionCard) {
-            if (
-              (v(currentCard) as AttentionCard).kind ==
-              AttentionKind.EnterAnswer
-            ) {
+          const isLastAnswer =
+            v(currentAnswerIndex) === v(currentExample)!.numbers.length - 1;
+          if (isLastAnswer) {
+            completeExample();
+            if (v(currentCard) instanceof AttentionCard)
               if (
-                v(currentAnswerIndex) ==
-                v(currentExample)!.numbers.length - 1
-              ) {
-                completeExample();
+                (v(currentCard) as AttentionCard).kind ==
+                AttentionKind.EnterAnswer
+              )
                 toNextCard();
-              }
-            }
           }
 
-          if (v(currentCard) instanceof RowCard) {
-            // FIXME: duplicate code
-            if (
-              v(currentAnswerIndex) ==
-              v(currentExample)!.numbers.length - 1
-            ) {
-              completeExample();
-            }
-            toNextCard();
-          }
-
+          if (config.waitForAnswer) toNextCard();
           incAnswerIndex();
         }
       });
@@ -497,6 +484,9 @@ export default defineComponent({
           currentExampleIndex.value = card.index;
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
+        } else if (card.kind == AttentionKind.EnterAnswer) {
+          if (v(currentAnswerIndex) == v(currentExample)!.numbers.length)
+            toNextCard();
         }
       } else if (card instanceof RowCard) {
         if (v(currentSequenceItem).speechSound) card.speech();
@@ -509,7 +499,7 @@ export default defineComponent({
     }
 
     function toNextCard() {
-      abacusBoard.lock();
+      //abacusBoard.lock();
       const currentIsAttention = v(currentCard) instanceof AttentionCard;
       const currentIsExample =
         currentIsAttention &&
@@ -523,7 +513,7 @@ export default defineComponent({
 
       executeAfter(() => {
         incCardIndex();
-        abacusBoard.unlock();
+        //abacusBoard.unlock();
 
         if (v(currentCard) instanceof AttentionCard) {
           if (
