@@ -100,82 +100,82 @@
 
     <div class="is-flex is-justify-content-center mt-4" v-if="canDisplayCards">
       <div class="abacus-game-card-container">
-        <div :class="cardClasses">
-          <div
-            class="
-              is-size-1
-              is-flex
-              is-justify-content-center
-              is-align-items-center
-              is-full-size
-              has-text-centered
-            "
-            v-if="displayMode == 'attention-card'"
-          >
-            <span>{{ currentCard.text }}</span>
-          </div>
-          <svg
-            class="is-full-size"
-            viewBox="0 0 484 230"
-            v-else-if="
-              currentThemeOperation & Operation.mult ||
-              currentThemeOperation & Operation.div
-            "
-          >
-            <text
-              fill="#fff"
-              x="0"
-              y="115"
-              dominant-baseline="middle"
-              text-anchor="start"
-              font-size="80px"
-              opacity=".9"
+        <transition name="slide-fade" mode="out-in">
+          <div :class="cardClasses" :key="cardIndex">
+            <div
+              class="
+                is-size-1
+                is-flex
+                is-justify-content-center
+                is-align-items-center
+                is-full-size
+                has-text-centered
+              "
+              v-if="displayMode == 'attention-card'"
             >
-              {{ currentCard.operation & Operation.mult ? "×" : "÷" }}
-            </text>
-            <text
-              fill="#fff"
-              x="484"
-              y="20"
-              font-size="90px"
-              text-anchor="end"
-              dominant-baseline="hanging"
+              <span>{{ currentCard.text }}</span>
+            </div>
+            <svg
+              class="is-full-size"
+              viewBox="0 0 484 230"
+              v-else-if="
+                currentThemeOperation & Operation.mult ||
+                currentThemeOperation & Operation.div
+              "
             >
-              {{ currentCard.row[0] }}
-            </text>
-            <line
-              x1="80"
-              y1="115"
-              x2="484"
-              y2="115"
-              stroke="white"
-              stroke-width="6"
-              stroke-opacity=".9"
-            />
-            <text
-              fill="#fff"
-              x="484"
-              y="200"
-              font-size="90px"
-              text-anchor="end"
-              dominant-baseline="auto"
+              <text
+                fill="#fff"
+                x="0"
+                y="115"
+                dominant-baseline="middle"
+                text-anchor="start"
+                font-size="80px"
+                opacity=".9"
+              >
+                {{ currentCard.operation & Operation.mult ? "×" : "÷" }}
+              </text>
+              <text
+                fill="#fff"
+                x="484"
+                y="20"
+                font-size="90px"
+                text-anchor="end"
+                dominant-baseline="hanging"
+              >
+                {{ currentCard.row[0] }}
+              </text>
+              <line
+                x1="80"
+                y1="115"
+                x2="484"
+                y2="115"
+                stroke="white"
+                stroke-width="6"
+                stroke-opacity=".9"
+              />
+              <text
+                fill="#fff"
+                x="484"
+                y="200"
+                font-size="90px"
+                text-anchor="end"
+                dominant-baseline="auto"
+              >
+                {{ currentCard.row[1] }}
+              </text>
+            </svg>
+            <div
+              class="
+                is-flex
+                is-full-size
+                is-align-items-center
+                is-justify-content-center
+              "
+              v-else-if="currentCard.speechSound && !currentCard.displayRow"
             >
-              {{ currentCard.row[1] }}
-            </text>
-          </svg>
-          <div
-            class="
-              is-flex
-              is-full-size
-              is-align-items-center
-              is-justify-content-center
-            "
-            v-else-if="currentCard.speechSound && !currentCard.displayRow"
-          >
-            <b-icon icon="volume" size="is-large" />
-          </div>
-          <svg viewBox="0 0 230 65" class="is-full-size" v-else>
-            <transition name="fade-animation" mode="in-out">
+              <b-icon icon="volume" size="is-large" />
+            </div>
+            <svg viewBox="0 0 230 65" class="is-full-size" v-else>
               <text
                 dominant-baseline="central"
                 text-anchor="middle"
@@ -187,9 +187,9 @@
               >
                 {{ currentCard.row }}
               </text>
-            </transition>
-          </svg>
-        </div>
+            </svg>
+          </div>
+        </transition>
       </div>
     </div>
 
@@ -444,19 +444,17 @@ svg.is-abacus-board {
   }
 }
 
-.fade-animation-enter-active {
-  opacity: 0;
+.slide-fade-enter-active {
+  transition: all 0s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0s ease;
 }
 
-.fade-animation-leave-active {
-  opacity: 1;
-}
-
-/*
-.fade-animation-enter, .fade-animation-leave-to {
+.slide-fade-enter,
+.slide-fade-leave-to {
   opacity: 0;
 }
-*/
 
 img.abacus-game-trophy {
   display: block;

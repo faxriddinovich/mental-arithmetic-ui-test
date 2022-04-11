@@ -204,6 +204,8 @@ export default defineComponent({
     const currentExampleIndex = ref<number>(0);
     const currentAnswerIndex = ref<number>(0);
 
+    const cardIndex = ref<number>(0);
+
     const computedCards = ref<(RowCard | AttentionCard)[]>([]);
     const currentCardIndex = ref<number>(0);
 
@@ -489,6 +491,7 @@ export default defineComponent({
             toNextCard();
         }
       } else if (card instanceof RowCard) {
+        cardIndex.value++;
         if (v(currentSequenceItem).speechSound) card.speech();
       }
     });
@@ -698,6 +701,7 @@ export default defineComponent({
 
       currentExample,
       currentRow,
+      cardIndex,
 
       displayMode,
       timerEnabled,
