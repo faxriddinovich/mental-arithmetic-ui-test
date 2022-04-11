@@ -17,7 +17,7 @@ export function getVoices(locale?: string): Promise<string[]> {
           return voice.voiceURI + ":" + voice.name + ":" + voice.lang + ":" + index;
         }).filter((voice) => {
           const [,, lang] = voice.split(':');
-          return locale && lang === locale ? true : false;
+          return locale && (lang.replace('-', '_') == locale.replace('-', '_'));
         });
         return resolve(identified);
       }
