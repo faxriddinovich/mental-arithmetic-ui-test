@@ -36,6 +36,8 @@ import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 import AbacusGameForm from "@/views/games/abacus/form.vue";
 import PlayAbacusGame from "@/views/games/abacus/game.vue";
 
+import PlayFlashCardGame from "@/views/games/flash-card/game.vue";
+
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
@@ -137,6 +139,17 @@ const routes: Array<RouteConfig> = [
       next();
     },
   },
+
+  {
+    path: "/games/flash-card/play",
+    name: "PlayFlashCardGame",
+    component: PlayFlashCardGame,
+    beforeEnter: (_1, _2, next) => {
+      //if (!acquireGame().abacus) return next({ name: "AbacusGameForm" });
+      next();
+    },
+  },
+
   {
     path: "/courses/:id",
     name: "Course",
