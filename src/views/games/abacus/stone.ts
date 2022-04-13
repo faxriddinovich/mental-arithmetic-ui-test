@@ -7,6 +7,7 @@ import stoneSkin from "@@/img/abacus/stone_yellow.svg";
 export class AbacusStone extends Image implements Drawable {
   public isActive = false;
   public isHigh = false;
+  public slot = 0;
 
   public draw() {
     this.load(

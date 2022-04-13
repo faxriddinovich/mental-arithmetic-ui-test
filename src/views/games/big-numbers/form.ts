@@ -6,6 +6,7 @@ import {
 import ColorPalette from "@/components/games/color-palette.vue";
 import ThemesInputField from "@/components/games/themes-input-field.vue";
 import { acquireGame, GAME_KIND } from "@/store/game";
+import { Theme } from '@mental-arithmetic/themes';
 
 const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 10;
 const MAX_ALLOWED_INSTANCES_COUNT = 9;
@@ -16,7 +17,7 @@ export default defineComponent({
     const fontRotations = ref<number[]>([0, 90, 180, 270]);
     const fontSizes = ref<number[]>([1, 2, 3]);
 
-    const theme = ref<string>("");
+    const theme = ref<Theme | null>(null);
     const digit = ref<number>(1);
     const examplesCount = ref<number>(10);
     const examplesTimeout = ref<number>(1);
@@ -39,7 +40,7 @@ export default defineComponent({
       return (
         sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT &&
         instances.value.length < MAX_ALLOWED_INSTANCES_COUNT &&
-        theme.value.length
+        theme.value
       );
     });
 
@@ -51,7 +52,7 @@ export default defineComponent({
     });
 
     const canPressPlayButton = computed<boolean>(() => {
-      return theme.value.length > 0 || sequence.value.length > 0;
+      return theme.value !== null || sequence.value.length > 0;
     });
 
     const game = acquireGame()

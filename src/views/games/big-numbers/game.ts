@@ -5,17 +5,17 @@ import {
   ref,
   PropType,
   Ref,
-  onUnmounted
+  onUnmounted,
 } from "@vue/composition-api";
-import {SequenceItem} from "@/views/games/big-numbers/interfaces";
-import CorrectAnswerSoundSrc from '@@/sounds/correct-answer.mp3'
-import IncorrectAnswerSoundSrc from '@@/sounds/incorrect-answer.mp3'
-import FinishSoundSrc from '@@/sounds/finish.mp3'
-import BubbleSoundSrc from '@@/sounds/bubble.mp3';
-import {SettingsStorage} from '@/services/storages/settings';
-import { Example } from '@/store/example';
+import { SequenceItem } from "@/views/games/big-numbers/interfaces";
+import CorrectAnswerSoundSrc from "@@/sounds/correct-answer.mp3";
+import IncorrectAnswerSoundSrc from "@@/sounds/incorrect-answer.mp3";
+import FinishSoundSrc from "@@/sounds/finish.mp3";
+import BubbleSoundSrc from "@@/sounds/bubble.mp3";
+import { SettingsStorage } from "@/services/storages/settings";
+import { Example } from "@/store/example";
 
-import {speak} from '@/services/tts';
+import { speak } from "@/services/tts";
 
 // FIXME: this should be done using i18n
 const START_ATTENTION_TEXTS = ["Ready?", "Go!"];
@@ -37,8 +37,8 @@ function playFinishSound() {
 }
 
 interface Star {
-  src: string,
-  classes: string[]
+  src: string;
+  classes: string[];
 }
 
 export default defineComponent({
@@ -46,31 +46,32 @@ export default defineComponent({
     answerAtEnd: {
       type: Boolean,
       default: false,
-      required: false
+      required: false,
     },
     sequence: {
       type: Array as PropType<SequenceItem[]>,
-      required: true
+      required: true,
     },
     onFinish: {
       type: Function as PropType<() => void>,
-      required: false
+      required: false,
     },
     onRefresh: {
       type: Function as PropType<() => void>,
-      required: false
+      required: false,
     },
     multiplayerMode: {
       type: Boolean,
       default: false,
-      required: false
-    }
+      required: false,
+    },
   },
   setup(props, context) {
     const progressPercentage = ref<number>(0);
     const answerFormValue = ref<number | null>();
 
-    const v = <T extends Ref<infer K>, K>(ref: Ref<K>): K => ref.value
+    const v = <K extends Ref>(ref: K): K extends Ref<infer J> ? J : unknown =>
+      ref.value;
 
     // these refs holds the current state of the game, so that we can use it
     const currentSequenceItemIndex = ref<number>(0);
@@ -89,7 +90,11 @@ export default defineComponent({
     const incorrectAnswersCount = ref<number>(0);
     const correctAnswersCount = ref<number>(0);
     const correctAnswersPercent = computed<number>(() => {
-      return (v(correctAnswersCount) / (v(correctAnswersCount) + v(incorrectAnswersCount)) * 100); // FIXME: tofixed
+      return (
+        (v(correctAnswersCount) /
+          (v(correctAnswersCount) + v(incorrectAnswersCount))) *
+        100
+      ); // FIXME: tofixed
     });
     const totalExamplesCount = computed<number>(() => {
       let total = 0;
@@ -100,37 +105,42 @@ export default defineComponent({
     });
 
     const displayParent = ref<HTMLElement>();
-    const displayMode = ref<'pass' | 'attention' | 'number' | 'answer' | 'answer-form' | 'answer-forms' | 'scores'>('attention');
+    const displayMode = ref<
+      | "pass"
+      | "attention"
+      | "number"
+      | "answer"
+      | "answer-form"
+      | "answer-forms"
+      | "scores"
+    >("attention");
     const display = ref<string | number | null>(null);
 
     const displayClasses = computed(() => {
-      const classes: string[] = ['is-display-text'];
-      if (displayMode.value === 'number') {
-        const {fontSize, fontRotation, fontColor} = v(currentSequenceItem)!;
+      const classes: string[] = ["is-display-text"];
+      if (displayMode.value === "number") {
+        const { fontSize, fontRotation, fontColor } = v(currentSequenceItem)!;
 
         const displayCharsCount = String(v(display)).length;
-        if (props.multiplayerMode)
-          classes.push('is-display-number-small');
-        else
-          classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
+        if (props.multiplayerMode) classes.push("is-display-number-small");
+        else classes.push(`is-display-number-${displayCharsCount}-${fontSize}`);
 
         classes.push(`is-rotated-${fontRotation}`);
         classes.push(`is-${fontColor}-color`);
-
-      } else if (displayMode.value === 'attention') {
-        classes.push('is-display-text');
-        classes.push('is-2');
+      } else if (displayMode.value === "attention") {
+        classes.push("is-display-text");
+        classes.push("is-2");
       }
 
       return classes;
     });
 
     const answerFormsColumnClasses = computed<string[]>(() => {
-      const classes: string[] = ['column']
+      const classes: string[] = ["column"];
       if (props.multiplayerMode) {
-        classes.push('is-12');
+        classes.push("is-12");
       } else {
-        classes.push('is-12-mobile is-8-desktop');
+        classes.push("is-12-mobile is-8-desktop");
       }
 
       return classes;
@@ -140,54 +150,42 @@ export default defineComponent({
       const classes: string[] = [];
       const percent = v(correctAnswersPercent);
 
-      classes.push('is-result-score-text');
-      classes.push('has-text-weight-semibold');
+      classes.push("is-result-score-text");
+      classes.push("has-text-weight-semibold");
 
-      if (percent >= 60 && percent <= 100)
-        classes.push('has-text-success');
-      else if (percent < 60 && percent >= 30)
-        classes.push('has-text-warning');
-      else if (percent < 30 && percent >= 0)
-        classes.push('has-text-danger');
+      if (percent >= 60 && percent <= 100) classes.push("has-text-success");
+      else if (percent < 60 && percent >= 30) classes.push("has-text-warning");
+      else if (percent < 30 && percent >= 0) classes.push("has-text-danger");
 
       return classes;
     });
 
     const finalStars = computed(() => {
-      const {value} = correctAnswersPercent;
+      const { value } = correctAnswersPercent;
       const stars: Star[] = [];
       for (let i = 0; i < 3; i++) {
-        const star: Star = {src: '', classes: []};
+        const star: Star = { src: "", classes: [] };
         let filled = false;
 
         /* FIXME: fix this chaos */
         if (i === 0)
-          if (value >= 20)
-            filled = true;
-          else
-            filled = false;
+          if (value >= 20) filled = true;
+          else filled = false;
         else if (i === 1)
-          if (value >= 40)
-            filled = true;
-          else
-            filled = false
+          if (value >= 40) filled = true;
+          else filled = false;
         else if (i === 2)
-          if (value >= 80)
-            filled = true;
-          else
-            filled = false;
+          if (value >= 80) filled = true;
+          else filled = false;
 
-        star.src = require(`@@/img/${filled ? 'filled' : 'empty'}-star.svg`);
+        star.src = require(`@@/img/${filled ? "filled" : "empty"}-star.svg`);
 
-        star.classes.push('is-star');
+        star.classes.push("is-star");
 
-        if (filled)
-          star.classes.push('has-shadow');
+        if (filled) star.classes.push("has-shadow");
 
-        if (i === 1)
-          star.classes.push('is-1', 'mb-4');
-        else
-          star.classes.push('is-2');
+        if (i === 1) star.classes.push("is-1", "mb-4");
+        else star.classes.push("is-2");
 
         stars.push(star);
       }
@@ -195,45 +193,47 @@ export default defineComponent({
       return stars;
     });
 
-    const language = ref<string>('en');
-    SettingsStorage.getSetting('locale').then((loc) => {
+    const language = ref<string>("en");
+    SettingsStorage.getSetting("locale").then((loc) => {
       language.value = loc;
     });
 
     const timerHandles = new Set<NodeJS.Timeout>();
 
     const clearScreen = () => {
-      displayMode.value = 'pass';
-    }
+      displayMode.value = "pass";
+    };
 
     const displayCorrectAnswerFade = () => {
-      v(displayParent)!.classList.add('is-correct-answer');
-      timerHandles.add(setTimeout(() => {
-        displayParent.value!.classList.remove('is-correct-answer');
-      }, 1000));
-    }
+      v(displayParent)!.classList.add("is-correct-answer");
+      timerHandles.add(
+        setTimeout(() => {
+          displayParent.value!.classList.remove("is-correct-answer");
+        }, 1000)
+      );
+    };
 
     const displayIncorrectAnswerFade = () => {
-      displayParent.value!.classList.add('is-incorrect-answer');
-      timerHandles.add(setTimeout(() => {
-        displayParent.value!.classList.remove('is-incorrect-answer');
-      }, 1000));
-    }
+      displayParent.value!.classList.add("is-incorrect-answer");
+      timerHandles.add(
+        setTimeout(() => {
+          displayParent.value!.classList.remove("is-incorrect-answer");
+        }, 1000)
+      );
+    };
 
     const displayAttentionText = (text: string | number) => {
-      displayMode.value = 'attention';
+      displayMode.value = "attention";
       display.value = text;
-    }
+    };
 
     const soundEffects = true;
 
     const displayNumber = (value: string | number | null) => {
-      displayMode.value = 'number';
+      displayMode.value = "number";
       display.value = null;
-      if (soundEffects && value && !props.multiplayerMode)
-        playBubbleSound();
-      if (v(currentSequenceItem)!.speechSound && value)
-        speechSpeak(value!);
+      if (soundEffects && value && !props.multiplayerMode) playBubbleSound();
+      if (v(currentSequenceItem)!.speechSound && value) speechSpeak(value!);
 
       if (!v(currentSequenceItem)!.displayNumbers && !props.multiplayerMode)
         return;
@@ -241,38 +241,41 @@ export default defineComponent({
       setTimeout(() => {
         display.value = value;
       }, 40);
-    }
+    };
 
     const displayAnswerForm = () => {
       answerFormValue.value = null; // clear
-      displayMode.value = 'answer-form';
-    }
+      displayMode.value = "answer-form";
+    };
 
     const displayAnswerForms = () => {
-      displayMode.value = 'answer-forms';
-    }
+      displayMode.value = "answer-forms";
+    };
 
     const displayAnswer = () => {
-      displayMode.value = 'answer';
-    }
+      displayMode.value = "answer";
+    };
 
     const displayScores = () => {
       playFinishSound();
-      displayMode.value = 'scores';
-    }
+      displayMode.value = "scores";
+    };
 
-    context.root.$on('display-answer-forms', () => {
+    context.root.$on("display-answer-forms", () => {
       displayAnswerForms();
     });
 
-    context.root.$on('next-example', () => {
+    context.root.$on("next-example", () => {
       nextExample();
     });
 
     function speechSpeak(text: string | number) {
-      const speechRate = v(currentSequenceItem)!.rowsTimeout >= 1
-        ? 1 : 1 + v(currentSequenceItem)!.rowsTimeout + (String(text).length / 2);
-      const voiceIdentity = context.root.$store.getters['Settings/get']('ttsVoiceIdentity');
+      const speechRate =
+        v(currentSequenceItem)!.rowsTimeout >= 1
+          ? 1
+          : 1 + v(currentSequenceItem)!.rowsTimeout + String(text).length / 2;
+      const voiceIdentity =
+        context.root.$store.getters["Settings/get"]("ttsVoiceIdentity");
       speak(text, speechRate, voiceIdentity);
     }
 
@@ -280,12 +283,16 @@ export default defineComponent({
       let currentAttentionTextIndex = 0;
       const timerHandle = setInterval(() => {
         if (START_ATTENTION_TEXTS[currentAttentionTextIndex]) {
-          displayAttentionText(START_ATTENTION_TEXTS[currentAttentionTextIndex]);
+          displayAttentionText(
+            START_ATTENTION_TEXTS[currentAttentionTextIndex]
+          );
           currentAttentionTextIndex++;
         } else {
-          timerHandles.add(setTimeout(() => {
-            displayExamples();
-          }, 1000));
+          timerHandles.add(
+            setTimeout(() => {
+              displayExamples();
+            }, 1000)
+          );
           clearInterval(timerHandle);
           timerHandles.delete(timerHandle);
         }
@@ -298,8 +305,7 @@ export default defineComponent({
       if (!v(currentExample)) {
         // if there are no sequence items left
         if (v(currentSequenceItemIndex) + 1 >= props.sequence!.length) {
-          if (props.onFinish)
-            props.onFinish();
+          if (props.onFinish) props.onFinish();
 
           if (props.answerAtEnd) {
             // if the multiplayer mode is on then we listen to event
@@ -309,7 +315,8 @@ export default defineComponent({
           } else {
             displayScores();
           }
-        } else { // otherwise we go to the next sequence item
+        } else {
+          // otherwise we go to the next sequence item
           currentExampleIndex.value = 0;
           currentSequenceItemIndex.value++;
 
@@ -324,54 +331,59 @@ export default defineComponent({
       }
 
       let currentRowIndex = 0;
-      const timerHandle = setInterval(function callback() {
-        /* if there are not displayed row items */
-        if (v(currentExample)!.numbers[currentRowIndex]) {
-          /* we just display the row item */
-          displayNumber(v(currentExample)!.numbers[currentRowIndex]);
-          currentRowIndex++;
-        } else { /* there are no row items left */
-
-          if (props.answerAtEnd) {
-            // FIXME: use css animations?
-            clearScreen();
-            /* after n seconds we display the next examples */
-            timerHandles.add(setTimeout(() => {
-              /* go to the next example */
-              currentExampleIndex.value++;
-              displayExamples();
-            }, v(currentSequenceItem)!.examplesTimeout * 1000))
+      const timerHandle = setInterval(
+        (function callback() {
+          /* if there are not displayed row items */
+          if (v(currentExample)!.numbers[currentRowIndex]) {
+            /* we just display the row item */
+            //@ts-ignore
+            displayNumber(v(currentExample)!.numbers[currentRowIndex]);
+            currentRowIndex++;
           } else {
-            /* otherwwise we just display the answer form */
-            displayAnswerForm();
+            /* there are no row items left */
+
+            if (props.answerAtEnd) {
+              // FIXME: use css animations?
+              clearScreen();
+              /* after n seconds we display the next examples */
+              timerHandles.add(
+                setTimeout(() => {
+                  /* go to the next example */
+                  currentExampleIndex.value++;
+                  displayExamples();
+                }, v(currentSequenceItem)!.examplesTimeout * 1000)
+              );
+            } else {
+              /* otherwwise we just display the answer form */
+              displayAnswerForm();
+            }
+
+            if (timerHandle!) {
+              /* TODO: not safe */
+              clearInterval(timerHandle);
+            }
           }
 
-          if (timerHandle!) { /* TODO: not safe */
-            clearInterval(timerHandle);
-          }
-        }
-
-        return callback;
-      }(), v(currentSequenceItem)!.rowsTimeout * 1000);
+          return callback;
+        })(),
+        v(currentSequenceItem)!.rowsTimeout * 1000
+      );
 
       timerHandles.add(timerHandle);
     }
 
     /* it does some common things */
     function completeExample(correct: boolean) {
-      progressPercentage.value += 1 / v(totalExamplesCount) * 100;
+      progressPercentage.value += (1 / v(totalExamplesCount)) * 100;
 
       if (correct) {
         correctAnswersCount.value++;
         displayCorrectAnswerFade();
-        if (soundEffects)
-          playCorrectAnswerSound();
-
+        if (soundEffects) playCorrectAnswerSound();
       } else {
         incorrectAnswersCount.value++;
         displayIncorrectAnswerFade();
-        if (soundEffects)
-          playIncorrectAnswerSound();
+        if (soundEffects) playIncorrectAnswerSound();
       }
     }
 
@@ -386,11 +398,13 @@ export default defineComponent({
         /* clear the screen */
         clearScreen();
         /* after 1 second we display the next examples */
-        timerHandles.add(setTimeout(() => {
-          /* go to the next example */
-          currentExampleIndex.value++;
-          displayExamples();
-        }, 1000));
+        timerHandles.add(
+          setTimeout(() => {
+            /* go to the next example */
+            currentExampleIndex.value++;
+            displayExamples();
+          }, 1000)
+        );
       } else {
         completeExample(false);
         /* display the answer of the current example */
@@ -404,41 +418,48 @@ export default defineComponent({
       sequenceItemIndex: number,
       exampleIndex: number
     ) {
-      const targetExample = props.sequence[sequenceItemIndex].examples[exampleIndex];
+      const targetExample =
+        props.sequence[sequenceItemIndex].examples[exampleIndex];
 
       // TODO: some dirty things
-      const answerInput = <HTMLInputElement>(event.target[0])
-      const answerButton = <HTMLButtonElement>(event.target[1]);
+      const answerInput = <HTMLInputElement>event.target[0];
+      const answerButton = <HTMLButtonElement>event.target[1];
 
-      answerInput.setAttribute('disabled', '');
-      answerButton.setAttribute('disabled', '');
+      answerInput.setAttribute("disabled", "");
+      answerButton.setAttribute("disabled", "");
 
       // if the answer is correct
       if (compareAnswer(targetExample.answer, answerInput.value)) {
-        answerInput.classList.add('is-success', 'is-disabled');
-        answerButton.innerText = '';
-        answerButton.classList.add('is-success', 'is-disabled');
+        answerInput.classList.add("is-success", "is-disabled");
+        answerButton.innerText = "";
+        answerButton.classList.add("is-success", "is-disabled");
 
         completeExample(true);
-      } else { // otherwise
-        answerInput.classList.add('is-danger');
-        answerButton.innerText = '';
-        answerButton.classList.add('is-danger');
+      } else {
+        // otherwise
+        answerInput.classList.add("is-danger");
+        answerButton.innerText = "";
+        answerButton.classList.add("is-danger");
 
         completeExample(false);
       }
 
       /* if this is the last example */
-      if (v(correctAnswersCount) + v(incorrectAnswersCount) === v(totalExamplesCount)) {
+      if (
+        v(correctAnswersCount) + v(incorrectAnswersCount) ===
+        v(totalExamplesCount)
+      ) {
         /* after 1 second we display the result of the game */
-        timerHandles.add(setTimeout(() => {
-          displayScores();
-        }, 1000));
+        timerHandles.add(
+          setTimeout(() => {
+            displayScores();
+          }, 1000)
+        );
       }
     }
 
     function nextExample() {
-      if(v(displayMode) === 'answer') {
+      if (v(displayMode) === "answer") {
         clearScreen();
 
         currentExampleIndex.value++;
@@ -449,8 +470,7 @@ export default defineComponent({
     function refresh() {
       clearScreen();
 
-      if (props.onRefresh)
-        props.onRefresh();
+      if (props.onRefresh) props.onRefresh();
 
       resetGameState();
       startGame();
@@ -466,8 +486,7 @@ export default defineComponent({
       currentExampleIndex.value = 0;
       correctAnswersCount.value = 0;
       incorrectAnswersCount.value = 0;
-      for (const handle of timerHandles.keys())
-        clearInterval(handle);
+      for (const handle of timerHandles.keys()) clearInterval(handle);
     }
 
     onMounted(() => {
@@ -495,7 +514,7 @@ export default defineComponent({
       incorrectAnswersCount,
       correctAnswersPercent,
       answerFormsColumnClasses,
-      resultScoreTextClasses
+      resultScoreTextClasses,
     };
   },
-});;
+});

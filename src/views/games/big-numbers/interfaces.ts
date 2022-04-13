@@ -1,7 +1,7 @@
 import { Example } from '@/store/example';
 
 export interface SequenceItem {
-  theme: string;
+  theme: Theme;
   examples: Example[];
   examplesTimeout: number;
   rowsTimeout: number;

@@ -14,7 +14,7 @@ export default defineComponent({
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const imgref = ref<HTMLElement>();
-    const abacusBoard = new AbacusBoard(3);
+    const abacusBoard = new AbacusBoard(5);
 
     context.root.$nextTick(() => {
       const abacusDraw = SVG()
@@ -25,6 +25,7 @@ export default defineComponent({
       abacusDraw.add(abacusBoard);
       abacusBoard.construct();
 
+      /*
       setTimeout(() => {
         const str = new XMLSerializer().serializeToString(abacusDraw.node);
         const decoded = decodeURIComponent(encodeURIComponent(str));
@@ -34,6 +35,7 @@ export default defineComponent({
           "data:image/svg+xml;base64," + base64
         );
       }, 5000);
+      */
     });
 
     return { abacusContainerRef, imgref };
