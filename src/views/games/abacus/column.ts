@@ -11,16 +11,16 @@ import {
 } from "./constants";
 
 const kmap: { [key: number]: number } = {
-  0b01001111: 0,
-  0b01010111: 1,
-  0b01011011: 2,
-  0b01011101: 3,
-  0b01011110: 4,
-  0b10101111: 5,
-  0b00110111: 6,
-  0b00111011: 7,
-  0b00111101: 8,
-  0b00111110: 9,
+  0b1001111: 0,
+  0b1010111: 1,
+  0b1011011: 2,
+  0b1011101: 3,
+  0b1011110: 4,
+  0b0101111: 5,
+  0b0110111: 6,
+  0b0111011: 7,
+  0b0111101: 8,
+  0b0111110: 9,
 };
 
 export class AbacusColumn extends G implements Drawable {
@@ -29,33 +29,11 @@ export class AbacusColumn extends G implements Drawable {
   private verticalLine = new Line();
 
   private bin = 0b010001111;
-  public get value() {
-    return kmap[this.bin];
-  }
+
+  public value = 0;
 
   constructor() {
     super();
-  }
-
-  public display(initial: number) {
-    const map: { [key: number]: number[] } = {
-      0: [],
-      1: [3],
-      2: [4],
-      3: [5],
-      4: [6],
-      5: [0],
-      6: [0, 3],
-      7: [0, 4],
-      8: [0, 5],
-      9: [0, 6],
-    };
-
-    const kmap = map[initial];
-
-    kmap.forEach((el) => {
-      this.updateStone(el);
-    });
   }
 
   public lock() {
@@ -66,59 +44,58 @@ export class AbacusColumn extends G implements Drawable {
     this.locked = false;
   }
 
-  public toslot(stone: AbacusStone, slot: number): void {
-    if (slot > 7 - 1 || stone.slot === slot) return;
-    const move = stone.slot > slot ? stone.slot - slot : slot - stone.slot;
+  public toslot(stone: AbacusStone, slot: number, duration = 100): void {
+    if (slot > 7 - 1 || stone.kslot === slot) return;
+    const move = stone.kslot > slot ? stone.kslot - slot : slot - stone.kslot;
 
     const dy =
-      (slot > stone.slot ? 1 : -1) *
+      (slot > stone.kslot ? 1 : -1) *
       (move * ABACUS_STONE_HEIGHT +
-        ((stone.slot <= 1 && slot > 1) || (stone.slot >= 2 && slot < 2)
+        ((stone.kslot <= 1 && slot > 1) || (stone.kslot >= 2 && slot < 2)
           ? ABACUS_HORIZONTAL_LINE_WIDTH
           : 0));
 
-    stone.animate(100).dy(dy);
-    stone.slot = slot;
+    stone.animate(duration).dy(dy);
+    stone.kslot = slot;
   }
 
   public update(k: number): void {
+    let rem = this.value - k;
+    // value=4, nv=2
+    for (const [, stone] of this.stones) {
+      if (rem < 5 && stone.isHigh) continue;
+      if(stone.isActive) continue;
+      
+      if (rem != 0) {
+        rem -= this.smove(stone.kindex, false);
+      } else if (stone.isActive) {
+      }
+
+      //console.log(this.smove(stone.kindex));
+      if (rem == 0) {
+
+      };
+    }
+
+    return;
     const bin = parseInt(
       Object.keys(kmap).find((kk) => kmap[parseInt(kk)] == (k | 0) % 10)!
     );
-    const weight = bin & 0b10000000 ? 5 : 1;
-    const map = bin & 0b1111111;
 
     let stones = 0;
-
-    /*
-    setInterval(() => {
-      this.toslot(this.stones.get(0)!, stones++);
-    }, 1000);
-    return;
-    */
 
     for (let i = 0; i < 7; i++) {
       const stone = this.stones.get(stones);
       if (!stone) continue;
 
-      if (map & (1 << (6 - i))) {
-        if (stone.slot == i) {
+      if (bin & (1 << (6 - i))) {
+        if (stone.kslot == i) {
           stones++;
           continue;
         }
 
         this.toslot(stone, i);
         stones++;
-      } else if (stone.slot == i) {
-        /*
-        const lowstones = Array.from(this.stones).filter(([, _stone]) => {
-          return stone.slot >= _stone.slot;
-        }).map(([, stone]) => stone);
-
-        for(const stone of lowstones) {
-          this.toslot(stone, stone.slot - 1);
-        }
-        */
       }
     }
 
@@ -126,43 +103,48 @@ export class AbacusColumn extends G implements Drawable {
     this.dispatch("update", { value: this.value });
   }
 
-  public updateStone(stoneIndex: number) {
-    if (this.locked) return;
-
+  public smove(stoneIndex: number, fire = true): number {
+    if (this.locked) return 0;
     const stone = this.stones.get(stoneIndex)!;
+    let kvalue = this.value;
+
     if (stone.isHigh) {
       if (stone.isActive) {
-        stone.inactivate();
-        this.value -= 5;
+        kvalue -= 5;
+        this.toslot(stone, 0);
       } else {
-        stone.activate();
-        this.value += 5;
+        kvalue += 5;
+        this.toslot(stone, 1);
       }
     } else {
-      const lowStones = Array.from(this.stones).filter(([index, _stone]) => {
-        return (
-          !_stone.isHigh &&
-          (_stone.isActive ? stoneIndex < index : stoneIndex >= index)
-        );
+      const stones = Array.from(this.stones).filter(([, _stone]) => {
+        if (_stone.isHigh) return false;
+
+        return _stone.isActive
+          ? stone.kslot <= _stone.kslot
+          : stone.kslot >= _stone.kslot;
       });
 
-      lowStones.forEach(([_, _stone]) => {
-        if (_stone.isActive) {
-          _stone.inactivate();
-          this.value--;
+      for (const [, stone] of stones) {
+        if (stone.isActive) {
+          this.toslot(stone, stone.kslot + 1);
+          kvalue--;
         } else {
-          _stone.activate();
-          this.value++;
+          this.toslot(stone, stone.kslot - 1);
+          kvalue++;
         }
-      });
+      }
     }
-    this.dispatch("update", { value: this.value });
-    return;
+
+    if (fire) {
+      this.fire("update", { value: this.value });
+    }
+    this.value = kvalue;
+    return kvalue;
   }
 
   public reset() {
-    this.value = 0;
-    for (const [, stone] of this.stones) stone.inactivate();
+    this.update(0);
   }
 
   public draw() {
@@ -187,23 +169,22 @@ export class AbacusColumn extends G implements Drawable {
     for (let i = 0; i < 7; i++) {
       if (i == 1 || i == 2) continue;
       const abacusStone = new AbacusStone();
-      abacusStone.isHigh = i == 0;
-      abacusStone.slot = i;
+      abacusStone.kslot = 0;
       abacusStone.draw();
-      abacusStone.on("click", () => this.updateStone(i));
+      abacusStone.kindex = stones;
+      abacusStone.on("click", () => this.smove(abacusStone.kindex));
 
-      abacusStone.y(
-        ABACUS_STONE_HEIGHT * i + (i > 1 ? ABACUS_HORIZONTAL_LINE_WIDTH : 0)
-      );
       this.add(abacusStone);
+      this.toslot(abacusStone, i, 1);
       this.stones.set(stones++, abacusStone);
     }
+
+    let i = 0;
+    this.update(1);
+    setTimeout(() => {
+      this.update(2);
+    }, 500);
   }
-}
-function getRandomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export class AbacusColumns extends G implements Drawable {
@@ -215,7 +196,7 @@ export class AbacusColumns extends G implements Drawable {
     const str = n.toString();
 
     this.children().forEach((el, idx) => {
-      (el as AbacusColumn).display(parseInt(str[idx]));
+      (el as AbacusColumn).smove(parseInt(str[idx]));
     });
   }
 
@@ -230,13 +211,6 @@ export class AbacusColumns extends G implements Drawable {
       column.x(ABACUS_STONE_WIDTH * i);
       this.add(column);
     }
-
-    setInterval(() => {
-      const str = getRandomInt(10000, 99999).toString();
-      for(let i = 0 ;i < str.length; i++) {
-        this.children()[i].update(parseInt(str[i]));
-      }
-    }, 1000);
   }
 
   public setColumns(columns: number) {
@@ -244,11 +218,11 @@ export class AbacusColumns extends G implements Drawable {
   }
 
   public lock() {
-    for (const stone of this.children()) stone.lock();
+    for (const column of this.children()) (column as AbacusColumn).lock();
   }
 
   public unlock() {
-    for (const stone of this.children()) stone.unlock();
+    for (const column of this.children()) (column as AbacusColumn).unlock();
   }
 
   public reset() {

@@ -5,9 +5,16 @@ import { ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT } from "./constants";
 import stoneSkin from "@@/img/abacus/stone_yellow.svg";
 
 export class AbacusStone extends Image implements Drawable {
-  public isActive = false;
-  public isHigh = false;
-  public slot = 0;
+  public kslot = 0;
+  public kindex = 0;
+
+  public get isActive() {
+    return this.kindex == 0 ? this.kslot == 1 : this.kslot - this.kindex == 1;
+  }
+
+  public get isHigh() {
+    return this.kindex == 0;
+  }
 
   public draw() {
     this.load(
@@ -17,23 +24,5 @@ export class AbacusStone extends Image implements Drawable {
       .size(ABACUS_STONE_WIDTH, ABACUS_STONE_HEIGHT)
       .css("cursor", "pointer")
       .attr({ class: "is-highlightless" });
-  }
-
-  public activate(duration = 100) {
-    if (!this.isActive) {
-      this.animate(duration).dy(
-        this.isHigh ? ABACUS_STONE_HEIGHT : -ABACUS_STONE_HEIGHT
-      );
-      this.isActive = true;
-    }
-  }
-
-  public inactivate(duration = 100) {
-    if (this.isActive) {
-      this.animate(duration).dy(
-        this.isHigh ? -ABACUS_STONE_HEIGHT : ABACUS_STONE_HEIGHT
-      );
-      this.isActive = false;
-    }
   }
 }
