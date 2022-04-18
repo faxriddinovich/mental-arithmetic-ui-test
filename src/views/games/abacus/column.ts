@@ -1,4 +1,4 @@
-import { G, Line } from "@svgdotjs/svg.js";
+import { G, Line, List } from "@svgdotjs/svg.js";
 import { Drawable, UpdateEventDetail } from "./interfaces";
 import { AbacusStone } from "./stone";
 import {
@@ -175,14 +175,6 @@ export class AbacusColumns extends G implements Drawable {
     super();
   }
 
-  public display(n: number) {
-    const str = n.toString();
-
-    this.children().forEach((el, idx) => {
-      (el as AbacusColumn).smove(parseInt(str[idx]));
-    });
-  }
-
   public draw() {
     for (let i = 0; i < this.columns; i++) {
       const column = new AbacusColumn();
@@ -196,8 +188,11 @@ export class AbacusColumns extends G implements Drawable {
     }
   }
 
-  public setColumns(columns: number) {
-    this.columns = columns;
+  public update(n: number): void {
+    const str = n.toString();
+    for(const [i, column] of this.children().entries()) {
+      (column as AbacusColumn).update(parseInt(str[i]));
+    }
   }
 
   public lock() {

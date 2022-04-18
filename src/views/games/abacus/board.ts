@@ -46,10 +46,8 @@ export class AbacusBoard extends G implements Drawable {
     this.abacusColumns.unlock();
   }
 
-  public setColumns(n: number) {
-    this.abacusOuterBox.setColumns(n);
-    this.abacusInnerBox.setColumns(n);
-    this.abacusColumns.setColumns(n);
+  public update(n: number) {
+    this.abacusColumns.update(n);
   }
 
   private resetDigits() {
