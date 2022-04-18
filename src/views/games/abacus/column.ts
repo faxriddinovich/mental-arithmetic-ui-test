@@ -127,13 +127,13 @@ export class AbacusColumn extends G implements Drawable {
       }
     }
 
-    this.fire("update", { value: this.value });
     this.value = kvalue;
+    this.fire("update", { value: this.value });
     this.drawBin();
   }
 
   public reset() {
-    this.update(2);
+    this.update(0);
   }
 
   public draw() {
@@ -167,11 +167,6 @@ export class AbacusColumn extends G implements Drawable {
       this.toslot(abacusStone, i, 1);
       this.stones.set(stones++, abacusStone);
     }
-
-    let i = 0;
-    setInterval(() => {
-      this.update((i++) % 10);
-    }, 500);
   }
 }
 
