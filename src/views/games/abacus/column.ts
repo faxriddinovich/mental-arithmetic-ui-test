@@ -1,4 +1,4 @@
-import { G, Line, List } from "@svgdotjs/svg.js";
+import { G, Line } from "@svgdotjs/svg.js";
 import { Drawable, UpdateEventDetail } from "./interfaces";
 import { AbacusStone } from "./stone";
 import {
@@ -28,7 +28,7 @@ export class AbacusColumn extends G implements Drawable {
   private stones: Map<number, AbacusStone> = new Map();
   private verticalLine = new Line();
 
-  private bin = 0b010001111;
+  public bin = 0b1001111;
 
   public value = 0;
 
@@ -60,24 +60,6 @@ export class AbacusColumn extends G implements Drawable {
   }
 
   public update(k: number): void {
-    let rem = this.value - k;
-    // value=4, nv=2
-    for (const [, stone] of this.stones) {
-      if (rem < 5 && stone.isHigh) continue;
-      if(stone.isActive) continue;
-      
-      if (rem != 0) {
-        rem -= this.smove(stone.kindex, false);
-      } else if (stone.isActive) {
-      }
-
-      //console.log(this.smove(stone.kindex));
-      if (rem == 0) {
-
-      };
-    }
-
-    return;
     const bin = parseInt(
       Object.keys(kmap).find((kk) => kmap[parseInt(kk)] == (k | 0) % 10)!
     );
@@ -99,12 +81,21 @@ export class AbacusColumn extends G implements Drawable {
       }
     }
 
-    this.bin = bin;
-    this.dispatch("update", { value: this.value });
+    this.value = k;
+    this.fire("update", { value: this.value });
   }
 
-  public smove(stoneIndex: number, fire = true): number {
-    if (this.locked) return 0;
+  private drawBin() {
+    let bin = 0;
+    for (const [, stone] of this.stones) {
+      bin = bin | (1 << (6 - stone.kslot));
+    }
+    this.bin = bin;
+  }
+
+  public smove(stoneIndex: number): void {
+    if (this.locked) return;
+
     const stone = this.stones.get(stoneIndex)!;
     let kvalue = this.value;
 
@@ -136,15 +127,13 @@ export class AbacusColumn extends G implements Drawable {
       }
     }
 
-    if (fire) {
-      this.fire("update", { value: this.value });
-    }
+    this.fire("update", { value: this.value });
     this.value = kvalue;
-    return kvalue;
+    this.drawBin();
   }
 
   public reset() {
-    this.update(0);
+    this.update(2);
   }
 
   public draw() {
@@ -180,9 +169,8 @@ export class AbacusColumn extends G implements Drawable {
     }
 
     let i = 0;
-    this.update(1);
-    setTimeout(() => {
-      this.update(2);
+    setInterval(() => {
+      this.update((i++) % 10);
     }, 500);
   }
 }

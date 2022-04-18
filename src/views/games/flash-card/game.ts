@@ -14,7 +14,7 @@ export default defineComponent({
   setup(_, context) {
     const abacusContainerRef = ref<HTMLElement>();
     const imgref = ref<HTMLElement>();
-    const abacusBoard = new AbacusBoard(1);
+    const abacusBoard = new AbacusBoard(6);
 
     context.root.$nextTick(() => {
       const abacusDraw = SVG()
