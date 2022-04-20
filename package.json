@@ -21,6 +21,7 @@
     "@hcaptcha/vue-hcaptcha": "^0.3.2",
     "@svgdotjs/svg.js": "^3.1.2",
     "@vue/composition-api": "^1.4.7",
+    "animejs": "^3.2.1",
     "buefy": "^0.9.17",
     "canvas-confetti": "^1.5.1",
     "chart.js": "^3.7.1",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^3.4.1",
+    "@types/animejs": "^3.1.4",
     "@types/canvas-confetti": "^1.4.2",
     "@types/deep-diff": "^1.0.1",
     "@types/electron-devtools-installer": "^2.2.0",
