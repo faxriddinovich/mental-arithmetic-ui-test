@@ -22,10 +22,13 @@ export default defineComponent({
     const yellowCardRef = ref<SVGElement | null>(null);
     const redCardRef = ref<SVGElement | null>(null);
 
+    const modal = ref<boolean>(false);
+    setTimeout(() => modal.value = true, 1000);
+
     onMounted(() => {
       animate({
         targets: [starRef0.value!, starRef1.value, starRef2.value],
-        translateY: [-80, 140],
+        translateY: [-100, 140],
         /*
         scale: {
           value: 2,
@@ -41,7 +44,7 @@ export default defineComponent({
       });
 
       const card = animate.timeline({
-        easing: 'easeOutExpo'
+        easing: "easeOutExpo",
       });
 
       card.add({
@@ -61,19 +64,24 @@ export default defineComponent({
         delay: animate.stagger(100),
       });
 
-      card.add({
-        targets: yellowCardRef.value,
-        rotate: -8
-      }, 390);
+      card.add(
+        {
+          targets: yellowCardRef.value,
+          rotate: -8,
+        },
+        390
+      );
 
-      card.add({
-        targets: redCardRef.value,
-        rotate: 8,
-        translateY: 20
-      }, 390);
-
+      card.add(
+        {
+          targets: redCardRef.value,
+          rotate: 8,
+          translateY: 20,
+        },
+        390
+      );
     });
 
-    return { starRef0, starRef1, starRef2, cards, yellowCardRef, redCardRef };
+    return { starRef0, starRef1, starRef2, cards, yellowCardRef, redCardRef , modal};
   },
 });

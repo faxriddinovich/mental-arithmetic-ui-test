@@ -1,11 +1,99 @@
 <template>
   <div class="game-background">
-  <!--
+    <br />
+
+    <div class="container">
+    <span
+      style="
+        position: relative;
+        border: 5px solid #dfe6e9;
+        background: white;
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        padding: 8px;
+        border-radius: 50%;
+        vertical-align: middle;
+        z-index: 1;
+        box-shadow: -1px 1px 5px 3px rgba(0,0,0,0.06) inset;
+      "
+    >
+      <img
+        src="../../../../public/heart.png"
+        width="50"
+        style="display: inline-block; vertical-align: middle"
+      />
+    </span>
+    <span
+      style="
+        position: relative;
+        display: inline-block;
+        background: #dfe6e9;
+        width: 350px;
+        vertical-align: middle;
+        margin-left: -10px;
+        padding-left: 2px;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        padding: 6px;
+        box-shadow: -1px 1px 5px 3px rgba(0,0,0,0.06) inset;
+      "
+    >
+      <div
+        style="
+        width: 40%;
+          background: rgb(223, 91, 79);
+          padding: 10px;
+          border-top-right-radius: 15px;
+          border-bottom-right-radius: 15px;
+          background: linear-gradient(180deg, rgba(223,91,79,1) 54%, rgba(204,78,67,1) 54%);
+        "
+      ></div>
+    </span>
+    </div>
+
+    <b-modal
+      v-model="modal"
+      :destroy-on-hide="false"
+      aria-role="dialog"
+      aria-label="Example Modal"
+      close-button-aria-label="Close"
+      animation="zoom-in"
+      :can-cancel="['outside']"
+      aria-modal
+    >
+      <template>
+        <div
+          class="flash-card-sketchy-card lined thick mt-7 is-size-5 mb-2 mx-5"
+          style="z-index: 999"
+        >
+          <div class="is-size-2 has-text-centered has-text-weight-semibold">
+            How to play?
+          </div>
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptate
+          ipsum incidunt suscipit, sit consequatur ipsa quasi quam quis adipisci
+          ex corrupti numquam distinctio perspiciatis harum eos non quo.
+          Inventore explicabo facere sint.
+          <!--
+          <button class="flash-card-button">
+            <span> <b-icon icon="play" />Play</span>
+          </button>
+          <img
+            src="https://pressstart.vip/images/uploads/assets/icons/starcolored.png"
+          />
+          <img
+            src="https://pressstart.vip/images/uploads/assets/icons/heartcolored.png"
+          />
+          -->
+        </div>
+      </template>
+    </b-modal>
+
     <div class="flash-card-stars">
       <img src="../../../../public/favourite.png" width="80" ref="starRef0" />
       <img
         src="../../../../public/favourite.png"
-        class="ml-3"
+        class="ml-3 mb-4"
         width="80"
         ref="starRef1"
       />
@@ -53,6 +141,8 @@
       />
       <text x="230" y="140" class="flash-card-game-title">Flash card</text>
     </svg>
+    <!--
+
     -->
 
     <section class="hero is-fullheight">
@@ -85,7 +175,6 @@
               </button>
             </div>
 
-              <!--
             <div class="flash-card-sketchy-card lined thick mt-7 is-size-5">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat ad
               odit, architecto facilis corporis mollitia minus impedit nesciunt
@@ -102,8 +191,6 @@
                 src="https://pressstart.vip/images/uploads/assets/icons/heartcolored.png"
               />
             </div>
-              -->
-
           </div>
         </div>
       </div>
@@ -221,6 +308,17 @@
 
   box-shadow: inset 0 0 10px #000000;
   background: rgb(245, 238, 219);
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+
   /*
   background: repeating-linear-gradient(
       0deg,
@@ -239,8 +337,16 @@
 }
 
 .flash-card-sketchy-card {
+  background: white;
+  border-radius: 5px;
+  border: 2px solid #000;
+  padding: 15px;
+  box-shadow: 0 4px 0 #000;
+}
+/*
+.flash-card-sketchy-card {
   //background: #fbfeff;
-  padding: 10px;
+  padding: 20px;
   font-size: 22px !important;
   background: #f4f7fc;
   font-family: "Patrick Hand SC", cursive;
@@ -275,6 +381,7 @@
     border: dashed 2px #41403e;
   }
 }
+*/
 
 .flash-card-button > span {
   background: #fff;
@@ -295,7 +402,6 @@
   display: inline-block;
   position: relative;
   font: normal 25px/25px "Patrick Hand SC", sans-serif;
-  margin-right: 10px;
   text-transform: uppercase;
   color: #000;
   text-decoration: none;
@@ -307,6 +413,26 @@
 }
 .flash-card-button:hover {
   cursor: pointer;
+}
+
+.meter > span:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+  background-size: 50px 50px;
+  animation: move 2s linear infinite;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  overflow: hidden;
+}
+div.modal-background {
+  background: rgba(0, 0, 0, 0.3);
 }
 </style>
 <script lang="ts" src="./game.ts"></script>
