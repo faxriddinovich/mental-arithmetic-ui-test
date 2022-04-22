@@ -3,54 +3,55 @@
     <br />
 
     <div class="container">
-    <span
-      style="
-        position: relative;
-        border: 5px solid #dfe6e9;
-        background: white;
-        display: inline-block;
-        width: 60px;
-        height: 60px;
-        padding: 8px;
-        border-radius: 50%;
-        vertical-align: middle;
-        z-index: 1;
-        box-shadow: -1px 1px 5px 3px rgba(0,0,0,0.06) inset;
-      "
-    >
-      <img
-        src="../../../../public/heart.png"
-        width="50"
-        style="display: inline-block; vertical-align: middle"
-      />
-    </span>
-    <span
-      style="
-        position: relative;
-        display: inline-block;
-        background: #dfe6e9;
-        width: 350px;
-        vertical-align: middle;
-        margin-left: -10px;
-        padding-left: 2px;
-        border-top-right-radius: 20px;
-        border-bottom-right-radius: 20px;
-        padding: 6px;
-        box-shadow: -1px 1px 5px 3px rgba(0,0,0,0.06) inset;
-      "
-    >
-      <div
-        style="
-        width: 40%;
-          background: rgb(223, 91, 79);
-          padding: 10px;
-          border-top-right-radius: 15px;
-          border-bottom-right-radius: 15px;
-          background: linear-gradient(180deg, rgba(223,91,79,1) 54%, rgba(204,78,67,1) 54%);
-        "
-      ></div>
-    </span>
+      <div class="is-absolute" style="width: 100%">
+        <div
+          class="is-flex is-justify-content-space-between is-align-items-center"
+        >
+          <health-bar ref="healthBarRef" />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/867/867454.png"
+            width="60"
+            ref="cardRef"
+          />
+          <scores-bar ref="scoresBarRef" />
+        </div>
+      </div>
     </div>
+
+    <!--
+    <button class="flash-card-button">
+      <span> <b-icon icon="home" /></span>
+    </button>
+    -->
+
+    <section class="hero is-fullheight" v-if="displayKind == 'attention-text'">
+      <div class="hero-body">
+        <div class="has-text-centered" style="width: 100%">
+          <div
+            style="font-size: 120px; font-family: 'Cabin Sketch'"
+            ref="textRef"
+          >
+            {{ text }}
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="hero is-fullheight"
+      v-else-if="displayKind == 'abacus'"
+      ref="abacusDisplayRef"
+    >
+      <div class="hero-body">
+        <div style="margin: auto">
+          <div>
+            <div class="flash-card-timeline" ref="timelineRef" />
+            <div class="flash-card-sketchy-card" style="z-index: 2">
+              <AbacusBoard style="width: 700px" :columns="6" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <b-modal
       v-model="modal"
@@ -89,22 +90,25 @@
       </template>
     </b-modal>
 
+    <!--
     <div class="flash-card-stars">
-      <img src="../../../../public/favourite.png" width="80" ref="starRef0" />
+      <img src="../../../../public/favourite.png" width="100" ref="starRef0" />
       <img
         src="../../../../public/favourite.png"
         class="ml-3 mb-4"
-        width="80"
+        width="100"
         ref="starRef1"
       />
       <img
         src="../../../../public/favourite.png"
         class="ml-3"
-        width="80"
+        width="100"
         ref="starRef2"
       />
     </div>
+    -->
 
+    <!--
     <svg
       viewBox="-90 -30 780 410"
       width="500"
@@ -139,68 +143,11 @@
         "
         ref="redCardRef"
       />
-      <text x="230" y="140" class="flash-card-game-title">Flash card</text>
     </svg>
-    <!--
 
     -->
 
-    <section class="hero is-fullheight">
-      <div class="hero-body">
-        <div class="columns is-gapless is-centered" style="min-width: 100%">
-          <div
-            class="column is-12-mobile is-10-tablet is-9-desktop is-5-fullhd"
-          >
-            <div
-              class="is-flex is-align-items-center"
-              style="flex-direction: column"
-            >
-              <button class="flash-card-button" style="width: 250px">
-                <span> <b-icon icon="play" />Play</span>
-              </button>
-
-              <button class="flash-card-button mt-2" style="width: 250px">
-                <span>
-                  <b-icon icon="setting" />
-
-                  Settings</span
-                >
-              </button>
-              <button class="flash-card-button mt-2" style="width: 250px">
-                <span>
-                  <b-icon icon="sign-out-alt" />
-
-                  Exit</span
-                >
-              </button>
-            </div>
-
-            <div class="flash-card-sketchy-card lined thick mt-7 is-size-5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat ad
-              odit, architecto facilis corporis mollitia minus impedit nesciunt
-              recusandae asperiores officiis sapiente veritatis debitis
-              necessitatibus aspernatur iure repudiandae modi? Omnis, dolor
-              minus.j
-              <button class="flash-card-button">
-                <span> <b-icon icon="play" />Play</span>
-              </button>
-              <img
-                src="https://pressstart.vip/images/uploads/assets/icons/starcolored.png"
-              />
-              <img
-                src="https://pressstart.vip/images/uploads/assets/icons/heartcolored.png"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!--
-    <AbacusBoard
-      style="width: 800px; display: block; margin: auto"
-      :columns="6"
-    />
   <img src="../../../../public/foggy.png" />
     <div class="is-flex is-justify-content-space-between">
       <div>1</div>
@@ -282,15 +229,12 @@
         </div>
       </div>
     </div>
-    <div class="hero is-fullheight">
-      <div class="hero-body has-text-centered">
-      </div>
-    </div>
     -->
   </div>
 </template>
 <style lang="scss">
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
+@import url("https://fonts.googleapis.com/css2?family=Cabin+Sketch&display=swap");
 
 .flash-card-stars {
   position: absolute;
@@ -433,6 +377,33 @@
 }
 div.modal-background {
   background: rgba(0, 0, 0, 0.3);
+}
+
+div.flash-card-timeline {
+  width: 20%;
+  position: relative;
+  background: #3fc380;
+  height: 10px;
+  margin-bottom: -4px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  z-index: -1;
+}
+
+div.flash-card-timeline::after {
+  content: "";
+  width: 25px;
+  height: 25px;
+  background: #019875;
+  border-radius: 50%;
+  border: 4px solid #3fc380;
+  position: absolute;
+  top: 50%;
+  right: -25px;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 </style>
 <script lang="ts" src="./game.ts"></script>
