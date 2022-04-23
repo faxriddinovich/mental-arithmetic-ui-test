@@ -52,6 +52,61 @@
         </div>
       </div>
     </section>
+    <section
+      class="hero is-fullheight"
+      v-else-if="displayKind == 'enter-answer-form'"
+      ref="enterAnswerFormDisplayRef"
+    >
+      <div class="hero-body">
+        <div style="margin: auto">
+          <img
+          ref="correctIconRef"
+            src="https://cdn-icons-png.flaticon.com/512/148/148767.png"
+            width="100"
+            style="
+              djsplay: inline-block;
+              position: absolute;
+              margin-left: auto;
+              margin-right: auto;
+              left: 0;
+              right: 0;
+              z-index: -1;
+            "
+          />
+
+          <div class="flash-card-sketchy-card mb-4">
+            <form style="width: 400px" action="/">
+              <input
+                class="input mb-4 is-size-1 px-3"
+                style="
+                  font-family: 'Patrick Hand SC', cursive;
+                  border: 2px solid black;
+                  height: 100px;
+                  -webkit-appearance: none;
+                  text-align: center;
+                  margin: 0;
+                "
+                type="number"
+              />
+              <button
+              type="button"
+                class="flash-card-button"
+                style="width: 100%; text-align: center"
+                @click="playCorrectIconAnimation"
+              >
+                <span> <b-icon icon="check" />Check the answer</span>
+              </button>
+            </form>
+          </div>
+          <button class="flash-card-button" @click="modal = true">
+            <span> <b-icon icon="bars" /> Show the answer</span>
+          </button>
+          <button class="flash-card-button ml-3">
+            <span> <b-icon icon="skip-forward" /> Skip the row</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
     <b-modal
       v-model="modal"
@@ -380,7 +435,7 @@ div.modal-background {
 }
 
 div.flash-card-timeline {
-  width: 20%;
+  width: 100%;
   position: relative;
   background: #3fc380;
   height: 10px;
@@ -388,23 +443,25 @@ div.flash-card-timeline {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   z-index: -1;
+  box-shadow: 0px 0px 30px 4px #bcf5bc;
 }
 
+/*
 div.flash-card-timeline::after {
+  display: inline-block;
   content: "";
   width: 25px;
   height: 25px;
   background: #019875;
   border-radius: 50%;
+  float: right;
   border: 4px solid #3fc380;
-  position: absolute;
-  top: 50%;
-  right: -25px;
   -webkit-transform: translateY(-50%);
   -moz-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
+  transform: translateY(-25%) translateX(100%);
 }
+*/
 </style>
 <script lang="ts" src="./game.ts"></script>
 

@@ -13,7 +13,11 @@ import HealthBar from "@/components/games/health-bar";
 import ScoresBar from "@/components/games/scores-bar";
 import animate from "animejs";
 
-type DisplayKind = "attention-text" | "abacus";
+type DisplayKind =
+  | "attention-text"
+  | "abacus"
+  | "enter-answer-form"
+  | "enter-answer-abacus";
 
 export default defineComponent({
   components: { AbacusBoard, HealthBar, ScoresBar },
@@ -28,7 +32,10 @@ export default defineComponent({
     const timelineRef = ref<HTMLElement | null>(null);
 
     const abacusDisplayRef = ref<HTMLElement | null>(null);
+    const enterAnswerFormDisplayRef = ref<HTMLElement | null>(null);
     const displayKind = ref<DisplayKind>("attention-text");
+
+    const correctIconRef = ref<HTMLElement | null>(null);
 
     const displayAttentionText = () => (displayKind.value = "attention-text");
     const displayAbacus = () => {
@@ -37,18 +44,51 @@ export default defineComponent({
         animate({
           targets: [abacusDisplayRef.value!!],
           opacity: [0, 1],
-          scale: 1.1,
+          scale: [1.1],
           delay: animate.stagger(100),
         });
 
         animate({
           targets: timelineRef.value,
-          width: "0%",
-          easing: 'easeInOutExpo',
-          duration: 3000,
+          width: ["100%", "0%"],
+          easing: "easeInOutExpo",
+          duration: 4000,
+          complete: () => {
+            displayEnterAnswerForm();
+          },
         });
+      });
+    };
 
+    const playCorrectIconAnimation = () => {
+      console.log("call");
+      animate({
+        targets: correctIconRef.value,
+        keyframes: [
+          { translateY: -130 },
+          { translateY: 0 },
+        ],
+        scaleY: [
+          { value: 1.5, duration: 100, easing: "easeOutExpo" },
+          { value: 1, duration: 900 },
+        ],
+        //easing: 'spring(1, 80, 10, 0)',
+        delay: animate.stagger(600),
+        complete: () => {
+          displayAbacus();
+        }
+      });
+    };
 
+    const displayEnterAnswerForm = () => {
+      displayKind.value = "enter-answer-form";
+      context.root.$nextTick(() => {
+        animate({
+          targets: [enterAnswerFormDisplayRef.value!],
+          opacity: [0, 1],
+          scale: 1.1,
+          delay: animate.stagger(100),
+        });
       });
     };
 
@@ -115,6 +155,10 @@ export default defineComponent({
     return {
       displayKind,
       abacusDisplayRef,
+      enterAnswerFormDisplayRef,
+      correctIconRef,
+      playCorrectIconAnimation,
+
       starRef0,
       starRef1,
       starRef2,
@@ -128,6 +172,7 @@ export default defineComponent({
       text,
       textRef,
       timelineRef,
+      displayAbacus,
     };
   },
 });
