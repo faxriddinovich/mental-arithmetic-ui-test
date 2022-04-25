@@ -17,7 +17,8 @@ type DisplayKind =
   | "attention-text"
   | "abacus"
   | "enter-answer-form"
-  | "enter-answer-abacus";
+  | "enter-answer-abacus"
+  | "scores";
 
 export default defineComponent({
   components: { AbacusBoard, HealthBar, ScoresBar },
@@ -33,9 +34,12 @@ export default defineComponent({
 
     const abacusDisplayRef = ref<HTMLElement | null>(null);
     const enterAnswerFormDisplayRef = ref<HTMLElement | null>(null);
-    const displayKind = ref<DisplayKind>("attention-text");
+    const displayKind = ref<DisplayKind>("scores");
 
     const correctIconRef = ref<HTMLElement | null>(null);
+
+    const scoresTimerRef = ref<HTMLElement | null>(null);
+    const scoresCoinRef = ref<HTMLElement | null>(null);
 
     const displayAttentionText = () => (displayKind.value = "attention-text");
     const displayAbacus = () => {
@@ -64,10 +68,7 @@ export default defineComponent({
       console.log("call");
       animate({
         targets: correctIconRef.value,
-        keyframes: [
-          { translateY: -130 },
-          { translateY: 0 },
-        ],
+        keyframes: [{ translateY: -130 }, { translateY: 0 }],
         scaleY: [
           { value: 1.5, duration: 100, easing: "easeOutExpo" },
           { value: 1, duration: 900 },
@@ -76,7 +77,7 @@ export default defineComponent({
         delay: animate.stagger(600),
         complete: () => {
           displayAbacus();
-        }
+        },
       });
     };
 
@@ -107,20 +108,30 @@ export default defineComponent({
     const modal = ref<boolean>(false);
 
     onMounted(() => {
-      /*
       const starAnim = animate({
-        autoplay: false,
+        autoplay: true,
         targets: [starRef0.value!, starRef1.value, starRef2.value],
-        translateY: [-140, 100],
-        scaleY: [
-          { value: 1.5, duration: 100, easing: "easeOutExpo" },
+        scale: [
+          { value: 1.2, duration: 100, easing: "easeOutExpo" },
           { value: 1, duration: 900 },
         ],
         delay: animate.stagger(600),
       });
-      */
+          animate({
+            autoplay: true,
+            targets: [scoresTimerRef.value, scoresCoinRef.value],
+            scale: [
+              { value: 1.1, duration: 100, easing: "easeOutExpo" },
+              { value: 1, duration: 900 },
+            ],
+            delay: animate.stagger(600),
+          });
 
-      const barAnim = animate.timeline({ autoplay: false });
+      const barAnim = animate.timeline({
+        autoplay: false,
+        complete: () => {
+        },
+      });
 
       barAnim
         .add({
@@ -158,6 +169,9 @@ export default defineComponent({
       enterAnswerFormDisplayRef,
       correctIconRef,
       playCorrectIconAnimation,
+
+      scoresTimerRef,
+      scoresCoinRef,
 
       starRef0,
       starRef1,

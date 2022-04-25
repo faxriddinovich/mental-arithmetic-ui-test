@@ -60,7 +60,7 @@
       <div class="hero-body">
         <div style="margin: auto">
           <img
-          ref="correctIconRef"
+            ref="correctIconRef"
             src="https://cdn-icons-png.flaticon.com/512/148/148767.png"
             width="100"
             style="
@@ -89,7 +89,7 @@
                 type="number"
               />
               <button
-              type="button"
+                type="button"
                 class="flash-card-button"
                 style="width: 100%; text-align: center"
                 @click="playCorrectIconAnimation"
@@ -104,6 +104,98 @@
           <button class="flash-card-button ml-3">
             <span> <b-icon icon="skip-forward" /> Skip the row</span>
           </button>
+        </div>
+      </div>
+    </section>
+    <section
+      class="hero is-fullheight"
+      v-else-if="displayKind == 'scores'"
+      ref="enterAnswerFormDisplayRef"
+    >
+      <div class="hero-body">
+      <div class="columns is-gapless is-centered" style="min-width: 100%">
+        <div class="column is-12-mobile is-10-tablet is-9-desktop is-4-fullhd">
+          <center style="margin-bottom: -30px; z-index: 0">
+            <img
+              src="../../../../public/favourite.png"
+              width="100"
+              ref="starRef0"
+            />
+            <img
+              src="../../../../public/favourite.png"
+              class="ml-3 mb-4"
+              width="100"
+              ref="starRef1"
+            />
+            <img
+              src="../../../../public/favourite.png"
+              class="ml-3"
+              width="100"
+              ref="starRef2"
+            />
+          </center>
+
+          <div class="flash-card-sketchy-card mx-6">
+            <div class="ribbon-4">
+              <div class="ribbon-content">
+                <div class="is-size-2 has-text-white has-text-centered py-1" style="font-family: arial">
+                YOU WON
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="mb-4"
+              style="
+                border-radius: 3px;
+                padding: 10px;
+                border: 1px solid black;
+                background: #f7f7ed;
+                -webkit-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+                -moz-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+                box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+              "
+            >
+              <div class="is-flex is-justify-content-space-around">
+                <div ref="scoresTimerRef">
+                  <img src="../../../../public/heart.png" width="45" style="vertical-align: middle" />
+                  <span style="vertical-align: middle" class="is-size-3 ml-2">22:21</span>
+                </div>
+                <div ref="scoresCoinRef">
+                  <img src="../../../../public/star.png" width="45" style="vertical-align: middle"/>
+                  <span style="vertical-align: middle" class="is-size-3 ml-2">322</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="is-flex is-justify-content-space-between">
+                <span class="is-size-4">Themes</span>
+                <span class="is-size-4">3</span>
+              </div>
+              <div class="is-flex is-justify-content-space-between">
+                <span class="is-size-4">Examples</span>
+                <span class="is-size-4">3</span>
+              </div>
+              <div class="is-flex is-justify-content-space-between">
+                <span class="is-size-4">Rows</span>
+                <span class="is-size-4">115</span>
+              </div>
+            </div>
+            <hr class="m-3" />
+            <div class="is-flex is-justify-content-space-between">
+              <button class="flash-card-button" @click="modal = true">
+                <span> <b-icon icon="home" /> </span>
+              </button>
+              <button class="flash-card-button ml-3">
+                <span> <b-icon icon="redo" /> Restart</span>
+              </button>
+              <button class="flash-card-button ml-3" @click="modal = true">
+                <span> <b-icon icon="bars" /> </span>
+              </button>
+
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </section>
@@ -146,21 +238,6 @@
     </b-modal>
 
     <!--
-    <div class="flash-card-stars">
-      <img src="../../../../public/favourite.png" width="100" ref="starRef0" />
-      <img
-        src="../../../../public/favourite.png"
-        class="ml-3 mb-4"
-        width="100"
-        ref="starRef1"
-      />
-      <img
-        src="../../../../public/favourite.png"
-        class="ml-3"
-        width="100"
-        ref="starRef2"
-      />
-    </div>
     -->
 
     <!--
@@ -290,12 +367,6 @@
 <style lang="scss">
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Sketch&display=swap");
-
-.flash-card-stars {
-  position: absolute;
-  right: 50%;
-  transform: translate(50%, 0);
-}
 
 .game-background {
   font-family: "Patrick Hand SC", cursive;
@@ -462,6 +533,64 @@ div.flash-card-timeline::after {
   transform: translateY(-25%) translateX(100%);
 }
 */
+.ribbon-4:before {
+  height: 0;
+  width: 0;
+  border-width: 40px 20px;
+  border-style: solid;
+  border-color: #16a085 #16a085 #16a085 transparent;
+  top: 10px;
+  left: -30px;
+}
+.ribbon-4:after {
+  height: 0;
+  width: 0;
+  border-width: 40px 20px;
+  border-style: solid;
+  border-color: #16a085 transparent #16a085 #16a085;
+  top: 10px;
+  right: -30px;
+}
+
+.ribbon-content {
+  border: 1px solid black;
+  height: inherit;
+  margin-bottom: 0;
+  background: #1abc9c;
+  z-index: 4;
+}
+.ribbon-content:before {
+  height: 0;
+  width: 0;
+  border-top: 10px solid #26808b;
+  border-left: 10px solid transparent;
+  bottom: -10px;
+}
+.ribbon-content:after {
+  height: 0;
+  width: 0;
+  border-top: 10px solid #26808b;
+  border-right: 10px solid transparent;
+  right: 0;
+  bottom: -10px;
+}
+[class^="ribbon-"] {
+  position: relative;
+}
+[class^="ribbon-"]:before,
+[class^="ribbon-"]:after {
+  content: "";
+  position: absolute;
+}
+.ribbon-4 {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  //height: 80px;
+  margin-left: -27px;
+  margin-right: -27px;
+  background: #efb23b;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
 </style>
 <script lang="ts" src="./game.ts"></script>
 
