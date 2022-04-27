@@ -17,6 +17,7 @@ type DisplayKind =
   | "attention-text"
   | "abacus"
   | "enter-answer-form"
+  | "enter-answers-form"
   | "enter-answer-abacus"
   | "scores";
 
@@ -34,7 +35,8 @@ export default defineComponent({
 
     const abacusDisplayRef = ref<HTMLElement | null>(null);
     const enterAnswerFormDisplayRef = ref<HTMLElement | null>(null);
-    const displayKind = ref<DisplayKind>("scores");
+    const enterAnswersFormDisplayRef = ref<HTMLElement | null>(null);
+    const displayKind = ref<DisplayKind>("attention-text");
 
     const correctIconRef = ref<HTMLElement | null>(null);
 
@@ -58,14 +60,17 @@ export default defineComponent({
           easing: "easeInOutExpo",
           duration: 4000,
           complete: () => {
-            displayEnterAnswerForm();
+            displayEnterAnswersForm();
           },
         });
       });
     };
 
+    const displayEnterAnswersForm = () => {
+      displayKind.value = "enter-answers-form";
+    }
+
     const playCorrectIconAnimation = () => {
-      console.log("call");
       animate({
         targets: correctIconRef.value,
         keyframes: [{ translateY: -130 }, { translateY: 0 }],
@@ -108,6 +113,7 @@ export default defineComponent({
     const modal = ref<boolean>(false);
 
     onMounted(() => {
+      /*
       const starAnim = animate({
         autoplay: true,
         targets: [starRef0.value!, starRef1.value, starRef2.value],
@@ -117,20 +123,20 @@ export default defineComponent({
         ],
         delay: animate.stagger(600),
       });
-          animate({
-            autoplay: true,
-            targets: [scoresTimerRef.value, scoresCoinRef.value],
-            scale: [
-              { value: 1.1, duration: 100, easing: "easeOutExpo" },
-              { value: 1, duration: 900 },
-            ],
-            delay: animate.stagger(600),
-          });
+      animate({
+        autoplay: true,
+        targets: [scoresTimerRef.value, scoresCoinRef.value],
+        scale: [
+          { value: 1.1, duration: 100, easing: "easeOutExpo" },
+          { value: 1, duration: 900 },
+        ],
+        delay: animate.stagger(600),
+      });
+      */
 
       const barAnim = animate.timeline({
         autoplay: false,
-        complete: () => {
-        },
+        complete: () => {},
       });
 
       barAnim
@@ -167,6 +173,7 @@ export default defineComponent({
       displayKind,
       abacusDisplayRef,
       enterAnswerFormDisplayRef,
+enterAnswersFormDisplayRef,
       correctIconRef,
       playCorrectIconAnimation,
 

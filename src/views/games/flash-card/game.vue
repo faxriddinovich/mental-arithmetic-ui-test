@@ -19,7 +19,7 @@
     </div>
 
     <!--
-    <button class="flash-card-button">
+    <button class="flash-card-3d-button">
       <span> <b-icon icon="home" /></span>
     </button>
     -->
@@ -90,7 +90,7 @@
               />
               <button
                 type="button"
-                class="flash-card-button"
+                class="flash-card-3d-button"
                 style="width: 100%; text-align: center"
                 @click="playCorrectIconAnimation"
               >
@@ -98,10 +98,10 @@
               </button>
             </form>
           </div>
-          <button class="flash-card-button" @click="modal = true">
+          <button class="flash-card-3d-button" @click="modal = true">
             <span> <b-icon icon="bars" /> Show the answer</span>
           </button>
-          <button class="flash-card-button ml-3">
+          <button class="flash-card-3d-button ml-3">
             <span> <b-icon icon="skip-forward" /> Skip the row</span>
           </button>
         </div>
@@ -113,88 +113,155 @@
       ref="enterAnswerFormDisplayRef"
     >
       <div class="hero-body">
-      <div class="columns is-gapless is-centered" style="min-width: 100%">
-        <div class="column is-12-mobile is-10-tablet is-9-desktop is-4-fullhd">
-          <center style="margin-bottom: -30px; z-index: 0">
-            <img
-              src="../../../../public/favourite.png"
-              width="100"
-              ref="starRef0"
-            />
-            <img
-              src="../../../../public/favourite.png"
-              class="ml-3 mb-4"
-              width="100"
-              ref="starRef1"
-            />
-            <img
-              src="../../../../public/favourite.png"
-              class="ml-3"
-              width="100"
-              ref="starRef2"
-            />
-          </center>
+        <div class="columns is-gapless is-centered" style="min-width: 100%">
+          <div
+            class="column is-12-mobile is-10-tablet is-9-desktop is-4-fullhd"
+          >
+            <center style="margin-bottom: -30px; z-index: 0">
+              <img
+                src="../../../../public/favourite.png"
+                width="100"
+                ref="starRef0"
+              />
+              <img
+                src="../../../../public/favourite.png"
+                class="ml-3 mb-4"
+                width="100"
+                ref="starRef1"
+              />
+              <img
+                src="../../../../public/favourite.png"
+                class="ml-3"
+                width="100"
+                ref="starRef2"
+              />
+            </center>
 
-          <div class="flash-card-sketchy-card mx-6">
-            <div class="ribbon-4">
-              <div class="ribbon-content">
-                <div class="is-size-2 has-text-white has-text-centered py-1" style="font-family: arial">
-                YOU WON
+            <div class="flash-card-sketchy-card mx-6">
+              <div class="ribbon-4">
+                <div class="ribbon-content">
+                  <div
+                    class="is-size-2 has-text-white has-text-centered py-1"
+                    style="font-family: arial"
+                  >
+                    YOU WON
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              class="mb-4"
-              style="
-                border-radius: 3px;
-                padding: 10px;
-                border: 1px solid black;
-                background: #f7f7ed;
-                -webkit-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
-                -moz-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
-                box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
-              "
-            >
-              <div class="is-flex is-justify-content-space-around">
-                <div ref="scoresTimerRef">
-                  <img src="../../../../public/heart.png" width="45" style="vertical-align: middle" />
-                  <span style="vertical-align: middle" class="is-size-3 ml-2">22:21</span>
+              <div
+                class="mb-4"
+                style="
+                  border-radius: 3px;
+                  padding: 10px;
+                  border: 1px solid black;
+                  background: #f7f7ed;
+                  -webkit-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+                  -moz-box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+                  box-shadow: 0px 0px 26px -9px rgba(34, 60, 80, 0.23) inset;
+                "
+              >
+                <div class="is-flex is-justify-content-space-around">
+                  <div ref="scoresTimerRef">
+                    <img
+                      src="../../../../public/heart.png"
+                      width="45"
+                      style="vertical-align: middle"
+                    />
+                    <span style="vertical-align: middle" class="is-size-3 ml-2"
+                      >22:21</span
+                    >
+                  </div>
+                  <div ref="scoresCoinRef">
+                    <img
+                      src="../../../../public/star.png"
+                      width="45"
+                      style="vertical-align: middle"
+                    />
+                    <span style="vertical-align: middle" class="is-size-3 ml-2"
+                      >322</span
+                    >
+                  </div>
                 </div>
-                <div ref="scoresCoinRef">
-                  <img src="../../../../public/star.png" width="45" style="vertical-align: middle"/>
-                  <span style="vertical-align: middle" class="is-size-3 ml-2">322</span>
+              </div>
+              <div>
+                <div class="is-flex is-justify-content-space-between">
+                  <span class="is-size-4">Themes</span>
+                  <span class="is-size-4">3</span>
+                </div>
+                <div class="is-flex is-justify-content-space-between">
+                  <span class="is-size-4">Examples</span>
+                  <span class="is-size-4">3</span>
+                </div>
+                <div class="is-flex is-justify-content-space-between">
+                  <span class="is-size-4">Rows</span>
+                  <span class="is-size-4">115</span>
                 </div>
               </div>
-            </div>
-            <div>
+              <hr class="m-3" />
               <div class="is-flex is-justify-content-space-between">
-                <span class="is-size-4">Themes</span>
-                <span class="is-size-4">3</span>
+                <button class="flash-card-3d-button" @click="modal = true">
+                  <span> <b-icon icon="home" /> </span>
+                </button>
+                <button class="flash-card-3d-button ml-3">
+                  <span> <b-icon icon="redo" /> Restart</span>
+                </button>
+                <button class="flash-card-3d-button ml-3" @click="modal = true">
+                  <span> <b-icon icon="bars" /> </span>
+                </button>
               </div>
-              <div class="is-flex is-justify-content-space-between">
-                <span class="is-size-4">Examples</span>
-                <span class="is-size-4">3</span>
-              </div>
-              <div class="is-flex is-justify-content-space-between">
-                <span class="is-size-4">Rows</span>
-                <span class="is-size-4">115</span>
-              </div>
-            </div>
-            <hr class="m-3" />
-            <div class="is-flex is-justify-content-space-between">
-              <button class="flash-card-button" @click="modal = true">
-                <span> <b-icon icon="home" /> </span>
-              </button>
-              <button class="flash-card-button ml-3">
-                <span> <b-icon icon="redo" /> Restart</span>
-              </button>
-              <button class="flash-card-button ml-3" @click="modal = true">
-                <span> <b-icon icon="bars" /> </span>
-              </button>
-
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="hero is-fullheight"
+      v-else-if="displayKind == 'enter-answers-form'"
+      ref="enterAnswersFormDisplayRef"
+    >
+      <div class="hero-body">
+        <div class="columns is-gapless is-centered" style="min-width: 100%">
+          <div
+            class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd"
+          >
+            <div class="flash-card-sketchy-card mx-6">
+              <div class="columns is-multiline is-mobile">
+                <div
+                  class="column is-6-mobile is-3-desktop"
+                  v-for="tet in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                  :key="tet"
+                >
+                  <div class="has-text-centered has-text-weight-semibold mb-1">
+                    Example {{ tet }}:
+                  </div>
+                  <div class="field">
+                    <div class="control">
+                      <input
+                        class="input flash-card-input"
+                        type="number"
+                        placeholder="Enter answer"
+                      />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <button
+                        class="button is-primary flash-card-button is-fullwidth"
+                      >
+                        <span>Check answer</span>
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <hr class="m-2" />
+
+              <button class="flash-card-3d-button">
+                <span> <b-icon icon="play" />Skip</span>
+              </button>
+
+            </div>
           </div>
         </div>
       </div>
@@ -223,7 +290,7 @@
           ex corrupti numquam distinctio perspiciatis harum eos non quo.
           Inventore explicabo facere sint.
           <!--
-          <button class="flash-card-button">
+          <button class="flash-card-3d-button">
             <span> <b-icon icon="play" />Play</span>
           </button>
           <img
@@ -453,7 +520,7 @@
 }
 */
 
-.flash-card-button > span {
+.flash-card-3d-button > span {
   background: #fff;
   display: block;
   padding: 5px 15px;
@@ -461,13 +528,13 @@
   border: 2px solid #000;
 }
 
-.flash-card-button:active {
+.flash-card-3d-button:active {
   top: 4px;
   padding-bottom: 0px;
   box-shadow: 0 1px 0 #000;
 }
 
-.flash-card-button {
+.flash-card-3d-button {
   all: initial;
   display: inline-block;
   position: relative;
@@ -481,7 +548,7 @@
   box-shadow: 0 2px 0 #000, 0 2px 0px 0px black;
   background-image: url("data:image/gif;base64,R0lGODlhBAAEAIABAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjEgNjQuMTQwOTQ5LCAyMDEwLzEyLzA3LTEwOjU3OjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1LjEgV2luZG93cyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NUY1OENCRDdDMDYxMUUyOTEzMEE1MEM5QzM0NDVBMyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NUY1OENCRTdDMDYxMUUyOTEzMEE1MEM5QzM0NDVBMyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk1RjU4Q0JCN0MwNjExRTI5MTMwQTUwQzlDMzQ0NUEzIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk1RjU4Q0JDN0MwNjExRTI5MTMwQTUwQzlDMzQ0NUEzIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAAAQAsAAAAAAQABAAAAgYEEpdoeQUAOw==");
 }
-.flash-card-button:hover {
+.flash-card-3d-button:hover {
   cursor: pointer;
 }
 
@@ -590,6 +657,16 @@ div.flash-card-timeline::after {
   background: #efb23b;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+input.flash-card-input {
+  border: 2px solid #000;
+  text-align: center;
+}
+
+input.flash-card-input:focus {
+  box-shadow: none;
+  border: 2px solid #000;
 }
 </style>
 <script lang="ts" src="./game.ts"></script>
