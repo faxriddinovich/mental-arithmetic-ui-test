@@ -15,6 +15,7 @@ import {
 export default defineComponent({
   props: {
     columns: { type: Number, required: false, default: 1 },
+    valueBox: { type: Boolean, required: false,  default: true }
   },
   setup(props) {
     const svgRef = ref<SVGSVGElement | null>(null);
@@ -29,8 +30,15 @@ export default defineComponent({
       const width =
         ABACUS_STONE_WIDTH * (columns || props.columns) +
         (ABACUS_FRAME_WIDTH + ABACUS_FRAME_ABSOLUTE_X_PADDING);
+        /*
       const height = 469;
       svgRef.value!.setAttribute("viewBox", `0 -55 ${width} ${height}`);
+    */
+
+      const height = props.valueBox ? 469 : 414;
+      const viewBoxX = 0;
+      const viewBoxY = props.valueBox ? -55 : 0;
+      svgRef.value!.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${width} ${height}`);
     }
 
     onMounted(() => {
