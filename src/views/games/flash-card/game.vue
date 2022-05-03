@@ -1,7 +1,5 @@
 <template>
-  <div class="game-background">
-    <br />
-
+  <div class="flash-card-background">
     <div class="container">
       <div class="is-absolute" style="width: 100%">
         <div
@@ -24,6 +22,7 @@
     </button>
     -->
 
+    <!-- Attention text section -->
     <section class="hero is-fullheight" v-if="displayKind == 'attention-text'">
       <div class="hero-body">
         <div class="has-text-centered" style="width: 100%">
@@ -36,22 +35,24 @@
         </div>
       </div>
     </section>
+    <!-- Abacus section -->
     <section
-      class="hero is-fullheight"
-      v-else-if="displayKind == 'abacus'"
+      class="columns is-flex is-centered is-vcentered is-gapless"
       ref="abacusDisplayRef"
+      style="min-height: 100vh"
+      v-else-if="displayKind == 'abacus'"
     >
-      <div class="hero-body">
-        <div style="margin: auto">
-          <div>
-            <div class="flash-card-timeline" ref="timelineRef" />
-            <div class="flash-card-sketchy-card" style="z-index: 2">
-              <AbacusBoard style="width: 700px" :columns="6" />
-            </div>
+      <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
+        <div>
+          <!--<div class="flash-card-timeline" ref="timelineRef" />-->
+          <div class="box">2</div>
+          <div class="flash-card-sketchy-card">
+            <AbacusBoard :columns="6" :valueBox="false" />
           </div>
         </div>
       </div>
     </section>
+
     <section
       class="hero is-fullheight"
       v-else-if="displayKind == 'enter-answer-form'"
@@ -221,7 +222,10 @@
       ref="enterAnswersFormDisplayRef"
     >
       <div class="hero-body">
-        <div class="columns is-gapless is-centered" style="min-width: 100%">
+        <div
+          class="columns is-gapless is-centered is-marginless"
+          style="min-width: 100%"
+        >
           <div
             class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd"
           >
@@ -260,13 +264,13 @@
               <button class="flash-card-3d-button">
                 <span> <b-icon icon="play" />Skip</span>
               </button>
-
             </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!--
     <b-modal
       v-model="modal"
       :destroy-on-hide="false"
@@ -289,7 +293,6 @@
           ipsum incidunt suscipit, sit consequatur ipsa quasi quam quis adipisci
           ex corrupti numquam distinctio perspiciatis harum eos non quo.
           Inventore explicabo facere sint.
-          <!--
           <button class="flash-card-3d-button">
             <span> <b-icon icon="play" />Play</span>
           </button>
@@ -299,12 +302,10 @@
           <img
             src="https://pressstart.vip/images/uploads/assets/icons/heartcolored.png"
           />
-          -->
         </div>
       </template>
     </b-modal>
 
-    <!--
     -->
 
     <!--
@@ -435,10 +436,11 @@
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Sketch&display=swap");
 
-.game-background {
+.flash-card-background {
   font-family: "Patrick Hand SC", cursive;
   background-color: rgb(226, 221, 204);
-  height: 100vh;
+  min-height: 100vh !important;
+  position: relative;
 
   -moz-box-shadow: inset 0 0 100px #000000;
   -webkit-box-shadow: inset 0 0 100px #000000;
@@ -477,7 +479,6 @@
   background: white;
   border-radius: 5px;
   border: 2px solid #000;
-  padding: 15px;
   box-shadow: 0 4px 0 #000;
 }
 /*

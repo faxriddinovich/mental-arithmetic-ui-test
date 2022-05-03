@@ -57,8 +57,9 @@ export default defineComponent({
         animate({
           targets: timelineRef.value,
           width: ["100%", "0%"],
-          easing: "easeInOutExpo",
-          duration: 4000,
+          //easing: "easeInOutExpo",
+          easing: "linear",
+          duration: 1800000,
           complete: () => {
             displayEnterAnswersForm();
           },
@@ -68,7 +69,7 @@ export default defineComponent({
 
     const displayEnterAnswersForm = () => {
       displayKind.value = "enter-answers-form";
-    }
+    };
 
     const playCorrectIconAnimation = () => {
       animate({
@@ -173,7 +174,7 @@ export default defineComponent({
       displayKind,
       abacusDisplayRef,
       enterAnswerFormDisplayRef,
-enterAnswersFormDisplayRef,
+      enterAnswersFormDisplayRef,
       correctIconRef,
       playCorrectIconAnimation,
 

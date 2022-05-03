@@ -13,12 +13,16 @@ export function getVoices(locale?: string): Promise<string[]> {
       const supported = await TextToSpeech.getSupportedVoices();
       if (supported.voices.length) {
         clearInterval(timerHandle);
-        const identified = supported.voices.map((voice, index) => {
-          return voice.voiceURI + ":" + voice.name + ":" + voice.lang + ":" + index;
-        }).filter((voice) => {
-          const [,, lang] = voice.split(':');
-          return locale && (lang.replace('-', '_') == locale.replace('-', '_'));
-        });
+        const identified = supported.voices
+          .map((voice, index) => {
+            return (
+              voice.voiceURI + ":" + voice.name + ":" + voice.lang + ":" + index
+            );
+          })
+          .filter((voice) => {
+            const [, , lang] = voice.split(":");
+            return locale && lang.replace("-", "_") == locale.replace("-", "_");
+          });
         return resolve(identified);
       }
       triesCount++;
@@ -27,7 +31,7 @@ export function getVoices(locale?: string): Promise<string[]> {
 }
 
 export function speak(text: string | number, rate: number, identity: string) {
-  const [,, lang, index] = identity.split(":");
+  const [, , lang, index] = identity.split(":");
 
   TextToSpeech.speak({
     text: String(text),

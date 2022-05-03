@@ -21,9 +21,40 @@ import { acquireSetting } from "@/store/setting";
 import { acquireAccount } from "@/store/account";
 import { getVoices } from "@/services/tts";
 
+import n29 from "@@/sounds/tts/20.mp3";
+import n9 from "@@/sounds/tts/9.mp3";
+import Crunker from "crunker";
+
 interface Task {
   text: string;
   run: () => Promise<void>;
+}
+
+const load = (k: any) => require("@@/sounds/tts/" + k + ".mp3");
+
+function speak(n: number): void {
+
+  let digits = n.toString().split('');
+  digits = n % 10 == 0 ? [load(n)] : digits.reverse()
+    .map((k, i) => parseInt(k) * (10 ** i)).reverse() // FIXME: lol
+    .map((k) => load(k))
+
+  console.log(digits);
+
+  const crunker = new Crunker();
+  crunker
+    .fetchAudio(...digits)
+    .then((k) => {
+      return crunker.concatAudio(k);
+    })
+    .then((merged) => {
+      return crunker.export(merged, "audio/mp3");
+    })
+    .then((out) => {
+      const audio = new Audio(out.url);
+      audio.playbackRate = 1.5;
+      audio.play();
+    });
 }
 
 export default defineComponent({
@@ -31,6 +62,9 @@ export default defineComponent({
     const loadingText = ref<string>("");
     const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
+
+    let i = 0;
+      speak(28);
 
     const tasks: Task[] = [
       {
