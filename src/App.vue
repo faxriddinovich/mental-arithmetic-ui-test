@@ -33,17 +33,26 @@ interface Task {
 const load = (k: any) => require("@@/sounds/tts/" + k + ".mp3");
 
 function speak(n: number): void {
+  let str = n.toString();
+  const len = str.length;
+  const mod = len % 3;
+  str = str.padStart(mod % 3 != 0 ? len + (3 - mod) : len, '0');
 
-  let digits = n.toString().split('');
-  digits = n % 10 == 0 ? [load(n)] : digits.reverse()
-    .map((k, i) => parseInt(k) * (10 ** i)).reverse() // FIXME: lol
-    .map((k) => load(k))
-
-  console.log(digits);
+  const chunks = str.split('').reduce((acc, curr, cind, src) => {
+    return acc.push(parseInt(src.splice(0, 3).join(''))) && acc
+  }, []).reduce((acc, curr, cind, src) => {
+    const spl = curr.toString().split('');
+    for(const [i, el] of spl.entries()) {
+      acc.push(parseInt(el) * (10 ** (spl.length - i - 1)));
+    }
+    if (src[cind + 1]) acc.push(1000 ** (src.length - cind - 1));
+    return acc.filter((k) => k != 0);
+  }, []).map((n) => load(n));
+  console.log(chunks);
 
   const crunker = new Crunker();
   crunker
-    .fetchAudio(...digits)
+    .fetchAudio(...chunks)
     .then((k) => {
       return crunker.concatAudio(k);
     })
@@ -52,7 +61,8 @@ function speak(n: number): void {
     })
     .then((out) => {
       const audio = new Audio(out.url);
-      audio.playbackRate = 1.5;
+      audio.webkitPreservesPitch = false;
+      audio.playbackRate = 3.0;
       audio.play();
     });
 }
@@ -63,8 +73,7 @@ export default defineComponent({
     const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
 
-    let i = 0;
-      speak(28);
+    speak(119);
 
     const tasks: Task[] = [
       {
