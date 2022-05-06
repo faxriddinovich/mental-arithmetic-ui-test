@@ -1,6 +1,6 @@
 <template>
   <div class="is-unselectable">
-  <input type="number" v-model="num" />
+  <input type="text" v-model="num" />
   <button @click="sspeak">go</button>
   <!--
     <div v-if="syncPercentage == 100">
@@ -25,8 +25,6 @@ import { acquireSetting } from "@/store/setting";
 import { acquireAccount } from "@/store/account";
 import { getVoices } from "@/services/tts";
 
-import n29 from "@@/sounds/tts/20.mp3";
-import n9 from "@@/sounds/tts/9.mp3";
 import Crunker from "crunker";
 
 interface Task {
@@ -37,6 +35,7 @@ interface Task {
 const split = (n: number): number[] => {
   const chunks = n.toString().split("");
   let i = 0;
+
   const res = chunks
     .reduce((acc, curr) => {
       const ncurr = parseInt(curr);
@@ -49,10 +48,14 @@ const split = (n: number): number[] => {
       }
       return acc;
     }, [] as number[])
-    .filter((k) => k != 0);
+    .filter((n) => n!=0);
 
     return res;
 };
+
+const excludeSign = (k: string) => {
+  return ['+', '-', '×', '÷'].includes(k[0]) ? k.slice(1, k.length) : k;
+}
 
 const group = (n: number): number[] => {
   let str = n.toString();
@@ -62,7 +65,7 @@ const group = (n: number): number[] => {
   const mod = len % 3;
   str = str.padStart(mod % 3 != 0 ? len + (3 - mod) : len, "0");
 
-  return str.split("").reduce((acc, curr, cind, src) => {
+  return str.split("").reduce((acc, _1, _2, src) => {
     acc.push(parseInt(src.splice(0, 3).join(""))) && acc;
     return acc;
   }, [] as number[]);
@@ -70,8 +73,14 @@ const group = (n: number): number[] => {
 
 const load = (k: any) => require("@@/sounds/tts/" + k + ".mp3");
 
-function speak(n: number): void {
-  const gr = group(n);
+function speak(n: string): void {
+  const signMap = new Map();
+  signMap.set('+', 'add');
+  signMap.set('-', 'subtract');
+  signMap.set('×', 'multiply');
+  signMap.set('÷', 'divide');
+  const sign = Array.from(signMap.keys()).includes(n[0]) ? n[0] : null;
+  const gr = group(parseInt(sign ? n.slice(1, n.length) : n));
 
   const chunks = gr.reduce((acc, curr, cind, src) => {
     const chunks = split(curr);
@@ -79,6 +88,8 @@ function speak(n: number): void {
     if (src[cind + 1]) acc.push(1000 ** (src.length - cind - 1));
     return acc;
   }, [] as number[]).map((n) => load(n));
+
+  if (sign) chunks.unshift(load(signMap.get(sign)));
 
   const crunker = new Crunker();
   crunker
@@ -101,19 +112,6 @@ export default defineComponent({
     const loadingText = ref<string>("");
     const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
-
-    /*
-       given: 300301
-       1. 300 301
-       2.
-
-         300          301
-         / \          / \ 
-        3  100      3 100 1
-
-       3 100 [1000] 3 100 1
-    */
-
 
     const num = ref(0);
     function sspeak() {
