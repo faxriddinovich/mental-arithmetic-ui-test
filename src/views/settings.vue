@@ -102,7 +102,7 @@ import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { speak } from "@/services/tts";
 import { acquireSetting, Locales } from "@/store/setting";
-import { getVoices } from '@/services/tts';
+import { TextToSpeech } from '@/services/tts';
 
 export default defineComponent({
   setup(_, context) {
@@ -113,7 +113,7 @@ export default defineComponent({
     const textToSpeechID = ref<string>(setting.one('text_to_speech_id'));
 
     async function getSupportedVoices() {
-      supportedVoices.value = await getVoices(locale.value);
+      supportedVoices.value = await TextToSpeech.getSupportedVoices(locale.value);
     }
 
     watch(locale, async () => {

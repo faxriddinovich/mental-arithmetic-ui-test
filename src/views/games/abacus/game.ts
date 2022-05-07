@@ -18,7 +18,7 @@ import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
 import { Operation } from "@mental-arithmetic/themes";
-import { speak } from "@/services/tts";
+import { TextToSpeech } from "@/services/tts";
 
 import StackedCards from "@/components/stacked-cards.vue";
 
@@ -316,8 +316,10 @@ export default defineComponent({
       ) {}
 
       public speech() {
+        TextToSpeech.speak(speechId, this.row, v(currentThemeOperation));
+        
         //const str = this.row[0] + ' multiplied by ' + this.row[1];
-        return speak(String(this.row), 400, speechId);
+        //return TextToSpeech.(String(this.row), 400, speechId);
       }
     }
 

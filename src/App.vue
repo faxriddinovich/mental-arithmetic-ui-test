@@ -1,8 +1,5 @@
 <template>
   <div class="is-unselectable">
-  <input type="text" v-model="num" />
-  <button @click="sspeak">go</button>
-  <!--
     <div v-if="syncPercentage == 100">
       <router-view :key="$route.fullPath" />
     </div>
@@ -16,7 +13,6 @@
         <div class="is-size-6">{{ loadingText }}</div>
       </div>
     </section>
-    -->
   </div>
 </template>
 <script lang="ts">
@@ -25,86 +21,9 @@ import { acquireSetting } from "@/store/setting";
 import { acquireAccount } from "@/store/account";
 import { getVoices } from "@/services/tts";
 
-import Crunker from "crunker";
-
 interface Task {
   text: string;
   run: () => Promise<void>;
-}
-
-const split = (n: number): number[] => {
-  const chunks = n.toString().split("");
-  let i = 0;
-
-  const res = chunks
-    .reduce((acc, curr) => {
-      const ncurr = parseInt(curr);
-      const power = 10 ** (chunks.length - i++ - 1);
-      // FIXME: hard coded
-      if (power > 99) {
-        acc.push(ncurr, power);
-      } else {
-        acc.push(ncurr * power);
-      }
-      return acc;
-    }, [] as number[])
-    .filter((n) => n!=0);
-
-    return res;
-};
-
-const excludeSign = (k: string) => {
-  return ['+', '-', '×', '÷'].includes(k[0]) ? k.slice(1, k.length) : k;
-}
-
-const group = (n: number): number[] => {
-  let str = n.toString();
-  const len = str.length;
-  if (n % (10 ** (len - 1)) == 0) return [n];
-
-  const mod = len % 3;
-  str = str.padStart(mod % 3 != 0 ? len + (3 - mod) : len, "0");
-
-  return str.split("").reduce((acc, _1, _2, src) => {
-    acc.push(parseInt(src.splice(0, 3).join(""))) && acc;
-    return acc;
-  }, [] as number[]);
-};
-
-const load = (k: any) => require("@@/sounds/tts/" + k + ".mp3");
-
-function speak(n: string): void {
-  const signMap = new Map();
-  signMap.set('+', 'add');
-  signMap.set('-', 'subtract');
-  signMap.set('×', 'multiply');
-  signMap.set('÷', 'divide');
-  const sign = Array.from(signMap.keys()).includes(n[0]) ? n[0] : null;
-  const gr = group(parseInt(sign ? n.slice(1, n.length) : n));
-
-  const chunks = gr.reduce((acc, curr, cind, src) => {
-    const chunks = split(curr);
-    acc.push(...chunks);
-    if (src[cind + 1]) acc.push(1000 ** (src.length - cind - 1));
-    return acc;
-  }, [] as number[]).map((n) => load(n));
-
-  if (sign) chunks.unshift(load(signMap.get(sign)));
-
-  const crunker = new Crunker();
-  crunker
-    .fetchAudio(...chunks)
-    .then((k) => {
-      return crunker.concatAudio(k);
-    })
-    .then((merged) => {
-      return crunker.export(merged, "audio/mp3");
-    })
-    .then((out) => {
-      const audio = new Audio(out.url);
-      audio.playbackRate = 2.0;
-      audio.play();
-    });
 }
 
 export default defineComponent({
@@ -112,11 +31,6 @@ export default defineComponent({
     const loadingText = ref<string>("");
     const syncPercentage = ref<number>(0);
     const isLoading = ref<boolean>(true);
-
-    const num = ref(0);
-    function sspeak() {
-      speak(num.value);
-    }
 
     const tasks: Task[] = [
       {
@@ -164,7 +78,7 @@ export default defineComponent({
       }
     });
 
-    return { isLoading, loadingText, syncPercentage, num, sspeak };
+    return { isLoading, loadingText, syncPercentage };
   },
 });
 </script>
