@@ -4,16 +4,6 @@ import { Operation, RowEl } from "@mental-arithmetic/themes";
 
 const GET_VOICES_MAX_TRIES_COUNT = 100;
 
-/*
- * +32
- * -32
- * *32
- * /324
- *
- * 32 / 24
- *
- */
-
 export class TextToSpeech {
   private static crunker = new Crunker();
   public static additionalLanguages = [
@@ -31,10 +21,7 @@ export class TextToSpeech {
     return n[0] == "-" ? Operation.sub : Operation.add;
   }
 
-  public static speak(
-    identifier: string,
-    row: RowEl
-  ): Promise<void> {
+  public static speak(identifier: string, row: RowEl): Promise<void> {
     const [, , locale] = identifier.split(":");
     if (locale == "uz-UZ") {
       const signChunk = this.load(this.signMap[row.sign]);
@@ -126,7 +113,7 @@ export class TextToSpeech {
   public static group(n: bigint): bigint[] {
     let str = n.toString();
     const len = str.length;
-    if (n % (BigInt(10) ** (BigInt(len - 1))) === BigInt(0)) return [n];
+    if (n % BigInt(10) ** BigInt(len - 1) === BigInt(0)) return [n];
 
     const mod = len % 3;
     str = str.padStart(mod % 3 != 0 ? len + (3 - mod) : len, "0");
@@ -153,24 +140,7 @@ export class TextToSpeech {
       }, [] as number[])
       .map((n) => this.load(n));
 
-    //if (sign) chunks.unshift(this.load(signMap.get(sign)));
-
     return chunks;
-
-    const crunker = new Crunker();
-    crunker
-      .fetchAudio(...chunks)
-      .then((k) => {
-        return crunker.concatAudio(k);
-      })
-      .then((merged) => {
-        return crunker.export(merged, "audio/mp3");
-      })
-      .then((out) => {
-        const audio = new Audio(out.url);
-        audio.playbackRate = 2.0;
-        audio.play();
-      });
   }
 }
 

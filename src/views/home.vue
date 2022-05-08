@@ -48,8 +48,8 @@
           icon-size="is-medium"
           has-icon
         >
-          <div class="mb-1" v-html="event.body"></div>
-          <small class="has-text-weight-bold">{{ event.createdAt }}</small>
+          <div class="mb-1" v-html="event.content"></div>
+          <small class="has-text-weight-bold">{{ event.timestamp }}</small>
         </b-message>
 
         <div class="columns is-variable is-2 is-mobile is-multiline">
@@ -209,7 +209,7 @@ import {
 import { Browser } from "@capacitor/browser";
 import Courses from "@/views/course/courses.vue";
 import { rpc } from "@/services/rpc";
-import { RPC_GET_LATEST_EVENT_METHOD } from "@/services/rpc/methods";
+import { RPC_METHOD_EVENT_GET_LATEST } from "@/services/rpc/methods";
 import { EventContract } from "@/services/rpc/contracts/event";
 import { acquireAccount } from "@/store/account";
 import { acquireSetting } from '@/store/setting';
@@ -223,7 +223,7 @@ export default defineComponent({
     function getEvent() {
       const canDisplayEvent = acquireSetting().one('show_latest_event');
       if (canDisplayEvent) {
-        rpc.call(RPC_GET_LATEST_EVENT_METHOD).then((result) => {
+        rpc.call(RPC_METHOD_EVENT_GET_LATEST).then((result) => {
           event.value = result;
         });
       }

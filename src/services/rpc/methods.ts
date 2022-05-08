@@ -1,5 +1,6 @@
-export const RPC_AUTHENTICATE_ACCOUNT_METHOD = "authenticate_account";
-export const RPC_CREATE_ACCOUNT_METHOD = "create_account";
+export const RPC_METHOD_ACCOUNT_ENTER = "account_enter";
+export const RPC_METHOD_ACCOUNT_CREATE = "account_create";
+
 export const RPC_GET_ACCOUNT_METHOD = "get_account";
 export const RPC_UPDATE_ACCOUNT_METHOD = "update_account";
 export const RPC_DELETE_ACCOUNT_METHOD = "delete_account";
@@ -17,6 +18,8 @@ export const RPC_CANCEL_SUBSCRIPTION_METHOD = "cancel_subscription";
 export const RPC_PURCHASE_SUBSCRIPTION_METHOD = "purchase_subscription";
 
 export const RPC_GET_LESSONS_METHOD = "get_lessons";
+
+export const RPC_METHOD_EVENT_GET_LATEST = "event_get_latest";
 
 export const RPC_GET_EVENTS_METHOD = "get_events";
 export const RPC_CREATE_EVENT_METHOD = "create_event";

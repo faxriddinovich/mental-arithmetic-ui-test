@@ -19,7 +19,7 @@
 import { defineComponent, onMounted, ref } from "@vue/composition-api";
 import { acquireSetting } from "@/store/setting";
 import { acquireAccount } from "@/store/account";
-import { getVoices } from "@/services/tts";
+import { TextToSpeech } from "@/services/tts";
 
 interface Task {
   text: string;
@@ -55,7 +55,7 @@ export default defineComponent({
           const setting = acquireSetting();
           if (!setting.one("text_to_speech_id")) {
             try {
-              const voices = await getVoices(
+              const voices = await TextToSpeech.getSupportedVoices(
                 setting.one("locale") || undefined
               );
               if (voices.length)
@@ -63,7 +63,7 @@ export default defineComponent({
             } catch {}
           }
         },
-      },
+      }
     ];
 
     function completeTask() {

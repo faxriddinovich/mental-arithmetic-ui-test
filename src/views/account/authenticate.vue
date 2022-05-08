@@ -95,7 +95,7 @@ import Captcha from "@hcaptcha/vue-hcaptcha";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
 import { RPC_INVALID_CREDENTIALS_ERR_CODE } from "@/services/rpc/error-codes";
-import { RPC_AUTHENTICATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import { RPC_METHOD_ACCOUNT_ENTER } from "@/services/rpc/methods";
 import {
   AccountCredentialsContract,
   SessionContract,
@@ -147,7 +147,7 @@ export default defineComponent({
       credentials[enterMode.value] = usernameOrEmail.value;
 
       rpc
-        .call(RPC_AUTHENTICATE_ACCOUNT_METHOD, credentials)
+        .call(RPC_METHOD_ACCOUNT_ENTER, credentials)
         .then(async (session: SessionContract) => {
           await accounts.addSession(session);
           context.root.$router.push({ name: 'AccountSessions' });

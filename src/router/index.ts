@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
-import Store from "@/store";
 import { acquireAccount } from '@/store/account';
 import { acquireGame } from '@/store/game';
 

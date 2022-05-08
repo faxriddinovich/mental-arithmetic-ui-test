@@ -91,7 +91,7 @@ import { defineComponent, ref, computed } from "@vue/composition-api";
 import Captcha from "@hcaptcha/vue-hcaptcha";
 import { showToastMessage, ToastType } from "@/services/toast";
 import { rpc } from "@/services/rpc";
-import { RPC_CREATE_ACCOUNT_METHOD } from "@/services/rpc/methods";
+import { RPC_METHOD_ACCOUNT_CREATE } from "@/services/rpc/methods";
 import { RPC_ACCOUNT_ALREADY_EXISTS_ERR_CODE } from "@/services/rpc/error-codes";
 import { CreateAccountContract } from "@/services/rpc/contracts/account";
 
@@ -139,7 +139,7 @@ export default defineComponent({
       console.log(params);
 
       rpc
-        .call(RPC_CREATE_ACCOUNT_METHOD, params)
+        .call(RPC_METHOD_ACCOUNT_CREATE, params)
         .then(() => {
           showToastMessage(
             context.root.$t("success_account_creation_message") as string,

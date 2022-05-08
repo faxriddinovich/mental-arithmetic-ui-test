@@ -310,9 +310,6 @@ export default defineComponent({
 
       public speech() {
         TextToSpeech.speak(speechId, this.row);
-        
-        //const str = this.row[0] + ' multiplied by ' + this.row[1];
-        //return TextToSpeech.(String(this.row), 400, speechId);
       }
     }
 
