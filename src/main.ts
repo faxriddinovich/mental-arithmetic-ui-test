@@ -75,12 +75,9 @@ Vue.filter("timerFormat", (timerAbsolute: number) => {
 Vue.filter("toOperation", (ops: number) => {
   let str = "";
 
-  if (ops & Operation.add) str += "+ ";
-
-  if (ops & Operation.sub) str += "- ";
-
-  if (ops & Operation.div) str += "÷ ";
-
+  if (ops & Operation.add) str += "+";
+  if (ops & Operation.sub) str += "-";
+  if (ops & Operation.div) str += "÷";
   if (ops & Operation.mult) str += "×";
 
   return str;

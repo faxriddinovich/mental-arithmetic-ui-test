@@ -118,10 +118,7 @@
             <svg
               class="is-full-size"
               viewBox="0 0 484 230"
-              v-else-if="
-                currentThemeOperation & Operation.mult ||
-                currentThemeOperation & Operation.div
-              "
+              v-else-if="currentCard.row.numbers instanceof Array"
             >
               <text
                 fill="#fff"
@@ -132,7 +129,7 @@
                 font-size="80px"
                 opacity=".9"
               >
-                {{ currentCard.operation & Operation.mult ? "×" : "÷" }}
+                {{ currentCard.row.sign | toOperation }}
               </text>
               <text
                 fill="#fff"
@@ -142,7 +139,7 @@
                 text-anchor="end"
                 dominant-baseline="hanging"
               >
-                {{ currentCard.row[0] }}
+                {{ currentCard.row.numbers[0] }}
               </text>
               <line
                 x1="80"
@@ -161,7 +158,7 @@
                 text-anchor="end"
                 dominant-baseline="auto"
               >
-                {{ currentCard.row[1] }}
+                {{ currentCard.row.numbers[1] }}
               </text>
             </svg>
             <div
@@ -185,7 +182,8 @@
                 fill="#fff"
                 :key="'row' + currentRow"
               >
-                {{ currentCard.row }}
+                {{ currentCard.row.sign | toOperation
+                }}{{ currentCard.row.numbers }}
               </text>
             </svg>
           </div>
@@ -219,22 +217,12 @@
     <b-modal v-model="isAnswerModalActive" :can-cancel="['escape', 'outside']">
       <div class="box mx-4">
         <div class="is-size-3 has-text-weight-semibold has-text-centered">
-          <span
-            v-if="
-              currentThemeOperation & Operation.mult ||
-              currentThemeOperation & Operation.div
-            "
-          >
-            {{ currentRow[0] }}
-            {{ currentThemeOperation & Operation.mult ? "×" : "÷" }}
-            {{ currentRow[1] }}
-          </span>
-          <span
-            v-else
-            v-for="(row, rowIndex) of currentExample.numbers"
-            :key="rowIndex"
-          >
-            {{ row | normalizeSign }}&nbsp;
+          <span v-for="(row, rowIndex) of currentExample.rows" :key="rowIndex">
+            <span v-if="row.numbers instanceof Array">
+              {{ row.numbers[0] }} {{ row.sign | toOperation }}
+              {{ row.numbers[1] }}
+            </span>
+            <span v-else> {{ row.numbers | normalizeSign }}&nbsp; </span>
           </span>
           <div class="has-text-centered">
             <span class="has-text-success has-text-weight-bold is-size-2"

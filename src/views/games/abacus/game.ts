@@ -17,7 +17,7 @@ import { acquireGame, GAME_KIND } from "@/store/game";
 import { acquireExample } from "@/store/example";
 import { acquireSetting } from "@/store/setting";
 import confettiLib from "canvas-confetti";
-import { Operation } from "@mental-arithmetic/themes";
+import { Operation, RowEl } from "@mental-arithmetic/themes";
 import { TextToSpeech } from "@/services/tts";
 
 import StackedCards from "@/components/stacked-cards.vue";
@@ -270,15 +270,9 @@ export default defineComponent({
       return classes;
     });
 
-    const currentRow = computed<RowType | RowType[]>(() => {
-      const operation = v(currentSequenceItem).theme.metadata.operation || 0;
-
-      if (v(currentExample) == null) return 0;
-
-      if (operation & Operation.add || operation & Operation.sub)
-        return v(currentExample)!.numbers[v(currentRowIndex)];
-
-      return v(currentExample)!.numbers;
+    const currentRow = computed<RowEl | null>(() => {
+      if (v(currentExample) == null) return null;
+      return v(currentExample)!.rows[v(currentRowIndex)];
     });
 
     const currentAnswer = computed(() => {
@@ -301,14 +295,13 @@ export default defineComponent({
 
     const totalSequenceItemsCount = ref<number>(config.sequence.length);
 
-    type RowType = string | number | BigInt;
     type AnswerType = number | BigInt;
 
     const speechId = acquireSetting().one("text_to_speech_id");
 
     class RowCard {
       constructor(
-        public row: RowType | RowType[],
+        public row: RowEl,
         public operation: number,
         public answer: AnswerType,
         public displayRow: boolean,
@@ -316,7 +309,7 @@ export default defineComponent({
       ) {}
 
       public speech() {
-        TextToSpeech.speak(speechId, this.row, v(currentThemeOperation));
+        TextToSpeech.speak(speechId, this.row);
         
         //const str = this.row[0] + ' multiplied by ' + this.row[1];
         //return TextToSpeech.(String(this.row), 400, speechId);
@@ -377,10 +370,10 @@ export default defineComponent({
 
           const operation = sequenceItem.theme.metadata.operation || 0;
           if (operation & Operation.div || operation & Operation.mult) {
-            const rows = example.numbers;
+            const rows = example.rows;
             v(computedCards).push(
               new RowCard(
-                [rows[0], rows[1]],
+                rows[0],
                 operation,
                 example.answer,
                 sequenceItem.displayNumbers,
@@ -388,7 +381,7 @@ export default defineComponent({
               )
             );
           } else {
-            for (const [rowIndex, row] of example.numbers.entries()) {
+            for (const [rowIndex, row] of example.rows.entries()) {
               v(computedCards).push(
                 new RowCard(
                   row,
@@ -419,9 +412,9 @@ export default defineComponent({
       abacusBoard.on("update", (event) => {
         const answer = (event as CustomEvent<number>).detail;
 
-        if (answer == v(currentAnswer)) {
+        if (BigInt(answer) == v(currentAnswer)) {
           const isLastAnswer =
-            v(currentAnswerIndex) === v(currentExample)!.numbers.length - 1;
+            v(currentAnswerIndex) === v(currentExample)!.rows.length - 1;
           if (isLastAnswer) {
             completeExample();
             if (v(currentCard) instanceof AttentionCard)
@@ -489,7 +482,7 @@ export default defineComponent({
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
         } else if (card.kind == AttentionKind.EnterAnswer) {
-          if (v(currentAnswerIndex) == v(currentExample)!.numbers.length)
+          if (v(currentAnswerIndex) == v(currentExample)!.rows.length)
             toNextCard();
         }
       } else if (card instanceof RowCard) {

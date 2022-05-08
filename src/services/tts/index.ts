@@ -1,6 +1,6 @@
 import { TextToSpeech as NativeTextToSpeech } from "@capacitor-community/text-to-speech";
 import Crunker from "crunker";
-import { Operation } from '@mental-arithmetic/themes';
+import { Operation, RowEl } from "@mental-arithmetic/themes";
 
 const GET_VOICES_MAX_TRIES_COUNT = 100;
 
@@ -28,22 +28,26 @@ export class TextToSpeech {
   };
 
   public static getSign(n: string): Operation {
-    return n[0] == '-' ? Operation.sub : Operation.add;
+    return n[0] == "-" ? Operation.sub : Operation.add;
   }
 
   public static speak(
     identifier: string,
-    row: string | string[],
-    op: Operation
+    row: RowEl
   ): Promise<void> {
     const [, , locale] = identifier.split(":");
     if (locale == "uz-UZ") {
-      const signChunk = this.load(this.signMap[op]);
+      const signChunk = this.load(this.signMap[row.sign]);
+
       const chunks =
-        row instanceof Array
-          ? [...this.toChunk(row[0]), signChunk, ...this.toChunk(row[1])]
-          : [signChunk, ...this.toChunk(row)];
-          console.log(chunks);
+        row.numbers instanceof Array
+          ? [
+              ...this.toChunk(row.numbers[0]),
+              signChunk,
+              ...this.toChunk(row.numbers[1]),
+            ]
+          : [signChunk, ...this.toChunk(row.numbers)];
+
       this.crunker
         .fetchAudio(...chunks)
         .then((k) => {
@@ -57,10 +61,6 @@ export class TextToSpeech {
           audio.playbackRate = 2.0;
           audio.play();
         });
-    }
-
-    if (row instanceof Array) {
-      [32, 25]; // *
     }
 
     return Promise.resolve();
@@ -102,7 +102,7 @@ export class TextToSpeech {
     });
   }
 
-  public static split(n: number): number[] {
+  public static split(n: bigint): number[] {
     const chunks = n.toString().split("");
     let i = 0;
 
@@ -123,26 +123,26 @@ export class TextToSpeech {
     return res;
   }
 
-  public static group(n: number): number[] {
+  public static group(n: bigint): bigint[] {
     let str = n.toString();
     const len = str.length;
-    if (n % 10 ** (len - 1) == 0) return [n];
+    if (n % (BigInt(10) ** (BigInt(len - 1))) === BigInt(0)) return [n];
 
     const mod = len % 3;
     str = str.padStart(mod % 3 != 0 ? len + (3 - mod) : len, "0");
 
     return str.split("").reduce((acc, _1, _2, src) => {
-      acc.push(parseInt(src.splice(0, 3).join(""))) && acc;
+      acc.push(BigInt(src.splice(0, 3).join(""))) && acc;
       return acc;
-    }, [] as number[]);
+    }, [] as bigint[]);
   }
 
   public static load(k: any) {
     return require("@@/sounds/tts/" + k + ".mp3");
   }
 
-  public static toChunk(n: string): string[] {
-    const gr = this.group(parseInt(n));
+  public static toChunk(n: bigint): string[] {
+    const gr = this.group(n);
 
     const chunks = gr
       .reduce((acc, curr, cind, src) => {
