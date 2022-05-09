@@ -1,13 +1,5 @@
 <template>
   <!-- FIXME: VIEWPORT CALCULATIONS MUST BE FIXED IN THE FUTURE -->
-  <!-- <svg :viewBox="`0 0 ${text.length * 33} 60`">
-
-      dominant-baseline="middle"
-      text-anchor="middle"
-      x="50%"
-      y="50%"
-      dy="5px"
-  -->
   <svg :viewBox="`0 0 250 60`">
     <text
       dominant-baseline="middle"

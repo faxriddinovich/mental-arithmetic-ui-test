@@ -92,11 +92,14 @@
     <canvas class="abacus-game-confetti" ref="confettiRef" />
 
     <!-- abacus board -->
-    <div
-      ref="abacusContainerRef"
-      v-if="canDisplayAbacus"
-      class="is-abacus-board-container"
-    />
+    <div v-if="canDisplayAbacus" class="is-abacus-board-container">
+      <abacus-board
+        class="is-abacus-board"
+        @on-update="onAbacusBoardUpdate"
+        ref="abacusBoardRef"
+        :columns="abacusBoardColumnsCount"
+      />
+    </div>
 
     <div class="is-flex is-justify-content-center mt-4" v-if="canDisplayCards">
       <div class="abacus-game-card-container">
@@ -172,7 +175,7 @@
             >
               <b-icon icon="volume" size="is-large" />
             </div>
-            <svg viewBox="0 0 230 65" class="is-full-size" v-else>
+            <svg viewBox="0 0 280 65" class="is-full-size" v-else>
               <text
                 dominant-baseline="central"
                 text-anchor="middle"
@@ -406,7 +409,7 @@ $extra-small: 321px;
   bottom: 0;
 }
 
-svg.is-abacus-board {
+.is-abacus-board {
   margin: auto;
   display: inline-block;
   display: block;

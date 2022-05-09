@@ -58,7 +58,7 @@
                     :value="voice"
                     :key="index"
                   >
-                    {{ voice.split(':')[1] }}
+                    {{ voice.split(":")[1] }}
                   </option>
                 </b-select>
                 <p class="control">
@@ -66,8 +66,7 @@
                     icon-left="volume"
                     @click="saySomething"
                     :disabled="!textToSpeechID"
-                    ></b-button
-                  >
+                  ></b-button>
                 </p>
               </b-field>
 
@@ -100,26 +99,27 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { showToastMessage, ToastType } from "@/services/toast";
-import { speak } from "@/services/tts";
+import { TextToSpeech } from "@/services/tts";
 import { acquireSetting, Locales } from "@/store/setting";
-import { TextToSpeech } from '@/services/tts';
 
 export default defineComponent({
   setup(_, context) {
     const setting = acquireSetting();
-    const locale = ref<Locales>(setting.one('locale') as Locales);
+    const locale = ref<Locales>(setting.one("locale") as Locales);
     const supportedVoices = ref<string[]>([]);
-    const showLatestEvent = ref<boolean>(setting.one('show_latest_event'));
-    const textToSpeechID = ref<string>(setting.one('text_to_speech_id'));
+    const showLatestEvent = ref<boolean>(setting.one("show_latest_event"));
+    const textToSpeechID = ref<string>(setting.one("text_to_speech_id"));
 
     async function getSupportedVoices() {
-      supportedVoices.value = await TextToSpeech.getSupportedVoices(locale.value);
+      supportedVoices.value = await TextToSpeech.getSupportedVoices(
+        locale.value
+      );
     }
 
     watch(locale, async () => {
       await getSupportedVoices();
-      if(setting.one('locale') === locale.value) {
-        textToSpeechID.value = setting.one('text_to_speech_id');
+      if (setting.one("locale") === locale.value) {
+        textToSpeechID.value = setting.one("text_to_speech_id");
       } else if (supportedVoices.value.length) {
         textToSpeechID.value = supportedVoices.value[0]!;
       }
@@ -132,7 +132,7 @@ export default defineComponent({
       await setting.change({
         show_latest_event: showLatestEvent.value,
         text_to_speech_id: textToSpeechID.value,
-        locale: locale.value
+        locale: locale.value,
       });
 
       showToastMessage(
@@ -143,7 +143,10 @@ export default defineComponent({
     }
 
     function saySomething() {
-      speak("-123", 1, textToSpeechID.value!);
+      TextToSpeech.speak(textToSpeechID.value, {
+        numbers: BigInt(123),
+        sign: 2,
+      });
     }
 
     onMounted(() => {

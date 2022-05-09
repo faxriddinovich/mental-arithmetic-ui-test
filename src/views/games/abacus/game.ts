@@ -7,8 +7,6 @@ import {
   computed,
   Ref,
 } from "@vue/composition-api";
-import { SVG } from "@svgdotjs/svg.js";
-import { AbacusBoard } from "./board";
 import TimerSoundEffect from "@@/sounds/timer.wav";
 import VictorySoundEffect from "@@/sounds/victory.mp3";
 import LostSoundEffect from "@@/sounds/lost.wav";
@@ -20,13 +18,8 @@ import confettiLib from "canvas-confetti";
 import { Operation, RowEl } from "@mental-arithmetic/themes";
 import { TextToSpeech } from "@/services/tts";
 
+import AbacusBoard from "@/components/games/abacus-board.vue";
 import StackedCards from "@/components/stacked-cards.vue";
-
-import {
-  ABACUS_STONE_WIDTH,
-  ABACUS_FRAME_WIDTH,
-  ABACUS_FRAME_ABSOLUTE_X_PADDING,
-} from "./constants";
 
 type TimerHandleKey = number;
 type SoundEffectKey =
@@ -41,16 +34,17 @@ const TIMER_LESS_TIME_SECS = 30;
 const ATTENTION_CARD_TIMEOUT = 1000;
 
 export default defineComponent({
-  components: { StackedCards },
+  components: { AbacusBoard, StackedCards },
   setup(_, context) {
     const config = acquireGame().get(GAME_KIND.ABACUS)!;
 
-    const abacusContainerRef = ref<HTMLElement>();
     const confettiRef = ref<HTMLCanvasElement>();
 
     const isAnswerModalActive = ref<boolean>(false);
 
     const sequence = ref<SequenceItem[]>(config.sequence);
+
+    const abacusBoardRef = ref<typeof AbacusBoard | null>(null);
 
     const v = <T extends Ref>(ref: T): T extends Ref<infer K> ? K : unknown =>
       ref.value;
@@ -229,10 +223,7 @@ export default defineComponent({
     const canDisplayCards = computed(() => {
       return ["attention-card", "row-card"].includes(v(displayMode));
     });
-
-    let abacusBoard = new AbacusBoard(
-      v(currentSequenceItem).abacusColumnsCount
-    ); // FIXME
+    
 
     const canDisplayButtons = computed(() => {
       if (v(currentCard) instanceof AttentionCard || v(currentCard) == null)
@@ -243,6 +234,10 @@ export default defineComponent({
 
     const canDisplayScores = computed(() => {
       return v(displayMode) == "scores";
+    });
+
+    const abacusBoardColumnsCount = computed(() => {
+      return v(currentSequenceItem).abacusColumnsCount;
     });
 
     const timerClasses = computed<string[]>(() => {
@@ -405,53 +400,6 @@ export default defineComponent({
 
     computeCards();
 
-    function listenAbacus() {
-      abacusBoard.on("update", (event) => {
-        const answer = (event as CustomEvent<number>).detail;
-
-        if (BigInt(answer) == v(currentAnswer)) {
-          const isLastAnswer =
-            v(currentAnswerIndex) === v(currentExample)!.rows.length - 1;
-          if (isLastAnswer) {
-            completeExample();
-            if (v(currentCard) instanceof AttentionCard)
-              if (
-                (v(currentCard) as AttentionCard).kind ==
-                AttentionKind.EnterAnswer
-              )
-                toNextCard();
-          }
-
-          if (config.waitForAnswer) toNextCard();
-          incAnswerIndex();
-        }
-      });
-    }
-
-    function drawAbacus(columns: number) {
-      context.root.$nextTick(() => {
-        const width =
-          ABACUS_STONE_WIDTH * columns + // FIXME
-          ABACUS_FRAME_WIDTH +
-          ABACUS_FRAME_ABSOLUTE_X_PADDING;
-
-        if (v(abacusContainerRef)?.children?.length)
-          v(abacusContainerRef)!.children[0].remove();
-
-        abacusBoard = new AbacusBoard(columns);
-
-        const abacusDraw = SVG()
-          .addTo(abacusContainerRef.value!)
-          .viewbox(0, -55, width, 469)
-          .addClass("is-abacus-board");
-
-        abacusBoard.draw();
-        abacusDraw.add(abacusBoard);
-        abacusBoard.construct();
-        listenAbacus();
-      });
-    }
-
     function incCardIndex() {
       currentCardIndex.value++;
     }
@@ -469,12 +417,17 @@ export default defineComponent({
       if (card instanceof AttentionCard) {
         if (card.kind == AttentionKind.Sequence) {
           currentSequenceItemIndex.value = card.index;
+          /*
           const { abacusColumnsCount } = v(currentSequenceItem);
-          if (abacusColumnsCount !== abacusBoard["columns"])
-            drawAbacus(v(currentSequenceItem).abacusColumnsCount);
+          if (abacusColumnsCount !== v(abacusBoardRef)!.columns) {
+            v(abacusBoardRef)!.updateColumns(
+              v(currentSequenceItem).abacusColumnsCount
+            );
+          }
+          */
           accumulatedCompletedExamplesCount.value = 0;
         } else if (card.kind == AttentionKind.Example) {
-          abacusBoard.reset();
+          v(abacusBoardRef)!.reset();
           currentExampleIndex.value = card.index;
           currentAnswerIndex.value = isMultiplication || isDivision ? 1 : 0;
           currentRowIndex.value = 0;
@@ -494,7 +447,7 @@ export default defineComponent({
     }
 
     function toNextCard() {
-      //abacusBoard.lock();
+      v(abacusBoardRef)!.lock()
       const currentIsAttention = v(currentCard) instanceof AttentionCard;
       const currentIsExample =
         currentIsAttention &&
@@ -508,7 +461,7 @@ export default defineComponent({
 
       executeAfter(() => {
         incCardIndex();
-        //abacusBoard.unlock();
+        v(abacusBoardRef)!.unlock()
 
         if (v(currentCard) instanceof AttentionCard) {
           if (
@@ -526,7 +479,6 @@ export default defineComponent({
     }
 
     function startGame() {
-      drawAbacus(v(currentSequenceItem).abacusColumnsCount);
       toNextCard();
     }
 
@@ -643,7 +595,26 @@ export default defineComponent({
       completedExamplesCount.value = 0;
       timerEnabled.value = false;
       timerAbsolute.value = config.timerSecs;
-      abacusBoard.reset();
+      //abacusBoard.reset();
+    }
+
+    function onAbacusBoardUpdate(answer: number) {
+      if (BigInt(answer) == v(currentAnswer)) {
+        const isLastAnswer =
+          v(currentAnswerIndex) === v(currentExample)!.rows.length - 1;
+        if (isLastAnswer) {
+          completeExample();
+          if (v(currentCard) instanceof AttentionCard)
+            if (
+              (v(currentCard) as AttentionCard).kind ==
+              AttentionKind.EnterAnswer
+            )
+              toNextCard();
+        }
+
+        if (config.waitForAnswer) toNextCard();
+        incAnswerIndex();
+      }
     }
 
     onMounted(() => {
@@ -655,6 +626,7 @@ export default defineComponent({
     });
 
     return {
+      onAbacusBoardUpdate,
       completedExamplesPercent,
       totalExamplesCount,
       totalSequenceItemsCount,
@@ -677,7 +649,7 @@ export default defineComponent({
 
       wonTheGame,
 
-      abacusContainerRef,
+      abacusBoardColumnsCount,
 
       canDisplayAbacus,
       canDisplayCards,
@@ -695,6 +667,7 @@ export default defineComponent({
       currentRow,
       cardIndex,
 
+      abacusBoardRef,
       displayMode,
       timerEnabled,
       timerAbsolute,

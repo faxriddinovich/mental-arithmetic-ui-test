@@ -1,9 +1,8 @@
 <template>
   <svg ref="svgRef" />
-  <!--<div ref="abacusContainerRef"></div> -->
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "@vue/composition-api";
+import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
 import { SVG } from "@svgdotjs/svg.js";
 import { AbacusBoard } from "@/views/games/abacus/board";
 import {
@@ -15,9 +14,10 @@ import {
 export default defineComponent({
   props: {
     columns: { type: Number, required: false, default: 1 },
-    valueBox: { type: Boolean, required: false,  default: true }
+    valueBox: { type: Boolean, required: false, default: true },
   },
-  setup(props) {
+  emits: ["on-update"],
+  setup(props, context) {
     const svgRef = ref<SVGSVGElement | null>(null);
     let abacusBoard: AbacusBoard;
     const svg = SVG();
@@ -30,21 +30,31 @@ export default defineComponent({
       const width =
         ABACUS_STONE_WIDTH * (columns || props.columns) +
         (ABACUS_FRAME_WIDTH + ABACUS_FRAME_ABSOLUTE_X_PADDING);
-        /*
-      const height = 469;
-      svgRef.value!.setAttribute("viewBox", `0 -55 ${width} ${height}`);
-    */
 
       const height = props.valueBox ? 469 : 414;
       const viewBoxX = 0;
       const viewBoxY = props.valueBox ? -55 : 0;
-      svgRef.value!.setAttribute("viewBox", `${viewBoxX} ${viewBoxY} ${width} ${height}`);
+      svgRef.value!.setAttribute(
+        "viewBox",
+        `${viewBoxX} ${viewBoxY} ${width} ${height}`
+      );
     }
 
     onMounted(() => {
       svg.node = svgRef.value!;
       draw(props.columns);
+      listenAbacusBoardEvents();
     });
+
+    watch(() => props.columns, (columns) => {
+        updateColumns(columns);
+    });
+
+    function listenAbacusBoardEvents() {
+      abacusBoard!.on("update", (event) => {
+        context.emit("on-update", (event as CustomEvent<number>).detail);
+      });
+    }
 
     function update(n: number): void {
       abacusBoard.update(n);
@@ -53,9 +63,22 @@ export default defineComponent({
     function updateColumns(columns: number) {
       svgRef.value!.children[0].remove();
       draw(columns);
+      listenAbacusBoardEvents();
     }
 
-    return { svgRef, update, updateColumns };
+    function lock() {
+      abacusBoard.lock();
+    }
+
+    function unlock() {
+      abacusBoard.unlock();
+    }
+
+    function reset() {
+      abacusBoard.reset();
+    }
+
+    return { svgRef, update, updateColumns, lock, unlock, reset };
   },
 });
 </script>

@@ -22,7 +22,7 @@ export class TextToSpeech {
   }
 
   public static speak(identifier: string, row: RowEl): Promise<void> {
-    const [, , locale] = identifier.split(":");
+    const [, , locale, index] = identifier.split(":");
     if (locale == "uz-UZ") {
       const signChunk = this.load(this.signMap[row.sign]);
 
@@ -48,6 +48,22 @@ export class TextToSpeech {
           audio.playbackRate = 2.0;
           audio.play();
         });
+    } else {
+      const signMap = {
+        [Operation.add]: "added to",
+        [Operation.sub]: "subtracted from",
+        [Operation.mult]: "multiplied by",
+        [Operation.div]: "divided by",
+      };
+      const text =
+        row.numbers instanceof Array
+          ? row.numbers[0] + signMap[row.sign] + row.numbers[1]
+          : signMap[row.sign] + row.numbers;
+      NativeTextToSpeech.speak({
+        text: text,
+        voice: Number(index),
+        lang: locale,
+      });
     }
 
     return Promise.resolve();
