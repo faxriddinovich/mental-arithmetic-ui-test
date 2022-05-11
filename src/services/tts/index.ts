@@ -10,11 +10,27 @@ export class TextToSpeech {
     "com.mental.speech.synthesis.voice.Uzbek:Uzbek voice:uz-UZ:1",
   ];
 
-  private static signMap: { [key: number]: string } = {
-    [Operation.add]: "added_by",
-    [Operation.sub]: "subtracted_by",
-    [Operation.mult]: "multiplied_by",
-    [Operation.div]: "divided_by",
+ /* these should not be here */
+  private static signMap = {
+    "en-US": {
+      [Operation.add]: "added to",
+      [Operation.sub]: "subtracted from",
+      [Operation.mult]: "multiplied by",
+      [Operation.div]: "divided by",
+    },
+    "ru-RU": {
+      [Operation.add]: "добавлено к",
+      [Operation.sub]: "вычесть из",
+      [Operation.mult]: "умножено на",
+      [Operation.div]: "разделить на",
+    },
+    /* FIXME: fix typos */
+    "uz-UZ": {
+      [Operation.add]: "added_by",
+      [Operation.sub]: "subtracted_by",
+      [Operation.mult]: "multiplied_by",
+      [Operation.div]: "divided_by",
+    },
   };
 
   public static getSign(n: string): Operation {
@@ -24,7 +40,7 @@ export class TextToSpeech {
   public static speak(identifier: string, row: RowEl): Promise<void> {
     const [, , locale, index] = identifier.split(":");
     if (locale == "uz-UZ") {
-      const signChunk = this.load(this.signMap[row.sign]);
+      const signChunk = this.load(this.signMap[locale][row.sign]);
 
       const chunks =
         row.numbers instanceof Array
@@ -45,20 +61,15 @@ export class TextToSpeech {
         })
         .then((out) => {
           const audio = new Audio(out.url);
-          audio.playbackRate = 2.0;
+          audio.playbackRate = 5.0;
           audio.play();
         });
     } else {
-      const signMap = {
-        [Operation.add]: "added to",
-        [Operation.sub]: "subtracted from",
-        [Operation.mult]: "multiplied by",
-        [Operation.div]: "divided by",
-      };
+      console.log(this.signMap[locale][row.sign]);
       const text =
         row.numbers instanceof Array
-          ? row.numbers[0] + signMap[row.sign] + row.numbers[1]
-          : signMap[row.sign] + row.numbers;
+          ? row.numbers[0] + this.signMap[locale][row.sign] + row.numbers[1]
+          : this.signMap[locale][row.sign] + row.numbers;
       NativeTextToSpeech.speak({
         text: text,
         voice: Number(index),
@@ -159,20 +170,3 @@ export class TextToSpeech {
     return chunks;
   }
 }
-
-/*
-export function speak(text: string | number, rate: number, identity: string) {
-  const [, , lang, index] = identity.split(":");
-
-  return;
-  TextToSpeech.speak({
-    text: String(text),
-    voice: Number(index),
-    pitch: 0.5,
-    lang,
-    rate,
-  }).catch((error) => {
-    console.error("[tts]: ", error);
-  });
-}
-*/
