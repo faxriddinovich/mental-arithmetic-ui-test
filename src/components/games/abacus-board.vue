@@ -31,7 +31,7 @@ export default defineComponent({
         ABACUS_STONE_WIDTH * (columns || props.columns) +
         (ABACUS_FRAME_WIDTH + ABACUS_FRAME_ABSOLUTE_X_PADDING);
 
-      const height = props.valueBox ? 469 : 414;
+      const height = props.valueBox ? 469 : 418;
       const viewBoxX = 0;
       const viewBoxY = props.valueBox ? -55 : 0;
       svgRef.value!.setAttribute(
@@ -47,7 +47,7 @@ export default defineComponent({
     });
 
     watch(() => props.columns, (columns) => {
-        updateColumns(columns);
+      updateColumns(columns);
     });
 
     function listenAbacusBoardEvents() {

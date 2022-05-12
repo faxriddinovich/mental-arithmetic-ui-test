@@ -50,7 +50,7 @@ export default defineComponent({
         animate({
           targets: [abacusDisplayRef.value!!],
           opacity: [0, 1],
-          scale: [1.1],
+          scale: [1.1, 1],
           delay: animate.stagger(100),
         });
 

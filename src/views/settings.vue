@@ -144,7 +144,7 @@ export default defineComponent({
 
     function saySomething() {
       TextToSpeech.speak(textToSpeechID.value, {
-        numbers: BigInt(123),
+        numbers: BigInt(888888),
         sign: 2,
       });
     }

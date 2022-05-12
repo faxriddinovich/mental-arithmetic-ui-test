@@ -61,11 +61,10 @@ export class TextToSpeech {
         })
         .then((out) => {
           const audio = new Audio(out.url);
-          audio.playbackRate = 5.0;
+          audio.playbackRate = 4.0;
           audio.play();
         });
     } else {
-      console.log(this.signMap[locale][row.sign]);
       const text =
         row.numbers instanceof Array
           ? row.numbers[0] + this.signMap[locale][row.sign] + row.numbers[1]

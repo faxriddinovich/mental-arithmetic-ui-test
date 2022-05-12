@@ -16,13 +16,7 @@
       </div>
     </div>
 
-    <!--
-    <button class="flash-card-3d-button">
-      <span> <b-icon icon="home" /></span>
-    </button>
-    -->
-
-    <!-- Attention text section -->
+    <!-- attention text section -->
     <section class="hero is-fullheight" v-if="displayKind == 'attention-text'">
       <div class="hero-body">
         <div class="has-text-centered" style="width: 100%">
@@ -35,7 +29,35 @@
         </div>
       </div>
     </section>
+    <!-- end attention text section -->
+    <!-- abacus board section -->
+    <section
+      class="columns is-flex is-centered is-vcentered is-gapless"
+      v-else-if="displayKind == 'abacus'"
+      style="height: 100vh"
+      ref="abacusDisplayRef"
+    >
+      <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd ">
+        <div class="mx-3">
+          <div class="flash-card-timeline" ref="timelineRef" />
+          <div class="flash-card-sketchy-card p-3">
+            <AbacusBoard :columns="6" :valueBox="false" />
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- end abacus board section -->
+    <!--
+
+    <button class="flash-card-3d-button">
+      <span> <b-icon icon="home" /></span>
+    </button>
+    -->
+
+    <!--
+    -->
     <!-- Abacus section -->
+    <!--
     <section
       class="columns is-flex is-centered is-vcentered is-gapless"
       ref="abacusDisplayRef"
@@ -44,7 +66,7 @@
     >
       <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
         <div>
-          <!--<div class="flash-card-timeline" ref="timelineRef" />-->
+          <div class="flash-card-timeline" ref="timelineRef" />
           <div class="box">2</div>
           <div class="flash-card-sketchy-card">
             <AbacusBoard :columns="6" :valueBox="false" />
@@ -52,7 +74,9 @@
         </div>
       </div>
     </section>
+    -->
 
+    <!--
     <section
       class="hero is-fullheight"
       v-else-if="displayKind == 'enter-answer-form'"
@@ -270,7 +294,6 @@
       </div>
     </section>
 
-    <!--
     <b-modal
       v-model="modal"
       :destroy-on-hide="false"
@@ -440,7 +463,7 @@
   font-family: "Patrick Hand SC", cursive;
   background-color: rgb(226, 221, 204);
   min-height: 100vh !important;
-  position: relative;
+  //position: relative;
 
   -moz-box-shadow: inset 0 0 100px #000000;
   -webkit-box-shadow: inset 0 0 100px #000000;
