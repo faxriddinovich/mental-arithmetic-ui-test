@@ -1,5 +1,31 @@
 <template>
   <div class="flash-card-background">
+    <div
+      ref="correctOverlayRef"
+      style="
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(63, 195, 128, 0.6);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+      "
+    >
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/148/148767.png"
+        width="100"
+        ref="correctOverlayIconRef"
+        style="
+          filter: drop-shadow(0 0 50px rgba(0, 0, 0, 0.3));
+          position: absolute;
+          left: 50%;
+          bottom: 50%;
+          transform: translateX(-50%);
+        "
+      />
+    </div>
+
     <div class="container">
       <div class="is-absolute" style="width: 100%">
         <div
@@ -9,6 +35,7 @@
           <img
             src="https://cdn-icons-png.flaticon.com/512/867/867454.png"
             width="60"
+            class="is-hidden-mobile"
             ref="cardRef"
           />
           <scores-bar ref="scoresBarRef" />
@@ -17,14 +44,24 @@
     </div>
 
     <!-- attention text section -->
-    <section class="hero is-fullheight" v-if="displayKind == 'attention-text'">
-      <div class="hero-body">
-        <div class="has-text-centered" style="width: 100%">
-          <div
-            style="font-size: 120px; font-family: 'Cabin Sketch'"
-            ref="textRef"
-          >
-            {{ text }}
+    <section
+      class="columns is-flex is-centered is-vcentered is-gapless mx-2"
+      style="height: 100vh"
+      v-if="displayKind == 'attention-text'"
+    >
+      <div class="column is-12">
+        <div
+          class="stitched"
+          style="
+            background: rgba(230, 126, 34, 0.2);
+            color: rgba(230, 126, 34, 0.8);
+          "
+          ref="textRef"
+        >
+          <div class="has-text-centered">
+            <div style="font-size: 100px; font-family: 'Pudelinka', arial">
+              {{ text }}
+            </div>
           </div>
         </div>
       </div>
@@ -32,17 +69,62 @@
     <!-- end attention text section -->
     <!-- abacus board section -->
     <section
-      class="columns is-flex is-centered is-vcentered is-gapless"
+      class="columns is-flex is-centered is-vcentered is-gapless mx-2"
       v-else-if="displayKind == 'abacus'"
       style="height: 100vh"
       ref="abacusDisplayRef"
     >
-      <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd ">
-        <div class="mx-3">
-          <div class="flash-card-timeline" ref="timelineRef" />
-          <div class="flash-card-sketchy-card p-3">
+      <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
+        <div>
+          <div
+            class="flash-card sketchy-card-timeline success"
+            ref="timelineRef"
+          />
+          <div class="flash-card sketchy-card p-3">
             <AbacusBoard :columns="6" :valueBox="false" />
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="columns is-flex is-centered is-vcentered is-gapless mx-2"
+      style="height: 100vh"
+      v-else-if="displayKind == 'enter-answer-form'"
+      ref="enterAnswerFormDisplayRef"
+    >
+      <div class="column is-12-mobile is-10-tablet is-9-desktop is-4-fullhd">
+        <div class="flash-card sketchy-card mb-4 p-4">
+          <form action="/">
+            <input
+              class="input mb-4 is-size-1 px-3"
+              style="
+                font-family: 'Patrick Hand SC', cursive;
+                border: 2px solid black;
+                height: 100px;
+                -webkit-appearance: none;
+                text-align: center;
+                margin: 0;
+              "
+              type="number"
+            />
+            <button
+              type="button"
+              class="flash-card-3d-button"
+              style="width: 100%; text-align: center"
+              @click="playCorrectOverlayAnimation"
+            >
+              <span> <b-icon icon="check" />Check answer</span>
+            </button>
+          </form>
+        </div>
+        <div class="has-text-centered">
+          <button class="flash-card-3d-button" @click="modal = true">
+            <span> <b-icon icon="bars" /> Show answer</span>
+          </button>
+          <button class="flash-card-3d-button ml-3">
+            <span> <b-icon icon="skip-forward" /> Skip row</span>
+          </button>
         </div>
       </div>
     </section>
@@ -55,83 +137,6 @@
     -->
 
     <!--
-    -->
-    <!-- Abacus section -->
-    <!--
-    <section
-      class="columns is-flex is-centered is-vcentered is-gapless"
-      ref="abacusDisplayRef"
-      style="min-height: 100vh"
-      v-else-if="displayKind == 'abacus'"
-    >
-      <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
-        <div>
-          <div class="flash-card-timeline" ref="timelineRef" />
-          <div class="box">2</div>
-          <div class="flash-card-sketchy-card">
-            <AbacusBoard :columns="6" :valueBox="false" />
-          </div>
-        </div>
-      </div>
-    </section>
-    -->
-
-    <!--
-    <section
-      class="hero is-fullheight"
-      v-else-if="displayKind == 'enter-answer-form'"
-      ref="enterAnswerFormDisplayRef"
-    >
-      <div class="hero-body">
-        <div style="margin: auto">
-          <img
-            ref="correctIconRef"
-            src="https://cdn-icons-png.flaticon.com/512/148/148767.png"
-            width="100"
-            style="
-              djsplay: inline-block;
-              position: absolute;
-              margin-left: auto;
-              margin-right: auto;
-              left: 0;
-              right: 0;
-              z-index: -1;
-            "
-          />
-
-          <div class="flash-card-sketchy-card mb-4">
-            <form style="width: 400px" action="/">
-              <input
-                class="input mb-4 is-size-1 px-3"
-                style="
-                  font-family: 'Patrick Hand SC', cursive;
-                  border: 2px solid black;
-                  height: 100px;
-                  -webkit-appearance: none;
-                  text-align: center;
-                  margin: 0;
-                "
-                type="number"
-              />
-              <button
-                type="button"
-                class="flash-card-3d-button"
-                style="width: 100%; text-align: center"
-                @click="playCorrectIconAnimation"
-              >
-                <span> <b-icon icon="check" />Check the answer</span>
-              </button>
-            </form>
-          </div>
-          <button class="flash-card-3d-button" @click="modal = true">
-            <span> <b-icon icon="bars" /> Show the answer</span>
-          </button>
-          <button class="flash-card-3d-button ml-3">
-            <span> <b-icon icon="skip-forward" /> Skip the row</span>
-          </button>
-        </div>
-      </div>
-    </section>
     <section
       class="hero is-fullheight"
       v-else-if="displayKind == 'scores'"
@@ -459,8 +464,20 @@
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Sketch&display=swap");
 
+.stitched {
+  padding: 10px;
+  background: #e67e22;
+  color: #fff;
+  //font-size: 21px;
+  //font-weight: bold;
+  //line-height: 1.3em;
+  border: 2px dashed rgba(230, 126, 34, 0.2);
+  //font-weight: normal;
+}
+
 .flash-card-background {
-  font-family: "Patrick Hand SC", cursive;
+  //font-family: "Patrick Hand SC", cursive;
+  font-family: "Pedulinka";
   background-color: rgb(226, 221, 204);
   min-height: 100vh !important;
   //position: relative;
@@ -498,12 +515,13 @@
   fill: rgba(0, 0, 0, 0.8);
 }
 
-.flash-card-sketchy-card {
+.flash-card.sketchy-card {
   background: white;
   border-radius: 5px;
   border: 2px solid #000;
   box-shadow: 0 4px 0 #000;
 }
+
 /*
 .flash-card-sketchy-card {
   //background: #fbfeff;
@@ -596,20 +614,28 @@ div.modal-background {
   background: rgba(0, 0, 0, 0.3);
 }
 
-div.flash-card-timeline {
+.flash-card.sketchy-card-timeline {
   width: 100%;
   position: relative;
-  background: #3fc380;
   height: 10px;
   margin-bottom: -4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   z-index: -1;
-  box-shadow: 0px 0px 30px 4px #bcf5bc;
+}
+
+.sketchy-card-timeline.success {
+  background: rgb(63, 195, 128);
+  box-shadow: 0px 0px 30px 4px rgba(63, 195, 128, .4);
+}
+
+.sketchy-card-timeline.warning {
+  background: rgb(230, 126, 34);
+  box-shadow: 0px 0px 30px 4px rgba(230, 126, 34, .4);
 }
 
 /*
-div.flash-card-timeline::after {
+.flash-card.sketchy-card-timeline::after {
   display: inline-block;
   content: "";
   width: 25px;
@@ -694,4 +720,3 @@ input.flash-card-input:focus {
 }
 </style>
 <script lang="ts" src="./game.ts"></script>
-

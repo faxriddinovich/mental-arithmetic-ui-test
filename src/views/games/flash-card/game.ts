@@ -38,7 +38,8 @@ export default defineComponent({
     const enterAnswersFormDisplayRef = ref<HTMLElement | null>(null);
     const displayKind = ref<DisplayKind>("attention-text");
 
-    const correctIconRef = ref<HTMLElement | null>(null);
+    const correctOverlayIconRef = ref<HTMLElement | null>(null);
+    const correctOverlayRef = ref<HTMLElement | null>(null);
 
     const scoresTimerRef = ref<HTMLElement | null>(null);
     const scoresCoinRef = ref<HTMLElement | null>(null);
@@ -59,9 +60,18 @@ export default defineComponent({
           width: ["100%", "0%"],
           //easing: "easeInOutExpo",
           easing: "linear",
-          duration: 1800000,
+          duration: 1800,
           complete: () => {
-            displayEnterAnswersForm();
+            v(timelineRef)!.classList.remove("warning");
+            v(timelineRef)!.classList.add("success");
+            displayEnterAnswerForm();
+          },
+
+          update: (anim) => {
+            if (anim.progress >= 60) {
+              v(timelineRef)!.classList.remove("success");
+              v(timelineRef)!.classList.add("warning");
+            }
           },
         });
       });
@@ -71,17 +81,17 @@ export default defineComponent({
       displayKind.value = "enter-answers-form";
     };
 
-    const playCorrectIconAnimation = () => {
+    const playCorrectOverlayAnimation = () => {
+      v(correctOverlayRef)!.style.display = "block";
+      v(correctOverlayRef)!.style.opacity = "1";
       animate({
-        targets: correctIconRef.value,
-        keyframes: [{ translateY: -130 }, { translateY: 0 }],
-        scaleY: [
-          { value: 1.5, duration: 100, easing: "easeOutExpo" },
-          { value: 1, duration: 900 },
-        ],
-        //easing: 'spring(1, 80, 10, 0)',
-        delay: animate.stagger(600),
+        targets: correctOverlayIconRef.value,
+        opacity: [0, 1],
+        scale: [1.3, 1],
+        endDelay: 200,
         complete: () => {
+          v(correctOverlayRef)!.style.display = "none";
+          v(correctOverlayRef)!.style.opacity = "0";
           displayAbacus();
         },
       });
@@ -93,7 +103,7 @@ export default defineComponent({
         animate({
           targets: [enterAnswerFormDisplayRef.value!],
           opacity: [0, 1],
-          scale: 1.1,
+          scale: [1.1, 1],
           delay: animate.stagger(100),
         });
       });
@@ -137,7 +147,6 @@ export default defineComponent({
 
       const barAnim = animate.timeline({
         autoplay: false,
-        complete: () => {},
       });
 
       barAnim
@@ -156,7 +165,8 @@ export default defineComponent({
       const textAnim = animate({
         targets: [textRef.value!],
         opacity: [0, 1],
-        scale: 1.1,
+        width: ["0%", "100%"],
+        //scale: 1.1,
         delay: animate.stagger(100),
         complete: () => {
           if (text.value == "Good luck!") {
@@ -175,8 +185,9 @@ export default defineComponent({
       abacusDisplayRef,
       enterAnswerFormDisplayRef,
       enterAnswersFormDisplayRef,
-      correctIconRef,
-      playCorrectIconAnimation,
+      correctOverlayIconRef,
+      correctOverlayRef,
+      playCorrectOverlayAnimation,
 
       scoresTimerRef,
       scoresCoinRef,
