@@ -7,6 +7,7 @@
         width: 100vw;
         height: 100vh;
         background: rgba(63, 195, 128, 0.6);
+        border: 10px solid #16a085;
         z-index: 999;
         display: none;
         opacity: 0;
@@ -26,8 +27,9 @@
       />
     </div>
 
-    <div class="container">
-      <div class="is-absolute" style="width: 100%">
+    <!--<div class="container is-mobile">-->
+    <div class="is-absolute px-2" style="width: 100%">
+      <div class="container">
         <div
           class="is-flex is-justify-content-space-between is-align-items-center"
         >
@@ -42,6 +44,7 @@
         </div>
       </div>
     </div>
+    <!--</div>-->
 
     <!-- attention text section -->
     <section
@@ -71,7 +74,7 @@
     <section
       class="columns is-flex is-centered is-vcentered is-gapless mx-2"
       v-else-if="displayKind == 'abacus'"
-      style="height: 100vh"
+      style="min-height: 100vh"
       ref="abacusDisplayRef"
     >
       <div class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd">
@@ -81,7 +84,7 @@
             ref="timelineRef"
           />
           <div class="flash-card sketchy-card p-3">
-            <AbacusBoard :columns="6" :valueBox="false" />
+            <abacus-board :valueBox="false" :columns="1" style="max-height: 600px" />
           </div>
         </div>
       </div>
@@ -96,21 +99,10 @@
       <div class="column is-12-mobile is-10-tablet is-9-desktop is-4-fullhd">
         <div class="flash-card sketchy-card mb-4 p-4">
           <form action="/">
-            <input
-              class="input mb-4 is-size-1 px-3"
-              style="
-                font-family: 'Patrick Hand SC', cursive;
-                border: 2px solid black;
-                height: 100px;
-                -webkit-appearance: none;
-                text-align: center;
-                margin: 0;
-              "
-              type="number"
-            />
+            <input class="flash-card input mb-4 is-size-1 px-3" type="number" />
             <button
               type="button"
-              class="flash-card-3d-button"
+              class="flash-card sketched-button"
               style="width: 100%; text-align: center"
               @click="playCorrectOverlayAnimation"
             >
@@ -119,10 +111,10 @@
           </form>
         </div>
         <div class="has-text-centered">
-          <button class="flash-card-3d-button" @click="modal = true">
+          <button class="flash-card sketched-button" @click="modal = true">
             <span> <b-icon icon="bars" /> Show answer</span>
           </button>
-          <button class="flash-card-3d-button ml-3">
+          <button class="flash-card sketched-button ml-3">
             <span> <b-icon icon="skip-forward" /> Skip row</span>
           </button>
         </div>
@@ -230,13 +222,13 @@
               </div>
               <hr class="m-3" />
               <div class="is-flex is-justify-content-space-between">
-                <button class="flash-card-3d-button" @click="modal = true">
+                <button class="flash-card sketched-button" @click="modal = true">
                   <span> <b-icon icon="home" /> </span>
                 </button>
-                <button class="flash-card-3d-button ml-3">
+                <button class="flash-card sketched-buttonn ml-3">
                   <span> <b-icon icon="redo" /> Restart</span>
                 </button>
-                <button class="flash-card-3d-button ml-3" @click="modal = true">
+                <button class="flash-card sketched-button ml-3" @click="modal = true">
                   <span> <b-icon icon="bars" /> </span>
                 </button>
               </div>
@@ -290,7 +282,7 @@
               </div>
               <hr class="m-2" />
 
-              <button class="flash-card-3d-button">
+              <button class="flash-card sketched-button">
                 <span> <b-icon icon="play" />Skip</span>
               </button>
             </div>
@@ -461,6 +453,7 @@
   </div>
 </template>
 <style lang="scss">
+@import "bulma/sass/utilities/mixins";
 @import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
 @import url("https://fonts.googleapis.com/css2?family=Cabin+Sketch&display=swap");
 
@@ -473,14 +466,15 @@
   //line-height: 1.3em;
   border: 2px dashed rgba(230, 126, 34, 0.2);
   //font-weight: normal;
+  overflow: hidden !important;
 }
 
 .flash-card-background {
   //font-family: "Patrick Hand SC", cursive;
   font-family: "Pedulinka";
   background-color: rgb(226, 221, 204);
-  min-height: 100vh !important;
   //position: relative;
+min-height: 100vh;
 
   -moz-box-shadow: inset 0 0 100px #000000;
   -webkit-box-shadow: inset 0 0 100px #000000;
@@ -562,7 +556,7 @@
 }
 */
 
-.flash-card-3d-button > span {
+.flash-card.sketched-button > span {
   background: #fff;
   display: block;
   padding: 5px 15px;
@@ -570,17 +564,21 @@
   border: 2px solid #000;
 }
 
-.flash-card-3d-button:active {
+.flash-card.sketched-button:active {
   top: 4px;
   padding-bottom: 0px;
   box-shadow: 0 1px 0 #000;
 }
 
-.flash-card-3d-button {
+.flash-card.sketched-button {
   all: initial;
   display: inline-block;
   position: relative;
   font: normal 25px/25px "Patrick Hand SC", sans-serif;
+  @include mobile {
+    font: normal 18px/18px "Patrick Hand SC", sans-serif;
+    padding-bottom: 2px;
+  }
   text-transform: uppercase;
   color: #000;
   text-decoration: none;
@@ -590,7 +588,8 @@
   box-shadow: 0 2px 0 #000, 0 2px 0px 0px black;
   background-image: url("data:image/gif;base64,R0lGODlhBAAEAIABAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjEgNjQuMTQwOTQ5LCAyMDEwLzEyLzA3LTEwOjU3OjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1LjEgV2luZG93cyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NUY1OENCRDdDMDYxMUUyOTEzMEE1MEM5QzM0NDVBMyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NUY1OENCRTdDMDYxMUUyOTEzMEE1MEM5QzM0NDVBMyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk1RjU4Q0JCN0MwNjExRTI5MTMwQTUwQzlDMzQ0NUEzIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk1RjU4Q0JDN0MwNjExRTI5MTMwQTUwQzlDMzQ0NUEzIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAQAAAQAsAAAAAAQABAAAAgYEEpdoeQUAOw==");
 }
-.flash-card-3d-button:hover {
+
+.flash-card.sketched-button:hover {
   cursor: pointer;
 }
 
@@ -626,12 +625,12 @@ div.modal-background {
 
 .sketchy-card-timeline.success {
   background: rgb(63, 195, 128);
-  box-shadow: 0px 0px 30px 4px rgba(63, 195, 128, .4);
+  box-shadow: 0px 0px 30px 4px rgba(63, 195, 128, 0.4);
 }
 
 .sketchy-card-timeline.warning {
   background: rgb(230, 126, 34);
-  box-shadow: 0px 0px 30px 4px rgba(230, 126, 34, .4);
+  box-shadow: 0px 0px 30px 4px rgba(230, 126, 34, 0.4);
 }
 
 /*
@@ -709,14 +708,17 @@ div.modal-background {
   margin-bottom: 20px;
 }
 
-input.flash-card-input {
-  border: 2px solid #000;
-  text-align: center;
-}
+input.flash-card.input {
+  font-family: "Patrick Hand SC", cursive;
+  border: 2px solid black;
+  height: 100px;
+  @include mobile {
+    height: 80px;
+  }
 
-input.flash-card-input:focus {
-  box-shadow: none;
-  border: 2px solid #000;
+  -webkit-appearance: none;
+  text-align: center;
+  margin: 0;
 }
 </style>
 <script lang="ts" src="./game.ts"></script>

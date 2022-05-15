@@ -27,6 +27,6 @@ export interface Drawable {
 }
 
 export interface UpdateEventDetail {
-  index: number;
+  digit: number;
   value: number;
 }

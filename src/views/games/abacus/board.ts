@@ -11,7 +11,7 @@ export class AbacusBoard extends G implements Drawable {
   private abacusInnerBox = new AbacusInnerBox(this.columns);
   private abacusColumns = new AbacusColumns(this.columns);
 
-  constructor(private columns: number) {
+  constructor(private columns: number, private valueBox: boolean = false) {
     super();
   }
 
@@ -20,21 +20,24 @@ export class AbacusBoard extends G implements Drawable {
     this.abacusInnerBox.cx(this.abacusOuterBox.cx());
     this.abacusColumns.cx(this.abacusInnerBox.cx());
 
-    this.abacusValueBox.centerText();
+    if (this.valueBox) {
+      this.abacusValueBox.centerText();
 
-    this.abacusValueBox.cx(this.abacusOuterBox.cx());
-    this.abacusValueBox.dy(-this.abacusValueBox.height() + 6);
+      this.abacusValueBox.cx(this.abacusOuterBox.cx());
+      this.abacusValueBox.dy(-this.abacusValueBox.height() + 6);
+    }
   }
 
   private listenColumnsValues() {
     this.abacusColumns.on("update", (event) => {
-      const [digit, value] = (event as CustomEvent<UpdateEventDetail>).detail;
+      const { digit, value } = (event as CustomEvent<UpdateEventDetail>).detail;
+
       this.digits[digit] = value;
       const conced = +this.digits.join("");
       if (this.digits.every((value) => value === 0)) this.fire("update", 0);
       else this.fire("update", conced);
 
-      this.abacusValueBox.setText(conced);
+      if (this.valueBox) this.abacusValueBox.setText(conced);
     });
   }
 
@@ -56,19 +59,19 @@ export class AbacusBoard extends G implements Drawable {
 
   public reset() {
     this.resetDigits();
-    this.abacusValueBox.reset();
+    if (this.valueBox) this.abacusValueBox.reset();
     this.abacusColumns.reset();
   }
 
   public draw() {
     this.listenColumnsValues();
-    this.abacusValueBox.draw();
+    if (this.valueBox) this.abacusValueBox.draw();
     this.abacusOuterBox.draw();
     this.abacusInnerBox.draw();
     this.abacusColumns.draw();
 
     this.abacusOuterBox.add(this.abacusInnerBox);
-    this.add(this.abacusValueBox);
+    if (this.valueBox) this.add(this.abacusValueBox);
     this.abacusInnerBox.add(this.abacusColumns);
 
     this.add(this.abacusOuterBox);

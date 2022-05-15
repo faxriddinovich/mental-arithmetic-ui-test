@@ -1,5 +1,5 @@
 <template>
-  <svg ref="barRef" width="400" height="70">
+  <svg ref="barRef" viewBox="0 0 400 70" :width="width" :height="height">
     <defs>
       <filter id="scores-circle-shadow" width="200%" height="200%">
         <feFlood flood-color="rgba(0, 0, 0, 0.2)" />
@@ -27,6 +27,10 @@ import { SVG, G, Rect, Circle } from "@svgdotjs/svg.js";
 import Star from "@@/star.png";
 
 export default defineComponent({
+  props: {
+    width: { type: Number, default: 400 },
+    height: { type: Number, default: 70 },
+  },
   setup() {
     const barRef = ref<SVGSVGElement | null>(null);
 
@@ -70,7 +74,6 @@ export default defineComponent({
       healthBar.add(gcircle);
       gcircle.x(grect.x() + grect.width() - 20);
       healthBar.move(5, 5);
-
     });
 
     return { barRef };

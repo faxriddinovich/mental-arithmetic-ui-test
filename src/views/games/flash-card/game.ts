@@ -60,7 +60,7 @@ export default defineComponent({
           width: ["100%", "0%"],
           //easing: "easeInOutExpo",
           easing: "linear",
-          duration: 1800,
+          duration: 180000,
           complete: () => {
             v(timelineRef)!.classList.remove("warning");
             v(timelineRef)!.classList.add("success");

@@ -23,7 +23,7 @@ export default defineComponent({
     const svg = SVG();
 
     function draw(columns: number) {
-      abacusBoard = new AbacusBoard(columns);
+      abacusBoard = new AbacusBoard(columns, props.valueBox);
       abacusBoard.draw();
       svg.add(abacusBoard);
       abacusBoard.construct();
@@ -38,6 +38,8 @@ export default defineComponent({
         "viewBox",
         `${viewBoxX} ${viewBoxY} ${width} ${height}`
       );
+      //svgRef.value!.setAttribute('width', width);
+      //svgRef.value!.setAttribute('height', height);
     }
 
     onMounted(() => {
