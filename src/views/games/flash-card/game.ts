@@ -13,6 +13,8 @@ import HealthBar from "@/components/games/health-bar";
 import ScoresBar from "@/components/games/scores-bar";
 import animate from "animejs";
 
+import { acquireGame, GAME_KIND } from '@/store/game';
+
 type DisplayKind =
   | "attention-text"
   | "abacus"
@@ -20,6 +22,23 @@ type DisplayKind =
   | "enter-answers-form"
   | "enter-answer-abacus"
   | "scores";
+
+enum SceneKind {
+  ATTENTION_TEXT,
+  GAME,
+  SCORES
+}
+
+enum DisplayCardKind {
+  ABACUS,
+  NUMBER,
+  ENTER_ANSWER,
+  ENTER_ANSWERS,
+}
+
+class DisplayCard {
+  constructor(public kind: DisplayCardKind, public value: any) {}
+}
 
 export default defineComponent({
   components: { AbacusBoard, HealthBar, ScoresBar },
@@ -31,7 +50,12 @@ export default defineComponent({
     const v = <T extends Ref>(ref: T): T extends Ref<infer K> ? K : unknown =>
       ref.value;
 
+    console.log(acquireGame().get(GAME_KIND.FLASH_CARD));
+
     const timelineRef = ref<HTMLElement | null>(null);
+
+    const canDisplayResourcesBar = ref<boolean>(true);
+    const canDisplayGameForm = ref<boolean>(true);
 
     const abacusDisplayRef = ref<HTMLElement | null>(null);
     const enterAnswerFormDisplayRef = ref<HTMLElement | null>(null);
@@ -60,13 +84,12 @@ export default defineComponent({
           width: ["100%", "0%"],
           //easing: "easeInOutExpo",
           easing: "linear",
-          duration: 180000,
+          duration: 1800,
           complete: () => {
             v(timelineRef)!.classList.remove("warning");
             v(timelineRef)!.classList.add("success");
             displayEnterAnswerForm();
           },
-
           update: (anim) => {
             if (anim.progress >= 60) {
               v(timelineRef)!.classList.remove("success");
@@ -188,6 +211,9 @@ export default defineComponent({
       correctOverlayIconRef,
       correctOverlayRef,
       playCorrectOverlayAnimation,
+
+      canDisplayResourcesBar,
+      canDisplayGameForm,
 
       scoresTimerRef,
       scoresCoinRef,

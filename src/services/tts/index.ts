@@ -61,7 +61,7 @@ export class TextToSpeech {
         })
         .then((out) => {
           const audio = new Audio(out.url);
-          audio.playbackRate = 4.0;
+          audio.playbackRate = 5.0;
           audio.play();
         });
     } else {

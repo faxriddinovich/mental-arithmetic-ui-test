@@ -74,6 +74,24 @@ export default defineComponent({
       healthBar.add(gcircle);
       gcircle.x(grect.x() + grect.width() - 20);
       healthBar.move(5, 5);
+
+      function playOneFlipAnimation() {
+        return new Promise((resolve) => {
+          const flipAnim = heart.animate(200).ease('<>').transform({ translateY: -18, scaleX: -0.1 }).after(() => {
+            flipAnim.animate(200).transform({ translateY: 0 }).after(resolve);
+          });
+
+        });
+      }
+
+      async function playFlipAnimation() {
+        while(true) {
+          await playOneFlipAnimation();
+        }
+      }
+
+      playFlipAnimation();
+
     });
 
     return { barRef };

@@ -96,7 +96,7 @@
           <!-- flash card game -->
           <div class="column is-4-mobile is-4-tablet is-2-desktop">
             <router-link
-              :to="{ name: 'PlayFlashCardGame' }"
+              :to="{ name: 'FlashCardGameForm' }"
               class="
                 card
                 is-clickable

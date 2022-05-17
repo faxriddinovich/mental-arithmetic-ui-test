@@ -35,6 +35,7 @@ import PlayBigNumbersGame from "@/views/games/big-numbers/play.vue";
 import AbacusGameForm from "@/views/games/abacus/form.vue";
 import PlayAbacusGame from "@/views/games/abacus/game.vue";
 
+import FlashCardGameForm from '@/views/games/flash-card/form.vue';
 import PlayFlashCardGame from "@/views/games/flash-card/game.vue";
 
 Vue.use(VueRouter);
@@ -139,6 +140,11 @@ const routes: Array<RouteConfig> = [
     },
   },
 
+  {
+    path: "/games/flash-card/form",
+    name: "FlashCardGameForm",
+    component: FlashCardGameForm,
+  },
   {
     path: "/games/flash-card/play",
     name: "PlayFlashCardGame",

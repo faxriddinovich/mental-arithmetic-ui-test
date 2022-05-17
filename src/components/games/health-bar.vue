@@ -74,11 +74,27 @@ export default defineComponent({
       healthBar.add(gcircle);
       healthBar.move(5, 5);
 
-      /*
-      setInterval(() => {
-        rect2.animate(100).width(rect2.width() - 5);
-      }, 100);
-      */
+      function playOneBeatAnimation(): Promise<void> {
+        const beatAnim = heart.animate(300).transform({ scale: 1.2 });
+        return new Promise((resolve) => {
+          beatAnim.after(() => {
+            beatAnim
+              .animate(300)
+              .transform({ scale: 1 })
+              .after(() => {
+                resolve();
+              });
+          });
+        });
+      }
+
+      async function playBeatAnimation() {
+        while (true) {
+          await playOneBeatAnimation();
+        }
+      }
+
+      playBeatAnimation();
     });
 
     return { barRef };

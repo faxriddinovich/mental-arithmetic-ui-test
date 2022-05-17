@@ -28,7 +28,11 @@
     </div>
 
     <!--<div class="container is-mobile">-->
-    <div class="is-absolute px-2" style="width: 100%">
+    <div
+      class="is-absolute px-2 mt-2"
+      style="width: 100%"
+      v-if="canDisplayResourcesBar"
+    >
       <div class="container">
         <div
           class="is-flex is-justify-content-space-between is-align-items-center"
@@ -84,7 +88,28 @@
             ref="timelineRef"
           />
           <div class="flash-card sketchy-card p-3">
-            <abacus-board :valueBox="false" :columns="1" style="max-height: 600px" />
+            <div
+              class="has-text-centered"
+              style="font-size: 200px; font-family: 'Patrick Hand SC', cursive"
+            >
+            <!--
+              <svg viewBox="0 0 900 150">
+                <text
+                  text-anchor="middle"
+                  dominant-baseline="central"
+                  x="50%"
+                  y="50%"
+                >
+                  +1
+                </text>
+              </svg>
+              -->
+            </div>
+            <abacus-board
+              :valueBox="false"
+              :columns="1"
+              style="max-height: 600px;"
+            />
           </div>
         </div>
       </div>
@@ -117,6 +142,59 @@
           <button class="flash-card sketched-button ml-3">
             <span> <b-icon icon="skip-forward" /> Skip row</span>
           </button>
+        </div>
+      </div>
+    </section>
+    <section
+      class="hero is-fullheight"
+      v-else-if="displayKind == 'enter-answers-form'"
+      ref="enterAnswersFormDisplayRef"
+    >
+      <div class="hero-body">
+        <div
+          class="columns is-gapless is-centered is-marginless"
+          style="min-width: 100%"
+        >
+          <div
+            class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd"
+          >
+            <div class="flash-card sketchy-card mx-2 p-4">
+              <div class="columns is-multiline is-mobile">
+                <div
+                  class="column is-6-mobile is-3-desktop"
+                  v-for="tet in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                  :key="tet"
+                >
+                  <div class="has-text-centered has-text-weight-semibold mb-1">
+                    Example {{ tet }}:
+                  </div>
+                  <div class="field">
+                    <div class="control">
+                      <input
+                        class="input flash-card-input"
+                        type="number"
+                        placeholder="Enter answer"
+                      />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <button
+                        class="button is-primary flash-card-button is-fullwidth"
+                      >
+                        <span>Check answer</span>
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <hr class="m-2" />
+
+              <button class="flash-card sketched-button">
+                <span> <b-icon icon="play" />Skip</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -237,59 +315,7 @@
         </div>
       </div>
     </section>
-    <section
-      class="hero is-fullheight"
-      v-else-if="displayKind == 'enter-answers-form'"
-      ref="enterAnswersFormDisplayRef"
-    >
-      <div class="hero-body">
-        <div
-          class="columns is-gapless is-centered is-marginless"
-          style="min-width: 100%"
-        >
-          <div
-            class="column is-12-mobile is-10-tablet is-9-desktop is-7-fullhd"
-          >
-            <div class="flash-card-sketchy-card mx-6">
-              <div class="columns is-multiline is-mobile">
-                <div
-                  class="column is-6-mobile is-3-desktop"
-                  v-for="tet in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
-                  :key="tet"
-                >
-                  <div class="has-text-centered has-text-weight-semibold mb-1">
-                    Example {{ tet }}:
-                  </div>
-                  <div class="field">
-                    <div class="control">
-                      <input
-                        class="input flash-card-input"
-                        type="number"
-                        placeholder="Enter answer"
-                      />
-                    </div>
-                  </div>
-                  <div class="field">
-                    <p class="control">
-                      <button
-                        class="button is-primary flash-card-button is-fullwidth"
-                      >
-                        <span>Check answer</span>
-                      </button>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <hr class="m-2" />
 
-              <button class="flash-card sketched-button">
-                <span> <b-icon icon="play" />Skip</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <b-modal
       v-model="modal"
@@ -470,11 +496,11 @@
 }
 
 .flash-card-background {
-  //font-family: "Patrick Hand SC", cursive;
-  font-family: "Pedulinka";
+  font-family: "Patrick Hand SC", cursive;
+  //font-family: "Pedulinka";
   background-color: rgb(226, 221, 204);
   //position: relative;
-min-height: 100vh;
+  min-height: 100vh;
 
   -moz-box-shadow: inset 0 0 100px #000000;
   -webkit-box-shadow: inset 0 0 100px #000000;

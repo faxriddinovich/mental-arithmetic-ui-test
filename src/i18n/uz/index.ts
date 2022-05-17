@@ -115,7 +115,8 @@ export namespace uz {
     "total_time": "Berilgan vaqt",
     "total_themes": "Umumiy mavzular",
     "total_examples": "Umumiy misollar",
-    "close": "Yopish"
+    "close": "Yopish",
+    "game_mode": "O'yin turi"
   };
 
   export const themes = {
