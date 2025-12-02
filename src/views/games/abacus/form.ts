@@ -1,0 +1,171 @@
+import {defineComponent, computed, watch, ref} from "@vue/composition-api";
+import {SequenceItem} from "@/views/games/abacus/interfaces";
+import ColorPalette from "@/components/games/color-palette.vue";
+import ThemesInputField from "@/components/games/themes-input-field.vue";
+import AbacusTipsContent from "@/views/contents/abacus-tips.vue";
+import {Theme, Operation} from "@mental-arithmetic/themes";
+import acquireGame, {GAME_KIND} from "@/store/game";
+
+const MAX_ALLOWED_SEQUENCE_ITEMS_COUNT = 20;
+
+export default defineComponent({
+    components: {ColorPalette, ThemesInputField, AbacusTipsContent},
+    setup(_, context) {
+        const fontRotations = ref<number[]>([0, 90, 180, 270]);
+        const fontSizes = ref<number[]>([1, 2, 3]);
+
+        const theme = ref<Theme | null>(null);
+        const digit = ref<number>(1);
+        const examplesCount = ref<number>(10);
+        const examplesTimeout = ref<number>(1);
+        const rowsCount = ref<number>(10);
+        const rowsTimeout = ref<number>(1);
+        const displayNumbers = ref<boolean>(true);
+        const speechSound = ref<boolean>(false);
+        const fontRotation = ref<number>(fontRotations.value[0]);
+        const fontSize = ref<number>(fontSizes.value[0]);
+        const fontColor = ref<string>("black");
+        const waitForAnswer = ref<boolean>(true);
+        const timerMins = ref<number>(1);
+        const timerSecs = ref<number>(0);
+        const abacusColumnsCount = ref<number>(2);
+
+        const themesInputRef = ref()
+
+        const greater = (a: number, b: number): number => {
+            return a > b ? a : b;
+        };
+
+        watch(digit, () => {
+            theme.value = null;
+        });
+
+        watch(theme, (val) => {
+            if (val == null) return;
+            const operation = val.metadata.operation || 0;
+
+            if (!val.data) {
+                abacusColumnsCount.value = digit.value + 1;
+                return;
+            }
+
+            abacusColumnsCount.value =
+                operation & Operation.mult
+                    ? (val.data as number) + digit.value + 1
+                    : greater(val.data as number, digit.value);
+        });
+
+        const sequence = ref<SequenceItem[]>([]);
+
+        const canAddSequenceItem = computed(() => {
+            return (
+                theme.value && sequence.value.length < MAX_ALLOWED_SEQUENCE_ITEMS_COUNT
+            );
+        });
+
+        const canPressPlayButton = computed<boolean>(() => {
+            return sequence.value.length > 0 || !!theme.value;
+        });
+
+        const gameConfig = acquireGame();
+        const abacusGameConfig = gameConfig.get(GAME_KIND.ABACUS);
+
+        if (abacusGameConfig) {
+            if (abacusGameConfig.sequence.length !== 1) {
+                sequence.value.push(...abacusGameConfig.sequence);
+            }
+
+            const lastSequenceItem =
+                abacusGameConfig.sequence[abacusGameConfig.sequence.length - 1];
+
+            context.root.$nextTick(() => {
+                themesInputRef.value!.setTheme(lastSequenceItem.theme);
+            });
+
+            digit.value = lastSequenceItem.digit;
+            examplesCount.value = lastSequenceItem.examplesCount;
+            examplesTimeout.value = lastSequenceItem.examplesTimeout;
+
+            rowsCount.value = lastSequenceItem.rowsCount;
+            rowsTimeout.value = lastSequenceItem.rowsTimeout;
+            abacusColumnsCount.value = lastSequenceItem.abacusColumnsCount;
+            timerMins.value = Math.floor(abacusGameConfig.timerSecs / 60);
+            timerSecs.value = abacusGameConfig.timerSecs % 60;
+            waitForAnswer.value = abacusGameConfig.waitForAnswer;
+
+            fontColor.value = lastSequenceItem.fontColor;
+            fontRotation.value = lastSequenceItem.fontRotation;
+            fontSize.value = lastSequenceItem.fontSize;
+            displayNumbers.value = lastSequenceItem.displayNumbers;
+            speechSound.value = lastSequenceItem.speechSound;
+        }
+
+        function addSequenceItem() {
+            sequence.value.push({
+                theme: theme.value!,
+                examples: [],
+                digit: Number(digit.value),
+                examplesCount: examplesCount.value,
+                rowsCount: rowsCount.value,
+                abacusColumnsCount: abacusColumnsCount.value,
+                examplesTimeout: examplesTimeout.value,
+                rowsTimeout: rowsTimeout.value,
+                displayNumbers: displayNumbers.value,
+                fontRotation: fontRotation.value,
+                fontColor: fontColor.value,
+                fontSize: fontSize.value,
+                speechSound: speechSound.value,
+            });
+        }
+
+        const removeSequenceItem = (index: number) => {
+            sequence.value = sequence.value.filter((_, idx) => idx !== index);
+        };
+
+        const play = () => {
+            //if (!abacusGameConfig) addSequenceItem();
+            if (sequence.value.length === 0) {
+                addSequenceItem();
+            }
+
+            gameConfig.set(GAME_KIND.ABACUS, {
+                sequence: sequence.value,
+                timerSecs: 60 * timerMins.value + timerSecs.value,
+                waitForAnswer: waitForAnswer.value,
+            });
+            context.root.$router.push({name: "PlayAbacusGame"});
+        };
+
+        return {
+            theme,
+            digit,
+            examplesCount,
+            examplesTimeout,
+            rowsCount,
+            rowsTimeout,
+            displayNumbers,
+            speechSound,
+            fontRotation,
+            fontSize,
+            fontColor,
+
+            fontRotations,
+            fontSizes,
+            canAddSequenceItem,
+            canPressPlayButton,
+
+            themesInputRef,
+
+            timerMins,
+            timerSecs,
+            abacusColumnsCount,
+            waitForAnswer,
+
+            sequence,
+
+            addSequenceItem,
+            removeSequenceItem,
+            play,
+        };
+    },
+});

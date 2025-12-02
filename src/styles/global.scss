@@ -1,0 +1,234 @@
+@import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/mixins";
+
+$border-color: rgb(149, 165, 166);
+
+.is-border-radiusless {
+  border-radius: 0px !important;
+}
+
+.is-absolute {
+  position: absolute !important;
+}
+
+a.dropdown-item {
+  padding-right: 16px !important;
+}
+
+.is-full-width {
+  width: 100% !important;
+}
+
+.is-full-size {
+  width: 100%;
+  height: 100%;
+}
+
+.is-dotted {
+   display: flex;
+   align-items: flex-end;
+ }
+.is-dotted .is-left,
+.is-dotted .is-right {
+  flex: 1 0 auto;
+}
+.is-dotted .is-dots {
+  flex: 0 1 auto;
+  overflow: hidden;
+}
+.is-dots::before {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  content: 
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+    ". . . . . . . . . . . . . . . . . . . . "
+}
+
+.is-nav-tabs > .tabs {
+  background: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1),
+    0 0px 0 1px rgba(10, 10, 10, 0.02);
+}
+
+.is-nav-tabs > .tab-content {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.is-nav-tabs.b-tabs {
+  margin-bottom: 0px !important;
+}
+
+.completed-progress > .progress {
+  border-radius: 0px !important;
+  @include mobile {
+    height: 0.8rem;
+  }
+}
+
+.is-shaking-text {
+  display: block;
+  animation-duration: 0.2s;
+  animation-name: shaking;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes shaking {
+  12% { transform: rotate(-2deg) }
+  24% { transform: rotate(-4deg) }
+  36% { transform: rotate(2deg) }
+  48% { transform: rotate(2deg) }
+  60% { transform: rotate(2deg) }
+  72% { transform: rotate(2deg) }
+  84% { transform: rotate(-2deg) }
+  96% { transform: rotate(-2deg) }
+}
+
+.is-full-rounded {
+  border-radius: 40px;
+}
+
+.is-bordered {
+  border: 1px solid $border-color;
+}
+
+.is-bordered-bottom-accent {
+  border: 1px solid $border-color;
+  border-bottom: 2px solid $border-color;
+}
+
+.is-blocked {
+  color: $danger;
+  text-decoration: line-through;
+}
+
+.is-event {
+  background-color: $white !important;
+}
+
+.has-text-weight-semibold-tablet {
+  @include tablet {
+    font-weight: $weight-semibold;
+  }
+}
+
+.hero > .hero-body {
+  @include touch {
+    padding: 1rem 0.5rem;
+  }
+}
+
+// FIXME?
+.is-bottom-left-screen {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.is-bottom-right-screen {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
+
+/* game colors */
+$is-black-color: #34495e;
+$is-green-color: #27ae60;;
+$is-blue-color: #3498db;
+$is-purple-color: #9b59b6;
+$is-yellow-color: #fdcb6e;
+$is-orange-color: #e67e22;
+$is-red-color: #e74c3c;
+$is-teal-color: #1dabb8;
+$is-brown-color: #651a1a;
+
+.is-black-color {
+  color: $is-black-color;
+}
+
+.is-green-color {
+  color: $is-green-color;
+}
+
+.is-blue-color {
+  color: $is-blue-color;
+}
+
+.is-purple-color {
+  color: $is-purple-color;
+}
+
+.is-yellow-color {
+  color: $is-yellow-color;
+}
+
+.is-orange-color {
+  color: $is-orange-color;
+}
+
+.is-red-color {
+  color: $is-red-color;
+}
+
+.is-teal-color {
+  color: $is-teal-color;
+}
+
+.is-brown-color {
+  color: $is-brown-color;
+}
+
+
+.is-black-bg-color {
+  background: $is-black-color;
+}
+
+.is-green-bg-color {
+  background: $is-green-color;
+}
+
+.is-blue-bg-color {
+  background: $is-blue-color;
+}
+
+.is-purple-bg-color {
+  background: $is-purple-color;
+}
+
+.is-yellow-bg-color {
+  background: $is-yellow-color;
+}
+
+.is-orange-bg-color {
+  background: $is-orange-color;
+}
+
+.is-red-bg-color {
+  background: $is-red-color;
+}
+
+.is-teal-bg-color {
+  background: $is-teal-color;
+}
+
+.is-brown-bg-color {
+  background: $is-brown-color;
+}
+
+.is-highlightless{
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

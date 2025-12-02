@@ -1,0 +1,79 @@
+import { G } from "@svgdotjs/svg.js";
+import { AbacusValueBox } from "./value-box";
+import { Drawable, UpdateEventDetail } from "./interfaces";
+import { AbacusInnerBox, AbacusOuterBox } from "./frame";
+import { AbacusColumns } from "./column";
+
+export class AbacusBoard extends G implements Drawable {
+  private digits: number[] = new Array(this.columns).fill(0);
+  private abacusValueBox = new AbacusValueBox();
+  private abacusOuterBox = new AbacusOuterBox(this.columns);
+  private abacusInnerBox = new AbacusInnerBox(this.columns);
+  private abacusColumns = new AbacusColumns(this.columns);
+
+  constructor(private columns: number, private valueBox: boolean = false) {
+    super();
+  }
+
+  public construct() {
+    this.abacusInnerBox.cy(this.abacusOuterBox.cy());
+    this.abacusInnerBox.cx(this.abacusOuterBox.cx());
+    this.abacusColumns.cx(this.abacusInnerBox.cx());
+
+    if (this.valueBox) {
+      this.abacusValueBox.centerText();
+
+      this.abacusValueBox.cx(this.abacusOuterBox.cx());
+      this.abacusValueBox.dy(-this.abacusValueBox.height() + 6);
+    }
+  }
+
+  private listenColumnsValues() {
+    this.abacusColumns.on("update", (event) => {
+      const { digit, value } = (event as CustomEvent<UpdateEventDetail>).detail;
+
+      this.digits[digit] = value;
+      const conced = +this.digits.join("");
+      if (this.digits.every((value) => value === 0)) this.fire("update", 0);
+      else this.fire("update", conced);
+
+      if (this.valueBox) this.abacusValueBox.setText(conced);
+    });
+  }
+
+  public lock() {
+    this.abacusColumns.lock();
+  }
+
+  public unlock() {
+    this.abacusColumns.unlock();
+  }
+
+  public update(n: number) {
+    this.abacusColumns.update(n);
+  }
+
+  private resetDigits() {
+    this.digits = new Array(this.columns).fill(0);
+  }
+
+  public reset() {
+    this.resetDigits();
+    if (this.valueBox) this.abacusValueBox.reset();
+    this.abacusColumns.reset();
+  }
+
+  public draw() {
+    this.listenColumnsValues();
+    if (this.valueBox) this.abacusValueBox.draw();
+    this.abacusOuterBox.draw();
+    this.abacusInnerBox.draw();
+    this.abacusColumns.draw();
+
+    this.abacusOuterBox.add(this.abacusInnerBox);
+    if (this.valueBox) this.add(this.abacusValueBox);
+    this.abacusInnerBox.add(this.abacusColumns);
+
+    this.add(this.abacusOuterBox);
+  }
+}

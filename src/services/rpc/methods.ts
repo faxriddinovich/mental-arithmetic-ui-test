@@ -1,0 +1,40 @@
+export const RPC_METHOD_ACCOUNT_ENTER = "account_enter";
+export const RPC_METHOD_ACCOUNT_CREATE = "account_create";
+
+export const RPC_GET_ACCOUNT_METHOD = "get_account";
+export const RPC_UPDATE_ACCOUNT_METHOD = "update_account";
+export const RPC_DELETE_ACCOUNT_METHOD = "delete_account";
+
+export const RPC_GET_ACCOUNTS_METHOD = "get_accounts";
+
+export const RPC_GET_COURSES_METHOD = "get_courses";
+export const RPC_GET_COURSE_METHOD = "get_course";
+export const RPC_GET_COURSE_FOR_UPDATE_METHOD = "get_course_for_update";
+export const RPC_PURCHASE_COURSE_METHOD = "purchase_course";
+export const RPC_DELETE_COURSE_METHOD = "delete_course";
+export const RPC_UPDATE_COURSE_METHOD = "update_course";
+export const RPC_GET_SUBSCRIPTION_METHOD = "get_subscription";
+export const RPC_CANCEL_SUBSCRIPTION_METHOD = "cancel_subscription";
+export const RPC_PURCHASE_SUBSCRIPTION_METHOD = "purchase_subscription";
+
+export const RPC_GET_LESSONS_METHOD = "get_lessons";
+
+export const RPC_METHOD_EVENT_GET_LATEST = "event_get_latest";
+
+export const RPC_GET_EVENTS_METHOD = "get_events";
+export const RPC_CREATE_EVENT_METHOD = "create_event";
+export const RPC_GET_LATEST_EVENT_METHOD = "get_latest_event";
+export const RPC_DELETE_EVENT_METHOD = "delete_event";
+
+export const RPC_GET_COURSE_CATEGORIES_METHOD = "get_course_categories";
+export const RPC_CREATE_COURSE_METHOD = "create_course";
+export const RPC_RATE_COURSE_METHOD = "rate_course";
+
+export const RPC_GET_LESSON_METHOD = "get_lesson";
+
+export const RPC_GET_COMMENTS_METHOD = "get_comments";
+export const RPC_CREATE_COMMENT_METHOD = "create_comment";
+export const RPC_DELETE_COMMENT_METHOD = "delete_comment";
+
+export const RPC_GET_SETTINGS_METHOD = "get_settings";
+export const RPC_UPDATE_SETTINGS_METHOD = "update_settings";
