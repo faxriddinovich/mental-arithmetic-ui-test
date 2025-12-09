@@ -32,7 +32,7 @@ jobs:
           yarn capacitor:build --android
           find . -name "*.apk"
           
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: android-artifacts
           path: dist/app-release.apk
