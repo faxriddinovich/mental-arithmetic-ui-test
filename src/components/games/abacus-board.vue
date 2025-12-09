@@ -1,10 +1,10 @@
 <template>
-  <svg ref="svgRef" />
+  <svg ref="svgRef"/>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from "@vue/composition-api";
-import { SVG } from "@svgdotjs/svg.js";
-import { AbacusBoard } from "@/views/games/abacus/board";
+import {defineComponent, ref, onMounted, watch} from "@vue/composition-api";
+import {SVG} from "@svgdotjs/svg.js";
+import {AbacusBoard} from "@/views/games/abacus/board";
 import {
   ABACUS_STONE_WIDTH,
   ABACUS_FRAME_WIDTH,
@@ -13,8 +13,8 @@ import {
 
 export default defineComponent({
   props: {
-    columns: { type: Number, required: false, default: 1 },
-    valueBox: { type: Boolean, required: false, default: true },
+    columns: {type: Number, required: false, default: 1},
+    valueBox: {type: Boolean, required: false, default: true},
   },
   emits: ["on-update"],
   setup(props, context) {
@@ -28,15 +28,15 @@ export default defineComponent({
       svg.add(abacusBoard);
       abacusBoard.construct();
       const width =
-        ABACUS_STONE_WIDTH * (columns || props.columns) +
-        (ABACUS_FRAME_WIDTH + ABACUS_FRAME_ABSOLUTE_X_PADDING);
+          ABACUS_STONE_WIDTH * (columns || props.columns) +
+          (ABACUS_FRAME_WIDTH + ABACUS_FRAME_ABSOLUTE_X_PADDING);
 
       const height = props.valueBox ? 469 : 418;
       const viewBoxX = 0;
       const viewBoxY = props.valueBox ? -55 : 0;
       svgRef.value!.setAttribute(
-        "viewBox",
-        `${viewBoxX} ${viewBoxY} ${width} ${height}`
+          "viewBox",
+          `${viewBoxX} ${viewBoxY} ${width} ${height}`
       );
       //svgRef.value!.setAttribute('width', width);
       //svgRef.value!.setAttribute('height', height);
@@ -80,7 +80,7 @@ export default defineComponent({
       abacusBoard.reset();
     }
 
-    return { svgRef, update, updateColumns, lock, unlock, reset };
+    return {svgRef, update, updateColumns, lock, unlock, reset};
   },
 });
 </script>

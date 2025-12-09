@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  ui:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: myorg/ui:latest
+    container_name: ui
+    environment:
+      - VIRTUAL_HOST=yourdomain.com
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_HOST=yourdomain.com
+      - LETSENCRYPT_EMAIL=you@yourdomain.com
+    networks:
+      - web
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs:rw
+      - ./nginx/vhost.d:/etc/nginx/vhost.d:rw
+      - ./nginx/html:/usr/share/nginx/html:rw
+    environment:
+      - DEFAULT_HOST=yourdomain.com
+    networks:
+      - web
+
+  letsencrypt:
+    image: nginxproxy/acme-companion
+    container_name: nginx-letsencrypt
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs:rw
+      - ./nginx/vhost.d:/etc/nginx/vhost.d:rw
+      - ./nginx/html:/usr/share/nginx/html:rw
+    environment:
+      - DEFAULT_EMAIL=Javohirmutalov@yandex.ru
+    networks:
+      - web
+
+networks:
+  web:
+    external: false

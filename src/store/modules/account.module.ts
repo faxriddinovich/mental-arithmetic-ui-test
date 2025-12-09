@@ -17,7 +17,7 @@ export default {
   },
   getters: {
     activeSession(state: StateProps) {
-      return state.sessions.find((session) => session.isActive === true) || null;
+      return state.sessions.find((session) => session.isActive) || null;
     },
 
     sessions(state: StateProps) {

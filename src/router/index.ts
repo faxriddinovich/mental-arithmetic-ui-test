@@ -1,8 +1,5 @@
 import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
-
-import { acquireAccount } from '@/store/account';
-import { acquireGame } from '@/store/game';
+import VueRouter, {RouteConfig} from "vue-router";
 
 import Home from "@/views/home.vue";
 
@@ -37,189 +34,204 @@ import PlayAbacusGame from "@/views/games/abacus/game.vue";
 
 import FlashCardGameForm from '@/views/games/flash-card/form.vue';
 import PlayFlashCardGame from "@/views/games/flash-card/game.vue";
+import acquireGame from "@/store/game";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home
-  },
-  {
-    path: "/settings",
-    name: "Settings",
-    component: Settings,
-  },
-  {
-    path: "/account",
-    component: Account,
-    children: [
-      {
+    {
         path: "/",
-        name: "UpdateAccount",
-        component: UpdateAccount,
-        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
-      },
-      {
-        path: "/account/sessions",
-        name: "AccountSessions",
-        component: AccountSessions,
-      },
-      {
-        path: "subscription",
-        name: "AccountSubscription",
-        component: AccountSubscription,
-        meta: { requiresAuth: true, roles: ["default", "root", "teacher"] },
-      },
-      {
-        path: "platform-settings",
-        name: "PlatformSettings",
-        component: PlatformSettings,
-        meta: { requiresAuth: true, roles: ["root"] },
-      },
-      {
-        path: "accounts",
-        name: "ControlPanelAccounts",
-        component: ControlPanelAccounts,
-        meta: { requiresAuth: true, roles: ["root"] },
-      },
-      {
-        path: "accounts/:id",
-        name: "ControlPanelUpdateAccount",
-        component: ControlPanelUpdateAccount,
-        meta: { requiresAuth: true, roles: ["root"] },
-      },
-      {
-        path: "events",
-        name: "ControlPanelEvents",
-        component: ControlPanelEvents,
-        meta: { requiresAuth: true, roles: ["root"] },
-      },
-    ],
-  },
-  {
-    path: "/account/authenticate",
-    name: "Authenticate",
-    component: Authenticate,
-  },
-  {
-    path: "/account/create",
-    name: "CreateAccount",
-    component: CreateAccount,
-  },
-  // FIXME: protect this route
-  {
-    path: "/account/blocked",
-    name: "AccountBlocked",
-    component: AccountBlocked,
-  },
-  {
-    path: "/games/big-numbers/form",
-    name: "BigNumbersGameForm",
-    component: BigNumbersGameForm,
-  },
-  {
-    path: "/games/big-numbers/play",
-    name: "PlayBigNumbersGame",
-    component: PlayBigNumbersGame,
-    props: true,
-    beforeEnter: (_1, _2, next) => {
-      if (!acquireGame().big_numbers) return next({ name: "BigNumbersGameForm" });
-      next();
+        name: "Home",
+        component: Home
     },
-  },
-  { path: "/games/abacus", name: "AbacusGameForm", component: AbacusGameForm },
-  {
-    path: "/games/abacus/play",
-    name: "PlayAbacusGame",
-    component: PlayAbacusGame,
-    beforeEnter: (_1, _2, next) => {
-      if (!acquireGame().abacus) return next({ name: "AbacusGameForm" });
-      next();
+    {
+        path: "/settings",
+        name: "Settings",
+        component: Settings,
     },
-  },
+    {
+        path: "/account",
+        component: Account,
+        children: [
+            {
+                path: "/",
+                name: "UpdateAccount",
+                component: UpdateAccount,
+                meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
+            },
+            {
+                path: "/account/sessions",
+                name: "AccountSessions",
+                component: AccountSessions,
+            },
+            {
+                path: "subscription",
+                name: "AccountSubscription",
+                component: AccountSubscription,
+                meta: {requiresAuth: true, roles: ["default", "root", "teacher"]},
+            },
+            {
+                path: "platform-settings",
+                name: "PlatformSettings",
+                component: PlatformSettings,
+                meta: {requiresAuth: true, roles: ["root"]},
+            },
+            {
+                path: "accounts",
+                name: "ControlPanelAccounts",
+                component: ControlPanelAccounts,
+                meta: {requiresAuth: true, roles: ["root"]},
+            },
+            {
+                path: "accounts/:id",
+                name: "ControlPanelUpdateAccount",
+                component: ControlPanelUpdateAccount,
+                meta: {requiresAuth: true, roles: ["root"]},
+            },
+            {
+                path: "events",
+                name: "ControlPanelEvents",
+                component: ControlPanelEvents,
+                meta: {requiresAuth: true, roles: ["root"]},
+            },
+        ],
+    },
+    {
+        path: "/account/authenticate",
+        name: "Authenticate",
+        component: Authenticate,
+    },
+    {
+        path: "/account/create",
+        name: "CreateAccount",
+        component: CreateAccount,
+    },
+    // FIXME: protect this route
+    {
+        path: "/account/blocked",
+        name: "AccountBlocked",
+        component: AccountBlocked,
+    },
+    {
+        path: "/games/big-numbers/form",
+        name: "BigNumbersGameForm",
+        component: BigNumbersGameForm,
+    },
+    {
+        path: "/games/big-numbers/play",
+        name: "PlayBigNumbersGame",
+        component: PlayBigNumbersGame,
+        props: true,
+        beforeEnter: (_1, _2, next) => {
+            try {
+                const gameStore = acquireGame()
+                if (!gameStore.big_numbers) {
+                    return next({name: "BigNumbersGameForm"})
+                } else next()
+            } catch (error) {
+                return next({name: "BigNumbersGameForm"})
+            }
+        },
+    },
+    {path: "/games/abacus", name: "AbacusGameForm", component: AbacusGameForm},
+    {
+        path: "/games/abacus/play",
+        name: "PlayAbacusGame",
+        component: PlayAbacusGame,
+        beforeEnter: (_1, _2, next) => {
+            try {
+                const gameStore = acquireGame()
+                if (!gameStore.abacus) {
+                    return next({name: "AbacusGameForm"});
+                } else next()
+            } catch (e) {
+                return next({name: "AbacusGameForm"});
+            }
+        },
+    },
 
-  {
-    path: "/games/flash-card/form",
-    name: "FlashCardGameForm",
-    component: FlashCardGameForm,
-  },
-  {
-    path: "/games/flash-card/play",
-    name: "PlayFlashCardGame",
-    component: PlayFlashCardGame,
-    beforeEnter: (_1, _2, next) => {
-      //if (!acquireGame().abacus) return next({ name: "AbacusGameForm" });
-      next();
+    {
+        path: "/games/flash-card/form",
+        name: "FlashCardGameForm",
+        component: FlashCardGameForm,
     },
-  },
+    {
+        path: "/games/flash-card/play",
+        name: "PlayFlashCardGame",
+        component: PlayFlashCardGame,
+        beforeEnter: (_1, _2, next) => {
+            //if (!acquireGame().abacus) return next({ name: "AbacusGameForm" });
+            next();
+        },
+    },
 
-  {
-    path: "/courses/:id",
-    name: "Course",
-    component: Course,
-  },
-  {
-    path: "/course/create",
-    name: "CreateCourse",
-    component: CreateCourse,
-    meta: { requiresAuth: true, roles: ["root", "teacher"] },
-  },
-  {
-    path: "/courses/:id/update",
-    name: "UpdateCourse",
-    component: UpdateCourse,
-    meta: { requiresAuth: true, roles: ["root", "teacher"] },
-  },
-  {
-    path: "/lessons/:id",
-    name: "Lesson",
-    component: Lesson,
-  },
-  {
-    path: "/lesson/create",
-    name: "CreateLesson",
-    component: CreateLesson,
-  },
-  {
-    path: "/scores",
-    name: "Scores",
-    component: Scores,
-  },
-  {
-    path: "*",
-    beforeEnter: (to, from, next) => {
-      next({ name: "Home" });
+    {
+        path: "/courses/:id",
+        name: "Course",
+        component: Course,
+    },
+    {
+        path: "/course/create",
+        name: "CreateCourse",
+        component: CreateCourse,
+        meta: {requiresAuth: true, roles: ["root", "teacher"]},
+    },
+    {
+        path: "/courses/:id/update",
+        name: "UpdateCourse",
+        component: UpdateCourse,
+        meta: {requiresAuth: true, roles: ["root", "teacher"]},
+    },
+    {
+        path: "/lessons/:id",
+        name: "Lesson",
+        component: Lesson,
+    },
+    {
+        path: "/lesson/create",
+        name: "CreateLesson",
+        component: CreateLesson,
+    },
+    {
+        path: "/scores",
+        name: "Scores",
+        component: Scores,
+    },
+    {
+        path: "*",
+        beforeEnter: (to, from, next) => {
+            next({name: "Home"});
+        }
     }
-  }
 ];
 
 const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
-  routes,
+    mode: "history",
+    base: process.env.BASE_URL,
+    routes,
 });
 
 router.beforeEach(async (to, from, next) => {
-  const routeName = localStorage.getItem("open-url");
-  if (routeName) {
-    const resolved = router.resolve({ path: routeName });
-    if(resolved.resolved.matched.length > 0) {
-      localStorage.removeItem('open-url');
-      return next(routeName)
+    const routeName = localStorage.getItem("open-url");
+    if (routeName) {
+        const resolved = router.resolve({path: routeName});
+        if (resolved.resolved.matched.length > 0) {
+            localStorage.removeItem('open-url');
+            return next(routeName)
+        }
     }
-  }
 
-  console.error('[router] waiting for sync is not implemented');
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    const activeSession = acquireAccount().activeSession;
+    console.error('[router] waiting for sync is not implemented');
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        const accountStore = require("@/store/account")
+        const session = accountStore()
+        const activeSession = session.activeSession;
 
-    if (!activeSession) return next({ name: "Authenticate" });
-    if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
-      return next({ name: "Home" });
-  }
-  next();
+        if (!activeSession) return next({name: "Authenticate"});
+        if (to.meta?.roles && !to.meta.roles.includes(activeSession.role))
+            return next({name: "Home"});
+    }
+    next();
 });
 
 export default router;

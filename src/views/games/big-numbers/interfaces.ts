@@ -1,4 +1,5 @@
 import { Example } from '@/store/example';
+import {Theme} from "@mental-arithmetic/themes";
 
 export interface SequenceItem {
   theme: Theme;

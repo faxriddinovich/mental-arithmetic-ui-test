@@ -4,57 +4,59 @@
       <div class="card p-2 is-bordered">
         <div class="buttons">
           <b-button
-            tag="router-link"
-            :to="{ name: 'BigNumbersGameForm' }"
-            type="is-primary is-light"
-            icon-left="arrow-left"
-            >Back</b-button
+              tag="router-link"
+              :to="{ name: 'BigNumbersGameForm' }"
+              type="is-primary is-light"
+              icon-left="arrow-left"
+          >Back
+          </b-button
           >
           <b-button
-            @click="emitNextExample"
-            type="is-primary"
-            icon-right="arrow-right"
-            >Next example</b-button
+              @click="emitNextExample"
+              type="is-primary"
+              icon-right="arrow-right"
+          >Next example
+          </b-button
           >
         </div>
       </div>
     </div>
     <div
-      class="
+        class="
         columns
         is-marginless is-mobile is-multiline is-centered is-vcentered
       "
-      style="min-height: 100vh"
-      v-if="config.multiplayerMode"
+        style="min-height: 100vh"
+        v-if="config.multiplayerMode"
     >
       <div
-        :class="columnClasses"
-        v-for="(instanceItem, instanceItemIndex) of config.instances"
-        :key="instanceItemIndex"
+          :class="columnClasses"
+          v-for="(instanceItem, instanceItemIndex) of config.instances"
+          :key="instanceItemIndex"
       >
         <BigNumbersGame
-          :multiplayerMode="true"
-          :answerAtEnd="config.answerAtEnd"
-          :onFinish="addCompletedInstance"
-          :sequence="instanceItem.sequence"
+            :multiplayerMode="true"
+            :answerAtEnd="config.answerAtEnd"
+            :onFinish="addCompletedInstance"
+            :sequence="instanceItem.sequence"
         />
       </div>
     </div>
 
     <div class="min-height: 100vh" v-else>
       <BigNumbersGame
-        :sequence="config.instances[0].sequence"
-        :answerAtEnd="config.instances[0].answerAtEnd"
-        :onRefresh="regenerateExamples"
+          :sequence="config.instances[0].sequence"
+          :answerAtEnd="config.instances[0].answerAtEnd"
+          :onRefresh="regenerateExamples"
       />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, computed } from "@vue/composition-api";
+import {defineComponent, ref, computed} from "@vue/composition-api";
 import BigNumbersGame from "@/views/games/big-numbers/game.vue";
-import { acquireGame, GAME_KIND } from "@/store/game";
-import { acquireExample, Example } from "@/store/example";
+import acquireGame, {GAME_KIND} from "@/store/game";
+import {acquireExample, Example} from "@/store/example";
 
 interface ThemeCache {
   theme: string;
@@ -65,7 +67,7 @@ interface ThemeCache {
 }
 
 export default defineComponent({
-  components: { BigNumbersGame },
+  components: {BigNumbersGame},
   setup(_, context) {
     const config = acquireGame().get(GAME_KIND.BIG_NUMBERS)!;
 
@@ -79,7 +81,7 @@ export default defineComponent({
     // for each instance we generate examples
     for (const instance of config.instances) {
       for (const sequenceItem of instance.sequence) {
-        const { examplesCount, rowsCount, theme, digit } = sequenceItem;
+        const {examplesCount, rowsCount, theme, digit} = sequenceItem;
         if (config.instances.length > 1 && config.sameExamples) {
           const cachedTheme = themeCaches.find((cache) => {
             const sameExamplesCount = cache.examplesCount === examplesCount;
@@ -96,10 +98,10 @@ export default defineComponent({
           }
           // we generate examples
           const examples = acquireExample().gen(
-            theme,
-            examplesCount,
-            rowsCount,
-            digit
+              theme,
+              examplesCount,
+              rowsCount,
+              digit
           );
           sequenceItem.examples = examples;
           // and we add to the cache
@@ -114,10 +116,10 @@ export default defineComponent({
         }
 
         sequenceItem.examples = acquireExample().gen(
-          theme,
-          examplesCount,
-          rowsCount,
-          digit
+            theme,
+            examplesCount,
+            rowsCount,
+            digit
         );
       }
     }
@@ -125,12 +127,12 @@ export default defineComponent({
     function regenerateExamples() {
       for (const instance of config.instances) {
         for (const sequenceItem of instance.sequence) {
-          const { theme, examplesCount, rowsCount, digit } = sequenceItem;
+          const {theme, examplesCount, rowsCount, digit} = sequenceItem;
           sequenceItem.examples = acquireExample().gen(
-            theme,
-            examplesCount,
-            rowsCount,
-            digit
+              theme,
+              examplesCount,
+              rowsCount,
+              digit
           );
         }
       }

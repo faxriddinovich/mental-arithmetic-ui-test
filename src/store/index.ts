@@ -12,5 +12,5 @@ export default new Vuex.Store({
   state: {
     synced: false
   },
-  modules: { Account, BigNumbers, Abacus, TextToSpeech, Settings },
+  modules: { Account, BigNumbers, Abacus, TextToSpeech, Settings,  },
 });
