@@ -10,7 +10,6 @@ COPY themes/package*.json ./themes/
 COPY ui ./ui
 COPY themes ./themes
 
-# Install dependencies (ui depends on themes via file:../themes)
 WORKDIR /app/ui
 RUN npm install --legacy-peer-deps
 
@@ -21,10 +20,8 @@ RUN npm run build
 # ---- Production stage ----
 FROM nginx:stable-alpine
 
-# Clean old nginx html
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy built UI
 COPY --from=builder /app/ui/dist /usr/share/nginx/html
 
 EXPOSE 80

@@ -4,14 +4,14 @@ services:
   ui:
     build:
       context: ..
-      dockerfile: Dockerfile
+      dockerfile: ui/Dockerfile
     image: myorg/ui:latest
     container_name: ui
     environment:
-      - VIRTUAL_HOST=yourdomain.com
+      - VIRTUAL_HOST=8080:80
       - VIRTUAL_PORT=80
-      - LETSENCRYPT_HOST=yourdomain.com
-      - LETSENCRYPT_EMAIL=you@yourdomain.com
+      - LETSENCRYPT_HOST=8080:80
+      - LETSENCRYPT_EMAIL=Javohirmutalov@yandex.ru
     networks:
       - web
 
