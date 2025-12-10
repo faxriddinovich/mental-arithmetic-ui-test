@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy UI and Themes package manifests
-COPY ui/package*.json ./ui/
+COPY mental-arithmetic-ui-test/package*.json ./ui/
 COPY themes/package*.json ./themes/
 
 # Copy full source
-COPY ui ./ui
+COPY mental-arithmetic-ui-test ./ui
 COPY themes ./themes
 
 WORKDIR /app/ui

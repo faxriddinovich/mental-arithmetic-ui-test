@@ -27,7 +27,7 @@ services:
       - ./nginx/vhost.d:/etc/nginx/vhost.d:rw
       - ./nginx/html:/usr/share/nginx/html:rw
     environment:
-      - DEFAULT_HOST=yourdomain.com
+      - DEFAULT_HOST=8080
     networks:
       - web
 
