@@ -4,7 +4,7 @@ services:
   ui:
     build:
       context: ..
-      dockerfile: ui/Dockerfile
+      dockerfile: mental-arithmetic-ui-test/Dockerfile
     image: myorg/ui:latest
     container_name: ui
     environment:
