@@ -19,7 +19,7 @@
     "@capacitor/splash-screen": "^1.2.2",
     "@capacitor/storage": "^1.2.4",
     "@hcaptcha/vue-hcaptcha": "^0.3.2",
-    "@mental-arithmetic/themes": "file:../themes",
+    "@mental-arithmetic/themes": "file:../mental-arithmetic-themes",
     "@svgdotjs/svg.js": "^3.1.2",
     "@vue/composition-api": "^1.4.7",
     "animejs": "^3.2.1",
