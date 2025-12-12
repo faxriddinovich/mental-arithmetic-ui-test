@@ -7,44 +7,11 @@ services:
       dockerfile: mental-arithmetic-ui-test/Dockerfile
     image: myorg/ui:latest
     container_name: ui
-    environment:
-      - VIRTUAL_HOST=8080:80
-      - VIRTUAL_PORT=80
-      - LETSENCRYPT_HOST=8080:80
-      - LETSENCRYPT_EMAIL=Javohirmutalov@yandex.ru
-    networks:
-      - web
-
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
     ports:
-      - "5080:30"
-      - "572:572"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs:rw
-      - ./nginx/vhost.d:/etc/nginx/vhost.d:rw
-      - ./nginx/html:/usr/share/nginx/html:rw
-    environment:
-      - DEFAULT_HOST=8080
+      - "7070:80"
     networks:
       - web
 
-  letsencrypt:
-    image: nginxproxy/acme-companion
-    container_name: nginx-letsencrypt
-    depends_on:
-      - nginx-proxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs:rw
-      - ./nginx/vhost.d:/etc/nginx/vhost.d:rw
-      - ./nginx/html:/usr/share/nginx/html:rw
-    environment:
-      - DEFAULT_EMAIL=Javohirmutalov@yandex.ru
-    networks:
-      - web
 
 networks:
   web:
