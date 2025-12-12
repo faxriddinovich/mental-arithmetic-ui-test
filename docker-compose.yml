@@ -20,7 +20,7 @@ services:
     container_name: nginx-proxy
     ports:
       - "5080:30"
-      - "443:443"
+      - "572:572"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx/certs:/etc/nginx/certs:rw
