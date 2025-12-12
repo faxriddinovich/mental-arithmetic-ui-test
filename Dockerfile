@@ -15,6 +15,7 @@ RUN npm install --legacy-peer-deps
 
 # Build UI
 RUN npm run build
+RUN npm run serve
 
 
 # ---- Production stage ----
